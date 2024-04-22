@@ -8,4 +8,42 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Bean\**" />
+    <EmbeddedResource Remove="Bean\**" />
+    <None Remove="Bean\**" />
+    <Page Remove="Bean\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="PowerAnalyzer\MainDialog.cs" />
+    <Compile Remove="Report\ReportWriter.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MySql.Data" Version="8.3.0" />
+    <PackageReference Include="NLog" Version="5.2.8" />
+    <PackageReference Include="NModbus4" Version="2.1.0" />
+    <PackageReference Include="NPOI" Version="2.7.0" />
+    <PackageReference Include="System.IO.Ports" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="TmctlAPINet">
+      <HintPath>TmctlAPINet.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="tmctl.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TmctlAPINet.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="YKMUSB.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

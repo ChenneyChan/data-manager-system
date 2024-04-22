@@ -5,8 +5,41 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ABBDataManagerSystem"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="信息化试验系统" Height="600" Width="1200" WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <Style TargetType="MenuItem">
+            <Setter Property="FontSize" Value="14"/>
+        </Style>
+    </Window.Resources>
     <Grid>
+        <DockPanel>
+            <!--停靠布局，让菜单栏和工具栏位于窗口顶部-->
+            <Menu DockPanel.Dock="Top" >
+                <MenuItem Header="试验">
+                    <MenuItem Header="功率分析仪" Click="PowerAnalyzeTest_Click" Name="PowerAnalyzeTest"/>
+                </MenuItem>
+                <MenuItem Header="设置">
+                    <MenuItem Header="设置" Click="MenuItemSetting_Click"/>
+                </MenuItem>
+                <MenuItem Header="关于"></MenuItem>
+            </Menu>
+            <ToolBar DockPanel.Dock="Top">
+                <!--ToolBar和StatusBar就是一个容器-->
+                <Button Content="Save"></Button>
+                <Separator></Separator>
+                <Button Content="SaveAll"></Button>
+                <Separator></Separator>
+                <Button Content="FileExplorer"></Button>
+                <Separator></Separator>
+                <Button Content="Start"></Button>
+                <Separator></Separator>
+                <Button Content="Test"></Button>
+            </ToolBar>
+            <TextBox DockPanel.Dock="Top" Text="This is my space" Height="243"></TextBox>
+            <StatusBar DockPanel.Dock="Bottom">
+                <TextBlock Text="statusBar"></TextBlock>
+            </StatusBar>
+        </DockPanel>
 
     </Grid>
 </Window>

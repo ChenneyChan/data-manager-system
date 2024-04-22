@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using ABBDataManagerSystem.Pages;
+using ABBDataManagerSystem.PowerAnalyzer;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -19,6 +21,24 @@ namespace ABBDataManagerSystem
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void MenuItemSetting_Click(object sender, RoutedEventArgs e)
+        {
+            new WindowSettings().ShowDialog();
+        }
+
+        private void PowerAnalyzeTest_Click(object sender, RoutedEventArgs e)
+        {
+            var window = new Window()
+            {
+                Title = "功率分析仪",
+                Width = 400,
+                Height = 300
+            };
+            var uc = new UCDeviceSearch();
+            window.Content = uc;
+            window.Show();
         }
     }
 }
