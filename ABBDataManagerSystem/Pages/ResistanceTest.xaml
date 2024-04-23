@@ -1,0 +1,48 @@
+﻿<UserControl x:Class="ABBDataManagerSystem.Pages.ResistanceTest"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ABBDataManagerSystem.Pages"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="0">
+            <StackPanel Orientation="Horizontal" Margin="0, 5">
+                <TextBlock Text="分接" Width="40" TextAlignment="Center" VerticalAlignment="Center"/>
+                <ComboBox Name="ConnectionGear" SelectedIndex="0" Width="100">
+                    <ComboBoxItem>1分接</ComboBoxItem>
+                    <ComboBoxItem>2分接</ComboBoxItem>
+                    <ComboBoxItem>3分接</ComboBoxItem>
+                    <ComboBoxItem>4分接</ComboBoxItem>
+                    <ComboBoxItem>5分接</ComboBoxItem>
+                    <ComboBoxItem>6分接</ComboBoxItem>
+                    <ComboBoxItem>7分接</ComboBoxItem>
+                    <ComboBoxItem>8分接</ComboBoxItem>
+                    <ComboBoxItem>9分接</ComboBoxItem>
+                    <ComboBoxItem>2-1分接</ComboBoxItem>
+                </ComboBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0, 5">
+                <TextBlock Text="绕组" Width="40" TextAlignment="Center" VerticalAlignment="Center"/>
+                <ComboBox Name="cbRaozu" SelectedIndex="0" Width="100">
+                    <ComboBoxItem>A-B</ComboBoxItem>
+                    <ComboBoxItem>B-C</ComboBoxItem>
+                    <ComboBoxItem>A-C</ComboBoxItem>
+                    <ComboBoxItem>A-O</ComboBoxItem>
+                    <ComboBoxItem>B-O</ComboBoxItem>
+                    <ComboBoxItem>C-O</ComboBoxItem>
+                </ComboBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0, 5">
+                <TextBlock Text="电阻仪高压侧电流" Width="40" TextAlignment="Center" VerticalAlignment="Center"/>
+                <ComboBox Name="cbHVCurrent" SelectedIndex="0" Width="100">
+                    <ComboBoxItem>5A</ComboBoxItem>
+                    <ComboBoxItem>1A</ComboBoxItem>
+                    <ComboBoxItem>0.1A</ComboBoxItem>
+                    <ComboBoxItem>0.01A</ComboBoxItem>
+                </ComboBox>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</UserControl>
