@@ -1,0 +1,106 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO.Ports;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ABBDataManagerSystem.Connector
+{
+    // JYR-20W与PC机485/232串口通讯协议
+    internal class ResistanceCurrentInfoCollector
+    {
+        private SerialPort serialPort;
+
+        /**
+         * 常规测试命令 (41H)、温升测试命令（42H）、温升定时命令（43H）、
+            复位命令 (44H)、参数设置命令 (45H)、常规保存命令 (46H)、
+            常规打印命令 (47H)、寻机命令(48H)。
+        */
+
+        public ResistanceCurrentInfoCollector(string portName, int baudRate)
+        {
+            serialPort = new SerialPort(portName, baudRate, Parity.None, 8, StopBits.One);
+            serialPort.Open();
+        }
+
+        // 主机发送命令
+        public void SendCommand(byte[] command)
+        {
+            byte[] packet = ConstructPacket(command);
+            serialPort.Write(packet, 0, packet.Length);
+        }
+
+        private byte[] ConstructPacket(byte[] command)
+        {
+            if (command.Length > 99)
+            {
+                Log.Error("Command Length Error");
+            }
+            int length = command.Length + 7; // 7 bytes for header, address * 2, length * 2, checksum, and footer
+            byte[] packet = new byte[length];
+            string lenStr = command.Length < 10 ? $"0{command.Length}" : command.Length.ToString();
+            char[] lenArray = lenStr.ToCharArray();
+
+            packet[0] = 0x7E; // 报文头
+            packet[1] = 0x3E; // 从机地址高字节
+            packet[2] = 0x3E; // 从机地址低字节
+            packet[3] = (byte)lenArray[0];  // 数据和命令长度高字节
+            packet[4] = (byte)lenArray[1];  // 数据和命令长度低字节
+
+            Array.Copy(command, 0, packet, 5, command.Length); // 命令数据
+
+            byte xorChecksum = CalculateChecksum(packet, 0, length - 2); // 从地址到数据部分的校验
+            packet[length - 2] = xorChecksum; // 异或校验
+            packet[length - 1] = 0x0D; // 报文尾
+
+            return packet;
+        }
+
+        // 计算异或校验
+        private byte CalculateChecksum(byte[] data, int offset, int length)
+        {
+            byte checksum = 0x00;
+            for (int i = offset; i < length; i++)
+            {
+                checksum ^= data[i];
+            }
+            return checksum;
+        }
+
+        // 主机接收数据
+        public byte[]? ReceiveData()
+        {
+            byte[] buffer = new byte[1024]; // 假设数据长度不超过1024字节
+            int bytesRead = serialPort.Read(buffer, 0, buffer.Length);
+
+            // 处理接收到的数据
+            if (bytesRead > 0)
+            {
+                // 检查报文头和尾
+                if (buffer[0] == 0x7E && buffer[bytesRead - 1] == 0x0D)
+                {
+                    // 获取数据部分
+                    int dataLength = bytesRead - 7; // 7 bytes for header, address, length, checksum, and footer
+                    byte[] data = new byte[dataLength];
+                    Array.Copy(buffer, 5, data, 0, dataLength); // 从第6个字节开始是数据部分
+                                                                // 返回数据部分，不包括报文头和尾
+                    return data;
+                }
+                else
+                {
+                    Log.Error("ResistanceCurrentInfoCollector: Invalid packet format.");
+                }
+            }
+            return null;
+        }
+
+        public void Close()
+        {
+            if (serialPort.IsOpen)
+            {
+                serialPort.Close();
+            }
+        }
+    }
+}
