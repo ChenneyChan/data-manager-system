@@ -34,9 +34,24 @@ namespace ABBDataManagerSystem
             {
                 Title = "功率分析仪",
                 Width = 400,
-                Height = 300
+                Height = 300,
+                WindowStartupLocation = WindowStartupLocation.CenterScreen,
             };
             var uc = new UCDeviceSearch();
+            window.Content = uc;
+            window.Show();
+        }
+
+        private void TemperatureTest_Click(object sender, RoutedEventArgs e)
+        {
+            var window = new Window()
+            {
+                Title = "温度检测仪",
+                Width = 800,
+                Height = 600,
+                WindowStartupLocation = WindowStartupLocation.CenterScreen,
+            };
+            var uc = new TempTestPage();
             window.Content = uc;
             window.Show();
         }

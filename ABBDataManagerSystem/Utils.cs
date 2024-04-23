@@ -195,13 +195,32 @@ namespace ABBDataManagerSystem
             else
             {
                 // 对于非0值，使用 ToString 方法进行格式化，并去除末尾的零和小数点（如果有的话）  
-                formattedNumber = number.ToString($"F{x}").TrimEnd('0', '.');
-                //if (formattedNumber.EndsWith(".")) // 如果因为去除小数点而导致字符串以点结尾，则进一步去除点  
-                //{
-                //    formattedNumber = formattedNumber.TrimEnd('.');
-                //}
+                var v = number.ToString($"F{x}");
+                var vv = v.Split('.');
+                if (vv.Length == 2)
+                {
+                    var vv_ = vv[1].TrimEnd('0');
+                    if (vv_.Length == 0)
+                    {
+                        v = vv[0];
+                    }
+                    else
+                    {
+                        v = vv[0] + '.' + vv_;
+                    }
+                }
+                else
+                {
+                    v = vv[0];
+                }
+                formattedNumber = v;
             }
             return formattedNumber;
+        }
+
+        internal static int ParseInt(object selectedItem)
+        {
+            throw new NotImplementedException();
         }
     }
 }
