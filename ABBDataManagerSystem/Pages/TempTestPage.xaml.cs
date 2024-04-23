@@ -555,5 +555,10 @@ namespace ABBDataManagerSystem.Pages
 
 
         #endregion
+
+        private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+        {
+            Destroy();
+        }
     }
 }

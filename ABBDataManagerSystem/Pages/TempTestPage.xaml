@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ABBDataManagerSystem.Pages"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800" Loaded="UserControl_Loaded">
+             d:DesignHeight="450" d:DesignWidth="800" Loaded="UserControl_Loaded" Unloaded="UserControl_Unloaded">
     <UserControl.Resources>
         <Style TargetType="Button" x:Key="plotButton">
             <Setter Property="Height" Value="30"/>
@@ -13,14 +13,15 @@
     </UserControl.Resources>
     <Grid Margin="20,20">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
+            <ColumnDefinition Width="671*"/>
+            <ColumnDefinition Width="89*"/>
         </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
+        <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
-        <StackPanel Orientation="Vertical">
+        <StackPanel Orientation="Vertical" Grid.ColumnSpan="2">
             <StackPanel Orientation="Horizontal">
                 <RadioButton Content="串口" VerticalAlignment="Center" Name="rbSerialPort"/>
                 <TextBlock Text="串口" Width="30" Margin="10,0" VerticalAlignment="Center"/>
@@ -50,10 +51,10 @@
                 </Grid>
             </StackPanel>
         </StackPanel>
-        <WrapPanel Grid.Row="1" Grid.Column="0" Name="SlotWrapPanel" Background="#FFBDCDE6">
+        <WrapPanel Grid.Column="0" Name="SlotWrapPanel" Background="#FFBDCDE6" Grid.ColumnSpan="2" Margin="0,112,0,0">
             <!--<local:ProductInfo Width="50" Height="50"/>-->
         </WrapPanel>
-        <Grid Grid.Row="2" Grid.Column="0" >
+        <Grid Grid.Column="0" Grid.ColumnSpan="2" Margin="0,112,0,0" Grid.RowSpan="3" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="100"/>
