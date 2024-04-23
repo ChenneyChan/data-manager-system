@@ -35,8 +35,8 @@
                 <Separator></Separator>
                 <Button Content="Test"></Button>
             </ToolBar>
-            <TextBox DockPanel.Dock="Top" Text="This is my space" Height="243"></TextBox>
-            <StatusBar DockPanel.Dock="Bottom">
+            <TextBox DockPanel.Dock="Top" Text="This is my space" Height="507"></TextBox>
+            <StatusBar DockPanel.Dock="Bottom" Height="20" VerticalAlignment="Bottom">
                 <TextBlock Text="statusBar"></TextBlock>
             </StatusBar>
         </DockPanel>
