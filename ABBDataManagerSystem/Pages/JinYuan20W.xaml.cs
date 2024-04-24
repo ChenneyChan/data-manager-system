@@ -37,6 +37,19 @@ namespace ABBDataManagerSystem.Pages
                 cbSerialPort.Items.Add(item);
             }
             cbSerialPort.SelectedIndex = ports.Length > 0 ? 0 : -1;
+
+            foreach (var item in JinYuan20WCollector.Ch1CurrentValue)
+            {
+                cbHVCurrents.Items.Add($"{item}A");
+            }
+            cbHVCurrents.SelectedIndex = 0;
+
+            foreach (var item in JinYuan20WCollector.Ch2CurrentValue)
+            {
+                cbLVCurrents.Items.Add($"{item}A");
+            }
+            cbLVCurrents.SelectedIndex = 0;
+
         }
     }
 }

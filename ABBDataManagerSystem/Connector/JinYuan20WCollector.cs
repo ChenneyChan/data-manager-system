@@ -21,21 +21,33 @@ namespace ABBDataManagerSystem.Connector
             TemperatureRaise60Minute,
         }
 
+        // CH1高压侧 CH2低压侧
+        
         public enum ChanelOneCurrents
         {
-            Current5A,
+            Current5A = 0,
             Current1A,
             Current01A,
             Current001A,
         }
 
+        public static List<float> Ch1CurrentValue = new List<float>()
+        {
+            5, 1, 0.1f, 0.01f
+        };
+
         public enum ChanelTwoCurrents
         {
-            Current20A,
+            Current20A = 0,
             Current10A,
             Current5A,
             Current2A,
         }
+
+        public static List<float> Ch2CurrentValue = new List<float>()
+        {
+            20, 10, 5, 2
+        };
 
         private readonly ResistanceCurrentInfoCollector collector;
 
@@ -197,6 +209,13 @@ namespace ABBDataManagerSystem.Connector
             byte[] ch1TimedResistanceValue = { packet[startIndex + 1], packet[startIndex + 2], packet[startIndex + 3], packet[startIndex + 4], packet[startIndex + 5], packet[startIndex + 6], packet[startIndex + 7] };
             startIndex = startIndex + 7;
             byte[] ch2TimedResistanceValue = { packet[startIndex + 1], packet[startIndex + 2], packet[startIndex + 3], packet[startIndex + 4], packet[startIndex + 5], packet[startIndex + 6], packet[startIndex + 7] };
+
+            string strCh1Current  = Encoding.ASCII.GetString(ch1CurrentValue);
+            string strCh2Current  = Encoding.ASCII.GetString(ch2CurrentValue);
+            string strCh1Resistance = Encoding.ASCII.GetString(ch1ResistanceValue);
+            string strCh2Resistance = Encoding.ASCII.GetString(ch2ResistanceValue);
+            string strCh1TimedResistant = Encoding.ASCII.GetString(ch1TimedResistanceValue);
+            string strCh2TimedResistant = Encoding.ASCII.GetString(ch2TimedResistanceValue);
         }
 
         // 主机打开，每400豪秒访问一次从机（寻机命令）或是发送命令，只有发送寻机命令

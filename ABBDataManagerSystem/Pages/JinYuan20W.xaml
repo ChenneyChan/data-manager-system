@@ -24,10 +24,14 @@
         <Button Content="开始采集" HorizontalAlignment="Left" Margin="28,130,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.934,-0.163" Height="29" Width="80"/>
         <Button Content="停止采集" HorizontalAlignment="Left" Margin="130,130,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.934,-0.163" Height="29" Width="80"/>
         <TextBlock HorizontalAlignment="Left" Margin="27,21,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="金源20W测量仪" FontSize="18" FontWeight="Bold"/>
-        <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" VerticalAlignment="Top" Margin="438,90,0,0">
-            <CheckBox Content="通道一" />
+        <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" VerticalAlignment="Top" Margin="451,85,0,0">
+            <CheckBox Content="高压侧" VerticalAlignment="Center"/>
             <Viewbox Width="10"/>
-            <CheckBox Content="通道二" />
+            <ComboBox Width="80" Name="cbHVCurrents"/>
+            <Viewbox Width="10"/>
+            <CheckBox Content="低压侧" VerticalAlignment="Center"/>
+            <Viewbox Width="10"/>
+            <ComboBox Width="80" Name="cbLVCurrents"/>
 
         </StackPanel>
         <StackPanel HorizontalAlignment="Left" Margin="272,138,0,0" Orientation="Horizontal" VerticalAlignment="Top">
