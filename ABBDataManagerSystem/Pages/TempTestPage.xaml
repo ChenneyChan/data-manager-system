@@ -17,8 +17,8 @@
             <ColumnDefinition Width="89*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
         <StackPanel Orientation="Vertical" Grid.ColumnSpan="2">
@@ -41,31 +41,29 @@
                 <ComboBox Width="100" VerticalAlignment="Center" Name="cbInterval"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="0, 10">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="100"/>
-                        <ColumnDefinition Width="1*"/>
-                    </Grid.ColumnDefinitions>
-                    <Button Name="btStart" Content="开始采集" Width="100" Height="30" Grid.Column="0" Grid.Row="0" Click="btStart_Click"/>
-                    <TextBox Grid.Column="1" Grid.Row="0" HorizontalAlignment="Stretch" MinWidth="200" Name="tbSaveFilePath"/>
-                </Grid>
+                <Button Name="btStart" Content="开始采集" Width="100" Height="30" Grid.Column="0" Grid.Row="0" Click="btStart_Click"/>
+                <!--<DockPanel Grid.Column="1" Grid.Row="0"></DockPanel>-->
+                <TextBlock Text="存储到CVS路径：" VerticalAlignment="Center" Margin="10,0"/>
+                <TextBox Grid.Column="1" Grid.Row="0" HorizontalAlignment="Stretch" MinWidth="200" Name="tbSaveFilePath" IsReadOnly="True"/>
             </StackPanel>
         </StackPanel>
-        <WrapPanel Grid.Column="0" Name="SlotWrapPanel" Background="#FFBDCDE6" Grid.ColumnSpan="2" Margin="0,112,0,0">
+        <WrapPanel Grid.Column="0" Grid.Row="1" Name="SlotWrapPanel" Background="#FFBDCDE6" Grid.ColumnSpan="2" Margin="0,5,0,0">
             <!--<local:ProductInfo Width="50" Height="50"/>-->
         </WrapPanel>
-        <Grid Grid.Column="0" Grid.ColumnSpan="2" Margin="0,112,0,0" Grid.RowSpan="3" >
+        <Grid Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" Margin="0,5" Grid.RowSpan="3" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="100"/>
             </Grid.ColumnDefinitions>
             <oxy:PlotView Grid.Row="0" Grid.Column="0" Name="plotView" Margin="5,5"/>
             <Grid Grid.Row="0" Grid.Column="1">
-                <StackPanel Orientation="Vertical">
-                    <Button Style="{StaticResource plotButton}" Content="清空" Margin="0, 5"/>
-                    <Button Style="{StaticResource plotButton}" Content="恢复" Margin="0, 5"/>
-                    <Button Style="{StaticResource plotButton}" Content="导出" Margin="0, 5"/>
-                    <Button Style="{StaticResource plotButton}" Content="还原" Margin="0, 5"/>
+                <StackPanel Orientation="Vertical" Margin="0, 10">
+                    <Button Style="{StaticResource plotButton}" Content="清空" Margin="0, 5" Name="btClearChart" Click="btClear_Click"/>
+                    <Button Style="{StaticResource plotButton}" Content="恢复" Margin="0, 5" Name="btResetChartAxias" Click="btResteAxis_Click"/>
+                    <Button Style="{StaticResource plotButton}" Content="导出为图片" Margin="0, 5" Name="btExportChartPng" Click="btSaveToPng_Click"/>
+                    <Button Style="{StaticResource plotButton}" Content="显隐题注" Margin="0, 5" Name="btResumeChart" Click="btToogleLegends_Click"/>
+                    <Button Style="{StaticResource plotButton}" Content="隐藏所有线条" Margin="0, 5" Name="btHideAllLine" Click="tbHideAllLine_Click"/>
+                    <Button Style="{StaticResource plotButton}" Content="恢复所有线条" Margin="0, 5" Name="btResumeAllLine" Click="btResumeLines_Click"/>
                 </StackPanel>
             </Grid>
         </Grid>

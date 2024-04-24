@@ -21,6 +21,7 @@ namespace ABBDataManagerSystem
         public MainWindow()
         {
             InitializeComponent();
+            Configs.Configs.LoadFromFile();
         }
 
         private void MenuItemSetting_Click(object sender, RoutedEventArgs e)
@@ -54,6 +55,11 @@ namespace ABBDataManagerSystem
             var uc = new TempTestPage();
             window.Content = uc;
             window.Show();
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            Configs.Configs.SaveToFile();     
         }
     }
 }

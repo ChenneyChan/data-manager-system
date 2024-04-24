@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ABBDataManagerSystem"
         mc:Ignorable="d"
-        Title="信息化试验系统" Height="600" Width="1200" WindowStartupLocation="CenterScreen">
+        Title="信息化试验系统" Height="600" Width="1200" WindowStartupLocation="CenterScreen" Closing="Window_Closing">
     <Window.Resources>
         <Style TargetType="MenuItem">
             <Setter Property="FontSize" Value="14"/>

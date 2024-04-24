@@ -28,7 +28,6 @@ namespace ABBDataManagerSystem.Pages
 
         private string csvFilePath = string.Empty;
 
-        private int MaxSlotCount = 0;
         private StreamWriter? csvWriter = null;
 
         private TempModbusCollector? tempModbusCollector;
@@ -54,8 +53,8 @@ namespace ABBDataManagerSystem.Pages
                 "9600",
                 "12800"
             };
-            baundRates.ForEach(port => { cbSerialBoudRate.Items.Add(port); });
-            for (var i = 0; i < 36; i++)
+            baundRates.ForEach(rate => { cbSerialBoudRate.Items.Add(rate); });
+            for (var i = 1; i < 36; i++)
             {
                 cbSlotNums.Items.Add(i.ToString());
             }
@@ -78,9 +77,7 @@ namespace ABBDataManagerSystem.Pages
             rbEthernet.Checked += RbEthernet_Checked;
             rbSerialPort.Checked += RbSerialPort_Checked;
 
-            MaxSlotCount = Utils.ParseInt(cbSlotNums.Items[cbSlotNums.Items.Count - 1].ToString());
-            tempCharts = new TempChartsNew(plotView, MaxSlotCount, MaxSlotCount);
-            cbInterval.SelectedIndex = 2;
+            cbInterval.SelectedIndex = 1;
             cbInterval.SelectionChanged += CbInterval_SelectedIndexChanged;
             cbSlotNums.SelectionChanged += CbSlotNum_SelectedIndexChanged;
             UpdateByConfig();
@@ -90,19 +87,44 @@ namespace ABBDataManagerSystem.Pages
         private void RbSerialPort_Checked(object sender, RoutedEventArgs e)
         {
             UsingSerial = true;
-            HandleConectionTypeChangec();
+            HandleConectionTypeChange();
         }
 
         private void RbEthernet_Checked(object sender, RoutedEventArgs e)
         {
             UsingSerial = false;
-            HandleConectionTypeChangec();
+            HandleConectionTypeChange();
         }
 
-        private void HandleConectionTypeChangec()
+        private void HandleConectionTypeChange()
         {
             rbEthernet.IsChecked = !UsingSerial;
             rbSerialPort.IsChecked = UsingSerial;
+
+            cbSerialPort.IsEnabled = UsingSerial;
+            cbSerialBoudRate.IsEnabled = UsingSerial;
+            tbEthernetIP.IsEnabled = !UsingSerial;
+            tbEthernetPort.IsEnabled = !UsingSerial;
+        }
+
+        private void ToogleAllStatus()
+        {
+            rbEthernet.IsEnabled = !IsCollecting;
+            rbSerialPort.IsEnabled = !IsCollecting;
+            cbSlotNums.IsEnabled = !IsCollecting;
+            cbInterval.IsEnabled = !IsCollecting;
+
+            if (IsCollecting)
+            {
+                cbSerialPort.IsEnabled = false;
+                cbSerialBoudRate.IsEnabled = false;
+                tbEthernetIP.IsEnabled = false;
+                tbEthernetPort.IsEnabled = false;
+            } 
+            else
+            {
+                HandleConectionTypeChange();
+            }
         }
 
         #region 从Winform拷贝的代码
@@ -113,14 +135,17 @@ namespace ABBDataManagerSystem.Pages
             UpdateByConfig();
             InitSlot();
             InitChartRange();
-
+            tempCharts = new TempChartsNew(plotView, SlotCount, SlotCount);
             tempCharts.InitChart();
         }
 
         private void CbSlotNum_SelectedIndexChanged(object? sender, RoutedEventArgs e)
         {
             InitSlot();
-            tempCharts.SetEnableSlotCount(SlotCount);
+            if (tempCharts != null)
+            {
+                tempCharts.SetEnableSlotCount(SlotCount);
+            }
         }
 
         private void InitSlot()
@@ -174,7 +199,7 @@ namespace ABBDataManagerSystem.Pages
                 btStart.Content = "启动";
                 //btStart.BackColor = Color.DodgerBlue;
                 //btStart.ForeColor = Color.White;
-                cbInterval.IsEnabled = true;
+                ToogleAllStatus();
                 return;
             }
             if (ResetEvent != null)
@@ -204,6 +229,11 @@ namespace ABBDataManagerSystem.Pages
                     return;
                 }
             }
+            if (tempCharts == null || tempCharts.GetMaxSlotCount() != SlotCount)
+            {
+                tempCharts = new TempChartsNew(plotView, SlotCount, SlotCount);
+                tempCharts.InitChart();
+            }
             if (needSaveCsv)
             {
                 StartCSVFile();
@@ -212,7 +242,7 @@ namespace ABBDataManagerSystem.Pages
             btStart.Content = "停止";
             //btStart.BackColor = Color.Red;
             //btStart.ForeColor = Color.White;
-            cbInterval.IsEnabled = false;
+            ToogleAllStatus();
 
             // 创建一个ManualResetEvent，初始状态为未设置（false）  
             ResetEvent = new ManualResetEvent(false);
@@ -331,6 +361,11 @@ namespace ABBDataManagerSystem.Pages
                 int interval = int.Parse(value.Split("s")[0]) * 1000;
                 Interval = interval;
             }
+            else if (value.IndexOf("min") >= 0)
+            {
+                int interval = int.Parse(value.Split("min")[0]) * 1000 * 60;
+                Interval = interval;
+            }
         }
 
         private void CollectDataOnce() // todo: 改成子线程读取，避免UI线程阻塞
@@ -383,13 +418,13 @@ namespace ABBDataManagerSystem.Pages
             }
         }
 
-        private void btResteAxis_Click(object sender, EventArgs e)
+        private void btResteAxis_Click(object sender, RoutedEventArgs e)
         {
             plotView.Model.ResetAllAxes();
             plotView.Model.InvalidatePlot(false);
         }
 
-        private void btToogleLegends_Click(object sender, EventArgs e)
+        private void btToogleLegends_Click(object sender, RoutedEventArgs e)
         {
             tempCharts.ToogleLegends();
         }
@@ -397,12 +432,12 @@ namespace ABBDataManagerSystem.Pages
         private void StartCSVFile()
         {
             // 定义要写入CSV文件的数据  
-            string[] titles = new string[MaxSlotCount + 1];
+            string[] titles = new string[SlotCount + 1];
             for (int i = 0; i < titles.Length; i++)
             {
                 titles[i] = $"Slot{i + 1}";
             }
-            titles[MaxSlotCount] = "Time";
+            titles[SlotCount] = "Time";
 
             // 定义CSV文件路径和文件名  
             csvFilePath = tbSaveFilePath.Text.Trim();
@@ -418,12 +453,12 @@ namespace ABBDataManagerSystem.Pages
         private void WriteCSVFile(float[] data)
         {
             if (data.Length == 0 || csvWriter == null) return;
-            string[] values = new string[MaxSlotCount + 1];
-            for (int i = 0; i < MaxSlotCount && i < data.Length; i++)
+            string[] values = new string[SlotCount + 1];
+            for (int i = 0; i < SlotCount && i < data.Length; i++)
             {
                 values[i] = data[i].ToString("0.0");
             }
-            values[MaxSlotCount] = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss fff");
+            values[SlotCount] = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss fff");
             csvWriter.WriteLine(string.Join(",", values)); // 使用逗号分隔每个字段并写入行
             flushDelay--;
             if (flushDelay == 0)
@@ -475,12 +510,12 @@ namespace ABBDataManagerSystem.Pages
         }
         #endregion
 
-        private void tbHideAllLine_Click(object sender, EventArgs e)
+        private void tbHideAllLine_Click(object sender, RoutedEventArgs e)
         {
             tempCharts.HideAllLines();
         }
 
-        private void btResumeLines_Click(object sender, EventArgs e)
+        private void btResumeLines_Click(object sender, RoutedEventArgs e)
         {
             tempCharts.ResuneAllLines();
         }

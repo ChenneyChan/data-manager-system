@@ -229,7 +229,7 @@ namespace ABBDataManagerSystem.Charts
 
         public void ExportToPng(string filePath)
         {
-            var pngExporter = new PngExporter { Width = (int)plot.Width, Height = (int)plot.Height };
+            var pngExporter = new PngExporter { Width = 1200, Height = 680 };
             pngExporter.ExportToFile(_myPlotModel, filePath);
         }
 
@@ -328,6 +328,11 @@ namespace ABBDataManagerSystem.Charts
                 _myPlotModel.Series[i].IsVisible = true;
             }
             _myPlotModel.InvalidatePlot(false);
+        }
+
+        public int GetMaxSlotCount()
+        {
+            return MaxSlotCount;
         }
     }
 }
