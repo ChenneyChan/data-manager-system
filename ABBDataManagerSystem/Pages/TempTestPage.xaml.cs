@@ -568,7 +568,7 @@ namespace ABBDataManagerSystem.Pages
                 {
                     cbSlotNums.SelectedIndex = index;
                 }
-            }
+            } 
         }
 
         private void SaveConfig()

@@ -34,13 +34,14 @@ namespace ABBDataManagerSystem
             var window = new Window()
             {
                 Title = "功率分析仪",
-                Width = 400,
+                Width = 500,
                 Height = 300,
                 WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                ResizeMode = ResizeMode.NoResize
             };
             var uc = new UCDeviceSearch();
             window.Content = uc;
-            window.Show();
+            window.ShowDialog();
         }
 
         private void TemperatureTest_Click(object sender, RoutedEventArgs e)
@@ -48,13 +49,13 @@ namespace ABBDataManagerSystem
             var window = new Window()
             {
                 Title = "温度检测仪",
-                Width = 800,
-                Height = 600,
+                Width = 1200,
+                Height = 900,
                 WindowStartupLocation = WindowStartupLocation.CenterScreen,
             };
             var uc = new TempTestPage();
             window.Content = uc;
-            window.Show();
+            window.ShowDialog();
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
