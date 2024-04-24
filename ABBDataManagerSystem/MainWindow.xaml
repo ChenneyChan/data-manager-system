@@ -18,6 +18,7 @@
                 <MenuItem Header="试验">
                     <MenuItem Header="功率分析仪" Click="PowerAnalyzeTest_Click" Name="PowerAnalyzeTest"/>
                     <MenuItem Header="温度检测仪" Click="TemperatureTest_Click"  Name="TemperatureTest"/>
+                    <MenuItem Header="金源20W测试仪" Click="JnYuan20WTest_Click"  Name="JnYuan20WTest"/>
                 </MenuItem>
                 <MenuItem Header="设置">
                     <MenuItem Header="设置" Click="MenuItemSetting_Click"/>

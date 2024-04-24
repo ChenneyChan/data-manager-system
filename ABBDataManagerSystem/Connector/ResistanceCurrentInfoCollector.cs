@@ -12,16 +12,33 @@ namespace ABBDataManagerSystem.Connector
     {
         private SerialPort serialPort;
 
-        /**
-         * 常规测试命令 (41H)、温升测试命令（42H）、温升定时命令（43H）、
-            复位命令 (44H)、参数设置命令 (45H)、常规保存命令 (46H)、
-            常规打印命令 (47H)、寻机命令(48H)。
-        */
+        public byte StartByte { set; get; } = 0x7E;
 
-        public ResistanceCurrentInfoCollector(string portName, int baudRate)
+        public byte StopByte { set; get; } = 0x0D;
+        
+        public byte[] DeviceAddress { set; get; } = { 0x3E, 0x3E };
+
+        public ResistanceCurrentInfoCollector(string portName, int baudRate = 9600)
         {
             serialPort = new SerialPort(portName, baudRate, Parity.None, 8, StopBits.One);
-            serialPort.Open();
+        }
+
+        public bool Open()
+        {
+            if (serialPort.IsOpen)
+            {
+                return true;
+            }
+            try
+            {
+                serialPort.Open();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"fail to open serial port {ex.Message}");
+                return false;
+            }
         }
 
         // 主机发送命令
@@ -69,7 +86,7 @@ namespace ABBDataManagerSystem.Connector
         }
 
         // 主机接收数据
-        public byte[]? ReceiveData()
+        public byte[]? ReadData()
         {
             byte[] buffer = new byte[1024]; // 假设数据长度不超过1024字节
             int bytesRead = serialPort.Read(buffer, 0, buffer.Length);
