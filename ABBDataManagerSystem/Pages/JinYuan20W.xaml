@@ -7,6 +7,12 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" Loaded="UserControl_Loaded">
     <UserControl.Resources>
+        <Style TargetType="{x:Type GridViewColumnHeader}">
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="Background" Value="#FF347071"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="18"/>
+        </Style>
         <Style TargetType="TextBlock">
             <Setter Property="FontSize" Value="18"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
@@ -26,9 +32,9 @@
             <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
     </UserControl.Resources>
-        <Grid Margin="10">
+    <Grid Margin="10">
         <Grid.ColumnDefinitions>
-            
+
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="60"/>
@@ -81,33 +87,51 @@
         </StackPanel>
         <Grid Grid.Row="4">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="120"/>
             </Grid.ColumnDefinitions>
             <!--<DataGrid  Grid.Column="0" Name="resultDataGrid"/>-->
-            <ListBox Name="itemControl2" Grid.Column="0">
-                <ListBox.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <UniformGrid Columns="1"></UniformGrid>
-                    </ItemsPanelTemplate>
-                </ListBox.ItemsPanel>
-                <ListBox.ItemContainerStyle>
-                    <Style TargetType="{x:Type ListBoxItem}">
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                                    <Border BorderThickness="1" BorderBrush="DarkSeaGreen">
-                                        <RadioButton x:Name="yiwuClass"  Width="44" GroupName="yw_class2">
-                                            <TextBlock Name="textBlok" TextWrapping="Wrap" Padding="0"    LineHeight="0.1" FontSize="20" Width="{Binding RelativeSource={RelativeSource Self},Path=FontSize}" Text="{Binding Name}"/>
-                                        </RadioButton>
-                                    </Border>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </ListBox.ItemContainerStyle>
-            </ListBox>
-            <StackPanel Orientation="Vertical" Grid.Column="1"></StackPanel>
+            <!--列表分组-->
+            <ListView Name="lvUsers">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="次数" Width="80" DisplayMemberBinding="{Binding SortIndex}" />
+                        <GridViewColumn Header="电流" Width="120" DisplayMemberBinding="{Binding Current}" />
+                        <GridViewColumn Header="电阻" Width="120" DisplayMemberBinding="{Binding Resistance}" />
+                    </GridView>
+                </ListView.View>
+                <ListView.GroupStyle>
+                    <GroupStyle>
+                        <GroupStyle.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock FontWeight="Bold" FontSize="18" Text="{Binding SortIndex}"/>
+                            </DataTemplate>
+                        </GroupStyle.HeaderTemplate>
+                    </GroupStyle>
+                </ListView.GroupStyle>
+            </ListView>
+            <StackPanel Orientation="Vertical" Grid.Column="1">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Button Content="New Item" Name="btAddRecord" Click="btAddRecord_Click"/>
+                    <Button Content="Delte Item" Name="btDeleteRecord" Click="btDeleteRecord_Click"/>
+                </StackPanel>
+                <!-- ListView控件 -->
+                <ListView Name="myListView"
+                  ItemsSource="{Binding Items}"
+                  SelectionMode="Multiple">
+                    <!-- 列定义 -->
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="名称"
+                                    DisplayMemberBinding="{Binding Name}"
+                                    Width="120"/>
+                            <GridViewColumn Header="描述"
+                                    DisplayMemberBinding="{Binding Description}"
+                                    Width="200"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </StackPanel>
         </Grid>
     </Grid>
 </UserControl>

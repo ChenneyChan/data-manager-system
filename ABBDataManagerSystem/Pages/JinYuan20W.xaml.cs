@@ -1,19 +1,8 @@
 ﻿using ABBDataManagerSystem.Connector;
-using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO.Ports;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace ABBDataManagerSystem.Pages
 {
@@ -23,10 +12,37 @@ namespace ABBDataManagerSystem.Pages
     public partial class JinYuan20W : UserControl
     {
         private JinYuan20WCollector? collector = null;
+        private List<User> items = new List<User>();
+        private ObservableCollection<MyItem> items2;
 
         public JinYuan20W()
         {
             InitializeComponent();
+
+            items.Add(new User() { Current = 101.2f, SortIndex = 42, Resistance = 222.2f });
+            items.Add(new User() { Current = 101.2f, SortIndex = 39, Resistance = 222.2f });
+            items.Add(new User() { Current = 101.2f, SortIndex = 7, Resistance = 222.2f });
+            items.Add(new User() { Current = 101.2f, SortIndex = 42, Resistance = 222.2f });
+            items.Add(new User() { Current = 101.2f, SortIndex = 39, Resistance = 222.2f });
+            items.Add(new User() { Current = 101.2f, SortIndex = 7, Resistance = 222.2f });
+            items.Add(new User() { Current = 101.2f, SortIndex = 42, Resistance = 222.2f });
+            items.Add(new User() { Current = 101.2f, SortIndex = 39, Resistance = 222.2f });
+            items.Add(new User() { Current = 101.2f, SortIndex = 7, Resistance = 222.2f });
+            items.Add(new User() { Current = 101.2f, SortIndex = 42, Resistance = 222.2f });
+            items.Add(new User() { Current = 101.2f, SortIndex = 39, Resistance = 222.2f });
+            items.Add(new User() { Current = 101.2f, SortIndex = 7, Resistance = 222.2f });
+            lvUsers.ItemsSource = items;
+
+            // 数据模型
+            items2 = new ObservableCollection<MyItem>
+            {
+                new MyItem { Name = "项目1", Description = "这是项目1的描述" },
+                new MyItem { Name = "项目2", Description = "这是项目2的描述" },
+                new MyItem { Name = "项目3", Description = "这是项目3的描述" }
+            };
+
+            // 数据绑定
+            this.DataContext = new { Items = items2 };
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
@@ -51,5 +67,41 @@ namespace ABBDataManagerSystem.Pages
             cbLVCurrents.SelectedIndex = 0;
 
         }
+
+
+        public class User
+        {
+            public float Current { get; set; }
+            public int SortIndex { get; set; }
+            public float Resistance { get; set; }
+        }
+
+        private void btAddRecord_Click(object sender, RoutedEventArgs e)
+        {
+            items.Add(new User() { Current = 101.2f, SortIndex = 7, Resistance = 222.2f });
+            lvUsers.Items.Refresh();
+
+            items2.Add(new MyItem() { Name = "新增", Description = "这是新增的" });
+        }
+
+        public class MyItem
+        {
+            public string Name { get; set; }
+            public string Description { get; set; }
+        }
+
+        private void btDeleteRecord_Click(object sender, RoutedEventArgs e)
+        {
+            if (items.Count > 0)
+            {
+                items.RemoveAt(items.Count - 1);
+                lvUsers.Items.Refresh();
+            }
+            if (items2.Count > 0)
+            {
+                items2.RemoveAt(items2.Count - 1);
+            }
+        }
     }
+
 }
