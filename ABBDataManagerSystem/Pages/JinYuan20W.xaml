@@ -6,45 +6,108 @@
              xmlns:local="clr-namespace:ABBDataManagerSystem.Pages"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" Loaded="UserControl_Loaded">
-    <Grid>
-        <StackPanel HorizontalAlignment="Left" Margin="227,82,0,0" Orientation="Horizontal" VerticalAlignment="Top">
-            <TextBlock TextWrapping="Wrap" Text="波特率" VerticalAlignment="Center" Margin="10, 0"/>
-
-            <ComboBox Width="120"  VerticalAlignment="Center" Name="cbBoundRate" SelectedIndex="1">
-                <ComboBoxItem Content="4800"/>
-                <ComboBoxItem Content="9600"/>
-                <ComboBoxItem Content="12800"/>
-            </ComboBox>
+    <UserControl.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style TargetType="ComboBox">
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="Width" Value="140"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style TargetType="CheckBox">
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+    </UserControl.Resources>
+        <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="120"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0">
+            <TextBlock HorizontalAlignment="Left" Margin="10,10" TextAlignment="Center" TextWrapping="Wrap" Text="金源20W测量仪" FontSize="24" FontWeight="Bold"/>
         </StackPanel>
-        <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" VerticalAlignment="Top" Margin="27,84,0,0">
-            <TextBlock TextWrapping="Wrap" Text="串口" VerticalAlignment="Center" Width="40"/>
-            <ComboBox Width="120" x:Name="cbSerialPort"/>
+        <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="10, 10">
+            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" VerticalAlignment="Top">
+                <TextBlock TextWrapping="Wrap" Text="串口" VerticalAlignment="Center" Width="40"/>
+                <ComboBox Width="120" x:Name="cbSerialPort"/>
+            </StackPanel>
+            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" VerticalAlignment="Top">
+                <TextBlock TextWrapping="Wrap" Text="波特率" VerticalAlignment="Center" Margin="10, 0"/>
+                <ComboBox Width="120"  VerticalAlignment="Center" Name="cbBoundRate" SelectedIndex="1">
+                    <ComboBoxItem Content="4800"/>
+                    <ComboBoxItem Content="9600"/>
+                    <ComboBoxItem Content="12800"/>
+                </ComboBox>
+            </StackPanel>
 
-        </StackPanel>
-        <Button Content="开始采集" HorizontalAlignment="Left" Margin="28,130,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.934,-0.163" Height="29" Width="80"/>
-        <Button Content="停止采集" HorizontalAlignment="Left" Margin="130,130,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.934,-0.163" Height="29" Width="80"/>
-        <TextBlock HorizontalAlignment="Left" Margin="27,21,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="金源20W测量仪" FontSize="18" FontWeight="Bold"/>
-        <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" VerticalAlignment="Top" Margin="451,85,0,0">
-            <CheckBox Content="高压侧" VerticalAlignment="Center"/>
-            <Viewbox Width="10"/>
-            <ComboBox Width="80" Name="cbHVCurrents"/>
-            <Viewbox Width="10"/>
-            <CheckBox Content="低压侧" VerticalAlignment="Center"/>
-            <Viewbox Width="10"/>
-            <ComboBox Width="80" Name="cbLVCurrents"/>
-
-        </StackPanel>
-        <StackPanel HorizontalAlignment="Left" Margin="272,138,0,0" Orientation="Horizontal" VerticalAlignment="Top">
-            <TextBlock TextWrapping="Wrap" Text="测试类型" VerticalAlignment="Center"/>
-            <Viewbox Width="10"/>
-            <ComboBox Width="120" x:Name="cbTestType" SelectedIndex="0">
-                <ComboBoxItem Content="常规测试"/>
-                <ComboBoxItem Content="温升测试-10秒"/>
-                <ComboBoxItem Content="温升测试-30秒"/>
-                <ComboBoxItem Content="温升测试-60秒"/>
-            </ComboBox>
-
+            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" VerticalAlignment="Top" Margin="10,0">
+                <CheckBox Content="高压侧" VerticalAlignment="Center"/>
+                <Viewbox Width="10"/>
+                <ComboBox Width="100" Name="cbHVCurrents"/>
+                <Viewbox Width="10"/>
+                <CheckBox Content="低压侧" VerticalAlignment="Center"/>
+                <Viewbox Width="10"/>
+                <ComboBox Width="100" Name="cbLVCurrents"/>
+            </StackPanel>
         </StackPanel>
 
+        <StackPanel Orientation="Horizontal" Grid.Row="2" Margin="10, 10">
+            <Button Content="开始采集" HorizontalAlignment="Left" Margin="0,0,10,0" VerticalAlignment="Top" />
+            <Button Content="停止采集" HorizontalAlignment="Left" Margin="0,0,20,0" VerticalAlignment="Top" />
+            <StackPanel HorizontalAlignment="Left" Margin="0,0" Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock TextWrapping="Wrap" Text="测试类型" VerticalAlignment="Center"/>
+                <Viewbox Width="10"/>
+                <ComboBox Width="120" x:Name="cbTestType" SelectedIndex="0">
+                    <ComboBoxItem Content="常规测试"/>
+                    <ComboBoxItem Content="温升测试-10秒"/>
+                    <ComboBoxItem Content="温升测试-30秒"/>
+                    <ComboBoxItem Content="温升测试-60秒"/>
+                </ComboBox>
+            </StackPanel>
+        </StackPanel>
+        <Grid Grid.Row="4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="120"/>
+            </Grid.ColumnDefinitions>
+            <!--<DataGrid  Grid.Column="0" Name="resultDataGrid"/>-->
+            <ListBox Name="itemControl2" Grid.Column="0">
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Columns="1"></UniformGrid>
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListBoxItem}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                    <Border BorderThickness="1" BorderBrush="DarkSeaGreen">
+                                        <RadioButton x:Name="yiwuClass"  Width="44" GroupName="yw_class2">
+                                            <TextBlock Name="textBlok" TextWrapping="Wrap" Padding="0"    LineHeight="0.1" FontSize="20" Width="{Binding RelativeSource={RelativeSource Self},Path=FontSize}" Text="{Binding Name}"/>
+                                        </RadioButton>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+            </ListBox>
+            <StackPanel Orientation="Vertical" Grid.Column="1"></StackPanel>
+        </Grid>
     </Grid>
 </UserControl>

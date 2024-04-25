@@ -110,6 +110,7 @@ namespace ABBDataManagerSystem.Connector
         #region 仪器参数设置命令
         public void SetParameters()
         {
+            // 0x45（波特率）（模式）（CH1）（CH1电流）（CH2）（CH2电流）
             collector.SendCommand(new byte[] {
                 0x45,
                 GetBoundRateByte(9600),
@@ -148,6 +149,22 @@ namespace ABBDataManagerSystem.Connector
             }
         }
 
+        public static TestType GetTestTypeByByte(byte type)
+        {
+            switch(type)
+            {
+                case 0x31:
+                    return TestType.TemperatureRaise10Minute;
+                case 0x32:
+                    return TestType.TemperatureRaise30Minute;
+                case 0x33:
+                    return TestType.TemperatureRaise60Minute;
+                case 0x30:
+                default:
+                    return TestType.CommonTest;
+            }
+        }
+
         public static byte GetChanelOneCurrentSet(ChanelOneCurrents current)
         {
             // 5A：(30H) 、1A：(31H) 、0.1A：(32H) 、0.01A：(33H)
@@ -177,17 +194,86 @@ namespace ABBDataManagerSystem.Connector
         }
         #endregion
 
-        public void ReadPacket()
+        public class JinYuan20WPacketInfo
         {
+            public byte ch1Status;
+            public byte ch2Status;
+            public bool ch1Enabled;
+            public bool ch2Enabled;
+            public TestType type;
+            public float ch1SelectedCurrent;
+            public float ch2SelectedCurrent;
+            public float ch1RealTimeCurrent;
+            public float ch2RealTimeCurrent;
+            public float ch1RealTimeResistance;
+            public float ch2RealTimeResistance;
+            public float ch1TimedResistance;
+            public float ch2TimedResistance;
+            public float tempRaiseTimeInterval;
+            public JinYuan20WPacketInfo()
+            {
+
+            }
+
+            public override string ToString()
+            {
+                return $"Channel 1 Status: {ch1Status}, " +
+                       $"Channel 2 Status: {ch2Status}, " +
+                       $"Channel 1 Enabled: {ch1Enabled}, " +
+                       $"Channel 2 Enabled: {ch2Enabled}, " +
+                       $"Type: {type}, " +
+                       $"Channel 1 Selected Current: {ch1SelectedCurrent}, " +
+                       $"Channel 2 Selected Current: {ch2SelectedCurrent}, " +
+                       $"Channel 1 Real Time Current: {ch1RealTimeCurrent}, " +
+                       $"Channel 2 Real Time Current: {ch2RealTimeCurrent}, " +
+                       $"Channel 1 Real Time Resistance: {ch1RealTimeResistance}, " +
+                       $"Channel 2 Real Time Resistance: {ch2RealTimeResistance}, " +
+                       $"Channel 1 Timed Resistance: {ch1TimedResistance}, " +
+                       $"Channel 2 Timed Resistance: {ch2TimedResistance}, " +
+                       $"Temperature Raise Time Interval: {tempRaiseTimeInterval}";
+            }
+
+        }
+
+        public static Dictionary<byte, string> CHStatusMap = new Dictionary<byte, string>()
+        {
+            { 0x51, "参数配置" },
+            { 0x52, "正在充电" },
+            { 0x53, "正在测试" },
+            { 0x54, "正在放电" },
+            { 0x55, "温升正在定时" },
+            { 0x56, "过热保护" },
+            { 0x57, "记录查看" },
+            { 0x58, "时间调整" },
+            { 0x59, "通道故障" },
+            { 0x5A, "换大电流" },
+            { 0x5B, "换小电流" },
+        };
+
+        public JinYuan20WPacketInfo? ReadPacket()
+        {
+            /**
+             *  从机返回给主机的状态分11类：CH1、CH2状态分别返回
+                参数配置状态(51H)、正在充电状态(52H)、正在测试状态（53H）正在放电状态(54H) 、
+                温升正在定时状态（55H）、过热保护状态（56H）、记录查看状态(57H)、
+                时间调整状态(58H)、通道故障状态(59H)、换大电流 (5AH) 、换小电流 (5BH)
+             */
+
+            // （CH1状态）（CH2状态）（波特率）（模式）（CH1通道）（CH1选定电流）（CH2通道）（CH2选定电流）
+            // （5字节CH1实时测试电流）（7字节CH1实时测试电阻） 
+            // （5字节CH2实时测试电流）（7字节CH2实时测试电阻）
+            // （4字节温升定时采集时间）
+            // （7字节CH1定时采集电阻）（7字节CH2定时采集电阻） 
+
             if (collector == null)
             {
-                return;
+                return null;
             }
             SendRequest();
             byte[]? packet = collector.ReadData();
             if (packet == null)
             {
-                return;
+                return null;
             }
             byte ch1Status = packet[0];
             byte ch2Status = packet[1];
@@ -216,6 +302,25 @@ namespace ABBDataManagerSystem.Connector
             string strCh2Resistance = Encoding.ASCII.GetString(ch2ResistanceValue);
             string strCh1TimedResistant = Encoding.ASCII.GetString(ch1TimedResistanceValue);
             string strCh2TimedResistant = Encoding.ASCII.GetString(ch2TimedResistanceValue);
+            string strTempSetTimeInterval = Encoding.ASCII.GetString(tempSetTimeInterval);
+
+            return new JinYuan20WPacketInfo()
+            {
+                ch1Enabled = ch1 == 0x31,
+                ch2Enabled = ch2 == 0x31,
+                ch1Status = ch1Status,
+                ch2Status = ch2Status,
+                type = GetTestTypeByByte(testMode),
+                ch1RealTimeCurrent = Utils.ParseFloat(strCh1Current),
+                ch2RealTimeCurrent = Utils.ParseFloat(strCh2Current),
+                ch1RealTimeResistance = Utils.ParseFloat(strCh1Resistance),
+                ch2RealTimeResistance = Utils.ParseFloat(strCh2Resistance),
+                //ch1SelectedCurrent = ch1Current,
+                //ch2SelectedCurrent = ch2Current,
+                ch1TimedResistance = Utils.ParseFloat(strCh1TimedResistant),
+                ch2TimedResistance = Utils.ParseFloat(strCh2TimedResistant),
+                tempRaiseTimeInterval = Utils.ParseFloat(strTempSetTimeInterval),
+            };
         }
 
         // 主机打开，每400豪秒访问一次从机（寻机命令）或是发送命令，只有发送寻机命令
