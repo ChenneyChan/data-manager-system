@@ -264,7 +264,7 @@ namespace ABBDataManagerSystem.Pages
                 tempModbusCollector = null;
                 StopCSVFile();
                 ResetEvent = null;
-                Log.Info("Temp collector DONE");
+                Log.Info("Temp Collector DONE");
             });
         }
 

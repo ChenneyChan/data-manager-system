@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NPOI.POIFS.FileSystem;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,7 +14,7 @@ namespace ABBDataManagerSystem.Connector
             复位命令 (44H)、参数设置命令 (45H)、常规保存命令 (46H)、
             常规打印命令 (47H)、寻机命令(48H)。
         */
-        public enum TestType
+        public enum TestType20W
         {
             CommonTest,
             TemperatureRaise10Minute,
@@ -22,8 +23,8 @@ namespace ABBDataManagerSystem.Connector
         }
 
         // CH1高压侧 CH2低压侧
-        
-        public enum ChanelOneCurrents
+
+        public enum CH1Currents
         {
             Current5A = 0,
             Current1A,
@@ -36,7 +37,7 @@ namespace ABBDataManagerSystem.Connector
             5, 1, 0.1f, 0.01f
         };
 
-        public enum ChanelTwoCurrents
+        public enum CH2Currents
         {
             Current20A = 0,
             Current10A,
@@ -49,22 +50,32 @@ namespace ABBDataManagerSystem.Connector
             20, 10, 5, 2
         };
 
-        private readonly ResistanceCurrentInfoCollector collector;
+        public static int Interval = 400; // 每400ms发送一次寻机指令，从机返回数据
 
-        public TestType testType { get; set; } = TestType.CommonTest;
+        private readonly ResistanceCurrentInfoCollector Collector;
 
-        public bool chanelOneEnable { get; set; } = true;
+        private TestType20W _TestType = TestType20W.CommonTest;
+        private bool _CH1Enabled = false;
+        private bool _CH2Enabled = false;
+        private CH1Currents _CH1CurrentConfig = CH1Currents.Current5A;
+        private CH2Currents _CH2CurrentConfig = CH2Currents.Current20A;
 
-        public bool chanelTwoEnable { get; set; } = true;
+        public TestType20W TestType { get { return _TestType; } set { _TestType = value; IsConfigChanged = true; } }
 
-        public ChanelOneCurrents chanelOneCurrent { get; set; } = ChanelOneCurrents.Current5A;
+        public bool CH1Enabled { get { return _CH1Enabled; } set { _CH1Enabled = value; IsConfigChanged = true; } }
 
-        public ChanelTwoCurrents chanelTwoCurrent { get; set; } = ChanelTwoCurrents.Current20A;
+        public bool CH2Enabled { get { return _CH2Enabled; } set { _CH2Enabled = value; IsConfigChanged = true; } }
+
+        public CH1Currents CH1CurrentConfig { get { return _CH1CurrentConfig; } set { _CH1CurrentConfig = value; IsConfigChanged = true; } }
+
+        public CH2Currents CH2CurrentConfig { get { return _CH2CurrentConfig; } set { _CH2CurrentConfig = value; IsConfigChanged = true; } }
+
+        private bool IsConfigChanged = false;
 
 
         public JinYuan20WCollector(string portName, int baudRate = 9600)
         {
-            collector = new ResistanceCurrentInfoCollector(portName, baudRate)
+            Collector = new ResistanceCurrentInfoCollector(portName, baudRate)
             {
                 StartByte = 0x7E,
                 StopByte = 0x0D,
@@ -74,51 +85,51 @@ namespace ABBDataManagerSystem.Connector
 
         public bool Connect()
         {
-            return collector.Open();
+            return Collector.Open();
         }
 
         public void Disconnect()
         {
-            collector.Close();
+            Collector.Close();
         }
 
         public void SetCommonTest()
         {
-            collector.SendCommand(new byte[] { 0x41 });
+            Collector.SendCommand(new byte[] { 0x41 });
         }
 
         public void SetTemperatureRaiseTest()
         {
-            collector.SendCommand(new byte[] { 0x42 });
+            Collector.SendCommand(new byte[] { 0x42 });
         }
 
         public void SetTemperatureRaiseTimerCommand()
         {
-            collector.SendCommand(new byte[] { 0x43 });
+            Collector.SendCommand(new byte[] { 0x43 });
         }
 
         public void SetRestCommand()
         {
-            collector.SendCommand(new byte[] { 0x44 });
+            Collector.SendCommand(new byte[] { 0x44 });
         }
 
         public void SendRequest()
         {
-            collector.SendCommand(new byte[] { 0x48 });
+            Collector.SendCommand(new byte[] { 0x48 });
         }
 
         #region 仪器参数设置命令
         public void SetParameters()
         {
             // 0x45（波特率）（模式）（CH1）（CH1电流）（CH2）（CH2电流）
-            collector.SendCommand(new byte[] {
+            Collector.SendCommand(new byte[] {
                 0x45,
                 GetBoundRateByte(9600),
-                GetTestType(testType),
-                (byte)(chanelOneEnable ? 0x31 : 0x30),
-                (byte)(chanelTwoEnable ? 0x31 : 0x30),
-                GetChanelOneCurrentSet(chanelOneCurrent),
-                GetChanelTwoCurrentSet(chanelTwoCurrent),
+                GetTestType(TestType),
+                (byte)(CH1Enabled ? 0x31 : 0x30),
+                (byte)(CH2Enabled ? 0x31 : 0x30),
+                GetChanelOneCurrentSet(CH1CurrentConfig),
+                GetChanelTwoCurrentSet(CH2CurrentConfig),
             });
         }
 
@@ -135,59 +146,59 @@ namespace ABBDataManagerSystem.Connector
             }
         }
 
-        public static byte GetTestType(TestType type)
+        public static byte GetTestType(TestType20W type)
         {
             // 常规模式：（30H）、10″温升：（31H）、30″温升：（32H）、60″温升：（33H）
             switch (type)
             {
-                case TestType.CommonTest: return 0x30;
-                case TestType.TemperatureRaise10Minute: return 0x31;
-                case TestType.TemperatureRaise30Minute: return 0x32;
-                case TestType.TemperatureRaise60Minute: return 0x33;
+                case TestType20W.CommonTest: return 0x30;
+                case TestType20W.TemperatureRaise10Minute: return 0x31;
+                case TestType20W.TemperatureRaise30Minute: return 0x32;
+                case TestType20W.TemperatureRaise60Minute: return 0x33;
                 default:
                     return 0x30;
             }
         }
 
-        public static TestType GetTestTypeByByte(byte type)
+        public static TestType20W GetTestTypeByByte(byte type)
         {
-            switch(type)
+            switch (type)
             {
                 case 0x31:
-                    return TestType.TemperatureRaise10Minute;
+                    return TestType20W.TemperatureRaise10Minute;
                 case 0x32:
-                    return TestType.TemperatureRaise30Minute;
+                    return TestType20W.TemperatureRaise30Minute;
                 case 0x33:
-                    return TestType.TemperatureRaise60Minute;
+                    return TestType20W.TemperatureRaise60Minute;
                 case 0x30:
                 default:
-                    return TestType.CommonTest;
+                    return TestType20W.CommonTest;
             }
         }
 
-        public static byte GetChanelOneCurrentSet(ChanelOneCurrents current)
+        public static byte GetChanelOneCurrentSet(CH1Currents current)
         {
             // 5A：(30H) 、1A：(31H) 、0.1A：(32H) 、0.01A：(33H)
             switch (current)
             {
-                case ChanelOneCurrents.Current5A: return 0x30;
-                case ChanelOneCurrents.Current1A: return 0x31;
-                case ChanelOneCurrents.Current01A: return 0x32;
-                case ChanelOneCurrents.Current001A: return 0x33;
+                case CH1Currents.Current5A: return 0x30;
+                case CH1Currents.Current1A: return 0x31;
+                case CH1Currents.Current01A: return 0x32;
+                case CH1Currents.Current001A: return 0x33;
                 default:
                     return 0x30;
             }
         }
 
-        public static byte GetChanelTwoCurrentSet(ChanelTwoCurrents current)
+        public static byte GetChanelTwoCurrentSet(CH2Currents current)
         {
             // 20A：(30H) 、10A：(31H) 、5A：(32H) 、2A：(33H)
             switch (current)
             {
-                case ChanelTwoCurrents.Current20A: return 0x30;
-                case ChanelTwoCurrents.Current10A: return 0x31;
-                case ChanelTwoCurrents.Current5A: return 0x32;
-                case ChanelTwoCurrents.Current2A: return 0x33;
+                case CH2Currents.Current20A: return 0x30;
+                case CH2Currents.Current10A: return 0x31;
+                case CH2Currents.Current5A: return 0x32;
+                case CH2Currents.Current2A: return 0x33;
                 default:
                     return 0x30;
             }
@@ -200,7 +211,7 @@ namespace ABBDataManagerSystem.Connector
             public byte ch2Status;
             public bool ch1Enabled;
             public bool ch2Enabled;
-            public TestType type;
+            public TestType20W type;
             public float ch1SelectedCurrent;
             public float ch2SelectedCurrent;
             public float ch1RealTimeCurrent;
@@ -265,12 +276,17 @@ namespace ABBDataManagerSystem.Connector
             // （4字节温升定时采集时间）
             // （7字节CH1定时采集电阻）（7字节CH2定时采集电阻） 
 
-            if (collector == null)
+            if (Collector == null)
             {
                 return null;
             }
+            if (IsConfigChanged)
+            {
+                IsConfigChanged = false;
+                SetParameters();
+            }
             SendRequest();
-            byte[]? packet = collector.ReadData();
+            byte[]? packet = Collector.ReadData();
             if (packet == null)
             {
                 return null;
@@ -296,8 +312,8 @@ namespace ABBDataManagerSystem.Connector
             startIndex = startIndex + 7;
             byte[] ch2TimedResistanceValue = { packet[startIndex + 1], packet[startIndex + 2], packet[startIndex + 3], packet[startIndex + 4], packet[startIndex + 5], packet[startIndex + 6], packet[startIndex + 7] };
 
-            string strCh1Current  = Encoding.ASCII.GetString(ch1CurrentValue);
-            string strCh2Current  = Encoding.ASCII.GetString(ch2CurrentValue);
+            string strCh1Current = Encoding.ASCII.GetString(ch1CurrentValue);
+            string strCh2Current = Encoding.ASCII.GetString(ch2CurrentValue);
             string strCh1Resistance = Encoding.ASCII.GetString(ch1ResistanceValue);
             string strCh2Resistance = Encoding.ASCII.GetString(ch2ResistanceValue);
             string strCh1TimedResistant = Encoding.ASCII.GetString(ch1TimedResistanceValue);

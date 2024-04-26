@@ -11,13 +11,13 @@ namespace ABBDataManagerSystem.Pages
     /// </summary>
     public partial class JinYuan20W : UserControl
     {
-        private JinYuan20WCollector? collector = null;
+        private JinYuan20WCollector? Collector = null;
         private List<User> items = new List<User>();
         private ObservableCollection<MyItem> items2;
         private bool IsConneted = false;
         private bool IsCollecting = false;
         private ManualResetEvent? ResetEvent = null;
-        private int Interval = 300; // ms
+        private bool CommandChange = false;
 
         public JinYuan20W()
         {
@@ -113,10 +113,10 @@ namespace ABBDataManagerSystem.Pages
             if (swConnect.IsChecked == true)
             {
                 IsConneted = true;
-                collector = new JinYuan20WCollector(cbSerialPort.SelectedItem.ToString(), Utils.ParseInt(cbBoundRate.Text));
-                if (!collector.Connect())
+                Collector = new JinYuan20WCollector(cbSerialPort.SelectedItem.ToString(), Utils.ParseInt(cbBoundRate.Text));
+                if (!Collector.Connect())
                 {
-                    collector = null;
+                    Collector = null;
                     IsConneted = false;
                     swConnect.IsChecked = false;
                 }
@@ -124,10 +124,10 @@ namespace ABBDataManagerSystem.Pages
             else
             {
                 StopCollect();
-                if (collector != null)
+                if (Collector != null)
                 {
-                    collector.Disconnect();
-                    collector = null;
+                    Collector.Disconnect();
+                    Collector = null;
                 }
                 IsConneted = false;
                 
@@ -147,18 +147,23 @@ namespace ABBDataManagerSystem.Pages
         private void UserControl_Unloaded(object sender, RoutedEventArgs e)
         {
             IsCollecting = false;
-            if (collector != null)
+            if (Collector != null)
             {
-                collector.Disconnect();
-                collector = null;
+                Collector.Disconnect();
+                Collector = null;
             }
         }
 
         private void CollectDataOnce()
         {
-            if (collector != null)
+            if (Collector != null)
             {
-                var packet = collector.ReadPacket();
+                if (CommandChange)
+                {
+                    CommandChange = false;
+
+                }
+                var packet = Collector.ReadPacket();
                 if (packet != null)
                 {
                 }
@@ -183,14 +188,14 @@ namespace ABBDataManagerSystem.Pages
                 while (IsCollecting)
                 {
                     CollectDataOnce();
-                    if (ResetEvent.WaitOne(Interval))
+                    if (ResetEvent.WaitOne(JinYuan20WCollector.Interval))
                     {
                         // 线程没有超时被唤醒，说明要停止循环了
                     }
                 }
                 IsCollecting = false;
                 ResetEvent = null;
-                Log.Info("Temp collector DONE");
+                Log.Info("Temp Collector DONE");
             }).Start();
         }
 
