@@ -7,6 +7,7 @@ using System.IO.Ports;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace ABBDataManagerSystem.Pages
 {
@@ -197,8 +198,8 @@ namespace ABBDataManagerSystem.Pages
                     ResetEvent.Set();
                 }
                 btStart.Content = "启动";
-                //btStart.BackColor = Color.DodgerBlue;
-                //btStart.ForeColor = Color.White;
+                btStart.Background = Brushes.DodgerBlue;
+                btStart.Foreground = Brushes.White;
                 ToogleAllStatus();
                 return;
             }
@@ -240,8 +241,8 @@ namespace ABBDataManagerSystem.Pages
             }
             IsCollecting = true;
             btStart.Content = "停止";
-            //btStart.BackColor = Color.Red;
-            //btStart.ForeColor = Color.White;
+            btStart.Background = Brushes.Red;
+            btStart.Foreground = Brushes.White;
             ToogleAllStatus();
 
             // 创建一个ManualResetEvent，初始状态为未设置（false）  
