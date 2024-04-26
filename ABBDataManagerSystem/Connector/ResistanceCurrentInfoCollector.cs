@@ -15,12 +15,16 @@ namespace ABBDataManagerSystem.Connector
         public byte StartByte { set; get; } = 0x7E;
 
         public byte StopByte { set; get; } = 0x0D;
-        
+
         public byte[] DeviceAddress { set; get; } = { 0x3E, 0x3E };
 
         public ResistanceCurrentInfoCollector(string portName, int baudRate = 9600)
         {
-            serialPort = new SerialPort(portName, baudRate, Parity.None, 8, StopBits.One);
+            serialPort = new SerialPort(portName, baudRate, Parity.None, 8, StopBits.One)
+            {
+                ReadTimeout = 2000,
+                WriteTimeout = 2000,
+            };
         }
 
         public bool Open()
@@ -45,7 +49,14 @@ namespace ABBDataManagerSystem.Connector
         public void SendCommand(byte[] command)
         {
             byte[] packet = ConstructPacket(command);
-            serialPort.Write(packet, 0, packet.Length);
+            try
+            {
+                serialPort.Write(packet, 0, packet.Length);
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Fail to write resistance command packet: " + ex.Message);
+            }
         }
 
         private byte[] ConstructPacket(byte[] command)
@@ -89,7 +100,16 @@ namespace ABBDataManagerSystem.Connector
         public byte[]? ReadData()
         {
             byte[] buffer = new byte[1024]; // 假设数据长度不超过1024字节
-            int bytesRead = serialPort.Read(buffer, 0, buffer.Length);
+            int bytesRead;
+            try
+            {
+                bytesRead = serialPort.Read(buffer, 0, buffer.Length);
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Fail to read resistance packet: " + ex.Message);
+                return null;
+            }
 
             // 处理接收到的数据
             if (bytesRead > 0)

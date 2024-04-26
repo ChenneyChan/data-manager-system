@@ -72,12 +72,12 @@ namespace ABBDataManagerSystem.Connector
             };
         }
 
-        public bool StartCollect()
+        public bool Connect()
         {
             return collector.Open();
         }
 
-        public void StopCollect()
+        public void Disconnect()
         {
             collector.Close();
         }

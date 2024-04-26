@@ -14,6 +14,10 @@ namespace ABBDataManagerSystem.Pages
         private JinYuan20WCollector? collector = null;
         private List<User> items = new List<User>();
         private ObservableCollection<MyItem> items2;
+        private bool IsConneted = false;
+        private bool IsCollecting = false;
+        private ManualResetEvent? ResetEvent = null;
+        private int Interval = 300; // ms
 
         public JinYuan20W()
         {
@@ -48,6 +52,7 @@ namespace ABBDataManagerSystem.Pages
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             var ports = SerialPort.GetPortNames();
+            Array.Sort(ports);
             foreach (var item in ports)
             {
                 cbSerialPort.Items.Add(item);
@@ -65,7 +70,7 @@ namespace ABBDataManagerSystem.Pages
                 cbLVCurrents.Items.Add($"{item}A");
             }
             cbLVCurrents.SelectedIndex = 0;
-
+            UpdateControlEnableState();
         }
 
 
@@ -101,6 +106,111 @@ namespace ABBDataManagerSystem.Pages
             {
                 items2.RemoveAt(items2.Count - 1);
             }
+        }
+
+        private void swConnect_CheckedChange(object sender, RoutedEventArgs e)
+        {
+            if (swConnect.IsChecked == true)
+            {
+                IsConneted = true;
+                collector = new JinYuan20WCollector(cbSerialPort.SelectedItem.ToString(), Utils.ParseInt(cbBoundRate.Text));
+                if (!collector.Connect())
+                {
+                    collector = null;
+                    IsConneted = false;
+                    swConnect.IsChecked = false;
+                }
+            }
+            else
+            {
+                StopCollect();
+                if (collector != null)
+                {
+                    collector.Disconnect();
+                    collector = null;
+                }
+                IsConneted = false;
+                
+            }
+            UpdateControlEnableState();
+        }
+
+        private void UpdateControlEnableState()
+        {
+            cbBoundRate.IsEnabled = !IsConneted;
+            cbSerialPort.IsEnabled = !IsConneted;
+
+            btStart.IsEnabled = IsConneted && !IsCollecting;
+            btStop.IsEnabled = IsConneted && IsCollecting;
+        }
+
+        private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+        {
+            IsCollecting = false;
+            if (collector != null)
+            {
+                collector.Disconnect();
+                collector = null;
+            }
+        }
+
+        private void CollectDataOnce()
+        {
+            if (collector != null)
+            {
+                var packet = collector.ReadPacket();
+                if (packet != null)
+                {
+                }
+            }
+        }
+
+        private void btStart_Click(object sender, RoutedEventArgs e)
+        {
+            if (!IsConneted || IsCollecting)
+            {
+                return;
+            }
+            // 创建一个ManualResetEvent，初始状态为未设置（false）  
+            ResetEvent = new ManualResetEvent(false);
+            IsCollecting = true;
+            UpdateControlEnableState();
+            Log.Info("Start 20W Collect...");
+
+            // 创建一个新线程并执行任务  
+            new Thread(() =>
+            {
+                while (IsCollecting)
+                {
+                    CollectDataOnce();
+                    if (ResetEvent.WaitOne(Interval))
+                    {
+                        // 线程没有超时被唤醒，说明要停止循环了
+                    }
+                }
+                IsCollecting = false;
+                ResetEvent = null;
+                Log.Info("Temp collector DONE");
+            }).Start();
+        }
+
+        private void btStop_Click(object sender, RoutedEventArgs e)
+        {
+            StopCollect();
+        }
+
+        private void StopCollect()
+        {
+            if (!IsCollecting)
+            {
+                return;
+            }
+            IsCollecting = false;
+            if (ResetEvent != null)
+            {
+                ResetEvent.Set();
+            }
+            UpdateControlEnableState();
         }
     }
 
