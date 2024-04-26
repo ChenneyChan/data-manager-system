@@ -59,17 +59,23 @@ namespace ABBDataManagerSystem.Pages
             }
             cbSerialPort.SelectedIndex = ports.Length > 0 ? 0 : -1;
 
-            foreach (var item in JinYuan20WCollector.Ch1CurrentValue)
+            foreach (var item in JinYuan20WCollector.CH1CurrentsMap.Keys)
             {
-                cbHVCurrents.Items.Add($"{item}A");
+                cbHVCurrents.Items.Add(item);
             }
             cbHVCurrents.SelectedIndex = 0;
 
-            foreach (var item in JinYuan20WCollector.Ch2CurrentValue)
+            foreach (var item in JinYuan20WCollector.CH2CurrentsMap.Keys)
             {
-                cbLVCurrents.Items.Add($"{item}A");
+                cbLVCurrents.Items.Add(item);
             }
             cbLVCurrents.SelectedIndex = 0;
+
+            foreach (var item in JinYuan20WCollector.TestTypeMap.Keys)
+            {
+                cbTestType.Items.Add(item);
+            }
+            cbTestType.SelectedIndex = 0;
             UpdateControlEnableState();
         }
 
@@ -113,7 +119,14 @@ namespace ABBDataManagerSystem.Pages
             if (swConnect.IsChecked == true)
             {
                 IsConneted = true;
-                Collector = new JinYuan20WCollector(cbSerialPort.SelectedItem.ToString(), Utils.ParseInt(cbBoundRate.Text));
+                Collector = new JinYuan20WCollector(cbSerialPort.SelectedItem.ToString(), Utils.ParseInt(cbBoundRate.Text))
+                {
+                    CH1Enabled = cbCH1.IsChecked == true,
+                    CH2Enabled = cbCH2.IsChecked == true,
+                    CH1CurrentConfig = JinYuan20WCollector.GetCH1CurrentConfig(cbHVCurrents.SelectedItem.ToString()),
+                    CH2CurrentConfig = JinYuan20WCollector.GetCH2CurrentConfig(cbLVCurrents.SelectedItem.ToString()),
+                    TestType = JinYuan20WCollector.TestTypeMap[cbTestType.SelectedItem.ToString()],
+                };
                 if (!Collector.Connect())
                 {
                     Collector = null;
@@ -130,7 +143,7 @@ namespace ABBDataManagerSystem.Pages
                     Collector = null;
                 }
                 IsConneted = false;
-                
+
             }
             UpdateControlEnableState();
         }
@@ -166,8 +179,27 @@ namespace ABBDataManagerSystem.Pages
                 var packet = Collector.ReadPacket();
                 if (packet != null)
                 {
+                    UpdateDisplayByPacket(packet);
                 }
             }
+        }
+
+        private void UpdateDisplayByPacket(JinYuan20WCollector.JinYuan20WPacketInfo packet)
+        {
+            tbCH1Enabled.Text = packet.ch1Enabled ? "是" : "否";
+            tbCH2Enabled.Text = packet.ch2Enabled ? "是" : "否";
+
+            tbCH1Status.Text = JinYuan20WCollector.CHStatusMap[packet.ch1Status];
+            tbCH2Status.Text = JinYuan20WCollector.CHStatusMap[packet.ch2Status];
+
+            tbCH1RealTimeCurrent.Text = Utils.FloatFormat(packet.ch1RealTimeCurrent);
+            tbCH2RealTimeCurrent.Text = Utils.FloatFormat(packet.ch2RealTimeCurrent);
+
+            tbCH1RealTimeResistance.Text = Utils.FloatFormat(packet.ch1RealTimeResistance);
+            tbCH2RealTimeResistance.Text = Utils.FloatFormat(packet.ch2RealTimeResistance);
+
+            tbCH1TimedResistance.Text = Utils.FloatFormat(packet.ch1TimedResistance);
+            tbCH2TimedResistance.Text = Utils.FloatFormat(packet.ch2TimedResistance);
         }
 
         private void btStart_Click(object sender, RoutedEventArgs e)

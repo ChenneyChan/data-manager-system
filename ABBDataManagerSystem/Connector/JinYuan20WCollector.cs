@@ -1,9 +1,11 @@
-﻿using NPOI.POIFS.FileSystem;
+﻿using ABBDataManagerSystem.Configs;
+using NPOI.POIFS.FileSystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 
 namespace ABBDataManagerSystem.Connector
 {
@@ -32,11 +34,6 @@ namespace ABBDataManagerSystem.Connector
             Current001A,
         }
 
-        public static List<float> Ch1CurrentValue = new List<float>()
-        {
-            5, 1, 0.1f, 0.01f
-        };
-
         public enum CH2Currents
         {
             Current20A = 0,
@@ -44,11 +41,6 @@ namespace ABBDataManagerSystem.Connector
             Current5A,
             Current2A,
         }
-
-        public static List<float> Ch2CurrentValue = new List<float>()
-        {
-            20, 10, 5, 2
-        };
 
         public static int Interval = 400; // 每400ms发送一次寻机指令，从机返回数据
 
@@ -203,6 +195,17 @@ namespace ABBDataManagerSystem.Connector
                     return 0x30;
             }
         }
+
+        public static CH1Currents GetCH1CurrentConfig(string currentConfig)
+        {
+            return CH1CurrentsMap[currentConfig];
+        }
+
+        public static CH2Currents GetCH2CurrentConfig(string currentConfig)
+        {
+            return CH2CurrentsMap[currentConfig];
+        }
+
         #endregion
 
         public class JinYuan20WPacketInfo
@@ -243,7 +246,6 @@ namespace ABBDataManagerSystem.Connector
                        $"Channel 2 Timed Resistance: {ch2TimedResistance}, " +
                        $"Temperature Raise Time Interval: {tempRaiseTimeInterval}";
             }
-
         }
 
         public static Dictionary<byte, string> CHStatusMap = new Dictionary<byte, string>()
@@ -259,6 +261,30 @@ namespace ABBDataManagerSystem.Connector
             { 0x59, "通道故障" },
             { 0x5A, "换大电流" },
             { 0x5B, "换小电流" },
+        };
+
+        public static Dictionary<string, TestType20W> TestTypeMap = new Dictionary<string, TestType20W>()
+        {
+            { "常规测试",  TestType20W.CommonTest},
+            { "温升测试-10秒",  TestType20W.TemperatureRaise10Minute},
+            { "温升测试-30秒",  TestType20W.TemperatureRaise30Minute},
+            { "温升测试-60秒",  TestType20W.TemperatureRaise60Minute},
+        };
+
+        public static Dictionary<string, CH1Currents> CH1CurrentsMap = new Dictionary<string, CH1Currents>()
+        {
+            { "5A", CH1Currents.Current5A },
+            { "1A", CH1Currents.Current1A },
+            { "0.1A", CH1Currents.Current01A },
+            { "0.01A", CH1Currents.Current001A },
+        };
+
+        public static Dictionary<string, CH2Currents> CH2CurrentsMap = new Dictionary<string, CH2Currents>()
+        {
+            { "20A", CH2Currents.Current20A },
+            { "10A", CH2Currents.Current10A },
+            { "5A", CH2Currents.Current5A },
+            { "2A", CH2Currents.Current2A },
         };
 
         public JinYuan20WPacketInfo? ReadPacket()

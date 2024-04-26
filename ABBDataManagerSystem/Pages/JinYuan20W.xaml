@@ -39,7 +39,6 @@
             <RowDefinition Height="60"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0">
@@ -60,11 +59,11 @@
             </StackPanel>
 
             <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" VerticalAlignment="Top" Margin="10,0">
-                <CheckBox Content="高压侧" VerticalAlignment="Center"/>
+                <CheckBox Content="高压侧" VerticalAlignment="Center" Name="cbCH1"/>
                 <Viewbox Width="10"/>
                 <ComboBox Width="100" Name="cbHVCurrents"/>
                 <Viewbox Width="10"/>
-                <CheckBox Content="低压侧" VerticalAlignment="Center"/>
+                <CheckBox Content="低压侧" VerticalAlignment="Center" Name="cbCH2"/>
                 <Viewbox Width="10"/>
                 <ComboBox Width="100" Name="cbLVCurrents"/>
             </StackPanel>
@@ -81,87 +80,87 @@
             <Button Content="停止采集" HorizontalAlignment="Left" Margin="0,0,20,0" Name="btStop"  Click="btStop_Click"/>
             <StackPanel HorizontalAlignment="Left" Margin="0,0" Orientation="Horizontal" VerticalAlignment="Center">
                 <TextBlock TextWrapping="Wrap" Text="测试类型" VerticalAlignment="Center" Margin="20,0"/>
-                <ComboBox Width="160" Name="cbTestType" SelectedIndex="0">
-                    <ComboBoxItem Content="常规测试"/>
-                    <ComboBoxItem Content="温升测试-10秒"/>
-                    <ComboBoxItem Content="温升测试-30秒"/>
-                    <ComboBoxItem Content="温升测试-60秒"/>
-                </ComboBox>
+                <ComboBox Width="160" Name="cbTestType"/>
             </StackPanel>
         </StackPanel>
         <Grid Grid.Row="3" Margin="10">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            <StackPanel Grid.Column="0" Orientation="Vertical" HorizontalAlignment="Center">
-                <TextBlock Text="高压侧" FontSize="24" Style="{StaticResource TextBlockLargeBold}"/>
-            </StackPanel>
-            <StackPanel Grid.Column="1" Orientation="Vertical" HorizontalAlignment="Center">
-                <TextBlock Text="低压侧" FontSize="24" Style="{StaticResource TextBlockLargeBold}"/>
-            </StackPanel>
-        </Grid>
-        <Grid Grid.Row="4">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
-            <!--<DataGrid  Grid.Column="0" Name="resultDataGrid"/>-->
-            <!--列表分组-->
-            <ListView Name="lvUsers">
-                <ListView.View>
-                    <GridView>
-                        <GridViewColumn Header="次数" Width="80" DisplayMemberBinding="{Binding SortIndex}" />
-                        <GridViewColumn Header="电流" Width="120" DisplayMemberBinding="{Binding Current}" />
-                        <GridViewColumn Header="电阻" Width="120" DisplayMemberBinding="{Binding Resistance}" />
-                    </GridView>
-                </ListView.View>
-                <ListView.GroupStyle>
-                    <GroupStyle>
-                        <GroupStyle.HeaderTemplate>
-                            <DataTemplate>
-                                <TextBlock FontWeight="Bold" FontSize="18" Text="{Binding SortIndex}"/>
-                            </DataTemplate>
-                        </GroupStyle.HeaderTemplate>
-                    </GroupStyle>
-                </ListView.GroupStyle>
-            </ListView>
-            <StackPanel Orientation="Vertical" Grid.Column="1">
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                    <Button Content="New Item" Name="btAddRecord" Click="btAddRecord_Click" controls:BorderElement.CornerRadius="15" Height="40"/>
-                    <Button Content="Delte Item" Name="btDeleteRecord" Click="btDeleteRecord_Click" controls:BorderElement.CornerRadius="15" Height="40"/>
-
-                    <!--内部Item样式为ButtonGroup控件自动附加-默认为水平方向item样式-->
-                    <controls:ButtonGroup Margin="0,32,0,0">
-                        <RadioButton Content="RadioButton" IsChecked="True"/>
-                        <RadioButton Content="RadioButton"/>
-                        <RadioButton IsEnabled="False" Content="RadioButton"/>
-                        <RadioButton Content="RadioButton"/>
-                    </controls:ButtonGroup>
-                    <controls:ButtonGroup Margin="0,16,0,0" Style="{StaticResource ButtonGroupSolid}">
-                        <RadioButton Content="RadioButton"/>
-                        <RadioButton Content="RadioButton"/>
-                        <RadioButton IsEnabled="False" Content="RadioButton"/>
-                        <RadioButton Content="RadioButton" IsChecked="True"/>
-                    </controls:ButtonGroup>
-                </StackPanel>
-                <!-- ListView控件 -->
-                <ListView Name="myListView"
-                  ItemsSource="{Binding Items}"
-                  SelectionMode="Multiple">
-                    <!-- 列定义 -->
+            <Grid Grid.Row="0" Grid.Column="0">
+                <!--列表分组-->
+                <ListView Name="lvUsers">
                     <ListView.View>
                         <GridView>
-                            <GridViewColumn Header="名称"
-                                    DisplayMemberBinding="{Binding Name}"
-                                    Width="120"/>
-                            <GridViewColumn Header="描述"
-                                    DisplayMemberBinding="{Binding Description}"
-                                    Width="200"/>
+                            <GridViewColumn Header="次数" Width="80" DisplayMemberBinding="{Binding SortIndex}" />
+                            <GridViewColumn Header="电流" Width="120" DisplayMemberBinding="{Binding Current}" />
+                            <GridViewColumn Header="电阻" Width="120" DisplayMemberBinding="{Binding Resistance}" />
                         </GridView>
                     </ListView.View>
+                    <ListView.GroupStyle>
+                        <GroupStyle>
+                            <GroupStyle.HeaderTemplate>
+                                <DataTemplate>
+                                    <TextBlock FontWeight="Bold" FontSize="18" Text="{Binding SortIndex}"/>
+                                </DataTemplate>
+                            </GroupStyle.HeaderTemplate>
+                        </GroupStyle>
+                    </ListView.GroupStyle>
                 </ListView>
-            </StackPanel>
+            </Grid>
+            <Grid Grid.Column="1" Margin="20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1.5*"/>
+                    <ColumnDefinition Width="1.5*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
+                <TextBlock Text="高压侧" Grid.Column="1" FontSize="24" Style="{StaticResource TextBlockLargeBold}" HorizontalAlignment="Center"/>
+                <TextBlock Text="低压侧" Grid.Column="2" FontSize="24" Style="{StaticResource TextBlockLargeBold}" HorizontalAlignment="Center"/>
+                <TextBlock Text="是否激活" Grid.Column="0" Grid.Row="1" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <TextBlock Text="当前状态" Grid.Column="0" Grid.Row="2" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <TextBlock Text="实时电阻" Grid.Column="0" Grid.Row="3" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <TextBlock Text="实时电流" Grid.Column="0" Grid.Row="4" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <TextBlock Text="定时电阻" Grid.Column="0" Grid.Row="5" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <TextBlock Text="NA" Grid.Column="1" Grid.Row="1" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center" Name="tbCH1Enabled"/>
+                <TextBlock Text="NA" Grid.Column="2" Grid.Row="1" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center" Name="tbCH2Enabled"/>
+                <TextBlock Text="NA" Grid.Column="1" Grid.Row="2" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center" Name="tbCH1Status"/>
+                <TextBlock Text="NA" Grid.Column="2" Grid.Row="2" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center" Name="tbCH2Status"/>
+                <TextBlock Text="NA" Grid.Column="1" Grid.Row="3" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center" Name="tbCH1RealTimeResistance"/>
+                <TextBlock Text="NA" Grid.Column="2" Grid.Row="3" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center" Name="tbCH2RealTimeResistance"/>
+                <TextBlock Text="NA" Grid.Column="1" Grid.Row="4" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center" Name="tbCH1RealTimeCurrent"/>
+                <TextBlock Text="NA" Grid.Column="2" Grid.Row="4" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center" Name="tbCH2RealTimeCurrent"/>
+                <TextBlock Text="NA" Grid.Column="1" Grid.Row="5" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center" Name="tbCH1TimedResistance"/>
+                <TextBlock Text="NA" Grid.Column="2" Grid.Row="5" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center" Name="tbCH2TimedResistance"/>
+                <Border Grid.Column="0" Grid.Row="0" BorderThickness="1" BorderBrush="Gray"/>
+                <Border Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" BorderThickness="1" BorderBrush="Gray"/>
+                <Border Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" BorderThickness="1" BorderBrush="Gray"/>
+                <Border Grid.Column="0" Grid.Row="0" Grid.RowSpan="4" BorderThickness="1" BorderBrush="Gray"/>
+                <Border Grid.Column="0" Grid.Row="0" Grid.RowSpan="5" BorderThickness="1" BorderBrush="Gray"/>
+                <Border Grid.Column="0" Grid.Row="0" Grid.RowSpan="6" BorderThickness="1" BorderBrush="Gray"/>
+
+                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" BorderThickness="1" BorderBrush="Gray"/>
+                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="2" BorderThickness="1" BorderBrush="Gray"/>
+                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="3" BorderThickness="1" BorderBrush="Gray"/>
+                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="4" BorderThickness="1" BorderBrush="Gray"/>
+                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="5" BorderThickness="1" BorderBrush="Gray"/>
+                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="6" BorderThickness="1" BorderBrush="Gray"/>
+
+                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" BorderThickness="1" BorderBrush="Gray"/>
+                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Grid.RowSpan="2" BorderThickness="1" BorderBrush="Gray"/>
+                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Grid.RowSpan="3" BorderThickness="1" BorderBrush="Gray"/>
+                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Grid.RowSpan="4" BorderThickness="1" BorderBrush="Gray"/>
+                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Grid.RowSpan="5" BorderThickness="1" BorderBrush="Gray"/>
+                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Grid.RowSpan="6" BorderThickness="1" BorderBrush="Gray"/>
+            </Grid>
         </Grid>
     </Grid>
 </UserControl>
