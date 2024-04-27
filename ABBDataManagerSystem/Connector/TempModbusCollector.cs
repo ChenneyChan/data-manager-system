@@ -23,6 +23,7 @@ namespace ABBDataManagerSystem.Connector
         private ushort startIndex = 0;
         private ushort count = 0;
         private int recordLog = 0;
+        private bool isConfigRead = false;
 
         public TempModbusCollector(string serialName, int serialBoundRate = 9600, bool useTcp = false, int slaveId = 1)
         {
@@ -30,12 +31,13 @@ namespace ABBDataManagerSystem.Connector
             _serialBoundRate = serialBoundRate;
             _slaveId = slaveId;
             UsingTcp = useTcp;
+            ReadConfig();
         }
 
         private void ReadConfig()
         {
             string filePath = "./temp_config.txt"; // 文件路径  
-            string firstLine = string.Empty;
+            string? firstLine = null;
 
             try
             {
@@ -44,6 +46,10 @@ namespace ABBDataManagerSystem.Connector
                 {
                     // 读取第一行  
                     firstLine = sr.ReadLine();
+                }
+                if (firstLine == null)
+                {
+                    return;
                 }
 
                 // 输出第一行内容  
@@ -55,12 +61,10 @@ namespace ABBDataManagerSystem.Connector
                     startIndex = (ushort)Utils.ParseInt(lines[0]);
                     count = (ushort)Utils.ParseInt(lines[1]);
                     recordLog = Utils.ParseInt(lines[2]);
+                    isConfigRead = true;
                 }
             }
-            catch (FileNotFoundException)
-            {
-            }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
         }
@@ -174,11 +178,10 @@ namespace ABBDataManagerSystem.Connector
                 }
                 try
                 {
-                    ushort startAddress = 0;
-                    if (UsingTcp)
+                    ushort startAddress = 1000;
+                    if (isConfigRead)
                     {
-                        //startAddress = this.startIndex;
-                        startAddress = 1000;
+                        startAddress = this.startIndex;
                     }
                     // 读取输入寄存器的浮点数值
                     string outValue = "Bytes:\r\n\t";

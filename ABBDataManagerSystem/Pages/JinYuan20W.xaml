@@ -140,26 +140,26 @@
                 <TextBlock Text="NA" Grid.Column="2" Grid.Row="4" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center" Name="tbCH2RealTimeCurrent"/>
                 <TextBlock Text="NA" Grid.Column="1" Grid.Row="5" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center" Name="tbCH1TimedResistance"/>
                 <TextBlock Text="NA" Grid.Column="2" Grid.Row="5" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center" Name="tbCH2TimedResistance"/>
-                <Border Grid.Column="0" Grid.Row="0" BorderThickness="1" BorderBrush="Gray"/>
-                <Border Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" BorderThickness="1" BorderBrush="Gray"/>
-                <Border Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" BorderThickness="1" BorderBrush="Gray"/>
-                <Border Grid.Column="0" Grid.Row="0" Grid.RowSpan="4" BorderThickness="1" BorderBrush="Gray"/>
-                <Border Grid.Column="0" Grid.Row="0" Grid.RowSpan="5" BorderThickness="1" BorderBrush="Gray"/>
-                <Border Grid.Column="0" Grid.Row="0" Grid.RowSpan="6" BorderThickness="1" BorderBrush="Gray"/>
+                <Border Grid.Column="0" Grid.Row="0" BorderThickness="2" BorderBrush="Gray"/>
+                <Border Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" BorderThickness="2" BorderBrush="Gray"/>
+                <Border Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" BorderThickness="2" BorderBrush="Gray"/>
+                <Border Grid.Column="0" Grid.Row="0" Grid.RowSpan="4" BorderThickness="2" BorderBrush="Gray"/>
+                <Border Grid.Column="0" Grid.Row="0" Grid.RowSpan="5" BorderThickness="2" BorderBrush="Gray"/>
+                <Border Grid.Column="0" Grid.Row="0" Grid.RowSpan="6" BorderThickness="2" BorderBrush="Gray"/>
 
-                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" BorderThickness="1" BorderBrush="Gray"/>
-                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="2" BorderThickness="1" BorderBrush="Gray"/>
-                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="3" BorderThickness="1" BorderBrush="Gray"/>
-                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="4" BorderThickness="1" BorderBrush="Gray"/>
-                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="5" BorderThickness="1" BorderBrush="Gray"/>
-                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="6" BorderThickness="1" BorderBrush="Gray"/>
+                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" BorderThickness="2" BorderBrush="Gray"/>
+                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="2" BorderThickness="2" BorderBrush="Gray"/>
+                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="3" BorderThickness="2" BorderBrush="Gray"/>
+                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="4" BorderThickness="2" BorderBrush="Gray"/>
+                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="5" BorderThickness="2" BorderBrush="Gray"/>
+                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="6" BorderThickness="2" BorderBrush="Gray"/>
 
-                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" BorderThickness="1" BorderBrush="Gray"/>
-                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Grid.RowSpan="2" BorderThickness="1" BorderBrush="Gray"/>
-                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Grid.RowSpan="3" BorderThickness="1" BorderBrush="Gray"/>
-                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Grid.RowSpan="4" BorderThickness="1" BorderBrush="Gray"/>
-                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Grid.RowSpan="5" BorderThickness="1" BorderBrush="Gray"/>
-                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Grid.RowSpan="6" BorderThickness="1" BorderBrush="Gray"/>
+                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" BorderThickness="2" BorderBrush="Gray"/>
+                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Grid.RowSpan="2" BorderThickness="2" BorderBrush="Gray"/>
+                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Grid.RowSpan="3" BorderThickness="2" BorderBrush="Gray"/>
+                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Grid.RowSpan="4" BorderThickness="2" BorderBrush="Gray"/>
+                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Grid.RowSpan="5" BorderThickness="2" BorderBrush="Gray"/>
+                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Grid.RowSpan="6" BorderThickness="2" BorderBrush="Gray"/>
             </Grid>
         </Grid>
     </Grid>
