@@ -1,6 +1,8 @@
 ﻿using ABBDataManagerSystem.Connector;
 using ABBDataManagerSystem.Pages;
 using ABBDataManagerSystem.PowerAnalyzer;
+using MathNet.Numerics;
+using NPOI.Util.ArrayExtensions;
 using System.IO.Ports;
 using System.Text;
 using System.Windows;
@@ -12,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Window = System.Windows.Window;
 
 namespace ABBDataManagerSystem
 {
@@ -33,7 +36,7 @@ namespace ABBDataManagerSystem
 
         private void PowerAnalyzeTest_Click(object sender, RoutedEventArgs e)
         {
-            var window = new Window()
+            var window = new System.Windows.Window()
             {
                 Title = "功率分析仪",
                 Width = 500,
@@ -48,7 +51,7 @@ namespace ABBDataManagerSystem
 
         private void TemperatureTest_Click(object sender, RoutedEventArgs e)
         {
-            var window = new Window()
+            var window = new System.Windows.Window()
             {
                 Title = "温度检测仪",
                 Width = 1200,
@@ -62,7 +65,7 @@ namespace ABBDataManagerSystem
 
         private void JnYuan20WTest_Click(object sender, RoutedEventArgs e)
         {
-            var window = new Window()
+            var window = new System.Windows.Window()
             {
                 Title = "金源20W测试仪",
                 Width = 1200,
@@ -122,6 +125,138 @@ namespace ABBDataManagerSystem
             {
                 tbMsg.Text = tbMsg.Text + "\r\n" + msg;
             }));
+        }
+
+        bool IsTemp = false;
+
+        private const ushort Polynomial = 0x1021;
+        private const ushort InitialValue = 0xFFFF;
+        public ushort ComputeChecksum(byte[] bytes, int offset, int len)
+        {
+            ushort crc = InitialValue;
+            for (int i = offset; i < bytes.Length && i < len; ++i)
+            {
+                crc ^= (ushort)(bytes[i] << 8);
+                for (int j = 0; j < 8; ++j)
+                {
+                    if ((crc & 0x8000) != 0)
+                    {
+                        crc = (ushort)((crc << 1) ^ Polynomial);
+                    }
+                    else
+                    {
+                        crc <<= 1;
+                    }
+                }
+            }
+            return crc;
+        }
+
+
+        #region 计算CRC校验码
+        /// <summary>
+        /// 计算CRC校验码，并转换为十六进制字符串
+        /// Cyclic Redundancy Check 循环冗余校验码
+        /// 是数据通信领域中最常用的一种差错校验码
+        /// 特征是信息字段和校验字段的长度可以任意选定
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public static new byte[] get_CRC16_C(byte[] data, int offset, int len)
+        {
+            byte num = 0xff;
+            byte num2 = 0xff;
+
+            byte num3 = 1;
+            byte num4 = 160;
+            byte[] buffer = data;
+
+            for (int i = offset; i < buffer.Length && i < len; i++)
+            {
+                //位异或运算
+                num = (byte)(num ^ buffer[i]);
+
+                for (int j = 0; j <= 7; j++)
+                {
+                    byte num5 = num2;
+                    byte num6 = num;
+
+                    //位右移运算
+                    num2 = (byte)(num2 >> 1);
+                    num = (byte)(num >> 1);
+
+                    //位与运算
+                    if ((num5 & 1) == 1)
+                    {
+                        //位或运算
+                        num = (byte)(num | 0x80);
+                    }
+                    if ((num6 & 1) == 1)
+                    {
+                        num2 = (byte)(num2 ^ num4);
+                        num = (byte)(num ^ num3);
+                    }
+                }
+            }
+            return new byte[] { num, num2 };
+        }
+        #endregion
+
+
+        private void btStartTempTest_Click(object sender, RoutedEventArgs e)
+        {
+            if (IsTemp)
+            {
+                IsTemp = false;
+                AppendMsg("Stop!!!");
+                return;
+            }
+            new Thread(() =>
+            {
+                var serialPort = new SerialPort("COM3", 9600)
+                {
+                    WriteTimeout = 2000,
+                    ReadTimeout = 2000,
+                };
+                try
+                {
+                    AppendMsg("Start Test:" );
+                    ushort startAddress = 30101;
+                    byte[] start = { (byte)(startAddress >> 8 & 0xFF), (byte)(startAddress & 0x00FF) };
+                    ushort count = 15;
+                    byte[] c = { (byte)(count >> 8 & 0xFF), (byte)(count & 0x00FF) };
+                    var packet = new byte[] { 0x01, 0x04, start[0], start[1], c[0], c[1], 0x31, 0xCA };
+                    var crc = get_CRC16_C(packet, 0, packet.Length - 2);
+                    packet[packet.Length - 2] = crc[0];
+                    packet[packet.Length - 1] = crc[1];
+                    AppendMsg(crc[0].ToString("X2") + " " + crc[1].ToString("X2")) ;
+                    string p = "";
+                    for (int i = 0; i < packet.Length; i++)
+                    {
+                        p += packet[i].ToString("x2") + " ";
+                    }
+                    AppendMsg($"Requeset Packet is {p}");
+
+                    serialPort.Open();
+                    serialPort.Write(packet, 0, packet.Length);
+                    AppendMsg("Send Done");
+                    byte[] buffer = new byte[1024];
+                    int len = serialPort.Read(buffer, 0, buffer.Length);
+                    AppendMsg($"Read Packet len {len}");
+                    p = "";
+                    for (int i =0; i < len;i++)
+                    {
+                        p += buffer[i].ToString("x2") + " ";
+                    }
+                    AppendMsg("Packet is: " + p);
+                    serialPort.Close();
+                    AppendMsg("Stop Test!");
+                }
+                catch (Exception ex)
+                {
+                    AppendMsg("Fail to process, error: " + ex.Message);
+                }
+            }).Start();
         }
     }
 }

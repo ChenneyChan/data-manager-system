@@ -51,6 +51,7 @@ namespace ABBDataManagerSystem.Connector
             byte[] packet = ConstructPacket(command);
             try
             {
+                Log.Info("SendMsg Is " + Utils.DumpBuffer(packet, 0, packet.Length));
                 serialPort.Write(packet, 0, packet.Length);
             }
             catch (Exception ex)
@@ -114,6 +115,7 @@ namespace ABBDataManagerSystem.Connector
             // 处理接收到的数据
             if (bytesRead > 0)
             {
+                Log.Info("Response is " + Utils.DumpBuffer(buffer,0, bytesRead));
                 // 检查报文头和尾
                 if (buffer[0] == 0x7E && buffer[bytesRead - 1] == 0x0D)
                 {

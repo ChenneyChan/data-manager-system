@@ -222,5 +222,15 @@ namespace ABBDataManagerSystem
         {
             throw new NotImplementedException();
         }
+
+        public static string DumpBuffer(byte[]buffer, int offset, int len)
+        {
+            string s = "";
+            for (int i = 0; i < len && i<buffer.Length; i++)
+            {
+                s += buffer[i].ToString("x2") + " ";
+            }
+            return s;
+        }
     }
 }

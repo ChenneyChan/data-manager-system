@@ -176,10 +176,20 @@ namespace ABBDataManagerSystem.Pages
                     CommandChange = false;
 
                 }
-                var packet = Collector.ReadPacket();
-                if (packet != null)
+                try
                 {
-                    UpdateDisplayByPacket(packet);
+                    var packet = Collector.ReadPacket();
+                    if (packet != null)
+                    {
+                        Dispatcher.Invoke(() => {
+                            UpdateDisplayByPacket(packet);
+                        });
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("Process packet error " + ex.Message);
                 }
             }
         }
