@@ -37,7 +37,12 @@
                 <Separator></Separator>
                 <Button Content="Test"></Button>
             </ToolBar>
-            <TextBox DockPanel.Dock="Top" Text="This is my space" Height="507"></TextBox>
+            <Grid>
+                <StackPanel Orientation="Vertical">
+                    <Button Content="50W串口测试" Name="btStartSerialTest" Click="btStartSerialTest_Click" Height="30" Width="120"/>
+                    <TextBlock Width="500" Height="Auto" TextWrapping="Wrap" Text="输出：" Name="tbMsg"/>
+                </StackPanel>
+            </Grid>
             <StatusBar DockPanel.Dock="Bottom" Height="20" VerticalAlignment="Bottom">
                 <TextBlock Text="statusBar"></TextBlock>
             </StatusBar>

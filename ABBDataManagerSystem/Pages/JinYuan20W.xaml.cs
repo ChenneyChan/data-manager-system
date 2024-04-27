@@ -200,6 +200,8 @@ namespace ABBDataManagerSystem.Pages
 
             tbCH1TimedResistance.Text = Utils.FloatFormat(packet.ch1TimedResistance);
             tbCH2TimedResistance.Text = Utils.FloatFormat(packet.ch2TimedResistance);
+
+            tbDebugMsg.Text = "Debug Packet: " + packet.ToString();
         }
 
         private void btStart_Click(object sender, RoutedEventArgs e)

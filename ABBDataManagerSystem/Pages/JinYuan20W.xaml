@@ -40,6 +40,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="1*"/>
+            <RowDefinition Height="60"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0">
             <TextBlock HorizontalAlignment="Left" Margin="0,10" TextAlignment="Center" TextWrapping="Wrap" Text="金源20W测量仪" FontSize="24" FontWeight="Bold"/>
@@ -162,5 +163,6 @@
                 <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Grid.RowSpan="6" BorderThickness="2" BorderBrush="Gray"/>
             </Grid>
         </Grid>
+        <TextBlock Grid.Row="4" Text="Debug Packet: " FontSize="12" TextWrapping="Wrap" Name="tbDebugMsg" VerticalAlignment="Top"/>
     </Grid>
 </UserControl>

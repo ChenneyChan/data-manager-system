@@ -16,7 +16,7 @@ namespace ABBDataManagerSystem.Pages
     /// </summary>
     public partial class TempTestPage : UserControl
     {
-        private static bool Simulate = true;
+        private static bool Simulate = false;
 
         private bool UsingSerial = true;
         private List<TemperatureSlotView> Slots = new List<TemperatureSlotView>();

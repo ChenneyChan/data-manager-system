@@ -215,8 +215,8 @@ namespace ABBDataManagerSystem.Connector
             public bool ch1Enabled;
             public bool ch2Enabled;
             public TestType20W type;
-            public float ch1SelectedCurrent;
-            public float ch2SelectedCurrent;
+            public byte ch1SelectedCurrent;
+            public byte ch2SelectedCurrent;
             public float ch1RealTimeCurrent;
             public float ch2RealTimeCurrent;
             public float ch1RealTimeResistance;
@@ -317,6 +317,11 @@ namespace ABBDataManagerSystem.Connector
             {
                 return null;
             }
+            if (packet.Length < 50)
+            {
+                Log.Error("Read Packet Len err" + packet.Length);
+                return null;
+            }
             byte ch1Status = packet[0];
             byte ch2Status = packet[1];
             byte boudRate = packet[2];
@@ -337,6 +342,7 @@ namespace ABBDataManagerSystem.Connector
             byte[] ch1TimedResistanceValue = { packet[startIndex + 1], packet[startIndex + 2], packet[startIndex + 3], packet[startIndex + 4], packet[startIndex + 5], packet[startIndex + 6], packet[startIndex + 7] };
             startIndex = startIndex + 7;
             byte[] ch2TimedResistanceValue = { packet[startIndex + 1], packet[startIndex + 2], packet[startIndex + 3], packet[startIndex + 4], packet[startIndex + 5], packet[startIndex + 6], packet[startIndex + 7] };
+            startIndex = startIndex + 7;
 
             string strCh1Current = Encoding.ASCII.GetString(ch1CurrentValue);
             string strCh2Current = Encoding.ASCII.GetString(ch2CurrentValue);
@@ -357,8 +363,8 @@ namespace ABBDataManagerSystem.Connector
                 ch2RealTimeCurrent = Utils.ParseFloat(strCh2Current),
                 ch1RealTimeResistance = Utils.ParseFloat(strCh1Resistance),
                 ch2RealTimeResistance = Utils.ParseFloat(strCh2Resistance),
-                //ch1SelectedCurrent = ch1Current,
-                //ch2SelectedCurrent = ch2Current,
+                ch1SelectedCurrent = ch1Current,
+                ch2SelectedCurrent = ch2Current,
                 ch1TimedResistance = Utils.ParseFloat(strCh1TimedResistant),
                 ch2TimedResistance = Utils.ParseFloat(strCh2TimedResistant),
                 tempRaiseTimeInterval = Utils.ParseFloat(strTempSetTimeInterval),

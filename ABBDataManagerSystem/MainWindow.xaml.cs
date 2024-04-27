@@ -1,5 +1,7 @@
-﻿using ABBDataManagerSystem.Pages;
+﻿using ABBDataManagerSystem.Connector;
+using ABBDataManagerSystem.Pages;
 using ABBDataManagerSystem.PowerAnalyzer;
+using System.IO.Ports;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -74,7 +76,52 @@ namespace ABBDataManagerSystem
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            Configs.Configs.SaveToFile();     
+            Configs.Configs.SaveToFile();
+        }
+
+        private void btStartSerialTest_Click(object sender, RoutedEventArgs e)
+        {
+            new Thread(() =>
+            {
+                var ports = SerialPort.GetPortNames();
+                Array.Sort(ports);
+
+                foreach (var port in ports)
+                {
+                    AppendMsg("Port " + port + " Start...");
+                    var collector = new JinYun50ECollector(port, 9600);
+                    if (collector.Connect())
+                    {
+                        AppendMsg("Connect Success!");
+                        collector.SetTestType(JinYun50ECollector.TestType50E.CommonTest);
+                        var packet = collector.QueryMsg();
+                        if (packet == null)
+                        {
+                            AppendMsg("Fail to Get Response, Done!");
+                        }
+                        else
+                        {
+                            AppendMsg($"Get Response, Size is {packet.Length}, Done!");
+                        }
+                        collector.Disconnect();
+                        Thread.Sleep(1000);
+                    }
+                    else
+                    {
+                        AppendMsg($"Connect fail, skip {port}!");
+                    }
+                }
+                AppendMsg("All Port Test Done!");
+
+            }).Start();
+        }
+
+        private void AppendMsg(string msg)
+        {
+            Dispatcher.Invoke(new Action(() =>
+            {
+                tbMsg.Text = tbMsg.Text + "\r\n" + msg;
+            }));
         }
     }
 }
