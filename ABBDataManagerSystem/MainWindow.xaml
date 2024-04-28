@@ -33,9 +33,11 @@
                 <Separator></Separator>
                 <Button Content="FileExplorer"></Button>
                 <Separator></Separator>
-                <Button Content="Start"></Button>
+                <Button Content="温度测量仪" Click="TemperatureTest_Click"></Button>
                 <Separator></Separator>
-                <Button Content="Test"></Button>
+                <Button Content="金源20W直流电阻" Click="JnYuan20WTest_Click"></Button>
+                <Separator></Separator>
+                <Button Content="功率分析仪" Click="PowerAnalyzeTest_Click"></Button>
             </ToolBar>
             <Grid>
                 <StackPanel Orientation="Vertical">

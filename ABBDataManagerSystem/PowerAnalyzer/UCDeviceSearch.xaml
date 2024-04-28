@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ABBDataManagerSystem.PowerAnalyzer"
              mc:Ignorable="d" 
-             d:DesignHeight="265.777" d:DesignWidth="502.184" Loaded="UserControl_Loaded">
+             d:DesignHeight="257.777" d:DesignWidth="458.851" Loaded="UserControl_Loaded">
     <Grid Margin="20,20">
         <Grid.RowDefinitions>
             <RowDefinition Height="1*"/>
@@ -13,27 +13,27 @@
             <RowDefinition Height="1*"/>
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" Height="20">
+        <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" Height="Auto">
             <RadioButton Name="rbGPIB" Content="GPIB" Width="80" VerticalAlignment="Center"/>
-            <TextBlock Text="Address" Width="80" VerticalAlignment="Center"/>
+            <TextBlock Text="地址" Width="80" VerticalAlignment="Center"/>
             <ComboBox Name="cbGPIB" Width="120"/>
         </StackPanel>
-        <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center" Height="20">
-            <RadioButton Name="rbUSB" Content="GPIB" Width="80" VerticalAlignment="Center"/>
-            <TextBlock Text="SerialNo." Width="80" VerticalAlignment="Center"/>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center" Height="Auto">
+            <RadioButton Name="rbUSB" Content="串口" Width="80" VerticalAlignment="Center"/>
+            <TextBlock Text="串口" Width="80" VerticalAlignment="Center"/>
             <ComboBox Name="cbUSB" Width="120"/>
-            <Button Name="btSerachUSB" Width="60" Margin="8, 0, 0, 0" Content="Search"/>
+            <Button Name="btSerachUSB" Width="60" Margin="8, 0, 0, 0" Content="搜索"/>
         </StackPanel>
-        <StackPanel Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Center" Height="20">
-            <RadioButton Name="rbEthNet" Content="GPIB" Width="80" VerticalAlignment="Center"/>
-            <TextBlock Text="IP Address" Width="80" VerticalAlignment="Center"/>
+        <StackPanel Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Center" Height="Auto">
+            <RadioButton Name="rbEthNet" Content="网口" Width="80" VerticalAlignment="Center"/>
+            <TextBlock Text="IP地址" Width="80" VerticalAlignment="Center"/>
             <ComboBox Name="cbIP" Width="120"/>
-            <Button Name="btSerachIP" Width="60" Margin="8, 0, 0, 0" Content="Search"/>
+            <Button Name="btSerachIP" Width="60" Margin="8, 0, 0, 0" Content="搜索"/>
         </StackPanel>
-        <StackPanel Grid.Row="3" Orientation="Horizontal" VerticalAlignment="Center" Height="20" HorizontalAlignment="Center">
-            <Button Content="OK" Width="100" Name="btConfirm" Click="btConfirm_Click"/>
+        <StackPanel Grid.Row="3" Orientation="Horizontal" VerticalAlignment="Center" Height="Auto" HorizontalAlignment="Center">
+            <Button Content="确认" Width="100" Name="btConfirm" Click="btConfirm_Click"/>
             <Decorator Width="20"></Decorator>
-            <Button Content="Cancel" Width="100" Name="btCancel" Click="btCancel_Click"/>
+            <Button Content="取消" Width="100" Name="btCancel" Click="btCancel_Click"/>
         </StackPanel>
     </Grid>
 </UserControl>

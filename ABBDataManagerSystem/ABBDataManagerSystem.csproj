@@ -20,12 +20,7 @@
 
   <ItemGroup>
     <Compile Remove="PowerAnalyzer\MainDialog.cs" />
-    <Compile Remove="PowerAnalyzer\UCPowerAanlyzer.xaml.cs" />
     <Compile Remove="Report\ReportWriter.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Page Remove="PowerAnalyzer\UCPowerAanlyzer.xaml" />
   </ItemGroup>
 
   <ItemGroup>

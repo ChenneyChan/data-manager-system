@@ -5,17 +5,16 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ABBDataManagerSystem.PowerAnalyzer"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800" Loaded="UserControl_Loaded">
+             d:DesignHeight="450" d:DesignWidth="800" Loaded="UserControl_Loaded" Unloaded="UserControl_Unloaded">
     <Grid Margin="20,20">
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition/>
             <RowDefinition/>
         </Grid.RowDefinitions>
@@ -44,10 +43,10 @@
         <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal">
             <Button Content="获取一次" Width="80" Name="btRequestSingle" HorizontalAlignment="Left"/>
             <Button Content="持续获取" Width="80" Name="btRequestContinue"/>
-            <Button Content="持续获取（定时器）" Width="120" Name="btRequestTimer" HorizontalAlignment="Right"/>
+            <Button Content="持续获取（定时器）" Width="140" Name="btRequestTimer" HorizontalAlignment="Right"/>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1">
-            <TextBox IsReadOnly="True" Name="ErrInfoText" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"/>
+            <TextBox IsReadOnly="True" Name="ErrInfoText" HorizontalAlignment="Stretch" MinWidth="200"/>
         </StackPanel>
         <DataGrid Grid.Row="3" Grid.ColumnSpan="2" Grid.RowSpan="2" Name="dataGrid"/>
     </Grid>

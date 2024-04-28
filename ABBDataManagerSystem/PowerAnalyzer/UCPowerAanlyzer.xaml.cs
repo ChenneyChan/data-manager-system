@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -13,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using Yokogawa.Tm.WT1800CommSample.cs;
 
 namespace ABBDataManagerSystem.PowerAnalyzer
@@ -34,35 +36,6 @@ namespace ABBDataManagerSystem.PowerAnalyzer
     /// </summary>
     public partial class UCPowerAanlyzer : UserControl
     {
-        public UCPowerAanlyzer()
-        {
-            InitializeComponent();
-            btRequestContinue.Click += BtRequestContinue_Click;
-            btRequestSingle.Click += BtRequestSingle_Click;
-            btRequestTimer.Click += BtRequestTimer_Click;
-            btSetUpdateRate.Click += BtSetUpdateRate_Click;
-            InitListItem();
-        }
-
-        private void BtSetUpdateRate_Click(object sender, RoutedEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void BtRequestTimer_Click(object sender, RoutedEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void BtRequestSingle_Click(object sender, RoutedEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void BtRequestContinue_Click(object sender, RoutedEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
 
         #region Variables
         private readonly string[] errorMsg = new string[14];
@@ -98,7 +71,42 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         private bool wt1800e_commandTypeEmulate;
 
         Connection connection = new Connection();
+        private DispatcherTimer Timer1;
         #endregion
+
+        public UCPowerAanlyzer()
+        {
+            InitializeComponent();
+            btRequestContinue.Click += BtRequestContinue_Click;
+            btRequestSingle.Click += BtRequestSingle_Click;
+            btRequestTimer.Click += BtRequestTimer_Click;
+            btSetUpdateRate.Click += BtSetUpdateRate_Click;
+            InitListItem();
+
+            Timer1 = new DispatcherTimer();
+            Timer1.Tick += Timer1_Tick; // 注册 Tick 事件处理程序  
+            Timer1.Interval = TimeSpan.FromSeconds(1); // 设置时间间隔为1秒  
+        }
+
+        private void BtSetUpdateRate_Click(object sender, RoutedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void BtRequestTimer_Click(object sender, RoutedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void BtRequestSingle_Click(object sender, RoutedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void BtRequestContinue_Click(object sender, RoutedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
 
         #region FindFunPos
         /// <summary>
@@ -897,7 +905,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
         #endregion
 
-        #region MainDialog_Load
+        #region UserControl_Loaded
         //******************************************************
         /// <summary>
         /// UserControl_Loaded
@@ -907,67 +915,11 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         //******************************************************
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            #region ControlsArray Init
-            /// ControlsArray
-            ///
-            this.ElementOptions = new ControlsArray();
-            this.FCombos = new ControlsArray();
-            this.ECombos = new ControlsArray();
-            this.OCombos = new ControlsArray();
-            this.DTexts = new ControlsArray();
-            this.ElementOptions.Add(this._ElementOption_0);
-            this.ElementOptions.Add(this._ElementOption_1);
-            this.ElementOptions.Add(this._ElementOption_2);
-            this.ElementOptions.Add(this._ElementOption_3);
-            this.ElementOptions.Add(this._ElementOption_4);
-            this.ElementOptions.Add(this._ElementOption_5);
-            this.FCombos.Add(this._FCombo_0);
-            this.FCombos.Add(this._FCombo_1);
-            this.FCombos.Add(this._FCombo_2);
-            this.FCombos.Add(this._FCombo_3);
-            this.FCombos.Add(this._FCombo_4);
-            this.FCombos.Add(this._FCombo_5);
-            this.FCombos.Add(this._FCombo_6);
-            this.FCombos.Add(this._FCombo_7);
-            this.FCombos.Add(this._FCombo_8);
-            this.FCombos.Add(this._FCombo_9);
-            this.ECombos.Add(this._ECombo_0);
-            this.ECombos.Add(this._ECombo_1);
-            this.ECombos.Add(this._ECombo_2);
-            this.ECombos.Add(this._ECombo_3);
-            this.ECombos.Add(this._ECombo_4);
-            this.ECombos.Add(this._ECombo_5);
-            this.ECombos.Add(this._ECombo_6);
-            this.ECombos.Add(this._ECombo_7);
-            this.ECombos.Add(this._ECombo_8);
-            this.ECombos.Add(this._ECombo_9);
-            this.OCombos.Add(this._OCombo_0);
-            this.OCombos.Add(this._OCombo_1);
-            this.OCombos.Add(this._OCombo_2);
-            this.OCombos.Add(this._OCombo_3);
-            this.OCombos.Add(this._OCombo_4);
-            this.OCombos.Add(this._OCombo_5);
-            this.OCombos.Add(this._OCombo_6);
-            this.OCombos.Add(this._OCombo_7);
-            this.OCombos.Add(this._OCombo_8);
-            this.OCombos.Add(this._OCombo_9);
-            this.DTexts.Add(this._DText_0);
-            this.DTexts.Add(this._DText_1);
-            this.DTexts.Add(this._DText_2);
-            this.DTexts.Add(this._DText_3);
-            this.DTexts.Add(this._DText_4);
-            this.DTexts.Add(this._DText_5);
-            this.DTexts.Add(this._DText_6);
-            this.DTexts.Add(this._DText_7);
-            this.DTexts.Add(this._DText_8);
-            this.DTexts.Add(this._DText_9);
-            #endregion
-
             ///Set ModelType Display#
             string model = Connection.DevModel;
 
             //--GET IDN--
-            string msg = "*IDN?";
+            string msg = "*IDN?"; // *IDN? -> YOKOGAWA,WT1806E-5A3-50A3,1234567890,F1.01
             string tem_idn = "";
             SetSendMonitor(msg);
             if (!QueriesData(60, msg, ref tem_idn))
@@ -1013,15 +965,6 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             //set unuse element RadioBox disable.
             lastElement = Convert.ToInt32(model.Substring(5, 1));
 
-            int elementIndex;
-            for (elementIndex = 0; elementIndex < MAX_ELEMENT; elementIndex++)
-            {
-                if (elementIndex > lastElement - 1)
-                {
-                    ElementOptions[elementIndex].IsEnabled = false;
-                }
-            }
-
             ///Queries the CrestFactor#
             string tempFactor = "";
             msg = ":INPUT:CFACTOR?";
@@ -1040,30 +983,23 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
             ///get current item settings from instrument
             ReadItemSettings();
-
-            //set the first RadioBox to be checked.
-            if (lastElement > 0)
-            {
-                ElementOptions[0].Select();
-            }
-
             return;
         }
 
         #endregion
 
-        #region MainDialog_Close
+        #region UserControl_Unloaded
         //********************************************
         ///Dialog Close
         //********************************************
-        private void MainDialog_Closed(object sender, System.EventArgs e)
+        private void UserControl_Unloaded(object sender, RoutedEventArgs e)
         {
             //close connection after exiting.
             connection.Finish();
-        }
-        private void CloseCommand_Click(object sender, System.EventArgs e)
-        {
-            this.Close();
+            if (Timer1.IsEnabled)
+            {
+                Timer1.Stop();
+            }
         }
         #endregion
 
@@ -1071,66 +1007,6 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         ///--Common Functions--
         //#-------------------------#
 
-        #region Class: ControlArray
-        //********************************************
-        ///<summary>Class: ControlArray(Index)</summary>
-        ///<remark>
-        ///used when setting controls in group.
-        ///</remark>
-        //********************************************
-        private class ControlsArray : System.Collections.CollectionBase
-        {
-            // indexer
-            public System.Windows.Forms.Control this[int Index]
-            {
-                get
-                {
-                    return (System.Windows.Forms.Control)this.List[Index];
-                }
-                set
-                {
-                    this.List[Index] = value;
-                }
-            }
-            // add object into ControlsArray.
-            public void Add(System.Windows.Forms.Control control)
-            {
-                this.List.Add(control);
-            }
-            // get the index of the given object.
-            public int GetIndex(object sender)
-            {
-                int n;
-                for (n = 0; n < this.Count; n++)
-                {
-                    if (this.List[n] == sender)
-                    {
-                        break;
-                    }
-                }
-                return n;
-            }
-            // set the index of the array as the given index.
-            public void SetIndex(object item, int index)
-            {
-            }
-            // get the checked radio only when this is a radio array.
-            public int GetActiveBtn(int startIndex)
-            {
-                int n;
-                RadioButton btn;
-                for (n = startIndex; n < this.Count; n++)
-                {
-                    btn = (RadioButton)this.List[n];
-                    if (btn.IsChecked == true)
-                    {
-                        break;
-                    }
-                }
-                return n;
-            }
-        }
-        #endregion
 
         #region Function: CutLeft
         //*********************************************
@@ -1202,37 +1078,6 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         //***********************************************
         private void SetSendMonitor(string msg)
         {
-            //when lines count over 500, delete the oldest one.
-            if (SendCmdMntText.Lines.Length >= MAX_LINES)
-            {
-                SendCmdMntText.Text = SendCmdMntText.Text.Remove(0, SendCmdMntText.Lines[0].Length + 2);
-            }
-            int selPos = SendCmdMntText.Text.Length;
-            if (SendCmdMntText.Text != "")
-            {
-                if (selPos < 32700)
-                {
-                    //"AppendText()"is fast, but has a limit of 32,766.
-                    SendCmdMntText.AppendText("\r\n");
-                }
-                else
-                {
-                    SendCmdMntText.Text += "\r\n";
-                }
-            }
-            if (selPos < 32700)
-            {
-                //AppendText() has a limit of 32,766.
-                SendCmdMntText.AppendText(msg);
-            }
-            else
-            {
-                SendCmdMntText.Text += msg;
-            }
-
-            //scroll the window to bottom.
-            SendCmdMntText.Select(selPos + 2, 0);
-            SendCmdMntText.ScrollToCaret();
         }
         #endregion
 
@@ -1244,42 +1089,6 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         //*****************************************
         private void SetReceiveMonitor(string data)
         {
-            if (data.IndexOf("\n") != -1)
-            {
-                data = data.Substring(0, data.IndexOf("\n"));
-            }
-            //when lines count over 500, delete the oldest one.
-            if (ReceiveMntText.Lines.Length >= MAX_LINES)
-            {
-                ReceiveMntText.Text = ReceiveMntText.Text.Remove(0, ReceiveMntText.Lines[0].Length + 2);
-            }
-            int selPos = ReceiveMntText.Text.Length;
-            if (ReceiveMntText.Text != "")
-            {
-                if (selPos < 32700)
-                {
-                    //AppendText() has a limit of 32,766.
-                    ReceiveMntText.AppendText("\r\n");
-                }
-                else
-                {
-                    ReceiveMntText.Text += "\r\n";
-                }
-            }
-            //scroll the window to button.
-            if (selPos < 32700)
-            {
-                //AppendText() has a limit of 32,766.
-                ReceiveMntText.AppendText(data);
-            }
-            else
-            {
-                ReceiveMntText.Text += data;
-            }
-
-            //scroll the window to bottom.
-            ReceiveMntText.Select(selPos + 2, 0);
-            ReceiveMntText.ScrollToCaret();
         }
         #endregion
 
@@ -1413,12 +1222,10 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 SetReceiveMonitor(outputValue);
             }
 
+            for (n = 0; n < ItemSettings.Count; n++)
             {
-                for (n = 0; n < Convert.ToInt32(ItemNumberCombo.Text); n++)
-                {
-                    //set display
-                    DTexts[n].Text = CutLeft(",", ref data);
-                }
+                //set display
+                ItemSettings[n].Value = Utils.ParseFloat(CutLeft(",", ref data));
             }
         }
         #endregion
@@ -1572,31 +1379,12 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         }
         #endregion
 
-        #region SelectElement
-        //********************************************
-        ///E1~E6 Radio Check
-        //********************************************
-        private void ElementOption_CheckedChanged(object sender, System.EventArgs e)
-        {
-            RadioButton btn = (RadioButton)sender;
-            //when button was unchecked, leave off.
-            if (btn.IsChecked == true)
-            {
-                int elementIndex = ElementOptions.GetIndex((RadioButton)sender);
-                Currentelement = elementIndex;
-                GetRanges(elementIndex);
-            }
-        }
-        #endregion
-
         #region SetRanges
         //********************************************
-        ///Set Range
+        ///Set Range of Selected Element#
         //********************************************
-        private void RangeSetCommand_Click(object sender, System.EventArgs e)
+        private void RangeSetCommand(int elementIndex)
         {
-            ///---------------------#Get the Selected Element#
-            int elementIndex = ElementOptions.GetActiveBtn(0);
             ///---------------------#Send Voltage Range#
             string msg;
             msg = cbVoltageRange.Text;
@@ -1728,7 +1516,6 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         }
         #endregion
 
-
         #region GetErrorInformation
         //***************************
         ///Getting Error Information
@@ -1786,7 +1573,6 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             }
         }
         #endregion
-
 
         #region Function: ReadItemSettings
         //*************************************
@@ -1856,105 +1642,29 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             buf = CutLeft("\n", ref buf);//cut left with LF.
                                          //cut off the item number(item count) portion.
             CutLeft(";", ref buf);
-
-            ///----------------------#set item settings to be display#
-            string itemBuf;
-            string element;
-            int n;
-
-            for (n = 0; n < Convert.ToInt32(ItemNumberCombo.Text); n++)
-            {
-                itemBuf = CutLeft(";", ref buf);
-                //#set function.#
-                fun_msg = CutLeft(",", ref itemBuf);
-                //************ Replace *************/
-                if (fun_msg == "PHIU" || fun_msg == "PHII" ||
-                fun_msg == "Z" || fun_msg == "RS" || fun_msg == "XS" || fun_msg == "RP" || fun_msg == "XP" ||
-                fun_msg == "UHDF" || fun_msg == "IHDF" || fun_msg == "PHDF")
-                { fun_msg = fun_msg + "K"; }
-                else if (fun_msg == "LAMB")
-                { fun_msg = "LAMBDA"; }
-                else if (fun_msg == "UPP")
-                { fun_msg = "UPPEAK"; }
-                else if (fun_msg == "UMP")
-                { fun_msg = "UMPEAK"; }
-                else if (fun_msg == "IPP")
-                { fun_msg = "IPPEAK"; }
-                else if (fun_msg == "IMP")
-                { fun_msg = "IMPEAK"; }
-                else if (fun_msg == "PPP")
-                { fun_msg = "PPPEAK"; }
-                else if (fun_msg == "PMP")
-                { fun_msg = "PMPEAK"; }
-                else if (fun_msg == "KFAC")
-                { fun_msg = "KFACTOR"; }
-                else if (fun_msg == "FPLL")
-                { fun_msg = "FPLL1"; }
-                else if (fun_msg == "SPE")
-                { fun_msg = "SPEED"; }
-                else if (fun_msg == "TORQ")
-                { fun_msg = "TORQUE"; }
-                else if (fun_msg == "SYNC")
-                { fun_msg = "SYNCSP"; }
-
-                //***********************************/
-                FCombos[n].Text = fun_msg;
-                //#set element.#     
-                FindFunPos(fun_msg, ref pos);
-                if (pos != -1)
-                {
-                    if (List[pos].ElementFlag)
-                    {
-                        ECombos[n].IsEnabled = true;
-                        ECombos[n].BackColor = SystemColors.Window;
-                        element = CutLeft(",", ref itemBuf);
-                        if (element == "SIGM")
-                        {
-                            //display "SIGMA" as "SIGM"
-                            element = "SIGMA";
-                        }
-                        ECombos[n].Text = element;
-                    }
-                    else
-                    {
-                        ECombos[n].Text = "";
-                        ECombos[n].IsEnabled = false;
-                        ECombos[n].BackColor = SystemColors.Control;
-                    }
-                }
-                pos = -1;
-                if (HarmonicOption >= 0)
-                {
-                    FindFunPos(fun_msg, ref pos);
-                    if (pos != -1)
-                    {
-                        if (List[pos].OrderFlag)
-                        {
-                            string temp_order;
-                            temp_order = CutLeft(",", ref itemBuf);
-                            if (temp_order == "TOTAL" || temp_order == "TOT")
-                            { temp_order = "Total"; }
-                            OCombos[n].IsEnabled = true;
-                            OCombos[n].BackColor = SystemColors.Window;
-                            OCombos[n].Text = temp_order;
-                        }
-                        else
-                        {
-                            OCombos[n].Text = "";
-                            OCombos[n].IsEnabled = false;
-                            OCombos[n].BackColor = SystemColors.Control;
-                        }
-                    }
-                }
-                else
-                {
-                    OCombos[n].Text = "";
-                    OCombos[n].IsEnabled = false;
-                    OCombos[n].BackColor = SystemColors.Control;
-                }
-            }
         }
         #endregion
+
+        private class FCODefine
+        {
+            public string Function { set; get; } = string.Empty;
+            public string Element { set; get; } = string.Empty;
+            public string Order { set; get; } = string.Empty;
+            public float Value { set; get; } = 0;
+        }
+
+        private List<FCODefine> ItemSettings = new List<FCODefine>()
+        {
+            new FCODefine {Function = "URMS", Element = "1", Order = ""},
+            new FCODefine {Function = "URMS", Element = "2", Order = ""},
+            new FCODefine {Function = "URMS", Element = "3", Order = ""},
+            new FCODefine {Function = "UMN",  Element = "1", Order = ""},
+            new FCODefine {Function = "UMN",  Element = "2", Order = ""},
+            new FCODefine {Function = "UMN",  Element = "3", Order = ""},
+            new FCODefine {Function = "IRMS", Element = "1", Order = ""},
+            new FCODefine {Function = "IRMS", Element = "2", Order = ""},
+            new FCODefine {Function = "IRMS", Element = "3", Order = ""},
+        };
 
         #region Function: SendItemSettings
         //********************************************
@@ -1985,7 +1695,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             }
 
             ///----------------------#set items number#
-            msg = ":NUMERIC:NORMAL:NUMBER " + ItemNumberCombo.Text;
+            msg = ":NUMERIC:NORMAL:NUMBER " + ItemSettings.Count;
             SetSendMonitor(msg);
             rtn = connection.Send(msg);
             if (rtn != 0)
@@ -1996,21 +1706,19 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
             ///----------------------#send message detail#
             msg = ":NUMERIC:NORMAL:";
-            for (int n = 0; n < Convert.ToInt32(ItemNumberCombo.Text); n++)
+            for (int n = 0; n < ItemSettings.Count; n++)
             {
                 //set function parameter into message.
-                msg = msg + "ITEM" + (n + 1).ToString() + " " + FCombos[n].Text;
+                msg = msg + "ITEM" + (n + 1).ToString() + " " + ItemSettings[n].Function;
                 //set element parameter into message.
-                if (ECombos[n].IsEnabled == true)
+                if (ItemSettings[n].Element.Length > 0)
                 {
-                    msg = msg + "," + ECombos[n].Text;
+                    msg = msg + "," + ItemSettings[n].Element;
                 }
                 //set order parameter into message, if have.
-                if (OCombos[n].IsEnabled == true)
-                    OCombos[n].BackColor = SystemColors.Window;
-                msg = msg + "," + OCombos[n].Text;
+                msg = msg + "," + ItemSettings[n].Order;
                 //set separator into message.
-                if (n != Convert.ToInt32(ItemNumberCombo.Text) - 1)
+                if (n != Convert.ToInt32(ItemSettings.Count) - 1)
                 {
                     msg = msg + ";";
                 }
@@ -2044,87 +1752,14 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             SendItemSettings();
         }
         #endregion
-
-        #region Function: SetItemsEnable
-        //********************************************
-        ///<summary>
-        ///Function: EnableItems
-        ///</summary>
-        ///<remarks>
-        ///use when getting datas continously.
-        ///set all other button disable.
-        ///</remarks>
-        //********************************************
-        private void EnableItems(bool isEnable)
-        {
-            int n;
-            int pos = 0;
-            string FuncName;
-
-            btRangeSet.IsEnabled = isEnable;
-            btSetUpdateRate.IsEnabled = isEnable;
-            cbUpdateRate.IsEnabled = isEnable;
-            //TestCmdSendCommand.IsEnabled = isEnable;
-            //ErrInfoGetCommand.IsEnabled = isEnable;
-            //HeaderCommand.IsEnabled = isEnable;
-            //AllResetCommand.IsEnabled = isEnable;
-
-            //GetAllItemsCommand.IsEnabled = isEnable;
-            //SetAllItemsCommand.IsEnabled = isEnable;
-            ItemNumberCombo.IsEnabled = isEnable;
-            ASCIIOption.IsEnabled = isEnable;
-            BINARYOption.IsEnabled = isEnable;
-
-            btRequestSingle.IsEnabled = isEnable;
-            btRequestContinue.IsEnabled = isEnable;
-            GetDataTimerCommand.IsEnabled = isEnable;
-            TimerText.IsEnabled = isEnable;
-            DataSaveCheckBox.IsEnabled = isEnable;
-            FileNameText.IsEnabled = isEnable;
-
-            for (n = 0; n < Convert.ToInt32(ItemNumberCombo.Text); n++)
-            {
-                if (isEnable == true)
-                {
-                    FuncName = FCombos[n].Text;
-                    FindFunPos(FuncName, ref pos);
-                    FCombos[n].IsEnabled = isEnable;
-                    FCombos[n].BackColor = SystemColors.Window;
-
-                    ECombos[n].IsEnabled = List[pos].ElementFlag;
-                    if (ECombos[n].IsEnabled == true)
-                    { ECombos[n].BackColor = SystemColors.Window; }
-                    else
-                    { ECombos[n].BackColor = SystemColors.Control; }
-
-                    OCombos[n].IsEnabled = List[pos].OrderFlag;
-                    if (OCombos[n].IsEnabled == true)
-                    { OCombos[n].BackColor = SystemColors.Window; }
-                    else
-                    {
-                        OCombos[n].BackColor = SystemColors.Control;
-                    }
-                }
-                else
-                {
-                    FCombos[n].IsEnabled = false;
-                    FCombos[n].BackColor = SystemColors.Control;
-                    ECombos[n].IsEnabled = false;
-                    ECombos[n].BackColor = SystemColors.Control;
-                    OCombos[n].IsEnabled = false;
-                    OCombos[n].BackColor = SystemColors.Control;
-                }
-            }
-        }
-        #endregion
-
+        
         #region OnTimer
         //*********************************
         ///<summary>
         ///Timer Event
         ///</summary>
         //*********************************
-        private void Timer1_Tick(object sender, System.EventArgs e)
+        private void Timer1_Tick(object? sender, System.EventArgs e)
         {
             string eesr = "";
             string msg = ":STATUS:EESR?";
@@ -2168,9 +1803,8 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             //----------------------#resume all#
             if (btRequestContinue.Content == "STOP")
             {
-                Timer1.IsEnabled = false;
+                Timer1.Stop();
                 btRequestContinue.Content = "Get Data   (Update Rate)";
-                EnableItems(true);
             }
             //----------------------#getting datas#
             else
@@ -2198,58 +1832,11 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 //************************************
 
                 //reset other controls' display.
-                EnableItems(false);
                 btRequestContinue.IsEnabled = true;
                 btRequestContinue.Content = "STOP";
                 //set timer interval and start getting data.
-                Timer1.IsEnabled = true;
-                Timer1.Interval = 10;
-            }
-        }
-        #endregion
-
-        #region GetDataByTimer
-        //***************************
-        ///GetData by Timer
-        //***************************
-        private void GetDataTimerCommand_Click(object sender, System.EventArgs e)
-        {
-            //----------------------#resume all#
-            if (GetDataTimerCommand.Text == "STOP")
-            {
-                Timer2.IsEnabled = false;
-                GetDataTimerCommand.Text = "Get Data (Timer)";
-                EnableItems(true);
-            }
-            //----------------------#getting datas#
-            else
-            {
-                //when timer is invalidate, show error.
-                int interval;
-                try
-                {
-                    interval = int.Parse(TimerText.Text);
-                }
-                catch (Exception)
-                {
-                    MessageBox.Show("Invalidate Timer", "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-
-                SendItemSettings();
-                //reset other controls' display.
-                EnableItems(false);
-                GetDataTimerCommand.IsEnabled = true;
-                GetDataTimerCommand.Text = "STOP";
-
-                //set timer interval and start getting datas.
-                if (interval < 20)
-                {
-                    interval = 20;
-                    TimerText.Text = interval.ToString();
-                }
-                Timer2.IsEnabled = true;
-                Timer2.Interval = interval;
+                Timer1.Start();
+                Timer1.Interval = TimeSpan.FromMilliseconds(10);
             }
         }
         #endregion
@@ -2260,9 +1847,9 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         //***************************
         private void AllResetCommand_Click(object sender, System.EventArgs e)
         {
-            DialogResult doReset =
-                MessageBox.Show("System will be All Reset, continue?", "Confirm", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
-            if (doReset == DialogResult.Cancel)
+            MessageBoxResult doReset =
+                MessageBox.Show("System will be All Reset, continue?", "Confirm", MessageBoxButton.OKCancel, MessageBoxImage.Warning);
+            if (doReset == MessageBoxResult.Cancel)
             {
                 return;
             }
@@ -2276,7 +1863,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                     DispError(connection.GetLastError());
                     return;
                 }
-                GetRanges(ElementOptions.GetActiveBtn(0));
+                GetRanges(0);
                 ReadItemSettings();
                 GetUpdateRate();
             }
@@ -2298,9 +1885,6 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             int G6 = -1;
             int MTR = -1;
             int AUX = -1;
-            ComboBox tempCombo;
-            int itemIndex;
-            int n;
 
             string opt = "";
             string msg = "*OPT?";
@@ -2332,289 +1916,6 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
             //get /AUX option 
             AUX = opt.IndexOf("AUX");
-
-            for (itemIndex = 0; itemIndex < MAX_ITEM; itemIndex++)
-            {
-                //----------------------#set function comboBoxes#
-                tempCombo = (ComboBox)FCombos[itemIndex];
-                tempCombo.Items.Clear();
-                for (n = NORMAL_FUNCTION_TOP; n <= NORMAL_FUNCTION_BOTTOM; n++)
-                {
-                    tempCombo.Items.Add(List[n].FunctionName);
-                }
-
-                //Add Harmonics funcion
-                if (G5 >= 0 || G6 >= 0)
-                {
-                    for (n = HARM_FUNCTION_TOP; n <= HARM_FUNCTION_BOTTOM; n++)
-                        if (G5 == 0 && n == 95)
-                        { }
-                        else
-                        { tempCombo.Items.Add(List[n].FunctionName); }
-                }
-                //Add Delta funcion
-                if (DT >= 0)
-                {
-                    for (n = DELTA_FUNCTION_TOP; n <= DELTA_FUNCTION_BOTTOM; n++)
-                        tempCombo.Items.Add(List[n].FunctionName);
-                }
-                //Add Motor funcion
-                if (MTR >= 0)
-                {
-                    for (n = MOTOR_FUNCTION_TOP; n <= MOTOR_FUNCTION_BOTTOM; n++)
-                        tempCombo.Items.Add(List[n].FunctionName);
-                }
-                //Add Aux funcion
-                if (AUX >= 0)
-                {
-                    for (n = AUX_FUNCTION_TOP; n <= AUX_FUNCTION_BOTTOM; n++)
-                        tempCombo.Items.Add(List[n].FunctionName);
-                }
-
-                tempCombo.SelectedIndex = 0;
-
-                //----------------------#set elememt comboBoxes#
-                tempCombo = (ComboBox)ECombos[itemIndex];
-                tempCombo.Items.Clear();
-                for (n = 0; n < lastElement; n++)
-                {
-                    tempCombo.Items.Add(eList[n]);
-                }
-
-                switch (lastElement)
-                {
-                    default:
-                    case 0:
-                    case 1:
-                        break;
-                    case 2:
-                    case 3:
-                        tempCombo.Items.Add(eList[6]);  //儼A
-                        break;
-                    case 4:
-                    case 5:
-                        tempCombo.Items.Add(eList[6]);  //儼A
-                        tempCombo.Items.Add(eList[7]);  //儼B
-                        break;
-                    case 6:
-                        tempCombo.Items.Add(eList[6]);  //儼A
-                        tempCombo.Items.Add(eList[7]);  //儼B
-                        tempCombo.Items.Add(eList[8]);  //儼C
-                        break;
-                }
-                tempCombo.SelectedIndex = 0;
-
-                //----------------------#set order comboBoxes#
-                tempCombo = (ComboBox)OCombos[itemIndex];
-                if (HarmonicOption >= 0)
-                {
-                    tempCombo.Items.Clear();
-                    tempCombo.IsEnabled = true;
-                    for (n = 0; n <= MAX_ORDER; n++)
-                    {
-                        tempCombo.Items.Add(oList[n]);
-                    }
-                }
-                else
-                {
-                    tempCombo.IsEnabled = false;
-                }
-                //----------------------#set data editBoxes#
-                DTexts[itemIndex].Text = "";
-            }
-
-        }
-        #endregion
-
-        #region SelectDataSave
-        //***************************
-        ///DataSave Box IsChecked
-        //***************************
-        private void DataSaveCheckBox_CheckedChanged(object sender, System.EventArgs e)
-        {
-            if (DataSaveCheckBox.IsChecked)
-            {
-                FileNameText.IsEnabled = true;
-            }
-            else
-            {
-                FileNameText.IsEnabled = false;
-            }
-        }
-        #endregion
-
-        #region ChangeItemsCount
-        //***************************
-        ///Items Count Changed
-        //***************************
-        private void ItemNumberCombo_SelectedIndexChanged(object sender, System.EventArgs e)
-        {
-            int n;
-            string Funbuf;
-            int Index;
-            int pos;
-            pos = -1;
-
-            //----------------------#set to ReadOnly(true/false)#
-            for (n = 0; n < Convert.ToInt32(ItemNumberCombo.Text); n++)
-            {
-                FCombos[n].IsEnabled = true;
-                FCombos[n].BackColor = SystemColors.Window;
-
-                ComboBox tempFCombo;
-                ComboBox tempECombo;
-                ComboBox tempOCombo;
-
-                Index = n;
-                tempFCombo = (ComboBox)FCombos[Index];
-                tempECombo = (ComboBox)ECombos[Index];
-                tempOCombo = (ComboBox)OCombos[Index];
-
-                Funbuf = tempFCombo.Text;
-
-                FindFunPos(Funbuf, ref pos);
-                if (pos != -1)
-                {
-                    if (List[pos].ElementFlag == true)
-                    {
-                        tempECombo.IsEnabled = true;
-                        tempECombo.BackColor = SystemColors.Window;
-                    }
-                    else
-                    {
-                        tempECombo.Text = "";
-                        tempECombo.IsEnabled = false;
-                        tempECombo.BackColor = SystemColors.Control;
-                    }
-
-                    if (HarmonicOption >= 0)
-                    {
-                        if (List[pos].OrderFlag == true)
-                        {
-                            tempOCombo.IsEnabled = true;
-                            tempOCombo.BackColor = SystemColors.Window;
-                        }
-                        else
-                        {
-                            tempOCombo.Text = "";
-                            tempOCombo.IsEnabled = false;
-                            tempOCombo.BackColor = SystemColors.Control;
-                        }
-                    }
-                    else
-                    {
-                        tempOCombo.Text = "";
-                        tempOCombo.IsEnabled = false;
-                        tempOCombo.BackColor = SystemColors.Control;
-                    }
-                }//end if (pos1!=-1)
-                DTexts[n].IsEnabled = true;
-                DTexts[n].BackColor = SystemColors.Window;
-            }
-
-            while (n < MAX_ITEM)
-            {
-                FCombos[n].IsEnabled = false;
-                FCombos[n].BackColor = SystemColors.Control;
-
-                ECombos[n].IsEnabled = false;
-                ECombos[n].BackColor = SystemColors.Control;
-
-                OCombos[n].IsEnabled = false;
-                OCombos[n].BackColor = SystemColors.Control;
-
-                DTexts[n].IsEnabled = false;
-                DTexts[n].BackColor = SystemColors.Control;
-                n++;
-            }
-        }
-        #endregion
-
-        #region ClearSendMonitor
-        //***************************
-        ///Clear Send Monitor
-        //***************************
-        private void SendClearCommand_Click(object sender, System.EventArgs e)
-        {
-            SendCmdMntText.Clear();
-        }
-        #endregion
-
-        #region ClearReceiveMonitor
-        //***************************
-        ///Clear Receive Monitor
-        //***************************
-        private void ReceiveClearCommand_Click(object sender, System.EventArgs e)
-        {
-            ReceiveMntText.Clear();
-        }
-        #endregion
-
-        #region  FCombo_TextChanged
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void FCombo_TextChanged(object sender, System.EventArgs e)
-        {
-            int Index;
-            string Funbuf;
-            int pos;
-            pos = -1;
-            ComboBox tempFCombo;
-            ComboBox tempECombo;
-            ComboBox tempOCombo;
-
-            Index = FCombos.GetIndex(sender);
-            tempFCombo = (ComboBox)FCombos[Index];
-            tempECombo = (ComboBox)ECombos[Index];
-            tempOCombo = (ComboBox)OCombos[Index];
-
-            Funbuf = tempFCombo.Text;
-
-            FindFunPos(Funbuf, ref pos);
-            if (pos >= 0)
-            {
-                if (List[pos].ElementFlag == true)
-                {
-                    tempECombo.Text = "1";
-                    tempECombo.IsEnabled = true;
-                    tempECombo.BackColor = SystemColors.Window;
-                }
-                else
-                {
-                    tempECombo.SelectedIndex = -1;
-                    tempECombo.Text = "";
-                    tempECombo.IsEnabled = false;
-                    tempECombo.BackColor = SystemColors.Control;
-                }
-
-                if (HarmonicOption >= 0)
-                {
-                    if (List[pos].OrderFlag == true)
-                    {
-                        tempOCombo.Text = "Total";
-                        tempOCombo.IsEnabled = true;
-                        tempOCombo.BackColor = SystemColors.Window;
-                    }
-                    else
-                    {
-                        tempOCombo.SelectedIndex = -1;
-                        tempOCombo.Text = "";
-                        tempOCombo.IsEnabled = false;
-                        tempOCombo.BackColor = SystemColors.Control;
-                    }
-                }
-                else
-                {
-                    tempOCombo.SelectedIndex = -1;
-                    tempOCombo.Text = "";
-                    tempOCombo.IsEnabled = false;
-                    tempOCombo.BackColor = SystemColors.Control;
-                }
-
-            }
         }
         #endregion
 

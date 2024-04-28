@@ -195,7 +195,7 @@ namespace ABBDataManagerSystem
             else
             {
                 // 对于非0值，使用 ToString 方法进行格式化，并去除末尾的零和小数点（如果有的话）  
-                var v = number.ToString($"F{x}");
+                var v = number.ToString($"Function{x}");
                 var vv = v.Split('.');
                 if (vv.Length == 2)
                 {

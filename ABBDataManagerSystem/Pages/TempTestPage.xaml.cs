@@ -614,13 +614,6 @@ namespace ABBDataManagerSystem.Pages
 
         private void mcbSelectedSlots_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            //StringBuilder stringBuilder = new StringBuilder();
-            //foreach (var item in mcbSelectedSlots.SelectedItems)
-            //{
-            //    stringBuilder.Append(item.ToString() + " ");
-            //}
-            //Growl.Warning($"选择了{mcbSelectedSlots.SelectedItems.Count} {stringBuilder.ToString()}");
-
             InitSlot();
             SelectedSlotChange = true;
         }
