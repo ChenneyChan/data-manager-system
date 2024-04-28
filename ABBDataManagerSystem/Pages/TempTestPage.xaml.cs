@@ -40,6 +40,13 @@ namespace ABBDataManagerSystem.Pages
         {
             InitializeComponent();
             InitView();
+            List<string> SlotChoices = new List<string>();
+            for (int i = 1; i < 36; i++)
+            {
+                SlotChoices.Add("通道-" + i.ToString());
+            }
+            this.DataContext = new { DataList = SlotChoices };
+            //mcbSelectedSlots.ItemsSource = SlotChoices;
         }
 
         private void InitView()
@@ -121,7 +128,7 @@ namespace ABBDataManagerSystem.Pages
                 cbSerialBoudRate.IsEnabled = false;
                 tbEthernetIP.IsEnabled = false;
                 tbEthernetPort.IsEnabled = false;
-            } 
+            }
             else
             {
                 HandleConectionTypeChange();
@@ -569,7 +576,7 @@ namespace ABBDataManagerSystem.Pages
                 {
                     cbSlotNums.SelectedIndex = index;
                 }
-            } 
+            }
         }
 
         private void SaveConfig()

@@ -72,6 +72,14 @@
                 <TextBlock Text="采集周期" Width="80" Margin="20,0" VerticalAlignment="Center"/>
                 <ComboBox Width="100" VerticalAlignment="Center" Name="cbInterval"/>
             </StackPanel>
+            <Grid Margin="0, 0,0 ,20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="通道选择" Width="80" Grid.Column="0" Margin="0, 0, 20,0"/>
+                <controls:CheckComboBox Name="mcbSelectedSlots" Grid.Column="1" ShowSelectAllButton="True" MaxWidth="380" ItemsSource="{Binding DataList}" Style="{StaticResource CheckComboBoxPlus}" HorizontalAlignment="Left" Width="400" MaxHeight="30" Height="30"/>
+            </Grid>
             <StackPanel Orientation="Horizontal" Margin="0, 0, 0, 20">
                 <Button Name="btStart" Content="开始采集" Grid.Column="0" Grid.Row="0" Click="btStart_Click" Style="{StaticResource startbutton}" Background="DodgerBlue"/>
                 <!--<DockPanel Grid.Column="1" Grid.Row="0"></DockPanel>-->
