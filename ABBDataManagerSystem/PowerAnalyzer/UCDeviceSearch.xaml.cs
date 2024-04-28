@@ -10,7 +10,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
     /// <summary>
     /// UCDeviceSearch.xaml 的交互逻辑
     /// </summary>
-    public partial class UCDeviceSearch : UserControl
+    public partial class UCDeviceSearch : Window
     {
         public UCDeviceSearch()
         {
@@ -50,10 +50,10 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
         #region CommDialogLoad
         //********************************************
-        ///CommDialogLoad
+        ///Window_Loaded
         //********************************************
 
-        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             List<string> gbibs = new List<string>() {
                 "1",
@@ -197,6 +197,18 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 //this.Visible = false; // todo
                 return;
             }
+
+            // 如下是测试代码
+            var window = new Window()
+            {
+                Width = 800,
+                Height = 600,
+                Title = "功率分析仪",
+                WindowStartupLocation = WindowStartupLocation.CenterScreen,
+            };
+            this.Close();
+            window.Content = new UCPowerAanlyzer();
+            window.ShowDialog();
             //if failed, select to try again or abort.
             //tryAgain = MessageBox.Show("Can not connect with the instrument, try again?", "Connection failed.", MessageBoxButton.OKCancel, MessageBoxImage.Error);
             return;

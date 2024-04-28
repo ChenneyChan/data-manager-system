@@ -1,6 +1,7 @@
 ﻿using ABBDataManagerSystem.Connector;
 using ABBDataManagerSystem.Pages;
 using ABBDataManagerSystem.PowerAnalyzer;
+using HandyControl.Tools.Extension;
 using MathNet.Numerics;
 using NPOI.Util.ArrayExtensions;
 using System.IO.Ports;
@@ -36,17 +37,8 @@ namespace ABBDataManagerSystem
 
         private void PowerAnalyzeTest_Click(object sender, RoutedEventArgs e)
         {
-            var window = new System.Windows.Window()
-            {
-                Title = "功率分析仪",
-                Width = 500,
-                Height = 300,
-                WindowStartupLocation = WindowStartupLocation.CenterScreen,
-                ResizeMode = ResizeMode.NoResize
-            };
             var uc = new UCDeviceSearch();
-            window.Content = uc;
-            window.ShowDialog();
+            uc.ShowDialog();
         }
 
         private void TemperatureTest_Click(object sender, RoutedEventArgs e)
