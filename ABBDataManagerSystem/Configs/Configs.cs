@@ -44,7 +44,7 @@ namespace ABBDataManagerSystem.Configs
         public static string TPIPAddress { set; get; } = string.Empty;
         public static int TPPort{ set; get; } = 0;
         public static int TPUsingSerialPort { set; get; } = 0;
-        public static int TPSlotNum { set; get; } = 0;
+        public static string TPSlots { set; get; } = string.Empty;
         public static string TPInterval { set; get; } = string.Empty;
         #endregion
 
@@ -72,7 +72,7 @@ namespace ABBDataManagerSystem.Configs
 
         public static void LoadFromFile()
         {
-            StringBuilder buff = new StringBuilder(16);
+            StringBuilder buff = new StringBuilder(128);
             GetPrivateProfileString(INIPDSerial, "SerialPort", "", buff, 16, INIPATH);
             PDSerialPort = buff.ToString();
             GetPrivateProfileString(INIPDSerial, "SerialBoudRate", "", buff, 16, INIPATH);
@@ -99,8 +99,8 @@ namespace ABBDataManagerSystem.Configs
             TPIPAddress = buff.ToString();
             GetPrivateProfileString(INITemperature, "Port", "", buff, 16, INIPATH);
             TPPort = Utils.ParseInt(buff.ToString());
-            GetPrivateProfileString(INITemperature, "SlotNum", "", buff, 16, INIPATH);
-            TPSlotNum = Utils.ParseInt(buff.ToString());
+            GetPrivateProfileString(INITemperature, "SelectedSlots", "", buff, 128, INIPATH);
+            TPSlots = buff.ToString();
             GetPrivateProfileString(INITemperature, "UsingSerialPort", "", buff, 16, INIPATH);
             TPUsingSerialPort = Utils.ParseInt(buff.ToString());
             GetPrivateProfileString(INITemperature, "Interval", "", buff, 32, INIPATH);
@@ -123,7 +123,7 @@ namespace ABBDataManagerSystem.Configs
             WritePrivateProfileString(INITemperature, "SerialBoudRate", TPSerialBoundRate, INIPATH);
             WritePrivateProfileString(INITemperature, "IPAddress", TPIPAddress, INIPATH);
             WritePrivateProfileString(INITemperature, "Port", TPPort.ToString(), INIPATH);
-            WritePrivateProfileString(INITemperature, "SlotNum", TPSlotNum.ToString(), INIPATH);
+            WritePrivateProfileString(INITemperature, "SelectedSlots", TPSlots, INIPATH);
             WritePrivateProfileString(INITemperature, "UsingSerialPort", TPUsingSerialPort.ToString(), INIPATH);
             WritePrivateProfileString(INITemperature, "Interval", TPInterval, INIPATH);
         }

@@ -1,6 +1,8 @@
 ﻿using ABBDataManagerSystem.Charts;
 using ABBDataManagerSystem.Connector;
 using ABBDataManagerSystem.Pages.Views;
+using HandyControl.Controls;
+using HandyControl.Properties;
 using Microsoft.Win32;
 using System.IO;
 using System.IO.Ports;
@@ -8,6 +10,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using MessageBox = HandyControl.Controls.MessageBox;
 
 namespace ABBDataManagerSystem.Pages
 {
@@ -16,7 +19,7 @@ namespace ABBDataManagerSystem.Pages
     /// </summary>
     public partial class TempTestPage : UserControl
     {
-        private static bool Simulate = false;
+        private static bool Simulate = true;
 
         private bool UsingSerial = true;
         private List<TemperatureSlotView> Slots = new List<TemperatureSlotView>();
@@ -30,6 +33,8 @@ namespace ABBDataManagerSystem.Pages
         private string csvFilePath = string.Empty;
 
         private StreamWriter? csvWriter = null;
+        private List<int> SelectedSlots = new List<int>();
+        private bool SelectedSlotChange = false;
 
         private TempModbusCollector? tempModbusCollector;
         private ManualResetEvent? ResetEvent = null;
@@ -41,12 +46,11 @@ namespace ABBDataManagerSystem.Pages
             InitializeComponent();
             InitView();
             List<string> SlotChoices = new List<string>();
-            for (int i = 1; i < 36; i++)
+            for (int i = 1; i <= 36; i++)
             {
                 SlotChoices.Add("通道-" + i.ToString());
             }
             this.DataContext = new { DataList = SlotChoices };
-            //mcbSelectedSlots.ItemsSource = SlotChoices;
         }
 
         private void InitView()
@@ -62,11 +66,6 @@ namespace ABBDataManagerSystem.Pages
                 "12800"
             };
             baundRates.ForEach(rate => { cbSerialBoudRate.Items.Add(rate); });
-            for (var i = 1; i < 36; i++)
-            {
-                cbSlotNums.Items.Add(i.ToString());
-            }
-            cbSlotNums.SelectedIndex = 10;
 
             var intervals = new List<string>()
             {
@@ -87,7 +86,6 @@ namespace ABBDataManagerSystem.Pages
 
             cbInterval.SelectedIndex = 1;
             cbInterval.SelectionChanged += CbInterval_SelectedIndexChanged;
-            cbSlotNums.SelectionChanged += CbSlotNum_SelectedIndexChanged;
             UpdateByConfig();
             UpdateInterval();
         }
@@ -119,8 +117,8 @@ namespace ABBDataManagerSystem.Pages
         {
             rbEthernet.IsEnabled = !IsCollecting;
             rbSerialPort.IsEnabled = !IsCollecting;
-            cbSlotNums.IsEnabled = !IsCollecting;
             cbInterval.IsEnabled = !IsCollecting;
+            mcbSelectedSlots.IsEnabled = !IsCollecting;
 
             if (IsCollecting)
             {
@@ -143,30 +141,17 @@ namespace ABBDataManagerSystem.Pages
             UpdateByConfig();
             InitSlot();
             InitChartRange();
-            tempCharts = new TempChartsNew(plotView, SlotCount, SlotCount);
+            tempCharts = new TempChartsNew(plotView, SelectedSlots);
             tempCharts.InitChart();
         }
 
-        private void CbSlotNum_SelectedIndexChanged(object? sender, RoutedEventArgs e)
-        {
-            InitSlot();
-            if (tempCharts != null)
-            {
-                tempCharts.SetEnableSlotCount(SlotCount);
-            }
-        }
 
         private void InitSlot()
         {
             SlotWrapPanel.Children.Clear();
             Slots.Clear();
-
-            if (cbSlotNums.SelectedIndex < 0 || cbSlotNums.SelectedItem == null)
-            {
-                SlotCount = 0;
-                return;
-            }
-            SlotCount = Utils.ParseInt(cbSlotNums.SelectedItem.ToString());
+            SlotCount = ProcessSelectedSlots();
+            if (SlotCount == 0) return;
             if (SlotCount >= Slots.Count)
             {
                 for (int i = Slots.Count; i < SlotCount; i++)
@@ -186,6 +171,11 @@ namespace ABBDataManagerSystem.Pages
             else
             {
                 Slots.RemoveRange(SlotCount, Slots.Count - SlotCount);
+            }
+            for (int i = 0; i < Slots.Count && i < SlotCount; i++)
+            {
+                var uc = Slots[i];
+                uc.Slot = SelectedSlots[i];
             }
             ResizeChartView();
         }
@@ -237,9 +227,11 @@ namespace ABBDataManagerSystem.Pages
                     return;
                 }
             }
-            if (tempCharts == null || tempCharts.GetMaxSlotCount() != SlotCount)
+
+            if (tempCharts == null || SelectedSlotChange)
             {
-                tempCharts = new TempChartsNew(plotView, SlotCount, SlotCount);
+                SelectedSlotChange = false;
+                tempCharts = new TempChartsNew(plotView, SelectedSlots);
                 tempCharts.InitChart();
             }
             if (needSaveCsv)
@@ -378,10 +370,9 @@ namespace ABBDataManagerSystem.Pages
 
         private void CollectDataOnce() // todo: 改成子线程读取，避免UI线程阻塞
         {
-            float[] values;
+            float[] values = new float[SlotCount];
             if (Simulate || tempModbusCollector == null)
             {
-                values = new float[SlotCount];
                 for (int i = 0; i < SlotCount; i++)
                 {
                     int value = random.Next(0, 10) + 10 * i;
@@ -391,8 +382,16 @@ namespace ABBDataManagerSystem.Pages
             else
             {
                 string msg;
-                var listValues = tempModbusCollector.ReadData(SlotCount, out msg);
-                values = listValues.ToArray();
+                int maxSelectedSlotIndex = SelectedSlots[SelectedSlots.Count - 1];
+                var listValues = tempModbusCollector.ReadData(maxSelectedSlotIndex, out msg);
+                for (int i = 0; i < SlotCount; i++)
+                {
+                    if (SelectedSlots[i] >= listValues.Count)
+                    {
+                        break;
+                    }
+                    values[i] = listValues[SelectedSlots[i]];
+                }
             }
             if (values.Length == 0)
             {
@@ -569,12 +568,16 @@ namespace ABBDataManagerSystem.Pages
                     cbInterval.SelectedIndex = index;
                 }
             }
-            if (Configs.Configs.TPSlotNum > 0)
+            if (Configs.Configs.TPSlots.Length > 0)
             {
-                int index = cbSlotNums.Items.IndexOf(Configs.Configs.TPSlotNum.ToString());
-                if (index != -1)
+                var slots = Configs.Configs.TPSlots.Split(',');
+                mcbSelectedSlots.SelectedItems.Clear();
+                foreach (var slot in slots)
                 {
-                    cbSlotNums.SelectedIndex = index;
+                    if (slot.Length > 0)
+                    {
+                        mcbSelectedSlots.SelectedItems.Add("通道-" + slot);
+                    }
                 }
             }
         }
@@ -592,7 +595,12 @@ namespace ABBDataManagerSystem.Pages
                 Configs.Configs.TPIPAddress = tbEthernetIP.Text;
                 Configs.Configs.TPPort = Utils.ParseInt(tbEthernetPort.Text);
             }
-            Configs.Configs.TPSlotNum = Utils.ParseInt(cbSlotNums.SelectedItem.ToString());
+            string slots = "";
+            foreach (var slot in SelectedSlots)
+            {
+                slots += $"{slot},";
+            }
+            Configs.Configs.TPSlots = slots;
             Configs.Configs.TPInterval = cbInterval.Text;
         }
 
@@ -602,6 +610,39 @@ namespace ABBDataManagerSystem.Pages
         private void UserControl_Unloaded(object sender, RoutedEventArgs e)
         {
             Destroy();
+        }
+
+        private void mcbSelectedSlots_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            //StringBuilder stringBuilder = new StringBuilder();
+            //foreach (var item in mcbSelectedSlots.SelectedItems)
+            //{
+            //    stringBuilder.Append(item.ToString() + " ");
+            //}
+            //Growl.Warning($"选择了{mcbSelectedSlots.SelectedItems.Count} {stringBuilder.ToString()}");
+
+            InitSlot();
+            SelectedSlotChange = true;
+        }
+
+        private int ProcessSelectedSlots()
+        {
+            if (mcbSelectedSlots.SelectedItems.Count == 0)
+            {
+                return 0;
+            }
+            SelectedSlots.Clear();
+            foreach (var item in mcbSelectedSlots.SelectedItems)
+            {
+                try
+                {
+                    var slotIndex = item.ToString().Split("-")[1];
+                    SelectedSlots.Add(Utils.ParseInt(slotIndex));
+                }
+                catch { }
+            }
+            SelectedSlots.Sort();
+            return SelectedSlots.Count;
         }
     }
 }

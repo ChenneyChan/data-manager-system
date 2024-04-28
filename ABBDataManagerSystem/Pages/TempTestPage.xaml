@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:ABBDataManagerSystem.Pages"
              xmlns:controls="https://handyorg.github.io/handycontrol" 
              mc:Ignorable="d" 
-             d:DesignHeight="594" d:DesignWidth="832" Loaded="UserControl_Loaded" Unloaded="UserControl_Unloaded">
+             d:DesignHeight="576.49" d:DesignWidth="1271.102" Loaded="UserControl_Loaded" Unloaded="UserControl_Unloaded">
     <UserControl.Resources>
         <Style TargetType="RadioButton" BasedOn="{StaticResource {x:Type RadioButton}}">
             <Setter Property="FontSize" Value="18"/>
@@ -45,48 +45,54 @@
     </UserControl.Resources>
     <Grid Margin="30,20,30,20">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="671*"/>
-            <ColumnDefinition Width="89*"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
-        <StackPanel Orientation="Vertical" Grid.ColumnSpan="2">
-            <StackPanel Orientation="Horizontal">
-                <RadioButton Content="串口" VerticalAlignment="Center" Name="rbSerialPort"/>
-                <TextBlock Text="串口" Width="40" Margin="20,0" VerticalAlignment="Center"/>
-                <ComboBox Width="120" VerticalAlignment="Center" Name="cbSerialPort"/>
-                <TextBlock Text="波特率" Width="60" Margin="20,0" VerticalAlignment="Center"/>
-                <ComboBox Width="100" VerticalAlignment="Center" Name="cbSerialBoudRate"/>
+        <Grid Grid.Row="0" Grid.Column="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="800"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Orientation="Vertical" >
+                <StackPanel Orientation="Horizontal">
+                    <RadioButton Content="串口" VerticalAlignment="Center" Name="rbSerialPort"/>
+                    <TextBlock Text="串口" Width="40" Margin="20,0" VerticalAlignment="Center"/>
+                    <ComboBox Width="120" VerticalAlignment="Center" Name="cbSerialPort"/>
+                    <TextBlock Text="波特率" Width="60" Margin="20,0" VerticalAlignment="Center"/>
+                    <ComboBox Width="100" VerticalAlignment="Center" Name="cbSerialBoudRate"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0, 20">
+                    <RadioButton Content="网口" VerticalAlignment="Center" Name="rbEthernet"/>
+                    <TextBlock Text="IP" Width="40" Margin="20,0" VerticalAlignment="Center"/>
+                    <TextBox Width="120" VerticalAlignment="Center" Name="tbEthernetIP"/>
+                    <TextBlock Text="端口号" Width="60" Margin="20,0" VerticalAlignment="Center"/>
+                    <TextBox Width="100" VerticalAlignment="Center" Name="tbEthernetPort"/>
+                    <!--<TextBlock Text="通道数" Width="60" Margin="20,0" VerticalAlignment="Center"/>
+                    <ComboBox Width="100" VerticalAlignment="Center" Name="cbSlotNums"/>-->
+                    <TextBlock Text="采集周期" Width="80" Margin="20,0" VerticalAlignment="Center"/>
+                    <ComboBox Width="100" VerticalAlignment="Center" Name="cbInterval"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0, 0, 0, 20">
+                    <Button Name="btStart" Content="开始采集" Grid.Column="0" Grid.Row="0" Click="btStart_Click" Style="{StaticResource startbutton}" Background="DodgerBlue"/>
+                    <!--<DockPanel Grid.Column="1" Grid.Row="0"></DockPanel>-->
+                    <TextBlock Text="存储到CVS路径：" VerticalAlignment="Center" Margin="20,0"/>
+                    <TextBox Grid.Column="1" Grid.Row="0" HorizontalAlignment="Stretch" MinWidth="360" Name="tbSaveFilePath" IsReadOnly="True"/>
+                </StackPanel>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="0, 20">
-                <RadioButton Content="网口" VerticalAlignment="Center" Name="rbEthernet"/>
-                <TextBlock Text="IP" Width="40" Margin="20,0" VerticalAlignment="Center"/>
-                <TextBox Width="120" VerticalAlignment="Center" Name="tbEthernetIP"/>
-                <TextBlock Text="端口号" Width="60" Margin="20,0" VerticalAlignment="Center"/>
-                <TextBox Width="100" VerticalAlignment="Center" Name="tbEthernetPort"/>
-                <TextBlock Text="通道数" Width="60" Margin="20,0" VerticalAlignment="Center"/>
-                <ComboBox Width="100" VerticalAlignment="Center" Name="cbSlotNums"/>
-                <TextBlock Text="采集周期" Width="80" Margin="20,0" VerticalAlignment="Center"/>
-                <ComboBox Width="100" VerticalAlignment="Center" Name="cbInterval"/>
+
+            <!--<TextBlock Text="通道选择" Width="80" Grid.Column="0" Margin="0, 0, 20,0"/>-->
+            <StackPanel Grid.Column="1" >
+                <controls:CheckComboBox MaxHeight="200" controls:InfoElement.ShowClearButton="True" FontSize="18"
+                                        controls:InfoElement.TitlePlacement="Top" controls:InfoElement.Placeholder="选择监视通道" controls:InfoElement.Title="通道选择" 
+                                        Name="mcbSelectedSlots" ShowSelectAllButton="True" ItemsSource="{Binding DataList}" Style="{StaticResource CheckComboBoxPlus}" 
+                                        HorizontalAlignment="Stretch" SelectionChanged="mcbSelectedSlots_SelectionChanged" VerticalAlignment="Top"/>
+
             </StackPanel>
-            <Grid Margin="0, 0,0 ,20">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <TextBlock Text="通道选择" Width="80" Grid.Column="0" Margin="0, 0, 20,0"/>
-                <controls:CheckComboBox Name="mcbSelectedSlots" Grid.Column="1" ShowSelectAllButton="True" MaxWidth="380" ItemsSource="{Binding DataList}" Style="{StaticResource CheckComboBoxPlus}" HorizontalAlignment="Left" Width="400" MaxHeight="30" Height="30"/>
-            </Grid>
-            <StackPanel Orientation="Horizontal" Margin="0, 0, 0, 20">
-                <Button Name="btStart" Content="开始采集" Grid.Column="0" Grid.Row="0" Click="btStart_Click" Style="{StaticResource startbutton}" Background="DodgerBlue"/>
-                <!--<DockPanel Grid.Column="1" Grid.Row="0"></DockPanel>-->
-                <TextBlock Text="存储到CVS路径：" VerticalAlignment="Center" Margin="20,0"/>
-                <TextBox Grid.Column="1" Grid.Row="0" HorizontalAlignment="Stretch" MinWidth="360" Name="tbSaveFilePath" IsReadOnly="True"/>
-            </StackPanel>
-        </StackPanel>
+        </Grid>
         <WrapPanel Grid.Column="0" Grid.Row="1" Name="SlotWrapPanel" Background="#FFBDCDE6" Grid.ColumnSpan="2" Margin="0,10,0,0">
             <!--<local:ProductInfo Width="50" Height="50"/>-->
         </WrapPanel>

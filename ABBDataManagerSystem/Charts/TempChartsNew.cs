@@ -13,20 +13,18 @@ namespace ABBDataManagerSystem.Charts
     {
         private readonly PlotView plot;
 
-        private PlotModel _myPlotModel;
-        private DateTimeAxis _dateAxis;
-        private LinearAxis _valueAxis;
-        private readonly int MaxSlotCount = 1;
-        private int EnableSlotCount = 1;
+        private PlotModel? _myPlotModel;
+        private DateTimeAxis? _dateAxis;
+        private LinearAxis? _valueAxis;
+        private List<int> EnabledSlots;
         private int MinutesRange = -1;
 
         private static int MAX_RECORD_COUNT = 10000;
 
-        public TempChartsNew(PlotView plot, int maxSlotCount, int enableSlotCount)
+        public TempChartsNew(PlotView plot, List<int> enabledSlots)
         {
             this.plot = plot;
-            this.MaxSlotCount = maxSlotCount;
-            this.EnableSlotCount = Math.Min(enableSlotCount, MaxSlotCount); ;
+            this.EnabledSlots = enabledSlots;
         }
 
         private Random rand = new Random();
@@ -109,15 +107,15 @@ namespace ABBDataManagerSystem.Charts
             //_myPlotModel.Series.Add(series);
             #endregion
 
-            for (int i = 0; i < MaxSlotCount; i++)
+            foreach (var slot in EnabledSlots)
             {
                 var series = new LineSeries()
                 {
                     StrokeThickness = 1,
                     MarkerSize = 2,
                     MarkerType = MarkerType.Diamond,
-                    Title = "Slot-" + (i + 1),
-                    IsVisible = i < EnableSlotCount,
+                    Title = "Slot-" + slot,
+                    IsVisible = true,
                 };
                 _myPlotModel.Series.Add(series);
             }
@@ -166,24 +164,6 @@ namespace ABBDataManagerSystem.Charts
                 LineStyle = LineStyle.Solid
             };
             _myPlotModel.Annotations.Add(lineHumiMinAnnotation);
-        }
-
-        public void SetEnableSlotCount(int enableCount)
-        {
-            this.EnableSlotCount = Math.Min(enableCount, MaxSlotCount);
-            UpdateSeriesVisible();
-        }
-
-        private void UpdateSeriesVisible()
-        {
-            if (_myPlotModel == null)
-            {
-                return;
-            }
-            for (int i = 0; i < _myPlotModel.Series.Count; i++)
-            {
-                _myPlotModel.Series[i].IsVisible = i < EnableSlotCount;
-            }
         }
 
         public void AddRecords(float[] values)
@@ -321,18 +301,14 @@ namespace ABBDataManagerSystem.Charts
             }
             _myPlotModel.InvalidatePlot(false);
         }
+
         public void ResuneAllLines()
         {
-            for (int i = 0; i < _myPlotModel.Series.Count && i < EnableSlotCount; i++)
+            for (int i = 0; i < _myPlotModel.Series.Count && i < EnabledSlots.Count; i++)
             {
                 _myPlotModel.Series[i].IsVisible = true;
             }
             _myPlotModel.InvalidatePlot(false);
-        }
-
-        public int GetMaxSlotCount()
-        {
-            return MaxSlotCount;
         }
     }
 }
