@@ -95,7 +95,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             rbGPIB.IsChecked = true;
 
             rbGPIB.Checked += RbGPIB_Checked;
-            rbUSB.Checked += RbUSB_Checked;
+            rbSerial.Checked += RbUSB_Checked;
             rbEthNet.Checked += RbEthNet_Checked;
         }
         #endregion
@@ -107,12 +107,12 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         private void RbGPIB_Checked(object sender, RoutedEventArgs e)
         {
             rbEthNet.IsChecked = false;
-            rbUSB.IsChecked = false;
+            rbSerial.IsChecked = false;
 
             cbGPIB.IsEnabled = true;
 
-            cbUSB.IsEnabled = false;
-            btSerachUSB.IsEnabled = false;
+            cbSerial.IsEnabled = false;
+            btSerachSerial.IsEnabled = false;
 
             cbIP.IsEnabled = false;
             btSerachIP.IsEnabled = false;
@@ -130,8 +130,8 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
             cbGPIB.IsEnabled = false;
 
-            cbUSB.IsEnabled = true;
-            btSerachUSB.IsEnabled = true;
+            cbSerial.IsEnabled = true;
+            btSerachSerial.IsEnabled = true;
 
             cbIP.IsEnabled = false;
             btSerachIP.IsEnabled = false;
@@ -145,12 +145,12 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         private void RbEthNet_Checked(object sender, RoutedEventArgs e)
         {
             rbGPIB.IsChecked = false;
-            rbUSB.IsChecked = false;
+            rbSerial.IsChecked = false;
 
             cbGPIB.IsEnabled = false;
 
-            cbUSB.IsEnabled = false;
-            btSerachUSB.IsEnabled = false;
+            cbSerial.IsEnabled = false;
+            btSerachSerial.IsEnabled = false;
 
             cbIP.IsEnabled = true;
             btSerachIP.IsEnabled = true;
@@ -181,10 +181,10 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 connection.devAddress = cbIP.Text;
                 connection.wireType = 8;
             }
-            else if (rbUSB.IsChecked == true)
+            else if (rbSerial.IsChecked == true)
             {
                 //when USB is selected, connect with USB port.//
-                connection.GetEncodeSerialNumber(decode, len, cbUSB.Text);
+                connection.GetEncodeSerialNumber(decode, len, cbSerial.Text);
                 connection.devAddress = decode.ToString();
                 connection.wireType = 7;
             }
@@ -219,7 +219,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         //********************************************
         ///SearchSerialNo_Click
         //********************************************
-        private void Btn_Search_SerialNo_Click(object sender, EventArgs e)
+        private void btSerachSerial_Click(object sender, RoutedEventArgs e)
         {
             DEVICELIST[] listbuff = new DEVICELIST[128];
             DEVICELIST[] list = new DEVICELIST[128];
@@ -246,21 +246,21 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 if (listindex == 1)
                 {
                     ret = tmDev.DecodeSerialNumber(decode, 256, list[0].adr);
-                    cbUSB.Items.Clear();
-                    cbUSB.Items.Add(decode.ToString());
+                    cbSerial.Items.Clear();
+                    cbSerial.Items.Add(decode.ToString());
                 }
                 else
                 {
-                    cbUSB.Items.Clear();
+                    cbSerial.Items.Clear();
                     for (n = 0; n < listindex; n++)
                     {
                         ret = tmDev.DecodeSerialNumber(decode, 256, list[n].adr);
                         if (ret == 0)
                         {
-                            cbUSB.Items.Add(decode);
+                            cbSerial.Items.Add(decode);
                         }
                     }
-                    cbUSB.SelectedIndex = 0;
+                    cbSerial.SelectedIndex = 0;
                     m_nEditOrCombo_USB = 1;
                 }
             }
@@ -275,7 +275,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         //********************************************
         ///SearchIPAddrClick
         //********************************************
-        private void Btn_Search_IPAddr_Click(object sender, EventArgs e)
+        private void btSerachIP_Click(object sender, RoutedEventArgs e)
         {
             DEVICELIST[] listbuff = new DEVICELIST[128];
             DEVICELIST[] list = new DEVICELIST[128];
@@ -321,9 +321,9 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             {
                 WritePrivateProfileString(Ini_Sec_Connect, Ini_Key_GPIB_Address, cbGPIB.Text, INIPATH);
             }
-            else if (rbUSB.IsChecked == true)
+            else if (rbSerial.IsChecked == true)
             {
-                buff = cbUSB.Text;
+                buff = cbSerial.Text;
                 WritePrivateProfileString(Ini_Sec_Connect, Ini_Key_USB_Serial, buff, INIPATH);
             }
             else if (rbEthNet.IsChecked == true)
