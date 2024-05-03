@@ -10,9 +10,9 @@ namespace ABBDataManagerSystem.PowerAnalyzer
     /// <summary>
     /// UCDeviceSearch.xaml 的交互逻辑
     /// </summary>
-    public partial class UCDeviceSearch : Window
+    public partial class PageDeviceSearch : Window
     {
-        public UCDeviceSearch()
+        public PageDeviceSearch()
         {
             InitializeComponent();
         }

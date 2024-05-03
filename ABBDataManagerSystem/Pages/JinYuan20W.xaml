@@ -3,9 +3,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:ABBDataManagerSystem.Pages"
+             xmlns:local="clr-namespace:ABBDataManagerSystem.Pages" 
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d" Loaded="UserControl_Loaded" Unloaded="UserControl_Unloaded" d:DesignHeight="594" d:DesignWidth="832">
     <UserControl.Resources>
+        <sys:Double x:Key="borderThickness">2</sys:Double>
         <Style TargetType="{x:Type GridViewColumnHeader}" BasedOn="{StaticResource {x:Type GridViewColumnHeader}}">
             <Setter Property="HorizontalContentAlignment" Value="Center" />
             <!--<Setter Property="Background" Value="#FF347071"/>-->
@@ -149,7 +151,7 @@
                 <Border Grid.Column="0" Grid.Row="0" Grid.RowSpan="6" BorderThickness="2" BorderBrush="Gray"/>
 
                 <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" BorderThickness="2" BorderBrush="Gray"/>
-                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="2" BorderThickness="2" BorderBrush="Gray"/>
+                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="2" BorderThickness="3,2,2,2" BorderBrush="Gray"/>
                 <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="3" BorderThickness="2" BorderBrush="Gray"/>
                 <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="4" BorderThickness="2" BorderBrush="Gray"/>
                 <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="5" BorderThickness="2" BorderBrush="Gray"/>

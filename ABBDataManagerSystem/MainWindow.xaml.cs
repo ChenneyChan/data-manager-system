@@ -1,20 +1,8 @@
 ﻿using ABBDataManagerSystem.Connector;
 using ABBDataManagerSystem.Pages;
 using ABBDataManagerSystem.PowerAnalyzer;
-using HandyControl.Tools.Extension;
-using MathNet.Numerics;
-using NPOI.Util.ArrayExtensions;
 using System.IO.Ports;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Window = System.Windows.Window;
 
 namespace ABBDataManagerSystem
@@ -37,13 +25,20 @@ namespace ABBDataManagerSystem
 
         private void PowerAnalyzeTest_Click(object sender, RoutedEventArgs e)
         {
-            var uc = new UCDeviceSearch();
-            uc.ShowDialog();
+            var window = new PageDeviceSearch()
+            {
+                Title = "功率分析仪",
+                Width = 500,
+                Height = 300,
+                WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                ResizeMode = ResizeMode.NoResize
+            };
+            window.ShowDialog();
         }
 
         private void TemperatureTest_Click(object sender, RoutedEventArgs e)
         {
-            var window = new System.Windows.Window()
+            var window = new Window()
             {
                 Title = "温度检测仪",
                 Width = 1200,
@@ -57,7 +52,7 @@ namespace ABBDataManagerSystem
 
         private void JnYuan20WTest_Click(object sender, RoutedEventArgs e)
         {
-            var window = new System.Windows.Window()
+            var window = new Window()
             {
                 Title = "金源20W测试仪",
                 Width = 1200,
