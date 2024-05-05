@@ -1,19 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Timers;
+﻿using HandyControl.Controls;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 using Yokogawa.Tm.WT1800CommSample.cs;
 
@@ -36,6 +23,8 @@ namespace ABBDataManagerSystem.PowerAnalyzer
     /// </summary>
     public partial class UCPowerAanlyzer : UserControl
     {
+        enum EncodeType { ASCII, BINARY }
+
 
         #region Variables
         private readonly string[] errorMsg = new string[14];
@@ -72,6 +61,8 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
         Connection connection = new Connection();
         private DispatcherTimer Timer1;
+        private EncodeType encodeType = EncodeType.ASCII;
+
         #endregion
 
         public UCPowerAanlyzer()
@@ -90,42 +81,28 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
         private void BtSetUpdateRate_Click(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            Growl.Info("暂未实现！");
         }
 
         private void BtRequestTimer_Click(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            Growl.Info("暂未实现！");
         }
 
         private void BtRequestSingle_Click(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            Growl.Info("暂未实现！");
         }
 
         private void BtRequestContinue_Click(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            Growl.Info("暂未实现！");
         }
 
-        #region FindFunPos
-        /// <summary>
-        /// find function position in the List[] arrary
-        /// </summary>
-        /// <param name="fun"></param>
-        /// <param name="postion"></param>
-        public void FindFunPos(string fun, ref int postion)
+        private void btRangeSet_Click(object sender, RoutedEventArgs e)
         {
-            for (int i = 0; i < MAX_FUNCTION; i++)
-            {
-                if (List[i].FunctionName == fun)
-                {
-                    postion = i;
-                    return;
-                }
-            }
+            RangeSetCommand(3);
         }
-        #endregion
 
         #region Function: InitListItem
         //********************************************
@@ -1138,7 +1115,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             ///----------------------#send message#
             SetSendMonitor(msg);
             //###ASCII:TmcSend(); FLOAT:TmcSendBuLength()###
-            if (ASCIIOption.IsChecked == true)
+            if (encodeType == EncodeType.ASCII)
             {
                 rtn = connection.Send(msg);
             }
@@ -1157,11 +1134,11 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             int realLength = 0;
             string data = "";
 
-            if (ASCIIOption.IsChecked == true)
+            if (encodeType == EncodeType.ASCII)
             {
                 ///----------------------#receive values by ASCII#
                 //###ASCII:TmcReceive()###
-                maxLength = 15 * Convert.ToInt32(ItemNumberCombo.Text);
+                maxLength = 15 * ItemSettings.Count;
                 rtn = connection.Receive(ref data, maxLength, ref realLength);
                 if (rtn != 0)
                 {
@@ -1601,34 +1578,32 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             ///---------#set ASCII/BINARY option#
             if (buf.IndexOf("ASC") != -1)
             {
-                ASCIIOption.IsChecked = true;
-                BINARYOption.IsChecked = false;
+                encodeType = EncodeType.ASCII;
             }
             else
             {
-                ASCIIOption.IsChecked = false;
-                BINARYOption.IsChecked = true;
+                encodeType = EncodeType.BINARY;
             }
 
             ///----------------------#get item count#
-            msg = ":NUMERIC:NORMAL:NUMBER?";
-            SetSendMonitor(msg);
-            if (!QueriesData(50, msg, ref buf))
-            {
-                return;
-            }
-            SetReceiveMonitor(buf);
-            buf = CutLeft("\n", ref buf);//cut left with LF.
+            //msg = ":NUMERIC:NORMAL:NUMBER?";
+            //SetSendMonitor(msg);
+            //if (!QueriesData(50, msg, ref buf))
+            //{
+            //    return;
+            //}
+            //SetReceiveMonitor(buf);
+            //buf = CutLeft("\n", ref buf);//cut left with LF.
 
-            ///----------------------#set item count combo#
-            if (Convert.ToInt32(buf) >= MAX_ITEM)
-            {
-                ItemNumberCombo.Text = MAX_ITEM.ToString();
-            }
-            else
-            {
-                ItemNumberCombo.Text = " " + buf;
-            }
+            /////----------------------#set item count combo#
+            //if (Convert.ToInt32(buf) >= MAX_ITEM)
+            //{
+            //    ItemNumberCombo.Text = MAX_ITEM.ToString();
+            //}
+            //else
+            //{
+            //    ItemNumberCombo.Text = " " + buf;
+            //}
 
             ///----------------------#get item settings#
             msg = ":NUMERIC:NORMAL?";
@@ -1678,7 +1653,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             int rtn;
 
             ///----------------------#set ASCII/Float(Binary)#
-            if (ASCIIOption.IsChecked == true)
+            if (encodeType == EncodeType.ASCII)
             {
                 msg = ":NUMERIC:FORMAT ASCII";
             }
@@ -1752,7 +1727,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             SendItemSettings();
         }
         #endregion
-        
+
         #region OnTimer
         //*********************************
         ///<summary>
@@ -1848,7 +1823,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         private void AllResetCommand_Click(object sender, System.EventArgs e)
         {
             MessageBoxResult doReset =
-                MessageBox.Show("System will be All Reset, continue?", "Confirm", MessageBoxButton.OKCancel, MessageBoxImage.Warning);
+                HandyControl.Controls.MessageBox.Show("System will be All Reset, continue?", "Confirm", MessageBoxButton.OKCancel, MessageBoxImage.Warning);
             if (doReset == MessageBoxResult.Cancel)
             {
                 return;
@@ -1956,5 +1931,73 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         }
         #endregion
 
+        #region GetRatios
+        //********************************************
+        ///Set Ratio of All Elements#
+        //********************************************
+        private bool GetRatios()
+        {
+            ///---------------------#Query Voltage Transformer Ratio#
+            string tem_auto = "";
+            string msg = ":INPUT:SCALING:VT?";
+            SetSendMonitor(msg);
+            if (!QueriesData(50, msg, ref tem_auto))
+            {
+                DispError(connection.GetLastError());
+                return false;
+            }
+            SetReceiveMonitor(tem_auto);
+            tem_auto = CutLeft("\n", ref tem_auto);//cut left with LF.
+            float vtRatio = Convert.ToSingle(tem_auto);
+            cbVoltageRatio.Text = vtRatio.ToString();
+
+            ///---------------------#Query Current Transformer Ratio#
+            tem_auto = "";
+            msg = ":INPUT:SCALING:CT?";
+            SetSendMonitor(msg);
+            if (!QueriesData(50, msg, ref tem_auto))
+            {
+                DispError(connection.GetLastError());
+                return false;
+            }
+            SetReceiveMonitor(tem_auto);
+            tem_auto = CutLeft("\n", ref tem_auto);//cut left with LF.
+            float ctRatio = Convert.ToSingle(tem_auto);
+            cbCurrentRatio.Text = ctRatio.ToString();
+
+            return true;
+        }
+        #endregion
+
+        #region SetRatios
+        //********************************************
+        ///Set Ratio of All Elements#
+        //********************************************
+        private void RatioSetCommand()
+        {
+            ///---------------------#Send Voltage Transformer#
+            string msg = ":INPUT:SCALING:VT:ALL " + cbVoltageRange.Text;
+            SetSendMonitor(msg);
+            int rtn = connection.Send(msg);
+            if (rtn != 0)
+            {
+                DispError(connection.GetLastError());
+                ///when setting failed, resume the original value.
+                GetRatios();
+            }
+
+            ///---------------------#Send Current Transformer#
+            msg = ":INPUT:SCALING:CT:ALL " + cbCurrentRatio.Text;
+            SetSendMonitor(msg);
+            rtn = connection.Send(msg);
+            if (rtn != 0)
+            {
+                DispError(connection.GetLastError());
+                ///when setting failed, resume the original value.
+                GetRatios();
+            }
+            GetRatios();
+        }
+        #endregion
     }
 }

@@ -37,36 +37,37 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
             <RowDefinition/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0" Orientation="Horizontal">
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Grid.ColumnSpan="2">
             <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="设备型号" VerticalAlignment="Center" Margin="0, 0, 20, 0"/>
             <TextBox HorizontalAlignment="Left" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Center" Width="120" Name="tbModelType" Margin="0, 0, 40, 0"/>
-            <RadioButton Name="ASCIIOption" Content="ASCII" VerticalAlignment="Center" Margin="0, 0, 20, 0"/>
-            <RadioButton Name="BINARYOption" Content="BINARY" VerticalAlignment="Center"/>
-        </StackPanel>
-        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0, 10, 0, 10">
-            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="电压档位" VerticalAlignment="Center" Margin="0, 0, 20, 0"/>
-            <ComboBox HorizontalAlignment="Left"  VerticalAlignment="Center" Width="120" Name="cbVoltageRange" Margin="0, 0, 40, 0"/>
-            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="元素数量" VerticalAlignment="Center" Margin="0, 0, 20, 0"/>
-            <ComboBox HorizontalAlignment="Left"  VerticalAlignment="Center" Width="120" Name="ItemNumberCombo"/>
-        </StackPanel>
-        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0, 10, 0, 10">
-            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="电流档位" VerticalAlignment="Center" Margin="0, 0, 20, 0"/>
-            <ComboBox HorizontalAlignment="Left"  VerticalAlignment="Center" Width="120" Name="cbCurrentRange" Margin="0, 0, 40, 0"/>
-            <Button Name="btRangeSet" Content="设置"/>
-        </StackPanel>
-        <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Margin="0, 10, 0, 10">
             <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="刷新频率" VerticalAlignment="Center" Margin="0, 0, 20, 0"/>
             <ComboBox HorizontalAlignment="Left"  VerticalAlignment="Center" Width="120" Name="cbUpdateRate" Margin="0, 0, 20, 0"/>
             <Button Content="设置" Width="60" Name="btSetUpdateRate"/>
         </StackPanel>
-        <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal">
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0, 10, 0, 10" Grid.ColumnSpan="2">
+            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="电压范围" VerticalAlignment="Center" Margin="0, 0, 20, 0"/>
+            <ComboBox HorizontalAlignment="Left"  VerticalAlignment="Center" Width="120" Name="cbVoltageRange" Margin="0, 0, 40, 0"/>
+            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="电流范围" VerticalAlignment="Center" Margin="0, 0, 20, 0"/>
+            <ComboBox HorizontalAlignment="Left"  VerticalAlignment="Center" Width="120" Name="cbCurrentRange" Margin="0, 0, 20, 0"/>
+            <Button Name="btRangeSet" Width="60" Content="设置" Click="btRangeSet_Click"/>
+            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="接线方式" VerticalAlignment="Center" Margin="20, 0, 20, 0"/>
+            <ComboBox HorizontalAlignment="Left"  VerticalAlignment="Center" Width="120" Name="cbWire" Margin="0, 0, 20, 0"/>
+            <Button Name="btWireSet" Width="60" Content="设置" Click="btRangeSet_Click"/>
+        </StackPanel>
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0, 10, 0, 10" Grid.ColumnSpan="2">
+            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="电压互感器" VerticalAlignment="Center" Margin="0, 0, 20, 0"/>
+            <ComboBox HorizontalAlignment="Left"  VerticalAlignment="Center" Width="120" Name="cbVoltageRatio" Margin="0, 0, 40, 0"/>
+            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="电流互感器" VerticalAlignment="Center" Margin="0, 0, 20, 0"/>
+            <ComboBox HorizontalAlignment="Left"  VerticalAlignment="Center" Width="120" Name="cbCurrentRatio" Margin="0, 0, 20, 0"/>
+            <Button Name="btRatioSet" Width="60" Content="设置"/>
+        </StackPanel>
+        <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0, 10, 0, 10">
             <Button Content="获取一次" Width="120" Name="btRequestSingle" HorizontalAlignment="Left" Margin="0, 0, 20, 0"/>
             <Button Content="持续获取" Width="120" Name="btRequestContinue" Margin="0, 0, 20, 0"/>
-            <Button Content="持续获取（定时器）" Width="180" Name="btRequestTimer" HorizontalAlignment="Right"/>
-        </StackPanel>
-        <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1">
-            <TextBox IsReadOnly="True" Name="ErrInfoText" HorizontalAlignment="Stretch" MinWidth="200"/>
+            <!--<Button Content="持续获取（定时器）" Width="180" Name="btRequestTimer" HorizontalAlignment="Right"/>-->
+            <TextBlock Name="ErrInfoText" Width="120" TextAlignment="Center" Margin="20, 0,0,0" Text=""/>
         </StackPanel>
         <DataGrid Grid.Row="3" Grid.ColumnSpan="2" Grid.RowSpan="2" Name="dataGrid"/>
     </Grid>
