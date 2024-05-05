@@ -70,7 +70,6 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             InitializeComponent();
             btRequestContinue.Click += BtRequestContinue_Click;
             btRequestSingle.Click += BtRequestSingle_Click;
-            btRequestTimer.Click += BtRequestTimer_Click;
             btSetUpdateRate.Click += BtSetUpdateRate_Click;
             InitListItem();
 
@@ -1082,6 +1081,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             if (errorID == 0)
             {
                 ErrInfoText.Text = "Getting error failed!";
+                Log.Error("Power Analyzer Error: " + ErrInfoText.Text);
                 return;
             }
             int n = 0;
@@ -1091,11 +1091,14 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             }
             //set errorMsg to display.
             ErrInfoText.Text = errorMsg[n];
+            Log.Error("Power Analyzer Error: " + ErrInfoText.Text);
         }
         private void DispError(string errorInfo)
         {
             //set errorMsg to display.
             ErrInfoText.Text = errorInfo;
+            Log.Error("Power Analyzer Error: " + ErrInfoText.Text);
+
         }
         #endregion
 
@@ -1628,17 +1631,29 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             public float Value { set; get; } = 0;
         }
 
+        /**
+         * IRMS 电流有效值
+         * URMS 电压有效值
+         * UMN  电压平均值
+         * P    功率
+         * fU   电压频率
+         */
+
         private List<FCODefine> ItemSettings = new List<FCODefine>()
         {
+            new FCODefine {Function = "IRMS", Element = "1", Order = ""},
+            new FCODefine {Function = "IRMS", Element = "2", Order = ""},
+            new FCODefine {Function = "IRMS", Element = "3", Order = ""},
             new FCODefine {Function = "URMS", Element = "1", Order = ""},
             new FCODefine {Function = "URMS", Element = "2", Order = ""},
             new FCODefine {Function = "URMS", Element = "3", Order = ""},
             new FCODefine {Function = "UMN",  Element = "1", Order = ""},
             new FCODefine {Function = "UMN",  Element = "2", Order = ""},
             new FCODefine {Function = "UMN",  Element = "3", Order = ""},
-            new FCODefine {Function = "IRMS", Element = "1", Order = ""},
-            new FCODefine {Function = "IRMS", Element = "2", Order = ""},
-            new FCODefine {Function = "IRMS", Element = "3", Order = ""},
+            new FCODefine {Function = "P", Element = "1", Order = ""},
+            new FCODefine {Function = "P", Element = "2", Order = ""},
+            new FCODefine {Function = "P", Element = "3", Order = ""},
+            new FCODefine {Function = "fU", Element = "0", Order = ""},
         };
 
         #region Function: SendItemSettings
@@ -1997,6 +2012,84 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 GetRatios();
             }
             GetRatios();
+        }
+        #endregion
+
+        #region GetWiringSystem
+        /**
+         * [:INPut]:WIRing {(P1W2|P1W3|P3W3|
+         * P3W4|V3A3)[,(P1W2|P1W3|P3W3|P3W4|
+         * V3A3)][,(P1W2|P1W3|P3W3|P3W4|V3A3)]
+         * [,(P1W2|P1W3|P3W3|P3W4|V3A3)]
+         * [,(P1W2|P1W3|P3W3)][,P1W2]}
+         * [:INPut]:WIRing?
+         * P1W2 = Single-phase, two-wire system
+         * [1P2W]
+         * P1W3 = Single-phase, three-wire
+         * system [1P3W]
+         * P3W3 = Three-phase, three-wire
+         * system [3P3W]
+         * P3W4 = Three-phase, four-wire system
+         * [3P3W]
+         * V3A3 = Three-phase, three-wire
+         * system with a three-voltage, threecurrent method
+         * [3P3W(3V3A)]
+         * 
+         * • Example for a 3-element model
+         * INPUT:WIRING P1W2,P3W3
+         * INPUT:WIRING? ->
+         * :INPUT:WIRING P1W2,P3W3
+         * INPUT:WIRING P3W4
+         * INPUT:WIRING? ->
+         * :INPUT:WIRING P3W4
+         */
+        //********************************************
+        ///Set Wiring System Config#
+        //********************************************
+        private bool GetWiringSystem()
+        {
+            cbWire.Items.Clear();
+            cbWire.Items.Add("P1W2");
+            cbWire.Items.Add("P1W3");
+            cbWire.Items.Add("P3W3");
+            cbWire.Items.Add("P3W4");
+            cbWire.Items.Add("V3A3");
+            ///---------------------#Query Wiring System#
+            string tem_auto = "";
+            string msg = ":INPUT:WIRING?";
+            SetSendMonitor(msg);
+            if (!QueriesData(50, msg, ref tem_auto))
+            {
+                DispError(connection.GetLastError());
+                return false;
+            }
+            SetReceiveMonitor(tem_auto);
+            tem_auto = CutLeft(",", ref tem_auto);//cut left with LF.
+            cbWire.Text = tem_auto;
+            return true;
+        }
+        #endregion
+
+        #region SetWiringSystem
+        //********************************************
+        ///Set Wiring System#
+        //********************************************
+        private void WiringSetCommand()
+        {
+            if (cbWire.SelectedIndex < 0)
+            {
+                return;
+            }
+            ///---------------------#Send Wiring System#
+            string msg = ":INPUT:WIRING " + cbWire.Text;
+            SetSendMonitor(msg);
+            int rtn = connection.Send(msg);
+            if (rtn != 0)
+            {
+                DispError(connection.GetLastError());
+            }
+
+            GetWiringSystem();
         }
         #endregion
     }
