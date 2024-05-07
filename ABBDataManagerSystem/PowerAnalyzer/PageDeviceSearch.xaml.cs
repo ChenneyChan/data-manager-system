@@ -167,7 +167,6 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             int len = 256;
             decode = new StringBuilder(256);
 
-
             //if (rbGPIB.IsChecked == true)
             //{
             //    //when GPIB is selected, connect with GPIB port.
@@ -201,8 +200,8 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             // 如下是测试代码
             var window = new Window()
             {
-                Width = 800,
-                Height = 600,
+                Width = 1600,
+                Height = 800,
                 Title = "功率分析仪",
                 WindowStartupLocation = WindowStartupLocation.CenterScreen,
             };

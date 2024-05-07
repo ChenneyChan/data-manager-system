@@ -26,6 +26,14 @@
         <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
             <Setter Property="FontSize" Value="16"/>
         </Style>
+        <Style x:Key="DataGridCellStyle" TargetType="{x:Type DataGridCell}" BasedOn="{StaticResource {x:Type DataGridCell}}">
+            <!--<Setter Property="Background" Value="LightBlue"/>
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="BorderBrush" Value="Black"/>
+            <Setter Property="BorderThickness" Value="1"/>-->
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
     </UserControl.Resources>
     <Grid Margin="20,20">
         <Grid.ColumnDefinitions>
@@ -42,7 +50,7 @@
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Orientation="Horizontal" Grid.ColumnSpan="2">
             <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="设备型号" VerticalAlignment="Center" Margin="0, 0, 20, 0"/>
-            <TextBox HorizontalAlignment="Left" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Center" Width="120" Name="tbModelType" Margin="0, 0, 40, 0"/>
+            <TextBox HorizontalAlignment="Left" TextWrapping="Wrap" Text="" VerticalAlignment="Center" Width="120" Name="tbModelType" Margin="0, 0, 40, 0"/>
             <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="刷新频率" VerticalAlignment="Center" Margin="0, 0, 20, 0"/>
             <ComboBox HorizontalAlignment="Left"  VerticalAlignment="Center" Width="120" Name="cbUpdateRate" Margin="0, 0, 20, 0"/>
             <Button Content="设置" Width="60" Name="btSetUpdateRate"/>
@@ -69,8 +77,27 @@
             <Button Content="持续采集" Width="120" Name="btRequestContinue" Margin="0, 0, 20, 0"/>
             <!--<Button Content="持续获取（定时器）" Width="180" Name="btRequestTimer" HorizontalAlignment="Right"/>-->
             <TextBlock Name="ErrInfoText" Width="120" TextAlignment="Center" Margin="20, 0,0,0" Text=""/>
+            <Button Content="谐波" Width="60" Name="btHarmonic" Margin="0, 0, 20, 0"/>
         </StackPanel>
-        <DataGrid Grid.Row="3" Grid.ColumnSpan="2" Grid.RowSpan="2" Name="dataGrid" ItemsSource="{Binding DataTableSource}" 
-                  FontSize="18" CanUserSortColumns="False" GridLinesVisibility="None" CanUserReorderColumns="False" CanUserResizeColumns="False" />
+        <DataGrid Grid.Row="3" Grid.RowSpan="2" Name="dataGrid" ItemsSource="{Binding DataTableSource}" 
+                  FontSize="18" CanUserSortColumns="False" GridLinesVisibility="None" CanUserReorderColumns="False" CanUserResizeColumns="False"
+                  Width="500" HorizontalAlignment="Left" MaxHeight="400" VerticalAlignment="Top" CanUserAddRows="False" CanUserDeleteRows="False" 
+                  CanUserResizeRows="False" AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="" Binding="{Binding Path=表头}" CellStyle="{StaticResource DataGridCellStyle}" />
+                <DataGridTextColumn Header="有效电压" Binding="{Binding Path=有效电压 , StringFormat='F2'}" CellStyle="{StaticResource DataGridCellStyle}" >
+                    <!--<DataGridTextColumn.CellStyle>
+                        <Style TargetType="{x:Type DataGridCell}" BasedOn="{StaticResource {x:Type DataGridCell}}">
+                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                        </Style>
+                    </DataGridTextColumn.CellStyle>-->
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="平均电压" Binding="{Binding Path=平均电压 , StringFormat='F2'}" IsReadOnly="True" CellStyle="{StaticResource DataGridCellStyle}"/>
+                <DataGridTextColumn Header="有效电流" Binding="{Binding Path=有效电流 , StringFormat='F2'}" IsReadOnly="True" CellStyle="{StaticResource DataGridCellStyle}"/>
+                <DataGridTextColumn Header="损耗" Binding="{Binding Path=损耗 , StringFormat='F2'}" CellStyle="{StaticResource DataGridCellStyle}"/>
+                <DataGridTextColumn Header="电压频率" Binding="{Binding Path=电压频率, StringFormat='F2'}" IsReadOnly="True" CellStyle="{StaticResource DataGridCellStyle}"/>
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 </UserControl>

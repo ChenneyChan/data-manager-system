@@ -59,13 +59,14 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             btRequestContinue.Click += BtRequestContinue_Click;
             btRequestSingle.Click += BtRequestSingle_Click;
             btSetUpdateRate.Click += BtSetUpdateRate_Click;
+            btHarmonic.Click += BtHarmonic_Click;
             InitListItem();
 
             Timer1 = new DispatcherTimer();
             Timer1.Tick += Timer1_Tick; // 注册 Tick 事件处理程序  
             Timer1.Interval = TimeSpan.FromSeconds(1); // 设置时间间隔为1秒  
 
-            DataTableSource.Columns.Add("", typeof(string));
+            DataTableSource.Columns.Add("表头", typeof(string));
             DataTableSource.Columns.Add("有效电压", typeof(float));
             DataTableSource.Columns.Add("平均电压", typeof(float));
             DataTableSource.Columns.Add("有效电流", typeof(float));
@@ -77,6 +78,12 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             DataTableSource.Rows.Add("Σ", 0, 0, 0, 0, "");
 
             this.DataContext = new { DataTableSource };
+        }
+
+        private void BtHarmonic_Click(object sender, RoutedEventArgs e)
+        {
+            Growl.Info("暂未实现！");
+            new HarmonicInfo { WindowStartupLocation = WindowStartupLocation.CenterScreen }.ShowDialog();
         }
 
         private void BtSetUpdateRate_Click(object sender, RoutedEventArgs e)
@@ -2136,12 +2143,6 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
         private void RefreshValueDisplay()
         {
-            //DataTableSource.Columns.Add("有效电压", typeof(float));
-            //DataTableSource.Columns.Add("平均电压", typeof(float));
-            //DataTableSource.Columns.Add("有效电流", typeof(float));
-            //DataTableSource.Columns.Add("损耗", typeof(float));
-            //DataTableSource.Columns.Add("电压频率", typeof(string));
-
             DataTableSource.Rows.Add("Σ", 0, 0, 0, 0, "");
             var rowElement1 = DataTableSource.Rows[0];
             var rowElement2 = DataTableSource.Rows[1];
