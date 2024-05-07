@@ -168,35 +168,35 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             decode = new StringBuilder(256);
 
 
-            if (rbGPIB.IsChecked == true)
-            {
-                //when GPIB is selected, connect with GPIB port.
-                connection.devAddress = cbGPIB.Text;
-                connection.wireType = 1;
-            }
-            else if (rbEthNet.IsChecked == true)
-            {
-                //when Ether is selected, connect with Ether port.
-                //set the address, username and password.
-                connection.devAddress = cbIP.Text;
-                connection.wireType = 8;
-            }
-            else if (rbSerial.IsChecked == true)
-            {
-                //when USB is selected, connect with USB port.//
-                connection.GetEncodeSerialNumber(decode, len, cbSerial.Text);
-                connection.devAddress = decode.ToString();
-                connection.wireType = 7;
-            }
-            //run connection.
-            if (connection.Initialize() == 0)
-            {
-                WriteConnectSettings();
-                //if successed, close this form and display main form.
-                //        this.Close();
-                //this.Visible = false; // todo
-                return;
-            }
+            //if (rbGPIB.IsChecked == true)
+            //{
+            //    //when GPIB is selected, connect with GPIB port.
+            //    connection.devAddress = cbGPIB.Text;
+            //    connection.wireType = 1;
+            //}
+            //else if (rbEthNet.IsChecked == true)
+            //{
+            //    //when Ether is selected, connect with Ether port.
+            //    //set the address, username and password.
+            //    connection.devAddress = cbIP.Text;
+            //    connection.wireType = 8;
+            //}
+            //else if (rbSerial.IsChecked == true)
+            //{
+            //    //when USB is selected, connect with USB port.//
+            //    connection.GetEncodeSerialNumber(decode, len, cbSerial.Text);
+            //    connection.devAddress = decode.ToString();
+            //    connection.wireType = 7;
+            //}
+            ////run connection.
+            //if (connection.Initialize() == 0)
+            //{
+            //    WriteConnectSettings();
+            //    //if successed, close this form and display main form.
+            //    //        this.Close();
+            //    //this.Visible = false; // todo
+            //    return;
+            //}
 
             // 如下是测试代码
             var window = new Window()

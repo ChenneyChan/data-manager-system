@@ -1,4 +1,6 @@
 ﻿using HandyControl.Controls;
+using NPOI.SS.Formula.Functions;
+using System.Data;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
@@ -25,6 +27,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
     {
         enum EncodeType { ASCII, BINARY }
 
+        private DataTable DataTableSource = new DataTable();
 
         #region Variables
         private readonly string[] errorMsg = new string[14];
@@ -36,21 +39,6 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         private readonly string[] oList = new string[103];         //order combo list(foreach)
         private readonly string rangeListAuto = "AUTO";            //auto range list item
         private const string MODEL = "WT1806";
-        private const int MAX_ELEMENT = 6;
-        private const int MAX_LINES = 100;
-        private const int MAX_ITEM = 10;
-        private const int MAX_FUNCTION = 119;
-        private const int MAX_ORDER = 101;
-        private const int NORMAL_FUNCTION_TOP = 0;
-        private const int NORMAL_FUNCTION_BOTTOM = 66;
-        private const int HARM_FUNCTION_TOP = 67;
-        private const int HARM_FUNCTION_BOTTOM = 100;
-        private const int DELTA_FUNCTION_TOP = 101;
-        private const int DELTA_FUNCTION_BOTTOM = 109;
-        private const int MOTOR_FUNCTION_TOP = 110;
-        private const int MOTOR_FUNCTION_BOTTOM = 116;
-        private const int AUX_FUNCTION_TOP = 117;
-        private const int AUX_FUNCTION_BOTTOM = 118;
         private int lastElement;
         private string crestFactor;
         public int Currentelement;
@@ -76,11 +64,24 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             Timer1 = new DispatcherTimer();
             Timer1.Tick += Timer1_Tick; // 注册 Tick 事件处理程序  
             Timer1.Interval = TimeSpan.FromSeconds(1); // 设置时间间隔为1秒  
+
+            DataTableSource.Columns.Add("", typeof(string));
+            DataTableSource.Columns.Add("有效电压", typeof(float));
+            DataTableSource.Columns.Add("平均电压", typeof(float));
+            DataTableSource.Columns.Add("有效电流", typeof(float));
+            DataTableSource.Columns.Add("损耗", typeof(float));
+            DataTableSource.Columns.Add("电压频率", typeof(string));
+            DataTableSource.Rows.Add("A", 0, 0, 0, 0, "50");
+            DataTableSource.Rows.Add("B", 0, 0, 0, 0, "");
+            DataTableSource.Rows.Add("C", 0, 0, 0, 0, "");
+            DataTableSource.Rows.Add("Σ", 0, 0, 0, 0, "");
+
+            this.DataContext = new { DataTableSource };
         }
 
         private void BtSetUpdateRate_Click(object sender, RoutedEventArgs e)
         {
-            Growl.Info("暂未实现！");
+            UpdateRateSetCommand_Click();
         }
 
         private void BtRequestTimer_Click(object sender, RoutedEventArgs e)
@@ -90,12 +91,23 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
         private void BtRequestSingle_Click(object sender, RoutedEventArgs e)
         {
-            Growl.Info("暂未实现！");
+            DataRow row = DataTableSource.Rows[1]; // 获取第2行  
+            row[0] = "新的值"; // 设置第3列的新值  
+            row[5] = new Random().Next() % 10 + 50 - 20;
+
+            // 如果您使用了数据绑定，并且想立即在DataGrid中看到更改  
+            // （这通常不是必要的，因为DataGrid会自动更新）  
+            // 您可以尝试调用DataGrid的InvalidateVisual或InvalidateProperty方法  
+            // 但这通常不是必要的，因为WPF的数据绑定应该会自动处理  
+
+            // dataGrid.InvalidateVisual(); // 假设dataGrid是您的DataGrid实例
+
+            GetDataSgCommand_Click();
         }
 
         private void BtRequestContinue_Click(object sender, RoutedEventArgs e)
         {
-            Growl.Info("暂未实现！");
+            GetDataURateCommand_Click();
         }
 
         private void btRangeSet_Click(object sender, RoutedEventArgs e)
@@ -957,8 +969,11 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             //initialize  Function base on  option
             GetOption();
 
-            ///get current item settings from instrument
-            ReadItemSettings();
+            // get range set for element 1
+            GetRanges(0);
+
+            // get  ratios for all elemenets
+            GetRatios();
             return;
         }
 
@@ -1207,6 +1222,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 //set display
                 ItemSettings[n].Value = Utils.ParseFloat(CutLeft(",", ref data));
             }
+            RefreshValueDisplay();
         }
         #endregion
 
@@ -1479,7 +1495,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         //********************************************
         ///Set UpdateRate
         //********************************************
-        private void UpdateRateSetCommand_Click(object sender, System.EventArgs e)
+        private void UpdateRateSetCommand_Click()
         {
             string msg;
             //Send Command.
@@ -1491,6 +1507,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 DispError(connection.GetLastError());
                 //when setting failed, resume the original value.
                 GetUpdateRate();
+                return;
             }
             GetUpdateRate();
         }
@@ -1623,39 +1640,6 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         }
         #endregion
 
-        private class FCODefine
-        {
-            public string Function { set; get; } = string.Empty;
-            public string Element { set; get; } = string.Empty;
-            public string Order { set; get; } = string.Empty;
-            public float Value { set; get; } = 0;
-        }
-
-        /**
-         * IRMS 电流有效值
-         * URMS 电压有效值
-         * UMN  电压平均值
-         * P    功率
-         * fU   电压频率
-         */
-
-        private List<FCODefine> ItemSettings = new List<FCODefine>()
-        {
-            new FCODefine {Function = "IRMS", Element = "1", Order = ""},
-            new FCODefine {Function = "IRMS", Element = "2", Order = ""},
-            new FCODefine {Function = "IRMS", Element = "3", Order = ""},
-            new FCODefine {Function = "URMS", Element = "1", Order = ""},
-            new FCODefine {Function = "URMS", Element = "2", Order = ""},
-            new FCODefine {Function = "URMS", Element = "3", Order = ""},
-            new FCODefine {Function = "UMN",  Element = "1", Order = ""},
-            new FCODefine {Function = "UMN",  Element = "2", Order = ""},
-            new FCODefine {Function = "UMN",  Element = "3", Order = ""},
-            new FCODefine {Function = "P", Element = "1", Order = ""},
-            new FCODefine {Function = "P", Element = "2", Order = ""},
-            new FCODefine {Function = "P", Element = "3", Order = ""},
-            new FCODefine {Function = "fU", Element = "0", Order = ""},
-        };
-
         #region Function: SendItemSettings
         //********************************************
         ///<summary>
@@ -1723,26 +1707,6 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         }
         #endregion
 
-        #region GetItems
-        //***************************
-        ///Read Item Settings
-        //***************************
-        private void GetAllItemsCommand_Click(object sender, System.EventArgs e)
-        {
-            ReadItemSettings();
-        }
-        #endregion
-
-        #region SetItems
-        //********************************************
-        ///Send Item Settings
-        //********************************************
-        private void SetAllItemsCommand_Click(object sender, System.EventArgs e)
-        {
-            SendItemSettings();
-        }
-        #endregion
-
         #region OnTimer
         //*********************************
         ///<summary>
@@ -1766,6 +1730,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 GetItemData();
             }
         }
+
         private void Timer2_Tick(object sender, System.EventArgs e)
         {
             GetItemData();
@@ -1777,8 +1742,9 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         //********************************************
         ///GetData Single
         //********************************************
-        private void GetDataSgCommand_Click(object sender, System.EventArgs e)
+        private void GetDataSgCommand_Click()
         {
+            SetBaseConfig();
             SendItemSettings();
             GetItemData();
         }
@@ -1788,17 +1754,18 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         //****************************************
         ///GetData by UpdateRate
         //****************************************
-        private void GetDataURateCommand_Click(object sender, System.EventArgs e)
+        private void GetDataURateCommand_Click()
         {
             //----------------------#resume all#
-            if (btRequestContinue.Content == "STOP")
+            if (btRequestContinue.Content == "停止采集")
             {
                 Timer1.Stop();
-                btRequestContinue.Content = "Get Data   (Update Rate)";
+                btRequestContinue.Content = "持续采集";
             }
             //----------------------#getting datas#
             else
             {
+                SetBaseConfig();
                 SendItemSettings();
 
                 //reset filter1.
@@ -1823,7 +1790,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
                 //reset other controls' display.
                 btRequestContinue.IsEnabled = true;
-                btRequestContinue.Content = "STOP";
+                btRequestContinue.Content = "停止采集";
                 //set timer interval and start getting data.
                 Timer1.Start();
                 Timer1.Interval = TimeSpan.FromMilliseconds(10);
@@ -2092,5 +2059,134 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             GetWiringSystem();
         }
         #endregion
+
+        #region Set Rang + Ratio + WiringSystem
+        private void SetBaseConfig()
+        {
+            RangeSetCommand(0);
+            RangeSetCommand(1);
+            RangeSetCommand(2);
+
+            RatioSetCommand();
+
+            WiringSetCommand();
+        }
+        #endregion
+
+        #region Functions Defination
+        private class FCODefine
+        {
+            public string Function { set; get; } = string.Empty;
+            public string Element { set; get; } = string.Empty;
+            public string Order { set; get; } = string.Empty;
+            public float Value { set; get; } = 0;
+        }
+
+        /**
+         * IRMS 电流有效值
+         * URMS 电压有效值
+         * UMN  电压平均值
+         * P    功率
+         * fU   电压频率
+         */
+
+        private List<FCODefine> ItemSettings = new List<FCODefine>()
+        {
+            new FCODefine {Function = "IRMS", Element = "1", Order = ""},
+            new FCODefine {Function = "IRMS", Element = "2", Order = ""},
+            new FCODefine {Function = "IRMS", Element = "3", Order = ""},
+            new FCODefine {Function = "URMS", Element = "1", Order = ""},
+            new FCODefine {Function = "URMS", Element = "2", Order = ""},
+            new FCODefine {Function = "URMS", Element = "3", Order = ""},
+            new FCODefine {Function = "UMN",  Element = "1", Order = ""},
+            new FCODefine {Function = "UMN",  Element = "2", Order = ""},
+            new FCODefine {Function = "UMN",  Element = "3", Order = ""},
+            new FCODefine {Function = "P", Element = "1", Order = ""},
+            new FCODefine {Function = "P", Element = "2", Order = ""},
+            new FCODefine {Function = "P", Element = "3", Order = ""},
+            new FCODefine {Function = "fU", Element = "0", Order = ""},
+        };
+
+        private FCODefine? GetFCO(string Function, string Element)
+        {
+            foreach (var item in ItemSettings)
+            {
+                if (item.Function == Function && item.Element == Element)
+                {
+                    return item;
+                }
+            }
+            return null;
+        }
+
+        private float GetFCOValue(string Function, string Element)
+        {
+            var fco = GetFCO(Function, Element);
+            if (fco != null) { return fco.Value; }
+            return -1;
+        }
+
+        #endregion
+
+        private static readonly int INDEX_URMS = 1;
+        private static readonly int INDEX_UMN = 2;
+        private static readonly int INDEX_IRMS = 3;
+        private static readonly int INDEX_P = 4;
+        private static readonly int INDEX_FU = 5;
+
+        private void RefreshValueDisplay()
+        {
+            //DataTableSource.Columns.Add("有效电压", typeof(float));
+            //DataTableSource.Columns.Add("平均电压", typeof(float));
+            //DataTableSource.Columns.Add("有效电流", typeof(float));
+            //DataTableSource.Columns.Add("损耗", typeof(float));
+            //DataTableSource.Columns.Add("电压频率", typeof(string));
+
+            DataTableSource.Rows.Add("Σ", 0, 0, 0, 0, "");
+            var rowElement1 = DataTableSource.Rows[0];
+            var rowElement2 = DataTableSource.Rows[1];
+            var rowElement3 = DataTableSource.Rows[2];
+            var rowMean = DataTableSource.Rows[3];
+
+            float urms1 = GetFCOValue("URMS", "1");
+            float urms2 = GetFCOValue("URMS", "2");
+            float urms3 = GetFCOValue("URMS", "3");
+
+            float irms1 = GetFCOValue("IRMS", "1");
+            float irms2 = GetFCOValue("IRMS", "2");
+            float irms3 = GetFCOValue("IRMS", "3");
+
+            float umn1 = GetFCOValue("UMN", "1");
+            float umn2 = GetFCOValue("UMN", "2");
+            float umn3 = GetFCOValue("UMN", "3");
+
+            float p1 = GetFCOValue("P", "1");
+            float p2 = GetFCOValue("P", "2");
+            float p3 = GetFCOValue("P", "3");
+
+            float fu = GetFCOValue("fU", "0");
+
+            rowElement1[INDEX_URMS] = urms1;
+            rowElement2[INDEX_URMS] = urms2;
+            rowElement3[INDEX_URMS] = urms3;
+            rowMean[INDEX_URMS] = (urms1 + urms2 + urms3) / 3;
+
+            rowElement1[INDEX_IRMS] = irms1;
+            rowElement2[INDEX_IRMS] = irms2;
+            rowElement3[INDEX_IRMS] = irms3;
+            rowMean[INDEX_IRMS] = (irms1 + irms2 + irms3) / 3;
+
+            rowElement1[INDEX_UMN] = umn1;
+            rowElement2[INDEX_UMN] = umn2;
+            rowElement3[INDEX_UMN] = umn3;
+            rowMean[INDEX_UMN] = (umn1 + umn2 + umn3) / 3;
+
+            rowElement1[INDEX_P] = p1;
+            rowElement2[INDEX_P] = p2;
+            rowElement3[INDEX_P] = p3;
+            rowMean[INDEX_P] = (p1 + p2 + p3);
+
+            rowElement1[INDEX_FU] = fu;
+        }
     }
 }
