@@ -12,7 +12,7 @@ namespace ABBDataManagerSystem.Pages
     public partial class JinYuan20W : UserControl
     {
         private JinYuan20WCollector? Collector = null;
-        private List<User> items = new List<User>();
+        private List<CurrentResistanceInfo> dataItems = new List<CurrentResistanceInfo>();
         private ObservableCollection<MyItem> items2;
         private bool IsConneted = false;
         private bool IsCollecting = false;
@@ -23,19 +23,18 @@ namespace ABBDataManagerSystem.Pages
         {
             InitializeComponent();
 
-            items.Add(new User() { Current = 101.2f, SortIndex = 42, Resistance = 222.2f });
-            items.Add(new User() { Current = 101.2f, SortIndex = 39, Resistance = 222.2f });
-            items.Add(new User() { Current = 101.2f, SortIndex = 7, Resistance = 222.2f });
-            items.Add(new User() { Current = 101.2f, SortIndex = 42, Resistance = 222.2f });
-            items.Add(new User() { Current = 101.2f, SortIndex = 39, Resistance = 222.2f });
-            items.Add(new User() { Current = 101.2f, SortIndex = 7, Resistance = 222.2f });
-            items.Add(new User() { Current = 101.2f, SortIndex = 42, Resistance = 222.2f });
-            items.Add(new User() { Current = 101.2f, SortIndex = 39, Resistance = 222.2f });
-            items.Add(new User() { Current = 101.2f, SortIndex = 7, Resistance = 222.2f });
-            items.Add(new User() { Current = 101.2f, SortIndex = 42, Resistance = 222.2f });
-            items.Add(new User() { Current = 101.2f, SortIndex = 39, Resistance = 222.2f });
-            items.Add(new User() { Current = 101.2f, SortIndex = 7, Resistance = 222.2f });
-            lvUsers.ItemsSource = items;
+            dataItems.Add(new CurrentResistanceInfo() { Current = 101.2f, SortIndex = 42, Resistance = 222.2f });
+            dataItems.Add(new CurrentResistanceInfo() { Current = 101.2f, SortIndex = 39, Resistance = 222.2f });
+            dataItems.Add(new CurrentResistanceInfo() { Current = 101.2f, SortIndex = 7, Resistance = 222.2f });
+            dataItems.Add(new CurrentResistanceInfo() { Current = 101.2f, SortIndex = 42, Resistance = 222.2f });
+            dataItems.Add(new CurrentResistanceInfo() { Current = 101.2f, SortIndex = 39, Resistance = 222.2f });
+            dataItems.Add(new CurrentResistanceInfo() { Current = 101.2f, SortIndex = 7, Resistance = 222.2f });
+            dataItems.Add(new CurrentResistanceInfo() { Current = 101.2f, SortIndex = 42, Resistance = 222.2f });
+            dataItems.Add(new CurrentResistanceInfo() { Current = 101.2f, SortIndex = 39, Resistance = 222.2f });
+            dataItems.Add(new CurrentResistanceInfo() { Current = 101.2f, SortIndex = 7, Resistance = 222.2f });
+            dataItems.Add(new CurrentResistanceInfo() { Current = 101.2f, SortIndex = 42, Resistance = 222.2f });
+            dataItems.Add(new CurrentResistanceInfo() { Current = 101.2f, SortIndex = 39, Resistance = 222.2f });
+            dataItems.Add(new CurrentResistanceInfo() { Current = 101.2f, SortIndex = 7, Resistance = 222.2f });
 
             // 数据模型
             items2 = new ObservableCollection<MyItem>
@@ -46,7 +45,7 @@ namespace ABBDataManagerSystem.Pages
             };
 
             // 数据绑定
-            this.DataContext = new { Items = items2 };
+            this.DataContext = new { Items = dataItems };
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
@@ -80,7 +79,7 @@ namespace ABBDataManagerSystem.Pages
         }
 
 
-        public class User
+        public class CurrentResistanceInfo
         {
             public float Current { get; set; }
             public int SortIndex { get; set; }
@@ -89,7 +88,7 @@ namespace ABBDataManagerSystem.Pages
 
         private void btAddRecord_Click(object sender, RoutedEventArgs e)
         {
-            items.Add(new User() { Current = 101.2f, SortIndex = 7, Resistance = 222.2f });
+            dataItems.Add(new CurrentResistanceInfo() { Current = 101.2f, SortIndex = 7, Resistance = 222.2f });
             lvUsers.Items.Refresh();
 
             items2.Add(new MyItem() { Name = "新增", Description = "这是新增的" });
@@ -103,9 +102,9 @@ namespace ABBDataManagerSystem.Pages
 
         private void btDeleteRecord_Click(object sender, RoutedEventArgs e)
         {
-            if (items.Count > 0)
+            if (dataItems.Count > 0)
             {
-                items.RemoveAt(items.Count - 1);
+                dataItems.RemoveAt(dataItems.Count - 1);
                 lvUsers.Items.Refresh();
             }
             if (items2.Count > 0)

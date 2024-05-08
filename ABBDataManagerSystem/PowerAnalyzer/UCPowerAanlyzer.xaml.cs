@@ -1690,7 +1690,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 return;
             }
 
-            ///----------------------#set items number#
+            ///----------------------#set dataItems number#
             msg = ":NUMERIC:NORMAL:NUMBER " + ItemSettings.Count;
             SetSendMonitor(msg);
             rtn = connection.Send(msg);

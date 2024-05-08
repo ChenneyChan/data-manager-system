@@ -8,12 +8,12 @@
              mc:Ignorable="d" Loaded="UserControl_Loaded" Unloaded="UserControl_Unloaded" d:DesignHeight="594" d:DesignWidth="832">
     <UserControl.Resources>
         <sys:Double x:Key="borderThickness">2</sys:Double>
-        <Style TargetType="{x:Type GridViewColumnHeader}" BasedOn="{StaticResource {x:Type GridViewColumnHeader}}">
+        <!--<Style TargetType="{x:Type GridViewColumnHeader}" BasedOn="{StaticResource {x:Type GridViewColumnHeader}}">
             <Setter Property="HorizontalContentAlignment" Value="Center" />
-            <!--<Setter Property="Background" Value="#FF347071"/>-->
-            <!--<Setter Property="Foreground" Value="White"/>-->
+            --><!--<Setter Property="Background" Value="#FF347071"/>-->
+            <!--<Setter Property="Foreground" Value="White"/>--><!--
             <Setter Property="FontSize" Value="24"/>
-        </Style>
+        </Style>-->
         <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
             <Setter Property="FontSize" Value="18"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
@@ -91,27 +91,14 @@
                 <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
-            <Grid Grid.Row="0" Grid.Column="0">
-                <!--列表分组-->
-                <ListView Name="lvUsers">
-                    <ListView.View>
-                        <GridView>
-                            <GridViewColumn Header="次数" Width="80" DisplayMemberBinding="{Binding SortIndex}" />
-                            <GridViewColumn Header="电流" Width="120" DisplayMemberBinding="{Binding Current}" />
-                            <GridViewColumn Header="电阻" Width="120" DisplayMemberBinding="{Binding Resistance}" />
-                        </GridView>
-                    </ListView.View>
-                    <ListView.GroupStyle>
-                        <GroupStyle>
-                            <GroupStyle.HeaderTemplate>
-                                <DataTemplate>
-                                    <TextBlock FontWeight="Bold" FontSize="18" Text="{Binding SortIndex}"/>
-                                </DataTemplate>
-                            </GroupStyle.HeaderTemplate>
-                        </GroupStyle>
-                    </ListView.GroupStyle>
-                </ListView>
-            </Grid>
+            <!--列表分组-->
+            <DataGrid Grid.Row="0" Grid.Column="0" Name="lvUsers" AutoGenerateColumns="False" ItemsSource="{Binding Items}" FontSize="18" CanUserAddRows="False" CanUserDeleteRows="False" CanUserSortColumns="False">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="次数" Width="80"  Binding="{Binding SortIndex}"  IsReadOnly="True"/>
+                    <DataGridTextColumn Header="电流" Width="120" Binding="{Binding Current}"    IsReadOnly="True"/>
+                    <DataGridTextColumn Header="电阻" Width="120" Binding="{Binding Resistance}" IsReadOnly="True"/>
+                </DataGrid.Columns>
+            </DataGrid>
             <Grid Grid.Column="1" Margin="20">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*"/>
