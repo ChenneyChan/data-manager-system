@@ -15,7 +15,7 @@
         <DockPanel>
             <!--停靠布局，让菜单栏和工具栏位于窗口顶部-->
             <Menu DockPanel.Dock="Top" >
-                <MenuItem Header="试验">
+                <MenuItem Header="试验" IsEnabled="False">
                     <MenuItem Header="功率分析仪" Click="PowerAnalyzeTest_Click" Name="PowerAnalyzeTest"/>
                     <MenuItem Header="温度检测仪" Click="TemperatureTest_Click"  Name="TemperatureTest"/>
                     <MenuItem Header="金源20W测试仪" Click="JnYuan20WTest_Click"  Name="JnYuan20WTest"/>
@@ -27,20 +27,20 @@
             </Menu>
             <ToolBar DockPanel.Dock="Top">
                 <!--ToolBar和StatusBar就是一个容器-->
-                <Button Content="Save"></Button>
+                <!--<Button Content="Save"></Button>
                 <Separator></Separator>
                 <Button Content="SaveAll"></Button>
                 <Separator></Separator>
                 <Button Content="FileExplorer"></Button>
+                <Separator></Separator>-->
+                <Button Content="温度测量仪" Click="TemperatureTest_Click" Visibility="Collapsed"></Button>
                 <Separator></Separator>
-                <Button Content="温度测量仪" Click="TemperatureTest_Click"></Button>
-                <Separator></Separator>
-                <Button Content="金源20W直流电阻" Click="JnYuan20WTest_Click"></Button>
+                <Button Content="金源20W直流电阻" Click="JnYuan20WTest_Click" Visibility="Collapsed"></Button>
                 <Separator></Separator>
                 <Button Content="功率分析仪" Click="PowerAnalyzeTest_Click"></Button>
             </ToolBar>
             <Grid>
-                <StackPanel Orientation="Vertical">
+                <StackPanel Orientation="Vertical" Visibility="Collapsed">
                     <Button Content="谐波" Name="btHarmonicTest" Click="btHarmonicTest_Click" Height="30" Width="120"/>
                     <Button Content="50W串口测试" Name="btStartSerialTest" Click="btStartSerialTest_Click" Height="30" Width="120"/>
                     <Button Content="温度测试" Name="btStartTempTest" Click="btStartTempTest_Click" Height="30" Width="120"/>
