@@ -99,9 +99,9 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
         private void BtRequestSingle_Click(object sender, RoutedEventArgs e)
         {
-            DataRow row = DataTableSource.Rows[1]; // 获取第2行  
-            row[0] = "新的值"; // 设置第3列的新值  
-            row[5] = new Random().Next() % 10 + 50 - 20;
+            //DataRow row = DataTableSource.Rows[1]; // 获取第2行  
+            //row[0] = "新的值"; // 设置第3列的新值  
+            //row[5] = new Random().Next() % 10 + 50 - 20;
 
             // 如果您使用了数据绑定，并且想立即在DataGrid中看到更改  
             // （这通常不是必要的，因为DataGrid会自动更新）  
@@ -121,6 +121,16 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         private void btRangeSet_Click(object sender, RoutedEventArgs e)
         {
             RangeSetCommand(3);
+        }
+
+        private void btRatioSet_Click(object sender, RoutedEventArgs e)
+        {
+            RatioSetCommand();
+        }
+
+        private void btWireSet_Click(object sender, RoutedEventArgs e)
+        {
+            WiringSetCommand();
         }
 
         #region Function: InitListItem
@@ -1078,6 +1088,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         private void SetSendMonitor(string msg)
         {
             tbSendCommand.Text += msg + "\r\n";
+            tbSendCommand.ScrollToEnd();
         }
         #endregion
 
@@ -1090,6 +1101,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         private void SetReceiveMonitor(string data)
         {
             tbReceiveMsg.Text += data + "\r\n";
+            tbSendCommand.ScrollToEnd();
         }
         #endregion
 

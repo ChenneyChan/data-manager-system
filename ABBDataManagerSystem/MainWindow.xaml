@@ -38,9 +38,11 @@
                 <Button Content="金源20W直流电阻" Click="JnYuan20WTest_Click" Visibility="Collapsed"></Button>
                 <Separator></Separator>
                 <Button Content="功率分析仪" Click="PowerAnalyzeTest_Click"></Button>
+                <Separator></Separator>
+                <Button Content="功率分析仪-不搜索" Click="PowerAnalyze2Test_Click"></Button>
             </ToolBar>
             <Grid>
-                <StackPanel Orientation="Vertical" Visibility="Collapsed">
+                <StackPanel Orientation="Vertical" Visibility="Visible">
                     <Button Content="谐波" Name="btHarmonicTest" Click="btHarmonicTest_Click" Height="30" Width="120"/>
                     <Button Content="50W串口测试" Name="btStartSerialTest" Click="btStartSerialTest_Click" Height="30" Width="120"/>
                     <Button Content="温度测试" Name="btStartTempTest" Click="btStartTempTest_Click" Height="30" Width="120"/>

@@ -251,8 +251,20 @@ namespace ABBDataManagerSystem
             new HarmonicInfo()
             {
                 Width = 1200,
-                Height = 800
+                Height = 800,
+                WindowStartupLocation = WindowStartupLocation.CenterScreen,
             }.ShowDialog();
+        }
+
+        private void PowerAnalyze2Test_Click(object sender, RoutedEventArgs e)
+        {
+            var window = new Window()
+            {
+                WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                WindowState = WindowState.Maximized
+            };
+            window.Content = new UCPowerAanlyzer();
+            window.ShowDialog();
         }
     }
 }

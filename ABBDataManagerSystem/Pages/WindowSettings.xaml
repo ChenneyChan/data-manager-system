@@ -4,26 +4,28 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ABBDataManagerSystem.Pages"
+        xmlns:hc="https://handyorg.github.io/handycontrol"
         mc:Ignorable="d"
         Title="系统设置" Height="460" Width="652" WindowStartupLocation="CenterScreen" Loaded="Window_Loaded" Closing="Window_Closing" ResizeMode="NoResize">
     <Window.Resources>
-        <Style x:Key="Label" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="15" />
+        <Style x:Key="Label" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="FontSize" Value="16" />
             <!--<Setter Property="FontWeight" Value="ExtraBold" />-->
             <Setter Property="TextAlignment" Value="Left"/>
             <Setter Property="HorizontalAlignment" Value="Right"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="Margin" Value="0,0,10,0"/>
         </Style>
-        <Style TargetType="Button">
-            <Setter Property="FontSize" Value="15"/>
+        <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="FontSize" Value="16"/>
             <!--<Setter Property="FontWeight" Value="ExtraBold" />-->
         </Style>
-        <Style TargetType="TabItem">
-            <Setter Property="FontSize" Value="15"/>
+        <Style TargetType="TabItem" BasedOn="{StaticResource {x:Type TabItem}}">
+            <Setter Property="FontSize" Value="16"/>
             <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
-        <Style TargetType="TextBox">
+        <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+            <Setter Property="FontSize" Value="16"/>
             <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
     </Window.Resources>
@@ -50,15 +52,15 @@
                         <TextBlock Text="数据库端口：" Width="120" Style="{StaticResource Label}" Margin="0,0,10,0"/>
                         <TextBox Name="tbDatabasePort" Width="220"/>
                     </StackPanel>
-                    <StackPanel Grid.Row="2" Orientation="Horizontal" Height="30" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <StackPanel Grid.Row="3" Orientation="Horizontal" Height="30" HorizontalAlignment="Center" VerticalAlignment="Center">
                         <TextBlock Text="数据库账户：" Width="120" Style="{StaticResource Label}" Margin="0,0,10,0"/>
                         <TextBox Name="tbDatabaseUserName" Width="220"/>
                     </StackPanel>
-                    <StackPanel Grid.Row="3" Orientation="Horizontal" Height="30" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <TextBlock Text="数据库密码：" Width="120" Style="{StaticResource Label}" Margin="0,0,10,0"/>
-                        <TextBox Name="tbDatabasePassword" Width="220"/>
-                    </StackPanel>
                     <StackPanel Grid.Row="4" Orientation="Horizontal" Height="30" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock Text="数据库密码：" Width="120" Style="{StaticResource Label}" Margin="0,0,10,0"/>
+                        <hc:PasswordBox Name="tbDatabasePassword" Width="220" ShowEyeButton="True" FontSize="16"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" Height="30" HorizontalAlignment="Center" VerticalAlignment="Center">
                         <TextBlock Text="数据库名称：" Width="120" Style="{StaticResource Label}" Margin="0,0,10,0"/>
                         <TextBox Name="tbDatabaseName" Width="220"/>
                     </StackPanel>

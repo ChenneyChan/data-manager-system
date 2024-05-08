@@ -30,7 +30,7 @@ namespace ABBDataManagerSystem.Pages
             tbDatabasePort.Text = Configs.Configs.Port + "";
             tbDatabaseName.Text = Configs.Configs.DatabaseName;
             tbDatabaseUserName.Text = Configs.Configs.Username;
-            tbDatabasePassword.Text = Configs.Configs.Password;
+            tbDatabasePassword.Password = Configs.Configs.Password;
             tbDatabaseIp.Text = Configs.Configs.Host;
         }
 
@@ -44,7 +44,7 @@ namespace ABBDataManagerSystem.Pages
             Configs.Configs.Port = Utils.ParseInt(tbDatabasePort.Text);
             Configs.Configs.DatabaseName = tbDatabaseName.Text;
             Configs.Configs.Username = tbDatabaseUserName.Text;
-            Configs.Configs.Password = tbDatabasePassword.Text;
+            Configs.Configs.Password = tbDatabasePassword.Password;
             Configs.Configs.Host = tbDatabaseIp.Text;
             DialogResult = true;
             Close();
