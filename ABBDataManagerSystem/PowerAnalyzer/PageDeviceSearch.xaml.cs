@@ -1,16 +1,18 @@
-﻿using System.Runtime.InteropServices;
+﻿using HandyControl.Controls;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using TmctlAPINet;
 using Yokogawa.Tm.WT1800CommSample.cs;
+using MessageBox = HandyControl.Controls.MessageBox;
 
 namespace ABBDataManagerSystem.PowerAnalyzer
 {
     /// <summary>
     /// UCDeviceSearch.xaml 的交互逻辑
     /// </summary>
-    public partial class PageDeviceSearch : Window
+    public partial class PageDeviceSearch : System.Windows.Window
     {
         public PageDeviceSearch()
         {
@@ -167,49 +169,47 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             int len = 256;
             decode = new StringBuilder(256);
 
-            //if (rbGPIB.IsChecked == true)
-            //{
-            //    //when GPIB is selected, connect with GPIB port.
-            //    connection.devAddress = cbGPIB.Text;
-            //    connection.wireType = 1;
-            //}
-            //else if (rbEthNet.IsChecked == true)
-            //{
-            //    //when Ether is selected, connect with Ether port.
-            //    //set the address, username and password.
-            //    connection.devAddress = cbIP.Text;
-            //    connection.wireType = 8;
-            //}
-            //else if (rbSerial.IsChecked == true)
-            //{
-            //    //when USB is selected, connect with USB port.//
-            //    connection.GetEncodeSerialNumber(decode, len, cbSerial.Text);
-            //    connection.devAddress = decode.ToString();
-            //    connection.wireType = 7;
-            //}
-            ////run connection.
-            //if (connection.Initialize() == 0)
-            //{
-            //    WriteConnectSettings();
-            //    //if successed, close this form and display main form.
-            //    //        this.Close();
-            //    //this.Visible = false; // todo
-            //    return;
-            //}
+            if (rbGPIB.IsChecked == true)
+            {
+                //when GPIB is selected, connect with GPIB port.
+                connection.devAddress = cbGPIB.Text;
+                connection.wireType = 1;
+            }
+            else if (rbEthNet.IsChecked == true)
+            {
+                //when Ether is selected, connect with Ether port.
+                //set the address, username and password.
+                connection.devAddress = cbIP.Text;
+                connection.wireType = 8;
+            }
+            else if (rbSerial.IsChecked == true)
+            {
+                //when USB is selected, connect with USB port.//
+                connection.GetEncodeSerialNumber(decode, len, cbSerial.Text);
+                connection.devAddress = decode.ToString();
+                connection.wireType = 7;
+            }
+            //run connection.
+            if (connection.Initialize() != 0)
+            {
+                //if fail send msg
+                Growl.Error("设备选择失败！");
+                return;
+            }
+
+            WriteConnectSettings();
+            //if successed, close this form and display main form.
 
             // 如下是测试代码
-            var window = new Window()
+            var window = new System.Windows.Window()
             {
-                Width = 1600,
-                Height = 800,
+                WindowState = System.Windows.WindowState.Maximized,
                 Title = "功率分析仪",
                 WindowStartupLocation = WindowStartupLocation.CenterScreen,
             };
             this.Close();
             window.Content = new UCPowerAanlyzer();
             window.ShowDialog();
-            //if failed, select to try again or abort.
-            //tryAgain = MessageBox.Show("Can not connect with the instrument, try again?", "Connection failed.", MessageBoxButton.OKCancel, MessageBoxImage.Error);
             return;
         }
         #endregion
@@ -241,7 +241,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             }
             if (listindex > 0)
             {
-                MessageBox.Show("Device is found", "Search Result", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("发现设备", "搜索结果", MessageBoxButton.OK, MessageBoxImage.Information);
                 if (listindex == 1)
                 {
                     ret = tmDev.DecodeSerialNumber(decode, 256, list[0].adr);
@@ -265,7 +265,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             }
             else
             {
-                MessageBox.Show("Device is not found", "Search Result", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("无法找到设备，请重试或者检查设备连接", "搜索结果", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
         #endregion
@@ -296,7 +296,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             if (listindex > 0)
             {
                 cbIP.Items.Clear();
-                MessageBox.Show("Device is found", "Search Result", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("发现设备", "搜索结果", MessageBoxButton.OK, MessageBoxImage.Information);
                 for (n = 0; n < listindex; n++)
                 {
                     cbIP.Items.Add(list[n].adr);
@@ -304,7 +304,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             }
             else
             {
-                MessageBox.Show("Device is not found", "Search Result", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("无法找到设备，请重试或者检查设备连接", "搜索结果", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
         #endregion

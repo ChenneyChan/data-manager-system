@@ -207,7 +207,7 @@ namespace ABBDataManagerSystem
                 };
                 try
                 {
-                    AppendMsg("Start Test:" );
+                    AppendMsg("Start Test:");
                     ushort startAddress = 30101;
                     byte[] start = { (byte)(startAddress >> 8 & 0xFF), (byte)(startAddress & 0x00FF) };
                     ushort count = 15;
@@ -216,7 +216,7 @@ namespace ABBDataManagerSystem
                     var crc = get_CRC16_C(packet, 0, packet.Length - 2);
                     packet[packet.Length - 2] = crc[0];
                     packet[packet.Length - 1] = crc[1];
-                    AppendMsg(crc[0].ToString("X2") + " " + crc[1].ToString("X2")) ;
+                    AppendMsg(crc[0].ToString("X2") + " " + crc[1].ToString("X2"));
                     string p = "";
                     for (int i = 0; i < packet.Length; i++)
                     {
@@ -231,7 +231,7 @@ namespace ABBDataManagerSystem
                     int len = serialPort.Read(buffer, 0, buffer.Length);
                     AppendMsg($"Read Packet len {len}");
                     p = "";
-                    for (int i =0; i < len;i++)
+                    for (int i = 0; i < len; i++)
                     {
                         p += buffer[i].ToString("x2") + " ";
                     }
@@ -244,6 +244,15 @@ namespace ABBDataManagerSystem
                     AppendMsg("Fail to process, error: " + ex.Message);
                 }
             }).Start();
+        }
+
+        private void btHarmonicTest_Click(object sender, RoutedEventArgs e)
+        {
+            new HarmonicInfo()
+            {
+                Width = 1200,
+                Height = 800
+            }.ShowDialog();
         }
     }
 }

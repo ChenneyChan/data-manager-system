@@ -1,16 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace ABBDataManagerSystem.PowerAnalyzer
 {
@@ -19,9 +8,31 @@ namespace ABBDataManagerSystem.PowerAnalyzer
     /// </summary>
     public partial class HarmonicInfo : Window
     {
+        DataTable DataTableElementA;
+
+        DataTable DataTableElementB;
+
+        DataTable DataTableElementC;
+
         public HarmonicInfo()
         {
             InitializeComponent();
+
+            DataTableElementA = new DataTable();
+            DataTableElementB = new DataTable();
+            DataTableElementC = new DataTable();
+            DataTableElementA.Columns.Add("次数", typeof(string));
+            DataTableElementA.Columns.Add("电压", typeof(float));
+            DataTableElementA.Columns.Add("电流", typeof(float));
+            DataTableElementA.Columns.Add("功率", typeof(float));
+
+            DataTableElementA.Rows.Add("Total", 0, 0, 0);
+            for (int i = 1; i <= 30; i++)
+            {
+                DataTableElementA.Rows.Add(i.ToString(), 0, 0, 0);
+            }
+
+            this.DataContext = new { DataTableElementA = DataTableElementA, DataTableElementB = DataTableElementA, DataTableElementC = DataTableElementA };
         }
     }
 }

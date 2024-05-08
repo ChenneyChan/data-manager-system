@@ -37,8 +37,8 @@
     </UserControl.Resources>
     <Grid Margin="20,20">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -76,7 +76,7 @@
             <Button Content="采集一次" Width="120" Name="btRequestSingle" HorizontalAlignment="Left" Margin="0, 0, 20, 0"/>
             <Button Content="持续采集" Width="120" Name="btRequestContinue" Margin="0, 0, 20, 0"/>
             <!--<Button Content="持续获取（定时器）" Width="180" Name="btRequestTimer" HorizontalAlignment="Right"/>-->
-            <TextBlock Name="ErrInfoText" Width="120" TextAlignment="Center" Margin="20, 0,0,0" Text=""/>
+            <TextBlock Name="ErrInfoText" Width="120" TextAlignment="Center" Margin="20, 0,0,0" Text="" Visibility="Collapsed"/>
             <Button Content="谐波" Width="60" Name="btHarmonic" Margin="0, 0, 20, 0"/>
         </StackPanel>
         <DataGrid Grid.Row="3" Grid.RowSpan="2" Name="dataGrid" ItemsSource="{Binding DataTableSource}" 
@@ -99,5 +99,17 @@
                 <DataGridTextColumn Header="电压频率" Binding="{Binding Path=电压频率, StringFormat='F2'}" IsReadOnly="True" CellStyle="{StaticResource DataGridCellStyle}"/>
             </DataGrid.Columns>
         </DataGrid>
+        <ScrollViewer Margin="10" Grid.Column="1" Grid.Row="3" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Disabled">
+            <TextBlock Text=""  Name="tbSendCommand"
+                       TextWrapping="Wrap"   HorizontalAlignment="Stretch"
+                       Padding="10" />
+        </ScrollViewer>
+        <ScrollViewer Margin="10" Grid.Column="1" Grid.Row="4" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Disabled">
+            <TextBlock Text=""  Name="tbReceiveMsg"
+                       TextWrapping="Wrap"   HorizontalAlignment="Stretch"
+                       Padding="10" />
+        </ScrollViewer>
+        <Border Grid.Column="1" Grid.Row="3" BorderThickness="1" BorderBrush="Gray" Margin="10"/>
+        <Border Grid.Column="1" Grid.Row="4" BorderThickness="1" BorderBrush="Gray" Margin="10"/>
     </Grid>
 </UserControl>

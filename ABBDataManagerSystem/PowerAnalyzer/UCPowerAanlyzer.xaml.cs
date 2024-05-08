@@ -3,6 +3,7 @@ using NPOI.SS.Formula.Functions;
 using System.Data;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Interop;
 using System.Windows.Threading;
 using Yokogawa.Tm.WT1800CommSample.cs;
 
@@ -1076,6 +1077,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         //***********************************************
         private void SetSendMonitor(string msg)
         {
+            tbSendCommand.Text += msg + "\r\n";
         }
         #endregion
 
@@ -1087,6 +1089,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         //*****************************************
         private void SetReceiveMonitor(string data)
         {
+            tbReceiveMsg.Text += data + "\r\n";
         }
         #endregion
 
