@@ -1,0 +1,280 @@
+﻿<UserControl x:Class="ABBDataManagerSystem.Pages.JinYuanJYT_A"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ABBDataManagerSystem.Pages"
+             xmlns:hc="https://handyorg.github.io/handycontrol"
+             mc:Ignorable="d" 
+             d:DesignHeight="960.433" d:DesignWidth="1068" Loaded="UserControl_Loaded" Unloaded="UserControl_Unloaded">
+    <UserControl.Resources>
+        <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="Width" Value="120"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+    </UserControl.Resources>
+    <Grid Margin="30,20,30,20">
+        <Grid.ColumnDefinitions>
+
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="60"/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0">
+            <TextBlock HorizontalAlignment="Left" Margin="0,10" TextAlignment="Center" TextWrapping="Wrap" Text="金源JYT-A变比测量仪" FontSize="24" FontWeight="Bold"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="0, 10">
+            <TextBlock Text="连接" Margin="0, 0, 10, 0" FontWeight="Bold"/>
+            <ToggleButton IsChecked="{Binding ContextMenuIsShow}" Style="{StaticResource ToggleButtonSwitch}"  Margin="0, 0, 20, 0" Name="swConnect" Checked="swConnect_CheckedChange" Unchecked="swConnect_CheckedChange">
+                <ToggleButton.Background>
+                    <SolidColorBrush Color="{DynamicResource SecondaryTextColor}"/>
+                </ToggleButton.Background>
+            </ToggleButton>
+            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" VerticalAlignment="Top">
+                <TextBlock TextWrapping="Wrap" Text="串口" VerticalAlignment="Center" Width="40" Margin="0,0,10,0"/>
+                <ComboBox Width="120" Name="cbSerialPort"/>
+            </StackPanel>
+            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" VerticalAlignment="Top">
+                <TextBlock Width="60" Text="波特率" VerticalAlignment="Center" Margin="20, 0, 10, 0"/>
+                <ComboBox Width="120"  VerticalAlignment="Center" Name="cbBoundRate" SelectedIndex="1">
+                    <ComboBoxItem Content="4800"/>
+                    <ComboBoxItem Content="9600"/>
+                    <ComboBoxItem Content="12800"/>
+                </ComboBox>
+            </StackPanel>
+
+            <!--<StackPanel HorizontalAlignment="Left" Orientation="Horizontal" VerticalAlignment="Top" Margin="10,0">
+                <CheckBox Content="高压侧" VerticalAlignment="Center" Name="cbCH1"/>
+                <Viewbox Width="10"/>
+                <ComboBox Width="100" Name="cbHVCurrents"/>
+                <Viewbox Width="10"/>
+                <CheckBox Content="低压侧" VerticalAlignment="Center" Name="cbCH2"/>
+                <Viewbox Width="10"/>
+                <ComboBox Width="100" Name="cbLVCurrents"/>
+            </StackPanel>-->
+        </StackPanel>
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,10">
+            <TextBlock Width="80" Text="测试类型" VerticalAlignment="Center" Margin="0, 0, 10, 0"/>
+            <ComboBox Name="cbTestMode" Width="120" SelectedIndex="0">
+                <ComboBoxItem Content="三相测试"/>
+                <ComboBoxItem Content="单相测试"/>
+            </ComboBox>
+            <TextBlock Width="80" Text="试验电压" VerticalAlignment="Center" Margin="20, 0, 10, 0"/>
+            <ComboBox Name="cbVoltageConfig" Width="120" SelectedIndex="0">
+                <ComboBoxItem Content="160V"/>
+                <ComboBoxItem Content="20V"/>
+            </ComboBox>
+            <TextBlock Width="120" Text="高压电压(kV)" VerticalAlignment="Center" Margin="20, 0, 10, 0"/>
+            <hc:NumericUpDown Width="120" Name="tbHighVoltage" Value="1.0" ValueFormat="N2" FontSize="18"/>
+            <TextBlock Width="120" Text="低压电压(kV)" VerticalAlignment="Center" Margin="20, 0, 10, 0"/>
+            <hc:NumericUpDown Width="120" Name="tbLowVoltage" Value="1.0" ValueFormat="N2" FontSize="18"/>
+        </StackPanel>
+        <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0, 10">
+            <TextBlock Width="80" Text="分接位置" VerticalAlignment="Center" Margin="0, 0, 10, 0"/>
+            <ComboBox Name="cbConnectionPosition" Width="120" SelectedIndex="0">
+                <ComboBoxItem Content="高压侧"/>
+                <ComboBoxItem Content="低压侧"/>
+            </ComboBox>
+            <TextBlock Width="80" Text="额定分接" VerticalAlignment="Center" Margin="20, 0, 10, 0"/>
+            <hc:NumericUpDown Width="120" Name="tbRatedConnection" Value="3" FontSize="18" Minimum="0"/>
+            <TextBlock Width="120" Text="正分接数" VerticalAlignment="Center" Margin="20, 0, 10, 0"/>
+            <hc:NumericUpDown Width="120" Name="tbPositiveConnection" Value="5" FontSize="18" Minimum="0"/>
+            <TextBlock Width="120" Text="分接间距(%)" VerticalAlignment="Center" Margin="20, 0, 10, 0"/>
+            <hc:NumericUpDown Width="120" Name="tbConnectionGap" Value="5" FontSize="18" Minimum="0" ValueFormat="N1" />
+        </StackPanel>
+        <StackPanel Grid.Row="4" Orientation="Horizontal" Margin="0, 10">
+            <TextBlock Width="140" Text="同极性显示(单相)" VerticalAlignment="Center" Margin="0, 0, 10, 0"/>
+            <ComboBox Name="cbTJX" Width="120" SelectedIndex="0">
+                <ComboBoxItem Content="负（-）"/>
+                <ComboBoxItem Content="正（+）"/>
+            </ComboBox>
+            <TextBlock Width="80" Text="联结方式" VerticalAlignment="Center" Margin="20, 0, 10, 0"/>
+            <ComboBox Name="cbConnectionMode1" Width="80" SelectedIndex="0">
+                <ComboBoxItem Content="Y"/>
+                <ComboBoxItem Content="YN"/>
+                <ComboBoxItem Content="D"/>
+                <ComboBoxItem Content="Z"/>
+                <ComboBoxItem Content="ZN"/>
+                <ComboBoxItem Content="V"/>
+                <ComboBoxItem Content="Scott"/>
+                <ComboBoxItem Content="In-Scott"/>
+            </ComboBox>
+            <TextBlock Text="-" Margin="5, 0"/>
+            <ComboBox Name="cbConnectionMode2" Width="80" SelectedIndex="0">
+                <ComboBoxItem Content="y"/>
+                <ComboBoxItem Content="yn"/>
+                <ComboBoxItem Content="d"/>
+                <ComboBoxItem Content="z"/>
+                <ComboBoxItem Content="zn"/>
+                <ComboBoxItem Content="-"/>
+            </ComboBox>
+            <TextBlock Text="-" Margin="5, 0"/>
+            <hc:NumericUpDown Width="120" Name="cbConnectionMode3" Value="0" FontSize="18" Minimum="0" ValueFormat="N1" />
+        </StackPanel>
+        <TabControl Grid.Row="5" Margin="0,20,0,10">
+            <TabItem Header="单相测试" FontSize="18" Height="40">
+                <Grid Margin="40">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0" Grid.Column="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="60"/>
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="变比" Grid.Column="0" Margin="10, 0"/>
+                        <TextBox Height="40" Grid.Column="1" IsReadOnly="True"/>
+                    </Grid>
+
+                    <Grid Grid.Row="0" Grid.Column="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="60"/>
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="误差" Grid.Column="0" Margin="10, 0"/>
+                        <TextBox Height="40" Grid.Column="1" IsReadOnly="True"/>
+                    </Grid>
+
+                    <Grid Grid.Row="1" Grid.Column="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="60"/>
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="电压" Grid.Column="0" Margin="10, 0"/>
+                        <TextBox Height="40" Grid.Column="1" IsReadOnly="True"/>
+                    </Grid>
+
+                    <Grid Grid.Row="1" Grid.Column="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="60"/>
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="电流" Grid.Column="0" Margin="10, 0"/>
+                        <TextBox Height="40" Grid.Column="1" IsReadOnly="True"/>
+                    </Grid>
+
+                    <Grid Grid.Row="1" Grid.Column="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="60"/>
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="频率" Grid.Column="0" Margin="10, 0"/>
+                        <TextBox Height="40" Grid.Column="1" IsReadOnly="True"/>
+                    </Grid>
+
+                    <Grid Grid.Row="2" Grid.Column="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="分接位" Grid.Column="0" Margin="10, 0"/>
+                        <TextBox Height="40" Grid.Column="1" IsReadOnly="True"/>
+                    </Grid>
+
+                    <Grid Grid.Row="2" Grid.Column="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="60"/>
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="极性" Grid.Column="0" Margin="10, 0"/>
+                        <TextBox Height="40" Grid.Column="1" IsReadOnly="True"/>
+                    </Grid>
+
+                    <Grid Grid.Row="3" Grid.Column="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="计算变比" Grid.Column="0" Margin="10, 0"/>
+                        <TextBox Height="40" Grid.Column="1" IsReadOnly="True"/>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="三相测试" FontSize="18" Height="40">
+                <Grid Margin="40">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="0.5*"/>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="1*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="A" FontSize="18" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBlock Text="B" FontSize="18" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBlock Text="C" FontSize="18" Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBlock Text="变比 " FontSize="20" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBlock Text="匝比 " FontSize="20" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBlock Text="误差 " FontSize="20" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBlock Text="电压 " FontSize="20" Grid.Column="0" Grid.Row="4" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBlock Text="电流 " FontSize="20" Grid.Column="0" Grid.Row="5" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBlock Text="联结方式 " FontSize="20" Grid.Column="0" Grid.Row="6" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBlock Text="计算变比 " FontSize="20" Grid.Column="0" Grid.Row="7" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBlock Text="频率 " FontSize="20" Grid.Column="2" Grid.Row="6" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBlock Text="分接位" FontSize="20" Grid.Column="2" Grid.Row="7" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <TextBox FontSize="20" Grid.Column="1" Grid.Row="1" Height="40" Margin="10, 0" IsReadOnly="True"/>
+                    <TextBox FontSize="20" Grid.Column="1" Grid.Row="2" Height="40" Margin="10, 0" IsReadOnly="True"/>
+                    <TextBox FontSize="20" Grid.Column="1" Grid.Row="3" Height="40" Margin="10, 0" IsReadOnly="True"/>
+                    <TextBox FontSize="20" Grid.Column="1" Grid.Row="4" Height="40" Margin="10, 0" IsReadOnly="True"/>
+                    <TextBox FontSize="20" Grid.Column="1" Grid.Row="5" Height="40" Margin="10, 0" IsReadOnly="True"/>
+                    <TextBox FontSize="20" Grid.Column="1" Grid.Row="6" Height="40" Margin="10, 0" IsReadOnly="True"/>
+                    <TextBox FontSize="20" Grid.Column="1" Grid.Row="7" Height="40" Margin="10, 0" IsReadOnly="True"/>
+                    <TextBox FontSize="20" Grid.Column="2" Grid.Row="1" Height="40" Margin="10, 0" IsReadOnly="True"/>
+                    <TextBox FontSize="20" Grid.Column="2" Grid.Row="2" Height="40" Margin="10, 0" IsReadOnly="True"/>
+                    <TextBox FontSize="20" Grid.Column="2" Grid.Row="3" Height="40" Margin="10, 0" IsReadOnly="True"/>
+                    <TextBox FontSize="20" Grid.Column="2" Grid.Row="4" Height="40" Margin="10, 0" IsReadOnly="True"/>
+                    <TextBox FontSize="20" Grid.Column="2" Grid.Row="5" Height="40" Margin="10, 0" IsReadOnly="True"/>
+                    <TextBox FontSize="20" Grid.Column="3" Grid.Row="1" Height="40" Margin="10, 0" IsReadOnly="True"/>
+                    <TextBox FontSize="20" Grid.Column="3" Grid.Row="2" Height="40" Margin="10, 0" IsReadOnly="True"/>
+                    <TextBox FontSize="20" Grid.Column="3" Grid.Row="3" Height="40" Margin="10, 0" IsReadOnly="True"/>
+                    <TextBox FontSize="20" Grid.Column="3" Grid.Row="4" Height="40" Margin="10, 0" IsReadOnly="True"/>
+                    <TextBox FontSize="20" Grid.Column="3" Grid.Row="5" Height="40" Margin="10, 0" IsReadOnly="True"/>
+                    <TextBox FontSize="20" Grid.Column="3" Grid.Row="6" Height="40" Margin="10, 0" IsReadOnly="True"/>
+                    <TextBox FontSize="20" Grid.Column="3" Grid.Row="7" Height="40" Margin="10, 0" IsReadOnly="True"/>
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+        <StackPanel Orientation="Horizontal" Grid.Row="6">
+            <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                <TextBox IsReadOnly="True" Name="tbDebug" VerticalContentAlignment="Top" Width="400"/>
+            </ScrollViewer>
+        </StackPanel>
+    </Grid>
+</UserControl>

@@ -266,5 +266,18 @@ namespace ABBDataManagerSystem
             window.Content = new UCPowerAanlyzer();
             window.ShowDialog();
         }
+
+        private void JinYuanJYT_A_Click(object sender, RoutedEventArgs e)
+        {
+            var window = new Window()
+            {
+                Title = "金源JYT-A",
+                Width = 1200,
+                Height = 900,
+                WindowStartupLocation = WindowStartupLocation.CenterScreen,
+            };
+            window.Content = new JinYuanJYT_A();
+            window.ShowDialog();
+        }
     }
 }
