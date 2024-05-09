@@ -81,8 +81,6 @@
             </ComboBox>
             <TextBlock Width="80" Text="试验电压" VerticalAlignment="Center" Margin="20, 0, 10, 0"/>
             <ComboBox Name="cbVoltageConfig" Width="120" SelectedIndex="0">
-                <ComboBoxItem Content="160V"/>
-                <ComboBoxItem Content="20V"/>
             </ComboBox>
             <TextBlock Width="120" Text="高压电压(kV)" VerticalAlignment="Center" Margin="20, 0, 10, 0"/>
             <hc:NumericUpDown Width="120" Name="tbHighVoltage" Value="1.0" ValueFormat="N2" FontSize="18"/>
@@ -91,9 +89,7 @@
         </StackPanel>
         <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0, 10">
             <TextBlock Width="80" Text="分接位置" VerticalAlignment="Center" Margin="0, 0, 10, 0"/>
-            <ComboBox Name="cbConnectionPosition" Width="120" SelectedIndex="0">
-                <ComboBoxItem Content="高压侧"/>
-                <ComboBoxItem Content="低压侧"/>
+            <ComboBox Name="cbTappingPoint" Width="120" SelectedIndex="0">
             </ComboBox>
             <TextBlock Width="80" Text="额定分接" VerticalAlignment="Center" Margin="20, 0, 10, 0"/>
             <hc:NumericUpDown Width="120" Name="tbRatedConnection" Value="3" FontSize="18" Minimum="0"/>
@@ -104,32 +100,16 @@
         </StackPanel>
         <StackPanel Grid.Row="4" Orientation="Horizontal" Margin="0, 10">
             <TextBlock Width="140" Text="同极性显示(单相)" VerticalAlignment="Center" Margin="0, 0, 10, 0"/>
-            <ComboBox Name="cbTJX" Width="120" SelectedIndex="0">
-                <ComboBoxItem Content="负（-）"/>
-                <ComboBoxItem Content="正（+）"/>
+            <ComboBox Name="cbHomopolarityDisplay" Width="120" SelectedIndex="0">
             </ComboBox>
             <TextBlock Width="80" Text="联结方式" VerticalAlignment="Center" Margin="20, 0, 10, 0"/>
-            <ComboBox Name="cbConnectionMode1" Width="80" SelectedIndex="0">
-                <ComboBoxItem Content="Y"/>
-                <ComboBoxItem Content="YN"/>
-                <ComboBoxItem Content="D"/>
-                <ComboBoxItem Content="Z"/>
-                <ComboBoxItem Content="ZN"/>
-                <ComboBoxItem Content="V"/>
-                <ComboBoxItem Content="Scott"/>
-                <ComboBoxItem Content="In-Scott"/>
+            <ComboBox Name="cbHighVoltageConnection" Width="80" SelectedIndex="0">
             </ComboBox>
             <TextBlock Text="-" Margin="5, 0"/>
-            <ComboBox Name="cbConnectionMode2" Width="80" SelectedIndex="0">
-                <ComboBoxItem Content="y"/>
-                <ComboBoxItem Content="yn"/>
-                <ComboBoxItem Content="d"/>
-                <ComboBoxItem Content="z"/>
-                <ComboBoxItem Content="zn"/>
-                <ComboBoxItem Content="-"/>
+            <ComboBox Name="cbLowVoltageConnection" Width="80" SelectedIndex="0">
             </ComboBox>
             <TextBlock Text="-" Margin="5, 0"/>
-            <hc:NumericUpDown Width="120" Name="cbConnectionMode3" Value="0" FontSize="18" Minimum="0" ValueFormat="N1" />
+            <hc:NumericUpDown Width="120" Name="tbGroup" Value="0" FontSize="18" Minimum="0" Maximum="11"/>
         </StackPanel>
         <TabControl Grid.Row="5" Margin="0,20,0,10">
             <TabItem Header="单相测试" FontSize="18" Height="40">
