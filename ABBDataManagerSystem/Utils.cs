@@ -232,5 +232,20 @@ namespace ABBDataManagerSystem
             }
             return s;
         }
+
+        public static void FloatToBytes(float value, byte[]buf, byte placeholder = 0x20)
+        {
+            string str = FloatFormat(value);
+            var chars = str.ToCharArray();
+            if (chars.Length > buf.Length)
+            {
+                return;
+            }
+            Array.Copy(chars, 0, buf, buf.Length - chars.Length, chars.Length);
+            for (int i = 0; i < buf.Length - chars.Length; i++)
+            {
+                buf[i] = placeholder;
+            }
+        }
     }
 }

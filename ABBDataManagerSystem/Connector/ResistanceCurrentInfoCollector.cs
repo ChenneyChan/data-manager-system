@@ -18,6 +18,10 @@ namespace ABBDataManagerSystem.Connector
 
         public byte[] DeviceAddress { set; get; } = { 0x3E, 0x3E };
 
+        public short SendLenByteCount { set; get; } = 2;
+        
+        public short RspLenByteCount {  set; get; } = 2;
+
         public ResistanceCurrentInfoCollector(string portName, int baudRate = 9600)
         {
             serialPort = new SerialPort(portName, baudRate, Parity.None, 8, StopBits.One)
@@ -119,10 +123,13 @@ namespace ABBDataManagerSystem.Connector
                 // 检查报文头和尾
                 if (buffer[0] == 0x7E && buffer[bytesRead - 1] == 0x0D)
                 {
+                    int startOffset = 1 + 2 + RspLenByteCount;
+                    int footerOffset = 2;
+
                     // 获取数据部分
-                    int dataLength = bytesRead - 7; // 7 bytes for header, address, length, checksum, and footer
+                    int dataLength = bytesRead - startOffset - footerOffset; // for header, address, length, checksum, and footer
                     byte[] data = new byte[dataLength];
-                    Array.Copy(buffer, 5, data, 0, dataLength); // 从第6个字节开始是数据部分
+                    Array.Copy(buffer, startOffset, data, 0, dataLength); // 从第6个字节开始是数据部分
                                                                 // 返回数据部分，不包括报文头和尾
                     return data;
                 }
