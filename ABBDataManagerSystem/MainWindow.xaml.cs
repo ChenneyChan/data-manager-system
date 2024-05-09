@@ -232,7 +232,7 @@ namespace ABBDataManagerSystem
                     AppendMsg("Send Done");
                     byte[] buffer = new byte[1024];
                     int len = serialPort.Read(buffer, 0, buffer.Length);
-                    AppendMsg($"Read Packet len {len}");
+                    AppendMsg($"Read Packet SinglePhaseCmdLen {len}");
                     p = "";
                     for (int i = 0; i < len; i++)
                     {

@@ -60,7 +60,7 @@ namespace ABBDataManagerSystem.Connector
             }
             catch (Exception ex)
             {
-                Log.Error("Fail to write resistance command packet: " + ex.Message);
+                Log.Error("Fail to write resistance command SinglePhaseCmdPacket: " + ex.Message);
             }
         }
 
@@ -112,7 +112,7 @@ namespace ABBDataManagerSystem.Connector
             }
             catch (Exception ex)
             {
-                Log.Error("Fail to read resistance packet: " + ex.Message);
+                Log.Error("Fail to read resistance SinglePhaseCmdPacket: " + ex.Message);
                 return null;
             }
 
@@ -135,7 +135,7 @@ namespace ABBDataManagerSystem.Connector
                 }
                 else
                 {
-                    Log.Error("ResistanceCurrentInfoCollector: Invalid packet format.");
+                    Log.Error("ResistanceCurrentInfoCollector: Invalid SinglePhaseCmdPacket format.");
                 }
             }
             return null;

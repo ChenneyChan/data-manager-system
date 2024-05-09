@@ -18,7 +18,77 @@ namespace ABBDataManagerSystem.Connector
             ThreePhaseAutoTest,
         }
 
+        // 分接位置
+        public enum TappingPointType
+        {
+            HighVoltage,
+            LowVoltage,
+        }
 
+        public enum HomopolarityDisplayType
+        {
+            Positive,
+            Negtive,
+        }
+
+        public enum TestVoltageType
+        {
+            Voltage160V,
+            Voltage20V,
+        }
+
+        public enum HighVoltageConnectionType
+        {
+            Type_Y,
+            Type_YN,
+            Type_D,
+            Type_Z,
+            Type_ZN,
+            Type_V,
+            Type_SCOTT,
+            Type_IN_SCOTT,
+        }
+
+        public enum LowVoltageConnectionType
+        {
+            //y - 30H  yn – 31H  d – 32H  z - 33H   zn – 34H  
+            // v-35H  Scott-36H  In-Scott-37H  空-38H
+
+            Type_Y,
+            Type_YN,
+            Type_D,
+            Type_Z,
+            Type_ZN,
+            Type_V,
+            Type_SCOTT,
+            Type_IN_SCOTT,
+            Type_NULL,
+        }
+
+        public enum DeviceState
+        {
+            Initial,
+            SelfeCheck,
+            MainMenu,
+        }
+
+        public enum TipInfoType
+        {
+            Null,
+            Testing,
+            TestDone,
+            TestError,
+        }
+
+        public enum PowerInfoType
+        {
+            Full,
+            Percent75,
+            Percent50,
+            Percent25,
+            Percent0,
+            ExternalPower,
+        }
 
         public static int Interval = 400; // 每400ms发送一次寻机指令，从机返回数据
 
@@ -26,10 +96,51 @@ namespace ABBDataManagerSystem.Connector
 
         private TestTypeJYTA _TestType = TestTypeJYTA.SinglePhaseTest;
 
+        public DeviceState deviceState = DeviceState.MainMenu;
+
         public TestTypeJYTA TestType { get { return _TestType; } set { _TestType = value; IsConfigChanged = true; } }
 
-        private bool IsConfigChanged = false;
+        private TappingPointType _TappingPoint;
 
+        public TappingPointType TappingPoint
+        {
+            get { return _TappingPoint; }
+            set { _TappingPoint = value; }
+        }
+
+        private HomopolarityDisplayType _HomopolarityDisplayType;
+
+        public HomopolarityDisplayType HomopolarityDisplay
+        {
+            get { return _HomopolarityDisplayType; }
+            set { _HomopolarityDisplayType = value; }
+        }
+
+        private TestVoltageType _TestVoltageType;
+
+        public TestVoltageType TestVoltage
+        {
+            get { return _TestVoltageType; }
+            set { _TestVoltageType = value; }
+        }
+
+        private HighVoltageConnectionType _HighVoltageConnection;
+
+        public HighVoltageConnectionType HighVoltageConnection
+        {
+            get { return _HighVoltageConnection; }
+            set { _HighVoltageConnection = value; }
+        }
+
+        private LowVoltageConnectionType _LowVoltageConnection;
+
+        public LowVoltageConnectionType LowVoltageConnection
+        {
+            get { return _LowVoltageConnection; }
+            set { _LowVoltageConnection = value; }
+        }
+
+        private bool IsConfigChanged = false;
 
         public JinYuanJYTACollector(string portName, int baudRate = 9600)
         {
@@ -52,6 +163,11 @@ namespace ABBDataManagerSystem.Connector
             Collector.Close();
         }
 
+        public bool CheckCanSendCommand()
+        {
+            return deviceState != DeviceState.Initial && deviceState != DeviceState.SelfeCheck;
+        }
+
         public void SetResetCommand()
         {
             Collector.SendCommand(new byte[] { 0x40 });
@@ -59,13 +175,19 @@ namespace ABBDataManagerSystem.Connector
 
         public float RatedHighVoltage = 0;
         public float RatedLowVoltage = 0;
-        public float RatedConnection = 0;
-        public float ConnectionPosition = 0;
-        public float PositiveConnectionCount = 0;
-        public float ConnectionGap = 0;
+        public int RatedTapping = 0;
+        public int PositiveTappingCount = 0;
+        public float TappingSpacing = 0;
         public string ProductSequence = "";
-        public float HomopolarityDisplay = 0;
-        public float TestVoltage = 0;
+        public int Group = 0; // 0 ~ 11
+
+        private static int SinglePhaseCmdLen = 1 + 8 + 8 + 2 + 1 + 2 + 6 + 14 + 1 + 1;
+        private byte[] SinglePhaseCmdPacket = new byte[SinglePhaseCmdLen];
+
+        private static int ThreePhaseCmdLen = 1 + 8 + 8 + 2 + 1 + 2 + 6 + 14 + 1 + 1 + 1 + 2 + 1;
+        private byte[] ThreePhaseCmdPacket = new byte[ThreePhaseCmdLen];
+
+        #region 仪器参数设置命令
 
         public void SetSinglePhaseTest()
         {
@@ -74,10 +196,95 @@ namespace ABBDataManagerSystem.Connector
 
             byte[] bRatedHV = new byte[8];
             byte[] bRatedLV = new byte[8];
+            byte[] bRatedTapping = new byte[2];
+            byte[] bPositiveTappingCount = new byte[2];
+            byte[] bTappingSpacing = new byte[6];
+            byte[] bProductSequence = new byte[14];
             Utils.FloatToBytes(RatedHighVoltage, bRatedHV);
             Utils.FloatToBytes(RatedLowVoltage, bRatedLV);
+            Utils.IntToBytes(RatedTapping, bRatedTapping);
+            Utils.IntToBytes(PositiveTappingCount, bPositiveTappingCount);
+            Utils.FloatToBytes(TappingSpacing, bTappingSpacing);
+            Utils.ByteCopy(ProductSequence.ToCharArray(), bProductSequence);
 
-            Collector.SendCommand(new byte[] { 0x61 });
+            SinglePhaseCmdPacket[0] = 0x61;
+            int offset = 1;
+            Array.Copy(SinglePhaseCmdPacket, offset, bRatedHV, 0, bRatedHV.Length);
+            offset += bRatedHV.Length;
+            Array.Copy(SinglePhaseCmdPacket, offset, bRatedLV, 0, bRatedLV.Length);
+            offset += bRatedLV.Length;
+            Array.Copy(SinglePhaseCmdPacket, offset, bRatedTapping, 0, bRatedTapping.Length);
+            offset += bRatedTapping.Length;
+            SinglePhaseCmdPacket[offset] = TappingPointTypeCmdMap[TappingPoint];
+            offset += 1;
+            Array.Copy(SinglePhaseCmdPacket, offset, bPositiveTappingCount, 0, bPositiveTappingCount.Length);
+            offset += bPositiveTappingCount.Length;
+            Array.Copy(SinglePhaseCmdPacket, offset, bTappingSpacing, 0, bTappingSpacing.Length);
+            offset += bTappingSpacing.Length;
+            Array.Copy(SinglePhaseCmdPacket, offset, bProductSequence, 0, bProductSequence.Length);
+            offset += bProductSequence.Length;
+            SinglePhaseCmdPacket[offset] = HomopolarityDisplayTypeCmdMap[HomopolarityDisplay];
+            offset += 1;
+            SinglePhaseCmdPacket[offset] = TestVoltageTypeCmdMap[TestVoltage];
+            offset += 1;
+            if (offset != SinglePhaseCmdPacket.Length)
+            {
+                Log.Error($"SetSinglePhaseTest Packet Fill Offset Error {offset} {SinglePhaseCmdPacket.Length}");
+            }
+
+            Collector.SendCommand(SinglePhaseCmdPacket);
+        }
+
+        public void SetThreePhaseTest()
+        {
+            //  <额定高压:8字节><额定低压:8字节><额定分接:2字节><分接位置:1字节><正分接数:2字节><分接间距:6字节>
+            //  <试品编号:14字节><高压联结:1字节><低压联结:1字节><组别:2字节> <试验电压:1字节> XOR 0D  
+
+            byte[] bRatedHV = new byte[8];
+            byte[] bRatedLV = new byte[8];
+            byte[] bRatedTapping = new byte[2];
+            byte[] bPositiveTappingCount = new byte[2];
+            byte[] bTappingSpacing = new byte[6];
+            byte[] bProductSequence = new byte[14];
+            byte[] bGroup = new byte[2];
+            Utils.FloatToBytes(RatedHighVoltage, bRatedHV);
+            Utils.FloatToBytes(RatedLowVoltage, bRatedLV);
+            Utils.IntToBytes(RatedTapping, bRatedTapping);
+            Utils.IntToBytes(PositiveTappingCount, bPositiveTappingCount);
+            Utils.FloatToBytes(TappingSpacing, bTappingSpacing);
+            Utils.ByteCopy(ProductSequence.ToCharArray(), bProductSequence);
+            Utils.IntToBytes(Group, bGroup);
+
+            ThreePhaseCmdPacket[0] = 0x62;
+            int offset = 1;
+            Array.Copy(ThreePhaseCmdPacket, offset, bRatedHV, 0, bRatedHV.Length);
+            offset += bRatedHV.Length;
+            Array.Copy(ThreePhaseCmdPacket, offset, bRatedLV, 0, bRatedLV.Length);
+            offset += bRatedLV.Length;
+            Array.Copy(ThreePhaseCmdPacket, offset, bRatedTapping, 0, bRatedTapping.Length);
+            offset += bRatedTapping.Length;
+            ThreePhaseCmdPacket[offset] = TappingPointTypeCmdMap[TappingPoint];
+            offset += 1;
+            Array.Copy(ThreePhaseCmdPacket, offset, bPositiveTappingCount, 0, bPositiveTappingCount.Length);
+            offset += bPositiveTappingCount.Length;
+            Array.Copy(ThreePhaseCmdPacket, offset, bTappingSpacing, 0, bTappingSpacing.Length);
+            offset += bTappingSpacing.Length;
+            Array.Copy(ThreePhaseCmdPacket, offset, bProductSequence, 0, bProductSequence.Length);
+            offset += bProductSequence.Length;
+            ThreePhaseCmdPacket[offset] = HighVoltageConnectionTypeCmdMap[HighVoltageConnection];
+            offset += 1;
+            ThreePhaseCmdPacket[offset] = LowVoltageConnectionTypeCmdMap[LowVoltageConnection];
+            offset += 1;
+            Array.Copy(ThreePhaseCmdPacket, offset, bGroup, 0, bGroup.Length);
+            offset += bGroup.Length;
+            ThreePhaseCmdPacket[offset] = TestVoltageTypeCmdMap[TestVoltage];
+            offset += 1;
+            if (offset != ThreePhaseCmdPacket.Length)
+            {
+                Log.Error($"SetThreePhaseTest Packet Fill Offset Error {offset} {ThreePhaseCmdPacket.Length}");
+            }
+
+            Collector.SendCommand(ThreePhaseCmdPacket);
         }
 
 
@@ -126,21 +333,6 @@ namespace ABBDataManagerSystem.Connector
             Collector.SendCommand(new byte[] { 0x6A });
         }
 
-        #region 仪器参数设置命令
-        public void SetParameters()
-        {
-            // 0x45（波特率）（模式）（CH1）（CH1电流）（CH2）（CH2电流）
-            Collector.SendCommand(new byte[] {
-                0x45,
-                GetBoundRateByte(9600),
-                GetTestType(TestType),
-                (byte)(CH1Enabled ? 0x31 : 0x30),
-                (byte)(CH2Enabled ? 0x31 : 0x30),
-                GetChanelOneCurrentSet(CH1CurrentConfig),
-                GetChanelTwoCurrentSet(CH2CurrentConfig),
-            });
-        }
-
         public static byte GetBoundRateByte(int boundRate)
         {
             //9600 bps：（30H）、4800 bps：（31H）、19200 bps：（32H）
@@ -153,114 +345,20 @@ namespace ABBDataManagerSystem.Connector
                     return 0x30;
             }
         }
-
-        public static byte GetTestType(TestType20W type)
-        {
-            // 常规模式：（30H）、10″温升：（31H）、30″温升：（32H）、60″温升：（33H）
-            switch (type)
-            {
-                case TestType20W.CommonTest: return 0x30;
-                case TestType20W.TemperatureRaise10Minute: return 0x31;
-                case TestType20W.TemperatureRaise30Minute: return 0x32;
-                case TestType20W.TemperatureRaise60Minute: return 0x33;
-                default:
-                    return 0x30;
-            }
-        }
-
-        public static TestType20W GetTestTypeByByte(byte type)
-        {
-            switch (type)
-            {
-                case 0x31:
-                    return TestType20W.TemperatureRaise10Minute;
-                case 0x32:
-                    return TestType20W.TemperatureRaise30Minute;
-                case 0x33:
-                    return TestType20W.TemperatureRaise60Minute;
-                case 0x30:
-                default:
-                    return TestType20W.CommonTest;
-            }
-        }
-
-        public static byte GetChanelOneCurrentSet(CH1Currents current)
-        {
-            // 5A：(30H) 、1A：(31H) 、0.1A：(32H) 、0.01A：(33H)
-            switch (current)
-            {
-                case CH1Currents.Current5A: return 0x30;
-                case CH1Currents.Current1A: return 0x31;
-                case CH1Currents.Current01A: return 0x32;
-                case CH1Currents.Current001A: return 0x33;
-                default:
-                    return 0x30;
-            }
-        }
-
-        public static byte GetChanelTwoCurrentSet(CH2Currents current)
-        {
-            // 20A：(30H) 、10A：(31H) 、5A：(32H) 、2A：(33H)
-            switch (current)
-            {
-                case CH2Currents.Current20A: return 0x30;
-                case CH2Currents.Current10A: return 0x31;
-                case CH2Currents.Current5A: return 0x32;
-                case CH2Currents.Current2A: return 0x33;
-                default:
-                    return 0x30;
-            }
-        }
-
-        public static CH1Currents GetCH1CurrentConfig(string currentConfig)
-        {
-            return CH1CurrentsMap[currentConfig];
-        }
-
-        public static CH2Currents GetCH2CurrentConfig(string currentConfig)
-        {
-            return CH2CurrentsMap[currentConfig];
-        }
-
         #endregion
 
-        public class JinYuan20WPacketInfo
+        public class JinYuanJYTAPacketInfo
         {
-            public byte ch1Status;
-            public byte ch2Status;
-            public bool ch1Enabled;
-            public bool ch2Enabled;
-            public TestType20W type;
-            public byte ch1SelectedCurrent;
-            public byte ch2SelectedCurrent;
-            public float ch1RealTimeCurrent;
-            public float ch2RealTimeCurrent;
-            public float ch1RealTimeResistance;
-            public float ch2RealTimeResistance;
-            public float ch1TimedResistance;
-            public float ch2TimedResistance;
-            public float tempRaiseTimeInterval;
-            public JinYuan20WPacketInfo()
+            public byte deviceState;
+
+            public JinYuanJYTAPacketInfo()
             {
 
             }
 
             public override string ToString()
             {
-                return $"Channel 1 Status: {ch1Status}, " +
-                       $"Channel 2 Status: {ch2Status}, " +
-                       $"Channel 1 Enabled: {ch1Enabled}, " +
-                       $"Channel 2 Enabled: {ch2Enabled}, " +
-                       $"Type: {type}, " +
-                       $"Channel 1 Selected Current: {ch1SelectedCurrent}, " +
-                       $"Channel 2 Selected Current: {ch2SelectedCurrent}, " +
-                       $"Channel 1 Real Time Current: {ch1RealTimeCurrent}, " +
-                       $"Channel 2 Real Time Current: {ch2RealTimeCurrent}, " +
-                       $"Channel 1 Real Time Resistance: {ch1RealTimeResistance}, " +
-                       $"Channel 2 Real Time Resistance: {ch2RealTimeResistance}, " +
-                       $"Channel 1 Timed Resistance: {ch1TimedResistance}, " +
-                       $"Channel 2 Timed Resistance: {ch2TimedResistance}, " +
-                       $"Temperature Raise Time Interval: {tempRaiseTimeInterval}";
+                return "";
             }
         }
 
@@ -293,23 +391,143 @@ namespace ABBDataManagerSystem.Connector
             { TestTypeJYTA.ThreePhaseAutoTest, 0x32},
         };
 
-        public static Dictionary<string, CH1Currents> CH1CurrentsMap = new Dictionary<string, CH1Currents>()
+        public static Dictionary<string, TappingPointType> TappingPointTypeMap = new Dictionary<string, TappingPointType>()
         {
-            { "5A", CH1Currents.Current5A },
-            { "1A", CH1Currents.Current1A },
-            { "0.1A", CH1Currents.Current01A },
-            { "0.01A", CH1Currents.Current001A },
+            { "高压侧",  TappingPointType.HighVoltage},
+            { "低压侧",  TappingPointType.LowVoltage},
         };
 
-        public static Dictionary<string, CH2Currents> CH2CurrentsMap = new Dictionary<string, CH2Currents>()
+        public static Dictionary<TappingPointType, byte> TappingPointTypeCmdMap = new Dictionary<TappingPointType, byte>()
         {
-            { "20A", CH2Currents.Current20A },
-            { "10A", CH2Currents.Current10A },
-            { "5A", CH2Currents.Current5A },
-            { "2A", CH2Currents.Current2A },
+            { TappingPointType.HighVoltage, 0x30},
+            { TappingPointType.LowVoltage, 0x31},
         };
 
-        public JinYuan20WPacketInfo? ReadPacket()
+        public static Dictionary<string, HomopolarityDisplayType> HomopolarityDisplayTypeMap = new Dictionary<string, HomopolarityDisplayType>()
+        {
+            { "负（0）",  HomopolarityDisplayType.Negtive},
+            { "正（+）",  HomopolarityDisplayType.Positive},
+        };
+
+        public static Dictionary<HomopolarityDisplayType, byte> HomopolarityDisplayTypeCmdMap = new Dictionary<HomopolarityDisplayType, byte>()
+        {
+            { HomopolarityDisplayType.Negtive, 0x30},
+            { HomopolarityDisplayType.Positive, 0x31},
+        };
+
+        public static Dictionary<string, TestVoltageType> TestVoltageTypeMap = new Dictionary<string, TestVoltageType>()
+        {
+            { "160V",  TestVoltageType.Voltage160V},
+            { "20V",  TestVoltageType.Voltage20V},
+        };
+
+        public static Dictionary<TestVoltageType, byte> TestVoltageTypeCmdMap = new Dictionary<TestVoltageType, byte>()
+        {
+            { TestVoltageType.Voltage160V, 0x30},
+            { TestVoltageType.Voltage20V, 0x31},
+        };
+
+        public static Dictionary<string, HighVoltageConnectionType> HighVoltageConnectionTypeMap = new Dictionary<string, HighVoltageConnectionType>()
+        {
+            { "Y",  HighVoltageConnectionType.Type_Y},
+            { "YN",  HighVoltageConnectionType.Type_YN},
+            { "D",  HighVoltageConnectionType.Type_D},
+            { "Z",  HighVoltageConnectionType.Type_Z},
+            { "ZN",  HighVoltageConnectionType.Type_ZN},
+            { "V",  HighVoltageConnectionType.Type_V},
+            { "Scott",  HighVoltageConnectionType.Type_SCOTT},
+            { "In-Scott",  HighVoltageConnectionType.Type_IN_SCOTT},
+        };
+
+        public static Dictionary<HighVoltageConnectionType, byte> HighVoltageConnectionTypeCmdMap = new Dictionary<HighVoltageConnectionType, byte>()
+        {
+            { HighVoltageConnectionType.Type_Y,  0x30 },
+            { HighVoltageConnectionType.Type_YN, 0x31 },
+            { HighVoltageConnectionType.Type_D,  0x32 },
+            { HighVoltageConnectionType.Type_Z,  0x33 },
+            { HighVoltageConnectionType.Type_ZN, 0x34 },
+            { HighVoltageConnectionType.Type_V,  0x35 },
+            { HighVoltageConnectionType.Type_SCOTT, 0x36 },
+            { HighVoltageConnectionType.Type_IN_SCOTT, 0x37 },
+        };
+
+        public static Dictionary<string, LowVoltageConnectionType> LowVoltageConnectionTypeMap = new Dictionary<string, LowVoltageConnectionType>()
+        {
+            { "y",  LowVoltageConnectionType.Type_Y},
+            { "yn",  LowVoltageConnectionType.Type_YN},
+            { "d",  LowVoltageConnectionType.Type_D},
+            { "z",  LowVoltageConnectionType.Type_Z},
+            { "zn",  LowVoltageConnectionType.Type_ZN},
+            { "v",  LowVoltageConnectionType.Type_V},
+            { "Scott",  LowVoltageConnectionType.Type_SCOTT},
+            { "In-Scott",  LowVoltageConnectionType.Type_IN_SCOTT},
+            { "-",  LowVoltageConnectionType.Type_NULL},
+        };
+
+        public static Dictionary<LowVoltageConnectionType, byte> LowVoltageConnectionTypeCmdMap = new Dictionary<LowVoltageConnectionType, byte>()
+        {
+            { LowVoltageConnectionType.Type_Y,  0x30 },
+            { LowVoltageConnectionType.Type_YN, 0x31 },
+            { LowVoltageConnectionType.Type_D,  0x32 },
+            { LowVoltageConnectionType.Type_Z,  0x33 },
+            { LowVoltageConnectionType.Type_ZN, 0x34 },
+            { LowVoltageConnectionType.Type_V,  0x35 },
+            { LowVoltageConnectionType.Type_SCOTT, 0x36 },
+            { LowVoltageConnectionType.Type_IN_SCOTT, 0x37 },
+            { LowVoltageConnectionType.Type_NULL, 0x38 },
+        };
+
+        public static Dictionary<string, DeviceState> DeviceStateMap = new Dictionary<string, DeviceState>()
+        {
+            { "初始",  DeviceState.Initial},
+            { "自检",  DeviceState.SelfeCheck},
+            { "主菜单",  DeviceState.MainMenu},
+        };
+
+        public static Dictionary<byte, DeviceState> DeviceStateCmdMap = new Dictionary<byte, DeviceState>()
+        {
+            {  0x60, DeviceState.Initial },
+            {  0x61, DeviceState.SelfeCheck },
+            {  0x63, DeviceState.MainMenu },
+        };
+
+        public static Dictionary<string, TipInfoType> TipInfoTypeMap = new Dictionary<string, TipInfoType>()
+        {
+            { "",  TipInfoType.Null},
+            { "测试中",  TipInfoType.Testing},
+            { "测试结束",  TipInfoType.TestDone},
+            { "测试错误",  TipInfoType.TestError},
+        };
+
+        public static Dictionary<byte, TipInfoType> TipInfoTypeByteMap = new Dictionary<byte, TipInfoType>()
+        {
+            { 0x30, TipInfoType.Null },
+            { 0x31, TipInfoType.Testing },
+            { 0x32, TipInfoType.TestDone },
+            { 0x33, TipInfoType.TestError },
+        };
+
+        public static Dictionary<string, PowerInfoType> PowerInfoTypeMap = new Dictionary<string, PowerInfoType>()
+        {
+            { "100",  PowerInfoType.Full},
+            { "75",  PowerInfoType.Percent75},
+            { "50",  PowerInfoType.Percent50},
+            { "25",  PowerInfoType.Percent25},
+            { "0",  PowerInfoType.Percent0},
+            { "外部供电",  PowerInfoType.ExternalPower},
+        };
+
+        public static Dictionary<byte, PowerInfoType> PowerInfoTypeByteMap = new Dictionary<byte, PowerInfoType>()
+        {
+            { 0x30, PowerInfoType.Full },
+            { 0x31, PowerInfoType.Percent75 },
+            { 0x32, PowerInfoType.Percent50 },
+            { 0x33, PowerInfoType.Percent25 },
+            { 0x34, PowerInfoType.Percent0 },
+            { 0x35, PowerInfoType.ExternalPower },
+        };
+
+        public JinYuanJYTAPacketInfo? ReadPacket()
         {
             /**
              *  从机返回给主机的状态分11类：CH1、CH2状态分别返回
@@ -331,7 +549,7 @@ namespace ABBDataManagerSystem.Connector
             if (IsConfigChanged)
             {
                 IsConfigChanged = false;
-                SetParameters();
+                //SetParameters();
             }
             SendRequest();
             byte[]? packet = Collector.ReadData();
@@ -339,58 +557,23 @@ namespace ABBDataManagerSystem.Connector
             {
                 return null;
             }
+
+            byte _deviceState = packet[0];
+            DeviceState deviceState = DeviceStateCmdMap[_deviceState];
+            byte _TipInfo = packet[1];
+            TipInfoType tipInfo = TipInfoTypeByteMap[_TipInfo];
+            byte _PowerInfo = packet[2];
+            PowerInfoType powerInfo = PowerInfoTypeByteMap[_PowerInfo];
+
             if (packet.Length < 50)
             {
                 Log.Error("Read Packet Len err" + packet.Length);
                 return null;
             }
-            byte ch1Status = packet[0];
-            byte ch2Status = packet[1];
-            byte boudRate = packet[2];
-            byte testMode = packet[3];
-            byte ch1 = packet[4];
-            byte ch1Current = packet[5];
-            byte ch2 = packet[6];
-            byte ch2Current = packet[7];
-            int startIndex = 7;
-            byte[] ch1CurrentValue = { packet[startIndex + 1], packet[startIndex + 2], packet[startIndex + 3], packet[startIndex + 4], packet[startIndex + 5] };
-            byte[] ch1ResistanceValue = { packet[startIndex + 6], packet[startIndex + 7], packet[startIndex + 8], packet[startIndex + 9], packet[startIndex + 10], packet[startIndex + 11], packet[startIndex + 12] };
-            startIndex = startIndex + 12;
-            byte[] ch2CurrentValue = { packet[startIndex + 1], packet[startIndex + 2], packet[startIndex + 3], packet[startIndex + 4], packet[startIndex + 5] };
-            byte[] ch2ResistanceValue = { packet[startIndex + 6], packet[startIndex + 7], packet[startIndex + 8], packet[startIndex + 9], packet[startIndex + 10], packet[startIndex + 11], packet[startIndex + 12] };
-            startIndex = startIndex + 12;
-            byte[] tempSetTimeInterval = { packet[startIndex + 1], packet[startIndex + 2], packet[startIndex + 3], packet[startIndex + 4] };
-            startIndex = startIndex + 4;
-            byte[] ch1TimedResistanceValue = { packet[startIndex + 1], packet[startIndex + 2], packet[startIndex + 3], packet[startIndex + 4], packet[startIndex + 5], packet[startIndex + 6], packet[startIndex + 7] };
-            startIndex = startIndex + 7;
-            byte[] ch2TimedResistanceValue = { packet[startIndex + 1], packet[startIndex + 2], packet[startIndex + 3], packet[startIndex + 4], packet[startIndex + 5], packet[startIndex + 6], packet[startIndex + 7] };
-            startIndex = startIndex + 7;
 
-            string strCh1Current = Encoding.ASCII.GetString(ch1CurrentValue);
-            string strCh2Current = Encoding.ASCII.GetString(ch2CurrentValue);
-            string strCh1Resistance = Encoding.ASCII.GetString(ch1ResistanceValue);
-            string strCh2Resistance = Encoding.ASCII.GetString(ch2ResistanceValue);
-            string strCh1TimedResistant = Encoding.ASCII.GetString(ch1TimedResistanceValue);
-            string strCh2TimedResistant = Encoding.ASCII.GetString(ch2TimedResistanceValue);
-            string strTempSetTimeInterval = Encoding.ASCII.GetString(tempSetTimeInterval);
 
-            return new JinYuan20WPacketInfo()
-            {
-                ch1Enabled = ch1 == 0x31,
-                ch2Enabled = ch2 == 0x31,
-                ch1Status = ch1Status,
-                ch2Status = ch2Status,
-                type = GetTestTypeByByte(testMode),
-                ch1RealTimeCurrent = Utils.ParseFloat(strCh1Current),
-                ch2RealTimeCurrent = Utils.ParseFloat(strCh2Current),
-                ch1RealTimeResistance = Utils.ParseFloat(strCh1Resistance),
-                ch2RealTimeResistance = Utils.ParseFloat(strCh2Resistance),
-                ch1SelectedCurrent = ch1Current,
-                ch2SelectedCurrent = ch2Current,
-                ch1TimedResistance = Utils.ParseFloat(strCh1TimedResistant),
-                ch2TimedResistance = Utils.ParseFloat(strCh2TimedResistant),
-                tempRaiseTimeInterval = Utils.ParseFloat(strTempSetTimeInterval),
-            };
+            return null;
+
         }
 
         // 主机打开，每400豪秒访问一次从机（寻机命令）或是发送命令，只有发送寻机命令

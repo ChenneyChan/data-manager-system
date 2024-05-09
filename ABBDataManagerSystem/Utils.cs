@@ -233,19 +233,31 @@ namespace ABBDataManagerSystem
             return s;
         }
 
+        public static void ByteCopy(char[] src, byte[]dst, byte placeholder = 0x20)
+        {
+            if (src.Length > dst.Length)
+            {
+                return;
+            }
+            Array.Copy(src, 0, dst, dst.Length - src.Length, src.Length);
+            for (int i = 0; i < dst.Length - src.Length; i++)
+            {
+                dst[i] = placeholder;
+            }
+        }
+
         public static void FloatToBytes(float value, byte[]buf, byte placeholder = 0x20)
         {
             string str = FloatFormat(value);
             var chars = str.ToCharArray();
-            if (chars.Length > buf.Length)
-            {
-                return;
-            }
-            Array.Copy(chars, 0, buf, buf.Length - chars.Length, chars.Length);
-            for (int i = 0; i < buf.Length - chars.Length; i++)
-            {
-                buf[i] = placeholder;
-            }
+            ByteCopy(chars, buf, placeholder);
+        }
+
+        public static void IntToBytes(int value, byte[] buf, byte placeholder = 0x20)
+        {
+            string str = value.ToString();
+            var chars = str.ToCharArray();
+            ByteCopy(chars, buf, placeholder);
         }
     }
 }
