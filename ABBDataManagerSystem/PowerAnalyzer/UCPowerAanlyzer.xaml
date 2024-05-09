@@ -10,15 +10,15 @@
     <UserControl.Resources>
         <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
             <Setter Property="FontSize" Value="16"/>
-            <Setter Property="Height" Value="40"/>
+            <Setter Property="Height" Value="32"/>
             <Setter Property="Width" Value="120"/>
         </Style>
         <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
             <Setter Property="FontSize" Value="16"/>
-            <Setter Property="Height" Value="40"/>
+            <Setter Property="Height" Value="32"/>
         </Style>
         <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
-            <Setter Property="FontSize" Value="16"/>
+                <Setter Property="FontSize" Value="16"/>
         </Style>
         <Style TargetType="RadioButton" BasedOn="{StaticResource {x:Type RadioButton}}">
             <Setter Property="FontSize" Value="16"/>
@@ -71,7 +71,7 @@
             <TextBlock Name="ErrInfoText" Width="120" TextAlignment="Center" Margin="20, 0,0,0" Text="" Visibility="Collapsed"/>
             <Button Content="谐波" Width="60" Name="btHarmonic" Margin="0, 0, 20, 0"/>
         </StackPanel>
-        <DataGrid Grid.Row="3" Grid.RowSpan="2" Name="dataGrid" ItemsSource="{Binding DataTableSource}" 
+        <DataGrid Margin="10" Grid.Row="3" Grid.RowSpan="2" Name="dataGrid" ItemsSource="{Binding DataTableSource}" 
                   FontSize="18" CanUserSortColumns="False" GridLinesVisibility="None" CanUserReorderColumns="False" CanUserResizeColumns="False"
                   Width="500" HorizontalAlignment="Left" MaxHeight="400" VerticalAlignment="Top" CanUserAddRows="False" CanUserDeleteRows="False" 
                   CanUserResizeRows="False" AutoGenerateColumns="False">
@@ -101,7 +101,7 @@
                        TextWrapping="Wrap"   HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Top" BorderThickness="0"
                        Padding="10" />
         </ScrollViewer>
-        <Border Grid.Column="1" Grid.Row="3" BorderThickness="1" BorderBrush="Gray" Margin="10"/>
-        <Border Grid.Column="1" Grid.Row="4" BorderThickness="1" BorderBrush="Gray" Margin="10"/>
+        <Border Grid.Column="1" Grid.Row="3" BorderThickness="1" BorderBrush="LightGray" Margin="10"/>
+        <Border Grid.Column="1" Grid.Row="4" BorderThickness="1" BorderBrush="LightGray" Margin="10"/>
     </Grid>
 </UserControl>

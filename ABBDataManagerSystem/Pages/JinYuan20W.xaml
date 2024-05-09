@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ABBDataManagerSystem.Pages" 
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
-             mc:Ignorable="d" Loaded="UserControl_Loaded" Unloaded="UserControl_Unloaded" d:DesignHeight="594" d:DesignWidth="832">
+             mc:Ignorable="d" Background="White" Loaded="UserControl_Loaded" Unloaded="UserControl_Unloaded" d:DesignHeight="594" d:DesignWidth="832">
     <UserControl.Resources>
         <sys:Double x:Key="borderThickness">2</sys:Double>
         <!--<Style TargetType="{x:Type GridViewColumnHeader}" BasedOn="{StaticResource {x:Type GridViewColumnHeader}}">

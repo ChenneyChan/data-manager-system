@@ -1,8 +1,11 @@
 ﻿using ABBDataManagerSystem.Connector;
 using ABBDataManagerSystem.Pages;
 using ABBDataManagerSystem.PowerAnalyzer;
+using HandyControl.Controls;
 using System.IO.Ports;
 using System.Windows;
+using System.Windows.Controls;
+using TabItem = HandyControl.Controls.TabItem;
 using Window = System.Windows.Window;
 
 namespace ABBDataManagerSystem
@@ -258,26 +261,24 @@ namespace ABBDataManagerSystem
 
         private void PowerAnalyze2Test_Click(object sender, RoutedEventArgs e)
         {
-            var window = new Window()
+            var item = new TabItem()
             {
-                WindowStartupLocation = WindowStartupLocation.CenterScreen,
-                WindowState = WindowState.Maximized
+                Content = new UCPowerAanlyzer(),
+                Header = "功率分析仪",
+                IsSelected = true,
             };
-            window.Content = new UCPowerAanlyzer();
-            window.ShowDialog();
+            tabControl.Items.Add(item);
         }
 
         private void JinYuanJYT_A_Click(object sender, RoutedEventArgs e)
         {
-            var window = new Window()
+            var item = new TabItem()
             {
-                Title = "金源JYT-A",
-                Width = 1200,
-                Height = 900,
-                WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                Content = new JinYuanJYT_A(),
+                Header = "金源JYT-A",
+                IsSelected = true
             };
-            window.Content = new JinYuanJYT_A();
-            window.ShowDialog();
+            tabControl.Items.Add(item);
         }
     }
 }

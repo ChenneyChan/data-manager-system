@@ -4,59 +4,75 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ABBDataManagerSystem"
+        xmlns:hc="https://handyorg.github.io/handycontrol"
         mc:Ignorable="d"
-        Title="信息化试验系统" Height="600" Width="1200" WindowStartupLocation="CenterScreen" Closing="Window_Closing">
+        Title="信息化试验系统" Height="800" Width="1200" WindowStartupLocation="CenterScreen" Closing="Window_Closing">
     <Window.Resources>
         <Style TargetType="MenuItem">
             <Setter Property="FontSize" Value="14"/>
         </Style>
     </Window.Resources>
     <Grid>
-        <DockPanel>
-            <!--停靠布局，让菜单栏和工具栏位于窗口顶部-->
-            <Menu DockPanel.Dock="Top" >
-                <MenuItem Header="试验" IsEnabled="False">
-                    <MenuItem Header="功率分析仪" Click="PowerAnalyzeTest_Click" Name="PowerAnalyzeTest"/>
-                    <MenuItem Header="温度检测仪" Click="TemperatureTest_Click"  Name="TemperatureTest"/>
-                    <MenuItem Header="金源20W测试仪" Click="JnYuan20WTest_Click"  Name="JnYuan20WTest"/>
-                </MenuItem>
-                <MenuItem Header="设置">
-                    <MenuItem Header="设置" Click="MenuItemSetting_Click"/>
-                </MenuItem>
-                <MenuItem Header="关于"></MenuItem>
-            </Menu>
-            <ToolBar DockPanel.Dock="Top">
-                <!--ToolBar和StatusBar就是一个容器-->
-                <!--<Button Content="Save"></Button>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <!--停靠布局，让菜单栏和工具栏位于窗口顶部-->
+        <Menu Grid.Row="0">
+            <MenuItem Header="试验" IsEnabled="False">
+                <MenuItem Header="功率分析仪" Click="PowerAnalyzeTest_Click" Name="PowerAnalyzeTest"/>
+                <MenuItem Header="温度检测仪" Click="TemperatureTest_Click"  Name="TemperatureTest"/>
+                <MenuItem Header="金源20W测试仪" Click="JnYuan20WTest_Click"  Name="JnYuan20WTest"/>
+            </MenuItem>
+            <MenuItem Header="设置">
+                <MenuItem Header="设置" Click="MenuItemSetting_Click"/>
+            </MenuItem>
+            <MenuItem Header="关于"></MenuItem>
+        </Menu>
+        <ToolBar Grid.Row="1">
+            <!--ToolBar和StatusBar就是一个容器-->
+            <!--<Button Content="Save"></Button>
                 <Separator></Separator>
                 <Button Content="SaveAll"></Button>
                 <Separator></Separator>
                 <Button Content="FileExplorer"></Button>
                 <Separator></Separator>-->
-                <Button Content="温度测量仪" Click="TemperatureTest_Click" Visibility="Visible"></Button>
-                <Separator></Separator>
-                <Button Content="金源20W直流电阻" Click="JnYuan20WTest_Click" Visibility="Visible"></Button>
-                <Separator></Separator>
-                <Button Content="功率分析仪" Click="PowerAnalyzeTest_Click"></Button>
-                <Separator></Separator>
-                <Button Content="功率分析仪-不搜索" Click="PowerAnalyze2Test_Click"></Button>
-                <Separator></Separator>
-                <Button Content="金源JYT-A" Click="JinYuanJYT_A_Click"/>
-            </ToolBar>
-            <Grid>
-                <StackPanel Orientation="Vertical" Visibility="Visible">
-                    <Button Content="谐波" Name="btHarmonicTest" Click="btHarmonicTest_Click" Height="30" Width="120"/>
-                    <Button Content="50W串口测试" Name="btStartSerialTest" Click="btStartSerialTest_Click" Height="30" Width="120"/>
-                    <Button Content="温度测试" Name="btStartTempTest" Click="btStartTempTest_Click" Height="30" Width="120"/>
-                    <ScrollViewer Height="Auto" VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
-                        <TextBlock Width="500" Height="Auto" TextWrapping="Wrap" Text="输出：" Name="tbMsg"/>
-                    </ScrollViewer>
-                </StackPanel>
-            </Grid>
-            <StatusBar DockPanel.Dock="Bottom" Height="20" VerticalAlignment="Bottom">
-                <TextBlock Text="statusBar"></TextBlock>
-            </StatusBar>
-        </DockPanel>
+            <Button Content="温度测量仪" Click="TemperatureTest_Click" Visibility="Visible"></Button>
+            <Separator></Separator>
+            <Button Content="金源20W直流电阻" Click="JnYuan20WTest_Click" Visibility="Visible"></Button>
+            <Separator></Separator>
+            <Button Content="功率分析仪" Click="PowerAnalyzeTest_Click"></Button>
+            <Separator></Separator>
+            <Button Content="功率分析仪-不搜索" Click="PowerAnalyze2Test_Click"></Button>
+            <Separator></Separator>
+            <Button Content="金源JYT-A" Click="JinYuanJYT_A_Click"/>
+        </ToolBar>
+        <Grid Grid.Row="2" Height="Auto">
 
+        </Grid>
+        <hc:TabControl Margin="10"  Grid.Row="3" Name="tabControl" IsAnimationEnabled="True" ShowCloseButton="True" IsDraggable="True" TabItemWidth="140">
+            <hc:TabItem Header="测试页面" ShowCloseButton="False" ShowContextMenu="False">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <StackPanel Orientation="Horizontal" Visibility="Visible">
+                        <Button Content="谐波" Name="btHarmonicTest" Click="btHarmonicTest_Click" Height="30" Width="120"/>
+                        <Button Content="50W串口测试" Name="btStartSerialTest" Click="btStartSerialTest_Click" Height="30" Width="120"/>
+                        <Button Content="温度测试" Name="btStartTempTest" Click="btStartTempTest_Click" Height="30" Width="120"/>
+                    </StackPanel>
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto" HorizontalAlignment="Left">
+                        <TextBlock Width="400" Height="Auto" TextWrapping="Wrap" Text="输出：" Name="tbMsg"/>
+                    </ScrollViewer>
+                </Grid>
+            </hc:TabItem>
+        </hc:TabControl>
+        <StatusBar Grid.Row="4" Height="40" VerticalAlignment="Bottom">
+            <TextBlock Text="statusBar"></TextBlock>
+        </StatusBar>
     </Grid>
 </Window>
