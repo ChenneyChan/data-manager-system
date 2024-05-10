@@ -252,6 +252,10 @@
         </TabControl>
 
         <StackPanel Orientation="Horizontal" Grid.Row="6">
+            <Button Content="复位"     Style="{StaticResource ButtonInfo}"  Height="40" Width="120" FontSize="18"  Margin="0, 0, 10, 0"/>
+            <Button Content="下发参数" Style="{StaticResource ButtonInfo}"  Height="40" Width="120" FontSize="18"  Margin="0, 0, 10, 0"/>
+            <Button Content="测试"     Style="{StaticResource ButtonInfo}"  Height="40" Width="120" FontSize="18"  Margin="0, 0, 10, 0"/>
+            <Button Content="重测"     Style="{StaticResource ButtonInfo}"  Height="40" Width="120" FontSize="18"  Margin="0, 0, 10, 0"/>
             <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
                 <TextBox IsReadOnly="True" Name="tbDebug" VerticalContentAlignment="Top" Width="400"/>
             </ScrollViewer>

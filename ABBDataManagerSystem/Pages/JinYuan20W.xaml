@@ -18,7 +18,7 @@
             <Setter Property="FontSize" Value="18"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
-        <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+        <Style TargetType="Button" BasedOn="{StaticResource ButtonInfo}">
             <Setter Property="FontSize" Value="18"/>
             <Setter Property="Width" Value="120"/>
             <Setter Property="Height" Value="40"/>
