@@ -60,12 +60,41 @@ namespace ABBDataManagerSystem.Pages
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-
+            ActiveSelectedTest();
         }
 
         private void UserControl_Unloaded(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void cbTestMode_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ActiveSelectedTest();
+        }
+
+        private void ActiveSelectedTest()
+        {
+            if (cbTestMode.SelectedIndex != 0 && tiSinglePhase != null && tiSinglePhase.IsSelected != true)
+            {
+                tiSinglePhase.IsSelected = true;
+            }
+            else if (cbTestMode.SelectedIndex != 1 && tiThreePhase != null && tiThreePhase.IsSelected != true)
+            {
+                tiThreePhase.IsSelected = true;
+            }
+        }
+
+        private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (tiSinglePhase.IsSelected == true)
+            {
+                cbTestMode.SelectedIndex = 1;
+            }
+            else if (tiThreePhase.IsSelected == true)
+            {
+                cbTestMode.SelectedIndex = 0;
+            }
         }
     }
 }
