@@ -348,16 +348,16 @@
                 <TextBlock Margin="10, 0, 0, 0" Text="高压（串联）对低压（1）：" Grid.Row="12" Grid.ColumnSpan="6"/>
                 <Views:TappingVoltageRatioFields Grid.Row="13" TappingIndex="2-1" Grid.ColumnSpan="6"/>
 
-                <Border Grid.Column="0" Grid.Row="0" BorderThickness="1.5,1.5,1.5,0" BorderBrush="Blue" Grid.ColumnSpan="6"></Border>
-                <Border Grid.Column="0" Grid.Row="1" BorderThickness="1.5,1.5,0,0" BorderBrush="Blue" Grid.RowSpan="2"></Border>
-                <Border Grid.Column="1" Grid.Row="1" BorderThickness="1.5,1.5,0,0" BorderBrush="Blue" Grid.RowSpan="2"></Border>
-                <Border Grid.Column="2" Grid.Row="1" BorderThickness="1.5,1.5,0,0" BorderBrush="Blue" Grid.RowSpan="2"></Border>
-                <Border Grid.Column="3" Grid.Row="1" BorderThickness="1.5,1.5,1.5,0" BorderBrush="Blue" Grid.RowSpan="2" Grid.ColumnSpan="3"></Border>
-                <Border Grid.Column="3" Grid.Row="1" BorderThickness="1.5" BorderBrush="Blue" Grid.ColumnSpan="3"></Border>
-                <Border Grid.Column="4" Grid.Row="2" BorderThickness="1.5,0,0,0" BorderBrush="Blue" Grid.ColumnSpan="3"></Border>
-                <Border Grid.Column="5" Grid.Row="2" BorderThickness="1.5,0,0,0" BorderBrush="Blue" Grid.ColumnSpan="3"></Border>
-                <Border Grid.Column="0" Grid.Row="12" BorderThickness="1.5,1.5,1.5,0" BorderBrush="Blue" Grid.ColumnSpan="6"></Border>
-                <Border Grid.Column="0" Grid.Row="13" BorderThickness="0,0,0,1.5" BorderBrush="Blue" Grid.ColumnSpan="6"></Border>
+                <Border Grid.Column="0" Grid.Row="0" BorderThickness="1.5,1.5,1.5,0" BorderBrush="Black" Grid.ColumnSpan="6"></Border>
+                <Border Grid.Column="0" Grid.Row="1" BorderThickness="1.5,1.5,0,0" BorderBrush="Black" Grid.RowSpan="2"></Border>
+                <Border Grid.Column="1" Grid.Row="1" BorderThickness="1.5,1.5,0,0" BorderBrush="Black" Grid.RowSpan="2"></Border>
+                <Border Grid.Column="2" Grid.Row="1" BorderThickness="1.5,1.5,0,0" BorderBrush="Black" Grid.RowSpan="2"></Border>
+                <Border Grid.Column="3" Grid.Row="1" BorderThickness="1.5,1.5,1.5,0" BorderBrush="Black" Grid.RowSpan="2" Grid.ColumnSpan="3"></Border>
+                <Border Grid.Column="3" Grid.Row="1" BorderThickness="1.5" BorderBrush="Black" Grid.ColumnSpan="3"></Border>
+                <Border Grid.Column="4" Grid.Row="2" BorderThickness="1.5,0,0,0" BorderBrush="Black" Grid.ColumnSpan="3"></Border>
+                <Border Grid.Column="5" Grid.Row="2" BorderThickness="1.5,0,0,0" BorderBrush="Black" Grid.ColumnSpan="3"></Border>
+                <Border Grid.Column="0" Grid.Row="12" BorderThickness="1.5,1.5,1.5,0" BorderBrush="Black" Grid.ColumnSpan="6"></Border>
+                <Border Grid.Column="0" Grid.Row="13" BorderThickness="0,0,0,1.5" BorderBrush="Black" Grid.ColumnSpan="6"></Border>
 
             </Grid>
         </Grid>
