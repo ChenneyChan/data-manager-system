@@ -370,10 +370,10 @@
         </Grid>
 
         <StackPanel Orientation="Horizontal" Grid.Row="6">
-            <Button Content="复位"     Style="{StaticResource ButtonInfo}"  Height="40" Width="120" FontSize="18"  Margin="0, 0, 10, 0"/>
-            <Button Content="下发参数" Style="{StaticResource ButtonInfo}"  Height="40" Width="120" FontSize="18"  Margin="0, 0, 10, 0"/>
-            <Button Content="测试"     Style="{StaticResource ButtonInfo}"  Height="40" Width="120" FontSize="18"  Margin="0, 0, 10, 0"/>
-            <Button Content="重测"     Style="{StaticResource ButtonInfo}"  Height="40" Width="120" FontSize="18"  Margin="0, 0, 10, 0"/>
+            <Button Content="复位"     Style="{StaticResource ButtonInfo}"  Height="40" Width="120" FontSize="18"  Margin="0, 0, 10, 0" Name="btReset" Click="btReset_Click"/>
+            <Button Content="下发参数" Style="{StaticResource ButtonInfo}"  Height="40" Width="120" FontSize="18"  Margin="0, 0, 10, 0" Name="btSetParameters" Click="btSetParameters_Click"/>
+            <Button Content="测试"     Style="{StaticResource ButtonInfo}"  Height="40" Width="120" FontSize="18"  Margin="0, 0, 10, 0" Name="btStartTest" Click="btStartTest_Click"/>
+            <Button Content="重测"     Style="{StaticResource ButtonInfo}"  Height="40" Width="120" FontSize="18"  Margin="0, 0, 10, 0" Name="btReTest" Click="btReTest_Click"/>
             <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
                 <TextBox IsReadOnly="True" Name="tbDebug" VerticalContentAlignment="Top" Width="400"/>
             </ScrollViewer>

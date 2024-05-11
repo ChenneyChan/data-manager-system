@@ -12,6 +12,7 @@ namespace ABBDataManagerSystem.Pages
     public partial class JinYuanJYT_A : UserControl
     {
         private Dictionary<string, TappingVoltageRatioFields> RatioValueFields = new Dictionary<string, TappingVoltageRatioFields>();
+        private JinYuanJYTACollector? Collector = null;
 
         public JinYuanJYT_A()
         {
@@ -74,6 +75,23 @@ namespace ABBDataManagerSystem.Pages
         {
             cbSerialPort.IsEnabled = swConnect.IsChecked != true;
             cbBoundRate.IsEnabled = swConnect.IsChecked != true;
+            if (swConnect.IsChecked != true && Collector != null)
+            {
+                Collector.Disconnect();
+                Collector = null;
+            }
+            else if (swConnect.IsChecked == true)
+            {
+                Collector = new JinYuanJYTACollector(cbSerialPort.Text, Utils.ParseInt(cbBoundRate.Text));
+                new Thread(() =>
+                {
+                    if (!Collector.Connect())
+                    {
+                        swConnect.IsChecked = false;
+                    }
+
+                }).Start();
+            }
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
@@ -113,6 +131,46 @@ namespace ABBDataManagerSystem.Pages
             {
                 cbTestMode.SelectedIndex = 0;
             }
+        }
+
+        private void btReset_Click(object sender, RoutedEventArgs e)
+        {
+            if (Collector != null)
+                Collector.SetResetCommand();
+        }
+
+        private void btSetParameters_Click(object sender, RoutedEventArgs e)
+        {
+            if (Collector == null)
+            {
+                return;
+            }
+            if (cbTestMode.Text == "三相测试")
+            {
+                Collector.SetThreePhaseTest();
+            }
+            else
+            {
+                Collector.SetSinglePhaseTest();
+            }
+        }
+
+        private void btStartTest_Click(object sender, RoutedEventArgs e)
+        {
+            if (Collector == null)
+            {
+                return;
+            }
+            Collector.SendStartTest();
+        }
+
+        private void btReTest_Click(object sender, RoutedEventArgs e)
+        {
+            if (Collector == null)
+            {
+                return;
+            }
+            Collector.SendRestartTest();
         }
     }
 }

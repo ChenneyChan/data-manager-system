@@ -73,7 +73,7 @@ namespace ABBDataManagerSystem.Connector
             int length = command.Length + 7; // 7 bytes for header, address * 2, length * 2, checksum, and footer
             byte[] packet = new byte[length];
             string lenStr = command.Length < 10 ? $"0{command.Length}" : command.Length.ToString();
-            char[] lenArray = lenStr.ToCharArray();
+            byte[] lenArray = Encoding.UTF8.GetBytes(lenStr);
 
             packet[0] = 0x7E; // 报文头
             packet[1] = 0x3E; // 从机地址高字节

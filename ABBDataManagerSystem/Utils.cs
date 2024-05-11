@@ -1,6 +1,7 @@
 ﻿using ABBDataManagerSystem.Configs;
 using System.IO;
 using System.Reflection;
+using System.Text;
 
 namespace ABBDataManagerSystem
 {
@@ -233,7 +234,7 @@ namespace ABBDataManagerSystem
             return s;
         }
 
-        public static void ByteCopy(char[] src, byte[]dst, byte placeholder = 0x20)
+        public static void ByteCopy(byte[] src, byte[]dst, byte placeholder = 0x20)
         {
             if (src.Length > dst.Length)
             {
@@ -249,15 +250,15 @@ namespace ABBDataManagerSystem
         public static void FloatToBytes(float value, byte[]buf, byte placeholder = 0x20)
         {
             string str = FloatFormat(value);
-            var chars = str.ToCharArray();
-            ByteCopy(chars, buf, placeholder);
+            var bytes = Encoding.UTF8.GetBytes(str);
+            ByteCopy(bytes, buf, placeholder);
         }
 
         public static void IntToBytes(int value, byte[] buf, byte placeholder = 0x20)
         {
             string str = value.ToString();
-            var chars = str.ToCharArray();
-            ByteCopy(chars, buf, placeholder);
+            var bytes = Encoding.UTF8.GetBytes(str);
+            ByteCopy(bytes, buf, placeholder);
         }
     }
 }

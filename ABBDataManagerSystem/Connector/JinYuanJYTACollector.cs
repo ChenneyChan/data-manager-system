@@ -205,7 +205,7 @@ namespace ABBDataManagerSystem.Connector
             Utils.IntToBytes(RatedTapping, bRatedTapping);
             Utils.IntToBytes(PositiveTappingCount, bPositiveTappingCount);
             Utils.FloatToBytes(TappingSpacing, bTappingSpacing);
-            Utils.ByteCopy(ProductSequence.ToCharArray(), bProductSequence);
+            Utils.ByteCopy(Encoding.UTF8.GetBytes(ProductSequence), bProductSequence);
 
             SinglePhaseCmdPacket[0] = 0x61;
             int offset = 1;
@@ -252,7 +252,7 @@ namespace ABBDataManagerSystem.Connector
             Utils.IntToBytes(RatedTapping, bRatedTapping);
             Utils.IntToBytes(PositiveTappingCount, bPositiveTappingCount);
             Utils.FloatToBytes(TappingSpacing, bTappingSpacing);
-            Utils.ByteCopy(ProductSequence.ToCharArray(), bProductSequence);
+            Utils.ByteCopy(Encoding.UTF8.GetBytes(ProductSequence), bProductSequence);
             Utils.IntToBytes(Group, bGroup);
 
             ThreePhaseCmdPacket[0] = 0x62;
