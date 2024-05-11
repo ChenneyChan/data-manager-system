@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using System.Drawing;
+using System.Windows.Controls;
 
 namespace ABBDataManagerSystem.Pages.Views
 {
@@ -12,7 +13,7 @@ namespace ABBDataManagerSystem.Pages.Views
         public string TappingIndex
         {
             get { return _TappingIndex; }
-            set { _TappingIndex = value; tbTappingIndex.Text = _TappingIndex.ToString(); }
+            set { _TappingIndex = value; UpdateDisplay(); }
         }
 
         private float _ValueAB;
@@ -20,7 +21,7 @@ namespace ABBDataManagerSystem.Pages.Views
         public float ValueAB
         {
             get { return _ValueAB; }
-            set { _ValueAB = value; }
+            set { _ValueAB = value; UpdateDisplay(); }
         }
 
         private float _ValueBC;
@@ -28,7 +29,7 @@ namespace ABBDataManagerSystem.Pages.Views
         public float ValueBC
         {
             get { return _ValueBC; }
-            set { _ValueBC = value; }
+            set { _ValueBC = value; UpdateDisplay(); }
         }
 
         private float _ValueCA;
@@ -36,7 +37,7 @@ namespace ABBDataManagerSystem.Pages.Views
         public float ValueCA
         {
             get { return _ValueCA; }
-            set { _ValueCA = value; }
+            set { _ValueCA = value; UpdateDisplay(); }
         }
 
         private float _TappingVoltage;
@@ -44,7 +45,7 @@ namespace ABBDataManagerSystem.Pages.Views
         public float TappingVoltage
         {
             get { return _TappingVoltage; }
-            set { _TappingVoltage = value; }
+            set { _TappingVoltage = value; UpdateDisplay(); }
         }
 
         private float _CalculatedRatio;
@@ -52,7 +53,15 @@ namespace ABBDataManagerSystem.Pages.Views
         public float CalculatedRatio
         {
             get { return _CalculatedRatio; }
-            set { _CalculatedRatio = value; }
+            set { _CalculatedRatio = value; UpdateDisplay(); }
+        }
+
+        private bool _IsSelected;
+
+        public bool IsSelected
+        {
+            get { return _IsSelected; }
+            set { _IsSelected = value; UpdateDisplay(); }
         }
 
         public TappingVoltageRatioFields()
@@ -69,6 +78,11 @@ namespace ABBDataManagerSystem.Pages.Views
             tbErrorCA.Text = ZeroIsNull(Utils.FloatFormat(ValueCA));
             tbCalculatedRatio.Text = ZeroIsNull(Utils.FloatFormat(CalculatedRatio));
             tbTappingVoltage.Text = ZeroIsNull(Utils.FloatFormat(TappingVoltage));
+
+            if (IsSelected)
+            {
+ 
+            }
         }
 
         private string ZeroIsNull(string value)

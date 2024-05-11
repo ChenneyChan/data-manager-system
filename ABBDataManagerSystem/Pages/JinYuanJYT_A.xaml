@@ -5,8 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ABBDataManagerSystem.Pages"
              xmlns:hc="https://handyorg.github.io/handycontrol"
-             mc:Ignorable="d" Background="White"
-             d:DesignHeight="1057.433" d:DesignWidth="1403" Loaded="UserControl_Loaded" Unloaded="UserControl_Unloaded">
+             mc:Ignorable="d" Background="White" Loaded="UserControl_Loaded" Unloaded="UserControl_Unloaded" Height="1111" Width="1411">
     <UserControl.Resources>
         <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
             <Setter Property="FontSize" Value="18"/>
@@ -260,7 +259,7 @@
                 </TabItem>
             </TabControl>
 
-            <Grid Grid.Column="1" Margin="10" Width="600" Height="640" HorizontalAlignment="Left" VerticalAlignment="Top">
+            <Grid Grid.Column="1" Margin="10" Width="600" Height="680" HorizontalAlignment="Left" VerticalAlignment="Top">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
@@ -284,6 +283,7 @@
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
+                    <RowDefinition Height="1.2*"/>
                 </Grid.RowDefinitions>
                 <TextBlock Margin="10, 0, 0, 0" Text="高压（串联）对低压（1）：" Grid.ColumnSpan="6"/>
                 <TextBlock Text="分接位置" Grid.Row="1" Grid.RowSpan="2" HorizontalAlignment="Center"/>
@@ -335,18 +335,18 @@
                 <TextBox Grid.Row="7" Grid.Column="4" HorizontalAlignment="Center" MinWidth="80" Height="40" IsReadOnly="True"/>
                 <TextBox Grid.Row="7" Grid.Column="5" HorizontalAlignment="Center" MinWidth="80" Height="40" IsReadOnly="True"/>-->
 
-                <Views:TappingVoltageRatioFields Grid.Row="3" TappingIndex="1" Grid.ColumnSpan="6"/>
-                <Views:TappingVoltageRatioFields Grid.Row="4" TappingIndex="2" Grid.ColumnSpan="6"/>
-                <Views:TappingVoltageRatioFields Grid.Row="5" TappingIndex="3" Grid.ColumnSpan="6"/>
-                <Views:TappingVoltageRatioFields Grid.Row="6" TappingIndex="4" Grid.ColumnSpan="6"/>
-                <Views:TappingVoltageRatioFields Grid.Row="7" TappingIndex="5" Grid.ColumnSpan="6"/>
-                <Views:TappingVoltageRatioFields Grid.Row="8" TappingIndex="6" Grid.ColumnSpan="6"/>
-                <Views:TappingVoltageRatioFields Grid.Row="9" TappingIndex="7" Grid.ColumnSpan="6"/>
-                <Views:TappingVoltageRatioFields Grid.Row="10" TappingIndex="8" Grid.ColumnSpan="6"/>
-                <Views:TappingVoltageRatioFields Grid.Row="11" TappingIndex="9" Grid.ColumnSpan="6"/>
+                <Views:TappingVoltageRatioFields x:Name="tvrTappingPoint1" Grid.Row="3" TappingIndex="1" Grid.ColumnSpan="6"/>
+                <Views:TappingVoltageRatioFields x:Name="tvrTappingPoint2" Grid.Row="4" TappingIndex="2" Grid.ColumnSpan="6"/>
+                <Views:TappingVoltageRatioFields x:Name="tvrTappingPoint3" Grid.Row="5" TappingIndex="3" Grid.ColumnSpan="6"/>
+                <Views:TappingVoltageRatioFields x:Name="tvrTappingPoint4" Grid.Row="6" TappingIndex="4" Grid.ColumnSpan="6"/>
+                <Views:TappingVoltageRatioFields x:Name="tvrTappingPoint5" Grid.Row="7" TappingIndex="5" Grid.ColumnSpan="6"/>
+                <Views:TappingVoltageRatioFields x:Name="tvrTappingPoint6" Grid.Row="8" TappingIndex="6" Grid.ColumnSpan="6"/>
+                <Views:TappingVoltageRatioFields x:Name="tvrTappingPoint7" Grid.Row="9" TappingIndex="7" Grid.ColumnSpan="6"/>
+                <Views:TappingVoltageRatioFields x:Name="tvrTappingPoint8" Grid.Row="10" TappingIndex="8" Grid.ColumnSpan="6"/>
+                <Views:TappingVoltageRatioFields x:Name="tvrTappingPoint9" Grid.Row="11" TappingIndex="9" Grid.ColumnSpan="6"/>
 
                 <TextBlock Margin="10, 0, 0, 0" Text="高压（串联）对低压（1）：" Grid.Row="12" Grid.ColumnSpan="6"/>
-                <Views:TappingVoltageRatioFields Grid.Row="13" TappingIndex="2-1" Grid.ColumnSpan="6"/>
+                <Views:TappingVoltageRatioFields x:Name="tvrTappingPoint21" Grid.Row="13" TappingIndex="2-1" Grid.ColumnSpan="6"/>
 
                 <Border Grid.Column="0" Grid.Row="0" BorderThickness="1.5,1.5,1.5,0" BorderBrush="Black" Grid.ColumnSpan="6"></Border>
                 <Border Grid.Column="0" Grid.Row="1" BorderThickness="1.5,1.5,0,0" BorderBrush="Black" Grid.RowSpan="2"></Border>
@@ -359,6 +359,13 @@
                 <Border Grid.Column="0" Grid.Row="12" BorderThickness="1.5,1.5,1.5,0" BorderBrush="Black" Grid.ColumnSpan="6"></Border>
                 <Border Grid.Column="0" Grid.Row="13" BorderThickness="0,0,0,1.5" BorderBrush="Black" Grid.ColumnSpan="6"></Border>
 
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="14" Grid.ColumnSpan="6" Margin="6">
+                    <TextBlock Text="连接组1" Margin="0, 0, 10, 0"/>
+                    <TextBox Width="120" Height="36" Margin="0, 0, 20, 0"/>
+                    <TextBlock Text="连接组2" Margin="0, 0, 10, 0"/>
+                    <TextBox Width="120" Height="36" Margin="0, 0, 20, 0"/>
+                    <Button Width="60" Content="↓" Style="{StaticResource ButtonInfo}" Height="30" FontSize="18"/>
+                </StackPanel>
             </Grid>
         </Grid>
 

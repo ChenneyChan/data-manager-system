@@ -1,4 +1,5 @@
 ﻿using ABBDataManagerSystem.Connector;
+using ABBDataManagerSystem.Pages.Views;
 using System.IO.Ports;
 using System.Windows;
 using System.Windows.Controls;
@@ -10,9 +11,12 @@ namespace ABBDataManagerSystem.Pages
     /// </summary>
     public partial class JinYuanJYT_A : UserControl
     {
+        private Dictionary<string, TappingVoltageRatioFields> RatioValueFields = new Dictionary<string, TappingVoltageRatioFields>();
+
         public JinYuanJYT_A()
         {
             InitializeComponent();
+            InitRatioValues();
             var ports = SerialPort.GetPortNames();
             Array.Sort(ports);
             foreach (var item in ports)
@@ -50,6 +54,20 @@ namespace ABBDataManagerSystem.Pages
                 cbLowVoltageConnection.Items.Add(item);
             }
             cbLowVoltageConnection.SelectedIndex = 0;
+        }
+
+        private void InitRatioValues()
+        {
+            RatioValueFields.Add("1", tvrTappingPoint1);
+            RatioValueFields.Add("2", tvrTappingPoint2);
+            RatioValueFields.Add("3", tvrTappingPoint3);
+            RatioValueFields.Add("4", tvrTappingPoint4);
+            RatioValueFields.Add("5", tvrTappingPoint5);
+            RatioValueFields.Add("6", tvrTappingPoint6);
+            RatioValueFields.Add("7", tvrTappingPoint7);
+            RatioValueFields.Add("8", tvrTappingPoint8);
+            RatioValueFields.Add("9", tvrTappingPoint9);
+            RatioValueFields.Add("21", tvrTappingPoint21);
         }
 
         private void swConnect_CheckedChange(object sender, RoutedEventArgs e)
