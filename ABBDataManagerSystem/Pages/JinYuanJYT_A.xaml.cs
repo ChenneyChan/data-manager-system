@@ -18,6 +18,7 @@ namespace ABBDataManagerSystem.Pages
         {
             InitializeComponent();
             InitRatioValues();
+            InitTestTappingChoice();
             var ports = SerialPort.GetPortNames();
             Array.Sort(ports);
             foreach (var item in ports)
@@ -25,7 +26,11 @@ namespace ABBDataManagerSystem.Pages
                 cbSerialPort.Items.Add(item);
             }
             if (ports.Length > 0) { cbSerialPort.SelectedIndex = 0; }
+            InitDeviceConfigs();
+        }
 
+        private void InitDeviceConfigs()
+        {
             foreach (var item in JinYuanJYTACollector.TestVoltageTypeMap.Keys)
             {
                 cbVoltageConfig.Items.Add(item);
@@ -69,6 +74,31 @@ namespace ABBDataManagerSystem.Pages
             RatioValueFields.Add("8", tvrTappingPoint8);
             RatioValueFields.Add("9", tvrTappingPoint9);
             RatioValueFields.Add("21", tvrTappingPoint21);
+        }
+
+        private void InitTestTappingChoice()
+        {
+            for (int i = 1; i <= 9; i++)
+            {
+                cbTestTapping.Items.Add($"{i}分接");
+            }
+            cbTestTapping.Items.Add("2-1分接");
+            cbTestTapping.SelectedIndex = 0;
+        }
+
+        private TappingVoltageRatioFields? GetSelectedTVR()
+        {
+            if (cbTestTapping.SelectedIndex < 0)
+            {
+                return null;
+            }
+            string selectedTapping = (string)cbTestTapping.SelectedValue;
+            string index = selectedTapping.Remove(selectedTapping.IndexOf("分接"));
+            if (index == "2-1")
+            {
+                index = "21";
+            }
+            return RatioValueFields[index];
         }
 
         private void swConnect_CheckedChange(object sender, RoutedEventArgs e)
@@ -171,6 +201,26 @@ namespace ABBDataManagerSystem.Pages
                 return;
             }
             Collector.SendRestartTest();
+        }
+
+        private void cbTestTapping_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var tvr = GetSelectedTVR();
+            if (tvr == null)
+            {
+                return;
+            }
+            foreach (var item in RatioValueFields.Values)
+            {
+                if (item != tvr)
+                {
+                    item.IsSelected = false;
+                }
+                else
+                {
+                    item.IsSelected = true;
+                }
+            }
         }
     }
 }

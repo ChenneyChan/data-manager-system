@@ -1,5 +1,5 @@
-﻿using System.Drawing;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace ABBDataManagerSystem.Pages.Views
 {
@@ -8,7 +8,7 @@ namespace ABBDataManagerSystem.Pages.Views
     /// </summary>
     public partial class TappingVoltageRatioFields : UserControl
     {
-        private string _TappingIndex;
+        private string _TappingIndex = String.Empty;
 
         public string TappingIndex
         {
@@ -64,9 +64,12 @@ namespace ABBDataManagerSystem.Pages.Views
             set { _IsSelected = value; UpdateDisplay(); }
         }
 
+        private System.Windows.Media.Brush OriginBackGroud;
+
         public TappingVoltageRatioFields()
         {
             InitializeComponent();
+            OriginBackGroud = Background;
             UpdateDisplay();
         }
 
@@ -81,7 +84,11 @@ namespace ABBDataManagerSystem.Pages.Views
 
             if (IsSelected)
             {
- 
+                Background = new SolidColorBrush(Colors.Yellow);
+            }
+            else
+            {
+                Background = OriginBackGroud;
             }
         }
 

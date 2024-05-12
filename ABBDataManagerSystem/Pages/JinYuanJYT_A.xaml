@@ -116,7 +116,7 @@
             <TextBlock Text="-" Margin="5, 0"/>
             <hc:NumericUpDown Width="120" Name="tbGroup" Value="0" FontSize="18" Minimum="0" Maximum="11"/>
         </StackPanel>
-        <Grid Grid.Row="5" Margin="0,10,0,5" >
+        <Grid Grid.Row="5" Margin="0,5,0,5" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
@@ -125,149 +125,154 @@
                 <RowDefinition/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <TabControl SelectionChanged="TabControl_SelectionChanged" Grid.Column="0" MaxHeight="600" MaxWidth="800" VerticalAlignment="Top" HorizontalAlignment="Left">
-                <TabItem Header="单相测试" FontSize="18" Height="{StaticResource textBoxHeigh}" Name="tiSinglePhase">
-                    <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" Style="{StaticResource ScrollViewerNativeBaseStyle}">
-                        <Grid Margin="40" MinHeight="300" MinWidth="600">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition/>
-                                <ColumnDefinition/>
-                                <ColumnDefinition/>
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition/>
-                                <RowDefinition/>
-                                <RowDefinition/>
-                                <RowDefinition/>
-                            </Grid.RowDefinitions>
-                            <Grid Grid.Row="0" Grid.Column="0">
+            <StackPanel Orientation="Vertical" Grid.Column="0" >
+                <TabControl SelectionChanged="TabControl_SelectionChanged" Grid.Column="0" MaxHeight="600" MaxWidth="800" VerticalAlignment="Top" HorizontalAlignment="Left">
+                    <TabItem Header="单相测试" FontSize="18" Height="{StaticResource textBoxHeigh}" Name="tiSinglePhase">
+                        <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" Style="{StaticResource ScrollViewerNativeBaseStyle}">
+                            <Grid Margin="40" MinHeight="300" MinWidth="600">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="60"/>
-                                    <ColumnDefinition Width="1*"/>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Text="变比" Grid.Column="0" Margin="10, 0"/>
-                                <TextBox Height="{StaticResource textBoxHeigh}" Grid.Column="1" IsReadOnly="True"/>
-                            </Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <Grid Grid.Row="0" Grid.Column="0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="60"/>
+                                        <ColumnDefinition Width="1*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="变比" Grid.Column="0" Margin="10, 0"/>
+                                    <TextBox Height="{StaticResource textBoxHeigh}" Grid.Column="1" IsReadOnly="True"/>
+                                </Grid>
 
-                            <Grid Grid.Row="0" Grid.Column="1">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="60"/>
-                                    <ColumnDefinition Width="1*"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Text="误差" Grid.Column="0" Margin="10, 0"/>
-                                <TextBox Height="{StaticResource textBoxHeigh}" Grid.Column="1" IsReadOnly="True"/>
-                            </Grid>
+                                <Grid Grid.Row="0" Grid.Column="1">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="60"/>
+                                        <ColumnDefinition Width="1*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="误差" Grid.Column="0" Margin="10, 0"/>
+                                    <TextBox Height="{StaticResource textBoxHeigh}" Grid.Column="1" IsReadOnly="True"/>
+                                </Grid>
 
-                            <Grid Grid.Row="1" Grid.Column="0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="60"/>
-                                    <ColumnDefinition Width="1*"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Text="电压" Grid.Column="0" Margin="10, 0"/>
-                                <TextBox Height="{StaticResource textBoxHeigh}" Grid.Column="1" IsReadOnly="True"/>
-                            </Grid>
+                                <Grid Grid.Row="1" Grid.Column="0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="60"/>
+                                        <ColumnDefinition Width="1*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="电压" Grid.Column="0" Margin="10, 0"/>
+                                    <TextBox Height="{StaticResource textBoxHeigh}" Grid.Column="1" IsReadOnly="True"/>
+                                </Grid>
 
-                            <Grid Grid.Row="1" Grid.Column="1">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="60"/>
-                                    <ColumnDefinition Width="1*"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Text="电流" Grid.Column="0" Margin="10, 0"/>
-                                <TextBox Height="{StaticResource textBoxHeigh}" Grid.Column="1" IsReadOnly="True"/>
-                            </Grid>
+                                <Grid Grid.Row="1" Grid.Column="1">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="60"/>
+                                        <ColumnDefinition Width="1*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="电流" Grid.Column="0" Margin="10, 0"/>
+                                    <TextBox Height="{StaticResource textBoxHeigh}" Grid.Column="1" IsReadOnly="True"/>
+                                </Grid>
 
-                            <Grid Grid.Row="1" Grid.Column="2">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="60"/>
-                                    <ColumnDefinition Width="1*"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Text="频率" Grid.Column="0" Margin="10, 0"/>
-                                <TextBox Height="{StaticResource textBoxHeigh}" Grid.Column="1" IsReadOnly="True"/>
-                            </Grid>
+                                <Grid Grid.Row="1" Grid.Column="2">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="60"/>
+                                        <ColumnDefinition Width="1*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="频率" Grid.Column="0" Margin="10, 0"/>
+                                    <TextBox Height="{StaticResource textBoxHeigh}" Grid.Column="1" IsReadOnly="True"/>
+                                </Grid>
 
-                            <Grid Grid.Row="2" Grid.Column="0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="100"/>
-                                    <ColumnDefinition Width="1*"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Text="分接位" Grid.Column="0" Margin="10, 0"/>
-                                <TextBox Height="{StaticResource textBoxHeigh}" Grid.Column="1" IsReadOnly="True"/>
-                            </Grid>
+                                <Grid Grid.Row="2" Grid.Column="0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="100"/>
+                                        <ColumnDefinition Width="1*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="分接位" Grid.Column="0" Margin="10, 0"/>
+                                    <TextBox Height="{StaticResource textBoxHeigh}" Grid.Column="1" IsReadOnly="True"/>
+                                </Grid>
 
-                            <Grid Grid.Row="2" Grid.Column="1">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="60"/>
-                                    <ColumnDefinition Width="1*"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Text="极性" Grid.Column="0" Margin="10, 0"/>
-                                <TextBox Height="{StaticResource textBoxHeigh}" Grid.Column="1" IsReadOnly="True"/>
-                            </Grid>
+                                <Grid Grid.Row="2" Grid.Column="1">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="60"/>
+                                        <ColumnDefinition Width="1*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="极性" Grid.Column="0" Margin="10, 0"/>
+                                    <TextBox Height="{StaticResource textBoxHeigh}" Grid.Column="1" IsReadOnly="True"/>
+                                </Grid>
 
-                            <Grid Grid.Row="3" Grid.Column="0">
+                                <Grid Grid.Row="3" Grid.Column="0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="100"/>
+                                        <ColumnDefinition Width="1*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="计算变比" Grid.Column="0" Margin="10, 0"/>
+                                    <TextBox Height="{StaticResource textBoxHeigh}" Grid.Column="1" IsReadOnly="True"/>
+                                </Grid>
+                            </Grid>
+                        </ScrollViewer>
+                    </TabItem>
+                    <TabItem Header="三相测试" FontSize="18" Height="{StaticResource textBoxHeigh}" Name="tiThreePhase">
+                        <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" Style="{StaticResource ScrollViewerNativeBaseStyle}">
+                            <Grid Margin="40" MinHeight="360" MinWidth="600">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="100"/>
+                                    <ColumnDefinition Width="0.5*"/>
+                                    <ColumnDefinition Width="1*"/>
+                                    <ColumnDefinition Width="1*"/>
                                     <ColumnDefinition Width="1*"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Text="计算变比" Grid.Column="0" Margin="10, 0"/>
-                                <TextBox Height="{StaticResource textBoxHeigh}" Grid.Column="1" IsReadOnly="True"/>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Text="A" FontSize="18" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <TextBlock Text="B" FontSize="18" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <TextBlock Text="C" FontSize="18" Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <TextBlock Text="变比 " FontSize="20" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <TextBlock Text="匝比 " FontSize="20" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <TextBlock Text="误差 " FontSize="20" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <TextBlock Text="电压 " FontSize="20" Grid.Column="0" Grid.Row="4" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <TextBlock Text="电流 " FontSize="20" Grid.Column="0" Grid.Row="5" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <TextBlock Text="联结方式 " FontSize="20" Grid.Column="0" Grid.Row="6" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <TextBlock Text="计算变比 " FontSize="20" Grid.Column="0" Grid.Row="7" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <TextBlock Text="频率 " FontSize="20" Grid.Column="2" Grid.Row="6" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                <TextBlock Text="分接位" FontSize="20" Grid.Column="2" Grid.Row="7" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                <TextBox FontSize="20" Grid.Column="1" Grid.Row="1" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
+                                <TextBox FontSize="20" Grid.Column="1" Grid.Row="2" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
+                                <TextBox FontSize="20" Grid.Column="1" Grid.Row="3" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
+                                <TextBox FontSize="20" Grid.Column="1" Grid.Row="4" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
+                                <TextBox FontSize="20" Grid.Column="1" Grid.Row="5" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
+                                <TextBox FontSize="20" Grid.Column="1" Grid.Row="6" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
+                                <TextBox FontSize="20" Grid.Column="1" Grid.Row="7" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
+                                <TextBox FontSize="20" Grid.Column="2" Grid.Row="1" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
+                                <TextBox FontSize="20" Grid.Column="2" Grid.Row="2" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
+                                <TextBox FontSize="20" Grid.Column="2" Grid.Row="3" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
+                                <TextBox FontSize="20" Grid.Column="2" Grid.Row="4" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
+                                <TextBox FontSize="20" Grid.Column="2" Grid.Row="5" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
+                                <TextBox FontSize="20" Grid.Column="3" Grid.Row="1" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
+                                <TextBox FontSize="20" Grid.Column="3" Grid.Row="2" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
+                                <TextBox FontSize="20" Grid.Column="3" Grid.Row="3" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
+                                <TextBox FontSize="20" Grid.Column="3" Grid.Row="4" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
+                                <TextBox FontSize="20" Grid.Column="3" Grid.Row="5" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
+                                <TextBox FontSize="20" Grid.Column="3" Grid.Row="6" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
+                                <TextBox FontSize="20" Grid.Column="3" Grid.Row="7" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
                             </Grid>
-                        </Grid>
-                    </ScrollViewer>
-                </TabItem>
-                <TabItem Header="三相测试" FontSize="18" Height="{StaticResource textBoxHeigh}" Name="tiThreePhase">
-                    <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" Style="{StaticResource ScrollViewerNativeBaseStyle}">
-                        <Grid Margin="40" MinHeight="360" MinWidth="600">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="0.5*"/>
-                                <ColumnDefinition Width="1*"/>
-                                <ColumnDefinition Width="1*"/>
-                                <ColumnDefinition Width="1*"/>
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition/>
-                                <RowDefinition/>
-                                <RowDefinition/>
-                                <RowDefinition/>
-                                <RowDefinition/>
-                                <RowDefinition/>
-                                <RowDefinition/>
-                                <RowDefinition/>
-                            </Grid.RowDefinitions>
-                            <TextBlock Text="A" FontSize="18" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            <TextBlock Text="B" FontSize="18" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            <TextBlock Text="C" FontSize="18" Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            <TextBlock Text="变比 " FontSize="20" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            <TextBlock Text="匝比 " FontSize="20" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            <TextBlock Text="误差 " FontSize="20" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            <TextBlock Text="电压 " FontSize="20" Grid.Column="0" Grid.Row="4" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            <TextBlock Text="电流 " FontSize="20" Grid.Column="0" Grid.Row="5" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            <TextBlock Text="联结方式 " FontSize="20" Grid.Column="0" Grid.Row="6" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            <TextBlock Text="计算变比 " FontSize="20" Grid.Column="0" Grid.Row="7" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            <TextBlock Text="频率 " FontSize="20" Grid.Column="2" Grid.Row="6" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                            <TextBlock Text="分接位" FontSize="20" Grid.Column="2" Grid.Row="7" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                            <TextBox FontSize="20" Grid.Column="1" Grid.Row="1" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
-                            <TextBox FontSize="20" Grid.Column="1" Grid.Row="2" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
-                            <TextBox FontSize="20" Grid.Column="1" Grid.Row="3" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
-                            <TextBox FontSize="20" Grid.Column="1" Grid.Row="4" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
-                            <TextBox FontSize="20" Grid.Column="1" Grid.Row="5" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
-                            <TextBox FontSize="20" Grid.Column="1" Grid.Row="6" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
-                            <TextBox FontSize="20" Grid.Column="1" Grid.Row="7" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
-                            <TextBox FontSize="20" Grid.Column="2" Grid.Row="1" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
-                            <TextBox FontSize="20" Grid.Column="2" Grid.Row="2" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
-                            <TextBox FontSize="20" Grid.Column="2" Grid.Row="3" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
-                            <TextBox FontSize="20" Grid.Column="2" Grid.Row="4" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
-                            <TextBox FontSize="20" Grid.Column="2" Grid.Row="5" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
-                            <TextBox FontSize="20" Grid.Column="3" Grid.Row="1" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
-                            <TextBox FontSize="20" Grid.Column="3" Grid.Row="2" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
-                            <TextBox FontSize="20" Grid.Column="3" Grid.Row="3" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
-                            <TextBox FontSize="20" Grid.Column="3" Grid.Row="4" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
-                            <TextBox FontSize="20" Grid.Column="3" Grid.Row="5" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
-                            <TextBox FontSize="20" Grid.Column="3" Grid.Row="6" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
-                            <TextBox FontSize="20" Grid.Column="3" Grid.Row="7" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
-                        </Grid>
-                    </ScrollViewer>
-                </TabItem>
-            </TabControl>
+                        </ScrollViewer>
+                    </TabItem>
+                </TabControl>
+                <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                    <TextBox IsReadOnly="True" Name="tbDebug" VerticalContentAlignment="Top" Width="400" HorizontalAlignment="Left" Margin="0,10,0,0" Height="200"/>
+                </ScrollViewer>
+            </StackPanel>
 
             <Grid Grid.Column="1" Margin="10" Grid.RowSpan="2"  Width="600" Height="680" HorizontalAlignment="Left" VerticalAlignment="Top" >
                 <Grid.ColumnDefinitions>
@@ -303,48 +308,7 @@
                 <TextBlock Text="AB/ab" Grid.Row="2" Grid.Column="3" HorizontalAlignment="Center"/>
                 <TextBlock Text="BC/bc" Grid.Row="2" Grid.Column="4" HorizontalAlignment="Center"/>
                 <TextBlock Text="CA/ca" Grid.Row="2" Grid.Column="5" HorizontalAlignment="Center"/>
-                <!--<TextBlock Text="1"  Grid.Row="3" Grid.Column="0" HorizontalAlignment="Center"/>
-                <TextBox Grid.Row="3" Grid.Column="1" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
-                <TextBox Grid.Row="3" Grid.Column="2" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
-                <TextBox Grid.Row="3" Grid.Column="3" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
-                <TextBox Grid.Row="3" Grid.Column="4" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
-                <TextBox Grid.Row="3" Grid.Column="5" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
-
-                <TextBlock Text="2"  Grid.Row="4" Grid.Column="0" HorizontalAlignment="Center"/>
-                <TextBox Grid.Row="4" Grid.Column="1" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
-                <TextBox Grid.Row="4" Grid.Column="2" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
-                <TextBox Grid.Row="4" Grid.Column="3" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
-                <TextBox Grid.Row="4" Grid.Column="4" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
-                <TextBox Grid.Row="4" Grid.Column="5" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
-
-                <TextBlock Text="3"  Grid.Row="5" Grid.Column="0" HorizontalAlignment="Center"/>
-                <TextBox Grid.Row="5" Grid.Column="1" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
-                <TextBox Grid.Row="5" Grid.Column="2" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
-                <TextBox Grid.Row="5" Grid.Column="3" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
-                <TextBox Grid.Row="5" Grid.Column="4" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
-                <TextBox Grid.Row="5" Grid.Column="5" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
-
-                <TextBlock Text="3"  Grid.Row="5" Grid.Column="0" HorizontalAlignment="Center"/>
-                <TextBox Grid.Row="5" Grid.Column="1" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
-                <TextBox Grid.Row="5" Grid.Column="2" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
-                <TextBox Grid.Row="5" Grid.Column="3" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
-                <TextBox Grid.Row="5" Grid.Column="4" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
-                <TextBox Grid.Row="5" Grid.Column="5" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
-
-                <TextBlock Text="4"  Grid.Row="6" Grid.Column="0" HorizontalAlignment="Center"/>
-                <TextBox Grid.Row="6" Grid.Column="1" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
-                <TextBox Grid.Row="6" Grid.Column="2" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
-                <TextBox Grid.Row="6" Grid.Column="3" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
-                <TextBox Grid.Row="6" Grid.Column="4" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
-                <TextBox Grid.Row="6" Grid.Column="5" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
-
-                <TextBlock Text="5"  Grid.Row="7" Grid.Column="0" HorizontalAlignment="Center"/>
-                <TextBox Grid.Row="7" Grid.Column="1" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
-                <TextBox Grid.Row="7" Grid.Column="2" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
-                <TextBox Grid.Row="7" Grid.Column="3" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
-                <TextBox Grid.Row="7" Grid.Column="4" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
-                <TextBox Grid.Row="7" Grid.Column="5" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>-->
-
+                
                 <Views:TappingVoltageRatioFields x:Name="tvrTappingPoint1" Grid.Row="3" TappingIndex="1" Grid.ColumnSpan="6"/>
                 <Views:TappingVoltageRatioFields x:Name="tvrTappingPoint2" Grid.Row="4" TappingIndex="2" Grid.ColumnSpan="6"/>
                 <Views:TappingVoltageRatioFields x:Name="tvrTappingPoint3" Grid.Row="5" TappingIndex="3" Grid.ColumnSpan="6"/>
@@ -378,16 +342,15 @@
                 </StackPanel>
             </Grid>
             <StackPanel Orientation="Horizontal" Grid.Row="2" MaxWidth="800">
+                <StackPanel Orientation="Horizontal" Margin="0, 0, 10, 0" VerticalAlignment="Center">
+                    <TextBlock Text="分接选择" Width="80" Margin="0,0,10,0" FontWeight="Bold"/>
+                    <ComboBox  Width="120" Name="cbTestTapping" SelectionChanged="cbTestTapping_SelectionChanged"/>
+                </StackPanel>
                 <Button Content="复位"     Style="{StaticResource ButtonInfo}"  Height="{StaticResource textBoxHeigh}" Width="120" FontSize="18"  Margin="0, 0, 10, 0" Name="btReset" Click="btReset_Click"/>
                 <Button Content="下发参数" Style="{StaticResource ButtonInfo}"  Height="{StaticResource textBoxHeigh}" Width="120" FontSize="18"  Margin="0, 0, 10, 0" Name="btSetParameters" Click="btSetParameters_Click"/>
                 <Button Content="测试"     Style="{StaticResource ButtonInfo}"  Height="{StaticResource textBoxHeigh}" Width="120" FontSize="18"  Margin="0, 0, 10, 0" Name="btStartTest" Click="btStartTest_Click"/>
                 <Button Content="重测"     Style="{StaticResource ButtonInfo}"  Height="{StaticResource textBoxHeigh}" Width="120" FontSize="18"  Margin="0, 0, 10, 0" Name="btReTest" Click="btReTest_Click"/>
-                <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-                    <TextBox IsReadOnly="True" Name="tbDebug" VerticalContentAlignment="Top" Width="400"/>
-                </ScrollViewer>
             </StackPanel>
         </Grid>
-
-
     </Grid>
 </UserControl>
