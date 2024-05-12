@@ -539,6 +539,43 @@ namespace ABBDataManagerSystem.Connector
             { 0x35, PowerCodeType.ExternalPower },
         };
 
+        public static HighVoltageConnectionType? GetHighConnectionType(string connection)
+        {
+            foreach( var item in HighVoltageConnectionTypeMap)
+            {
+                if (item.Key == connection)
+                {
+                    return item.Value;
+                }
+            }
+            return null;
+        }
+
+        public static LowVoltageConnectionType? GetLowConnectionType(string connection)
+        {
+            foreach (var item in LowVoltageConnectionTypeMap)
+            {
+                if (item.Key == connection)
+                {
+                    return item.Value;
+                }
+            }
+            return null;
+        }
+
+        public static HomopolarityDisplayType? GetHomopolarityDisplayType(string type)
+        {
+            foreach (var item in HomopolarityDisplayTypeMap)
+            {
+                if (item.Key == type)
+                {
+                    return item.Value;
+                }
+            }
+            return null;
+        }
+       
+
         public JinYunJYTATestResult? ReadPacket(ref bool needReset)
         {
             needReset = false;

@@ -86,11 +86,11 @@
                 <ComboBox Name="cbTappingPoint" Width="120" SelectedIndex="0">
                 </ComboBox>
                 <TextBlock Width="80" Text="额定分接" VerticalAlignment="Center" Margin="20, 0, 10, 0"/>
-                <hc:NumericUpDown Width="120" Name="tbRatedConnection" Value="3" FontSize="18" Minimum="0"/>
+                <hc:NumericUpDown Width="120" Name="tbRatedTapping" Value="3" FontSize="18" Minimum="0"/>
                 <TextBlock Width="120" Text="正分接数" VerticalAlignment="Center" Margin="20, 0, 10, 0"/>
-                <hc:NumericUpDown Width="120" Name="tbPositiveConnection" Value="5" FontSize="18" Minimum="0"/>
+                <hc:NumericUpDown Width="120" Name="tbPositiveTappingCount" Value="5" FontSize="18" Minimum="0"/>
                 <TextBlock Width="120" Text="分接间距(%)" VerticalAlignment="Center" Margin="20, 0, 10, 0"/>
-                <hc:NumericUpDown Width="120" Name="tbConnectionGap" Value="5" FontSize="18" Minimum="0" ValueFormat="N1" />
+                <hc:NumericUpDown Width="120" Name="tbTappingSpacing" Value="5" FontSize="18" Minimum="0" ValueFormat="N1" />
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="0, 5">
                 <TextBlock Width="140" Text="同极性显示(单相)" VerticalAlignment="Center" Margin="0, 0, 10, 0"/>
