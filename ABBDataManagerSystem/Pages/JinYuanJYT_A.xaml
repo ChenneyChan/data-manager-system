@@ -40,14 +40,11 @@
             <RowDefinition Height="60"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0">
             <TextBlock HorizontalAlignment="Left" Margin="0,10" TextAlignment="Center" TextWrapping="Wrap" Text="金源JYT-A变比测量仪" FontSize="24" FontWeight="Bold"/>
         </StackPanel>
-
         <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="0, 10">
             <TextBlock Text="连接" Margin="0, 0, 10, 0" FontWeight="Bold"/>
             <ToggleButton IsChecked="{Binding ContextMenuIsShow}" Style="{StaticResource ToggleButtonSwitch}"  hc:IconSwitchElement.GeometrySelected="{StaticResource RightGeometry}"  Margin="0, 0, 20, 0" Name="swConnect" Checked="swConnect_CheckedChange" Unchecked="swConnect_CheckedChange">
@@ -67,68 +64,63 @@
                     <ComboBoxItem Content="12800"/>
                 </ComboBox>
             </StackPanel>
+        </StackPanel>
 
-            <!--<StackPanel HorizontalAlignment="Left" Orientation="Horizontal" VerticalAlignment="Top" Margin="10,0">
-        <CheckBox Content="高压侧" VerticalAlignment="Center" Name="cbCH1"/>
-        <Viewbox Width="10"/>
-        <ComboBox Width="100" Name="cbHVCurrents"/>
-        <Viewbox Width="10"/>
-        <CheckBox Content="低压侧" VerticalAlignment="Center" Name="cbCH2"/>
-        <Viewbox Width="10"/>
-        <ComboBox Width="100" Name="cbLVCurrents"/>
-    </StackPanel>-->
+        <StackPanel Grid.Row="2" Orientation="Vertical" >
+            <StackPanel Orientation="Horizontal" Margin="0,5">
+                <TextBlock Width="80" Text="测试类型" VerticalAlignment="Center" Margin="0, 0, 10, 0"/>
+                <ComboBox Name="cbTestMode" Width="120" SelectedIndex="0" SelectionChanged="cbTestMode_SelectionChanged">
+                    <ComboBoxItem Content="三相测试"/>
+                    <ComboBoxItem Content="单相测试"/>
+                </ComboBox>
+                <TextBlock Width="80" Text="试验电压" VerticalAlignment="Center" Margin="20, 0, 10, 0"/>
+                <ComboBox Name="cbVoltageConfig" Width="120" SelectedIndex="0">
+                </ComboBox>
+                <TextBlock Width="120" Text="高压电压(kV)" VerticalAlignment="Center" Margin="20, 0, 10, 0"/>
+                <hc:NumericUpDown Width="120" Name="tbHighVoltage" Value="1.0" ValueFormat="N2" FontSize="18"/>
+                <TextBlock Width="120" Text="低压电压(kV)" VerticalAlignment="Center" Margin="20, 0, 10, 0"/>
+                <hc:NumericUpDown Width="120" Name="tbLowVoltage" Value="1.0" ValueFormat="N2" FontSize="18"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0, 5">
+                <TextBlock Width="80" Text="分接位置" VerticalAlignment="Center" Margin="0, 0, 10, 0"/>
+                <ComboBox Name="cbTappingPoint" Width="120" SelectedIndex="0">
+                </ComboBox>
+                <TextBlock Width="80" Text="额定分接" VerticalAlignment="Center" Margin="20, 0, 10, 0"/>
+                <hc:NumericUpDown Width="120" Name="tbRatedConnection" Value="3" FontSize="18" Minimum="0"/>
+                <TextBlock Width="120" Text="正分接数" VerticalAlignment="Center" Margin="20, 0, 10, 0"/>
+                <hc:NumericUpDown Width="120" Name="tbPositiveConnection" Value="5" FontSize="18" Minimum="0"/>
+                <TextBlock Width="120" Text="分接间距(%)" VerticalAlignment="Center" Margin="20, 0, 10, 0"/>
+                <hc:NumericUpDown Width="120" Name="tbConnectionGap" Value="5" FontSize="18" Minimum="0" ValueFormat="N1" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0, 5">
+                <TextBlock Width="140" Text="同极性显示(单相)" VerticalAlignment="Center" Margin="0, 0, 10, 0"/>
+                <ComboBox Name="cbHomopolarityDisplay" Width="120" SelectedIndex="0">
+                </ComboBox>
+                <TextBlock Width="80" Text="联结方式" VerticalAlignment="Center" Margin="20, 0, 10, 0"/>
+                <ComboBox Name="cbHighVoltageConnection" Width="80" SelectedIndex="0">
+                </ComboBox>
+                <TextBlock Text="-" Margin="5, 0"/>
+                <ComboBox Name="cbLowVoltageConnection" Width="80" SelectedIndex="0">
+                </ComboBox>
+                <TextBlock Text="-" Margin="5, 0"/>
+                <hc:NumericUpDown Width="120" Name="tbGroup" Value="0" FontSize="18" Minimum="0" Maximum="11"/>
+            </StackPanel>
         </StackPanel>
-        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,5">
-            <TextBlock Width="80" Text="测试类型" VerticalAlignment="Center" Margin="0, 0, 10, 0"/>
-            <ComboBox Name="cbTestMode" Width="120" SelectedIndex="0" SelectionChanged="cbTestMode_SelectionChanged">
-                <ComboBoxItem Content="三相测试"/>
-                <ComboBoxItem Content="单相测试"/>
-            </ComboBox>
-            <TextBlock Width="80" Text="试验电压" VerticalAlignment="Center" Margin="20, 0, 10, 0"/>
-            <ComboBox Name="cbVoltageConfig" Width="120" SelectedIndex="0">
-            </ComboBox>
-            <TextBlock Width="120" Text="高压电压(kV)" VerticalAlignment="Center" Margin="20, 0, 10, 0"/>
-            <hc:NumericUpDown Width="120" Name="tbHighVoltage" Value="1.0" ValueFormat="N2" FontSize="18"/>
-            <TextBlock Width="120" Text="低压电压(kV)" VerticalAlignment="Center" Margin="20, 0, 10, 0"/>
-            <hc:NumericUpDown Width="120" Name="tbLowVoltage" Value="1.0" ValueFormat="N2" FontSize="18"/>
-        </StackPanel>
-        <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0, 5">
-            <TextBlock Width="80" Text="分接位置" VerticalAlignment="Center" Margin="0, 0, 10, 0"/>
-            <ComboBox Name="cbTappingPoint" Width="120" SelectedIndex="0">
-            </ComboBox>
-            <TextBlock Width="80" Text="额定分接" VerticalAlignment="Center" Margin="20, 0, 10, 0"/>
-            <hc:NumericUpDown Width="120" Name="tbRatedConnection" Value="3" FontSize="18" Minimum="0"/>
-            <TextBlock Width="120" Text="正分接数" VerticalAlignment="Center" Margin="20, 0, 10, 0"/>
-            <hc:NumericUpDown Width="120" Name="tbPositiveConnection" Value="5" FontSize="18" Minimum="0"/>
-            <TextBlock Width="120" Text="分接间距(%)" VerticalAlignment="Center" Margin="20, 0, 10, 0"/>
-            <hc:NumericUpDown Width="120" Name="tbConnectionGap" Value="5" FontSize="18" Minimum="0" ValueFormat="N1" />
-        </StackPanel>
-        <StackPanel Grid.Row="4" Orientation="Horizontal" Margin="0, 5">
-            <TextBlock Width="140" Text="同极性显示(单相)" VerticalAlignment="Center" Margin="0, 0, 10, 0"/>
-            <ComboBox Name="cbHomopolarityDisplay" Width="120" SelectedIndex="0">
-            </ComboBox>
-            <TextBlock Width="80" Text="联结方式" VerticalAlignment="Center" Margin="20, 0, 10, 0"/>
-            <ComboBox Name="cbHighVoltageConnection" Width="80" SelectedIndex="0">
-            </ComboBox>
-            <TextBlock Text="-" Margin="5, 0"/>
-            <ComboBox Name="cbLowVoltageConnection" Width="80" SelectedIndex="0">
-            </ComboBox>
-            <TextBlock Text="-" Margin="5, 0"/>
-            <hc:NumericUpDown Width="120" Name="tbGroup" Value="0" FontSize="18" Minimum="0" Maximum="11"/>
-        </StackPanel>
-        <Grid Grid.Row="5" Margin="0,5,0,5" >
+
+        <Grid Grid.Row="3" Margin="0,5,0,5" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-            <StackPanel Orientation="Vertical" Grid.Column="0" >
-                <TabControl SelectionChanged="TabControl_SelectionChanged" Grid.Column="0" MaxHeight="600" MaxWidth="800" VerticalAlignment="Top" HorizontalAlignment="Left">
+            <Grid Grid.Column="0" >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <TabControl SelectionChanged="TabControl_SelectionChanged" Grid.Column="0" Height="600" Width="730" VerticalAlignment="Top" HorizontalAlignment="Left">
                     <TabItem Header="单相测试" FontSize="18" Height="{StaticResource textBoxHeigh}" Name="tiSinglePhase">
-                        <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" Style="{StaticResource ScrollViewerNativeBaseStyle}">
+                        <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" Style="{StaticResource ScrollViewerNativeBaseStyle}" >
                             <Grid Margin="40" MinHeight="300" MinWidth="600">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition/>
@@ -269,12 +261,23 @@
                         </ScrollViewer>
                     </TabItem>
                 </TabControl>
-                <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-                    <TextBox IsReadOnly="True" Name="tbDebug" VerticalContentAlignment="Top" Width="400" HorizontalAlignment="Left" Margin="0,10,0,0" Height="200"/>
-                </ScrollViewer>
-            </StackPanel>
 
-            <Grid Grid.Column="1" Margin="10" Grid.RowSpan="2"  Width="600" Height="680" HorizontalAlignment="Left" VerticalAlignment="Top" >
+                <StackPanel Orientation="Horizontal" Grid.Row="1" MaxWidth="800">
+                    <StackPanel Orientation="Horizontal" Margin="0, 0, 10, 0" VerticalAlignment="Center">
+                        <TextBlock Text="分接选择" Width="80" Margin="0,0,10,0" FontWeight="Bold"/>
+                        <ComboBox  Width="120" Name="cbTestTapping" SelectionChanged="cbTestTapping_SelectionChanged"/>
+                    </StackPanel>
+                    <Button Content="复位"     Style="{StaticResource ButtonInfo}"  Height="{StaticResource textBoxHeigh}" Width="120" FontSize="18"  Margin="0, 0, 10, 0" Name="btReset" Click="btReset_Click"/>
+                    <Button Content="下发参数" Style="{StaticResource ButtonInfo}"  Height="{StaticResource textBoxHeigh}" Width="120" FontSize="18"  Margin="0, 0, 10, 0" Name="btSetParameters" Click="btSetParameters_Click"/>
+                    <Button Content="测试"     Style="{StaticResource ButtonInfo}"  Height="{StaticResource textBoxHeigh}" Width="120" FontSize="18"  Margin="0, 0, 10, 0" Name="btStartTest" Click="btStartTest_Click"/>
+                    <Button Content="重测"     Style="{StaticResource ButtonInfo}"  Height="{StaticResource textBoxHeigh}" Width="120" FontSize="18"  Margin="0, 0, 10, 0" Name="btReTest" Click="btReTest_Click"/>
+                </StackPanel>
+                <ScrollViewer Grid.Row="2" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                    <TextBox IsReadOnly="True" Name="tbDebug" VerticalContentAlignment="Center" Width="730" HorizontalAlignment="Left" Margin="0,10,0,0" Height="Auto"/>
+                </ScrollViewer>
+            </Grid>
+
+            <Grid Grid.Column="1" Margin="10" Width="600" Height="680" HorizontalAlignment="Left" VerticalAlignment="Top" >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
@@ -308,7 +311,7 @@
                 <TextBlock Text="AB/ab" Grid.Row="2" Grid.Column="3" HorizontalAlignment="Center"/>
                 <TextBlock Text="BC/bc" Grid.Row="2" Grid.Column="4" HorizontalAlignment="Center"/>
                 <TextBlock Text="CA/ca" Grid.Row="2" Grid.Column="5" HorizontalAlignment="Center"/>
-                
+
                 <Views:TappingVoltageRatioFields x:Name="tvrTappingPoint1" Grid.Row="3" TappingIndex="1" Grid.ColumnSpan="6"/>
                 <Views:TappingVoltageRatioFields x:Name="tvrTappingPoint2" Grid.Row="4" TappingIndex="2" Grid.ColumnSpan="6"/>
                 <Views:TappingVoltageRatioFields x:Name="tvrTappingPoint3" Grid.Row="5" TappingIndex="3" Grid.ColumnSpan="6"/>
@@ -341,16 +344,6 @@
                     <Button Width="60" Content="↓" Style="{StaticResource ButtonInfo}" Height="30" FontSize="18"/>
                 </StackPanel>
             </Grid>
-            <StackPanel Orientation="Horizontal" Grid.Row="2" MaxWidth="800">
-                <StackPanel Orientation="Horizontal" Margin="0, 0, 10, 0" VerticalAlignment="Center">
-                    <TextBlock Text="分接选择" Width="80" Margin="0,0,10,0" FontWeight="Bold"/>
-                    <ComboBox  Width="120" Name="cbTestTapping" SelectionChanged="cbTestTapping_SelectionChanged"/>
-                </StackPanel>
-                <Button Content="复位"     Style="{StaticResource ButtonInfo}"  Height="{StaticResource textBoxHeigh}" Width="120" FontSize="18"  Margin="0, 0, 10, 0" Name="btReset" Click="btReset_Click"/>
-                <Button Content="下发参数" Style="{StaticResource ButtonInfo}"  Height="{StaticResource textBoxHeigh}" Width="120" FontSize="18"  Margin="0, 0, 10, 0" Name="btSetParameters" Click="btSetParameters_Click"/>
-                <Button Content="测试"     Style="{StaticResource ButtonInfo}"  Height="{StaticResource textBoxHeigh}" Width="120" FontSize="18"  Margin="0, 0, 10, 0" Name="btStartTest" Click="btStartTest_Click"/>
-                <Button Content="重测"     Style="{StaticResource ButtonInfo}"  Height="{StaticResource textBoxHeigh}" Width="120" FontSize="18"  Margin="0, 0, 10, 0" Name="btReTest" Click="btReTest_Click"/>
-            </StackPanel>
         </Grid>
     </Grid>
 </UserControl>

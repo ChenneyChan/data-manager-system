@@ -70,6 +70,16 @@ namespace ABBDataManagerSystem.Connector
             Initial,
             SelfeCheck,
             MainMenu,
+            SinglePhaseSetting,
+            TreePhaseSetting,
+            TreePhaseAutoSetting,
+            SinglePhaseTest,
+            TreePhaseTest,
+            TreePhaseAutoTest,
+            VoltageProtection,
+            CurrentProtection,
+            OverheatProtection,
+            OtherState,
         }
 
         public enum TipInfoType
@@ -80,7 +90,7 @@ namespace ABBDataManagerSystem.Connector
             TestError,
         }
 
-        public enum PowerInfoType
+        public enum PowerCodeType
         {
             Full,
             Percent75,
@@ -97,6 +107,10 @@ namespace ABBDataManagerSystem.Connector
         private TestTypeJYTA _TestType = TestTypeJYTA.SinglePhaseTest;
 
         public DeviceState deviceState = DeviceState.MainMenu;
+
+        public TipInfoType tipInfo = TipInfoType.Null;
+
+        public PowerCodeType powerCode = PowerCodeType.Full;
 
         public TestTypeJYTA TestType { get { return _TestType; } set { _TestType = value; IsConfigChanged = true; } }
 
@@ -349,7 +363,7 @@ namespace ABBDataManagerSystem.Connector
 
         public class JinYuanJYTAPacketInfo
         {
-            public byte deviceState;
+            public DeviceState deviceState;
 
             public JinYuanJYTAPacketInfo()
             {
@@ -479,16 +493,36 @@ namespace ABBDataManagerSystem.Connector
 
         public static Dictionary<string, DeviceState> DeviceStateMap = new Dictionary<string, DeviceState>()
         {
-            { "初始",  DeviceState.Initial},
-            { "自检",  DeviceState.SelfeCheck},
-            { "主菜单",  DeviceState.MainMenu},
+            { "初始",  DeviceState.Initial },
+            { "自检",  DeviceState.SelfeCheck },
+            { "主菜单",  DeviceState.MainMenu },
+            { "单相参数设置", DeviceState.SinglePhaseSetting },
+            { "三相参数设置", DeviceState.TreePhaseSetting },
+            { "三相自动参数设置", DeviceState.TreePhaseAutoSetting },
+            { "单相测试", DeviceState.SinglePhaseTest },
+            { "三相测试", DeviceState.TreePhaseTest },
+            { "三相自动测试", DeviceState.TreePhaseAutoTest},
+            { "电压保护", DeviceState.VoltageProtection},
+            { "电流保护", DeviceState.CurrentProtection },
+            { "过热保护", DeviceState.OverheatProtection },
+            { "其他状态", DeviceState.OtherState },
         };
 
         public static Dictionary<byte, DeviceState> DeviceStateCmdMap = new Dictionary<byte, DeviceState>()
         {
-            {  0x60, DeviceState.Initial },
-            {  0x61, DeviceState.SelfeCheck },
-            {  0x63, DeviceState.MainMenu },
+            { 0x60, DeviceState.Initial },
+            { 0x61, DeviceState.SelfeCheck },
+            { 0x63, DeviceState.MainMenu },
+            { 0x65, DeviceState.SinglePhaseSetting  },
+            { 0x66, DeviceState.TreePhaseSetting },
+            { 0x67, DeviceState.TreePhaseAutoSetting },
+            { 0x6A, DeviceState.SinglePhaseTest },
+            { 0x6B, DeviceState.TreePhaseTest },
+            { 0x6C, DeviceState.TreePhaseAutoTest },
+            { 0x70, DeviceState.VoltageProtection },
+            { 0x71, DeviceState.CurrentProtection },
+            { 0x72, DeviceState.OverheatProtection },
+            { 0x7A, DeviceState.OtherState },
         };
 
         public static Dictionary<string, TipInfoType> TipInfoTypeMap = new Dictionary<string, TipInfoType>()
@@ -507,41 +541,29 @@ namespace ABBDataManagerSystem.Connector
             { 0x33, TipInfoType.TestError },
         };
 
-        public static Dictionary<string, PowerInfoType> PowerInfoTypeMap = new Dictionary<string, PowerInfoType>()
+        public static Dictionary<string, PowerCodeType> PowerCodeTypeMap = new Dictionary<string, PowerCodeType>()
         {
-            { "100",  PowerInfoType.Full},
-            { "75",  PowerInfoType.Percent75},
-            { "50",  PowerInfoType.Percent50},
-            { "25",  PowerInfoType.Percent25},
-            { "0",  PowerInfoType.Percent0},
-            { "外部供电",  PowerInfoType.ExternalPower},
+            { "100", PowerCodeType.Full},
+            { "75", PowerCodeType.Percent75},
+            { "50", PowerCodeType.Percent50},
+            { "25", PowerCodeType.Percent25},
+            { "0",  PowerCodeType.Percent0},
+            { "外部供电",  PowerCodeType.ExternalPower},
         };
 
-        public static Dictionary<byte, PowerInfoType> PowerInfoTypeByteMap = new Dictionary<byte, PowerInfoType>()
+        public static Dictionary<byte, PowerCodeType> PowerCodeTypeByteMap = new Dictionary<byte, PowerCodeType>()
         {
-            { 0x30, PowerInfoType.Full },
-            { 0x31, PowerInfoType.Percent75 },
-            { 0x32, PowerInfoType.Percent50 },
-            { 0x33, PowerInfoType.Percent25 },
-            { 0x34, PowerInfoType.Percent0 },
-            { 0x35, PowerInfoType.ExternalPower },
+            { 0x30, PowerCodeType.Full },
+            { 0x31, PowerCodeType.Percent75 },
+            { 0x32, PowerCodeType.Percent50 },
+            { 0x33, PowerCodeType.Percent25 },
+            { 0x34, PowerCodeType.Percent0 },
+            { 0x35, PowerCodeType.ExternalPower },
         };
 
-        public JinYuanJYTAPacketInfo? ReadPacket()
+        public JinYuanJYTAPacketInfo? ReadPacket(ref bool needReset)
         {
-            /**
-             *  从机返回给主机的状态分11类：CH1、CH2状态分别返回
-                参数配置状态(51H)、正在充电状态(52H)、正在测试状态（53H）正在放电状态(54H) 、
-                温升正在定时状态（55H）、过热保护状态（56H）、记录查看状态(57H)、
-                时间调整状态(58H)、通道故障状态(59H)、换大电流 (5AH) 、换小电流 (5BH)
-             */
-
-            // （CH1状态）（CH2状态）（波特率）（模式）（CH1通道）（CH1选定电流）（CH2通道）（CH2选定电流）
-            // （5字节CH1实时测试电流）（7字节CH1实时测试电阻） 
-            // （5字节CH2实时测试电流）（7字节CH2实时测试电阻）
-            // （4字节温升定时采集时间）
-            // （7字节CH1定时采集电阻）（7字节CH2定时采集电阻） 
-
+            needReset = false;
             if (Collector == null)
             {
                 return null;
@@ -557,23 +579,85 @@ namespace ABBDataManagerSystem.Connector
             {
                 return null;
             }
-
-            byte _deviceState = packet[0];
-            DeviceState deviceState = DeviceStateCmdMap[_deviceState];
-            byte _TipInfo = packet[1];
-            TipInfoType tipInfo = TipInfoTypeByteMap[_TipInfo];
-            byte _PowerInfo = packet[2];
-            PowerInfoType powerInfo = PowerInfoTypeByteMap[_PowerInfo];
-
-            if (packet.Length < 50)
+            if (packet.Length < 1)
             {
                 Log.Error("Read Packet Len err" + packet.Length);
                 return null;
             }
 
+            byte _deviceState = packet[0];
+            deviceState = DeviceStateCmdMap[_deviceState];
+            if (deviceState == DeviceState.Initial || deviceState == DeviceState.SelfeCheck)
+            {
+                return null;
+            }
+
+            if (deviceState == DeviceState.VoltageProtection || deviceState == DeviceState.CurrentProtection
+                 || deviceState == DeviceState.OtherState)
+            {
+                needReset = true;
+                return null;
+            }
+
+            if (packet.Length < 3)
+            {
+                Log.Error("Read Packet Len err" + packet.Length);
+                return null;
+            }
+            byte _TipInfo = packet[1];
+            tipInfo = TipInfoTypeByteMap[_TipInfo];
+            byte _PowerCode = packet[2];
+            powerCode = PowerCodeTypeByteMap[_PowerCode];
+            if (deviceState == DeviceState.MainMenu)
+            {
+                return null;
+            }
 
             return null;
+        }
 
+        private void ProcessSingleTestResult(byte[] packet)
+        {
+            // 7E 54 55 30 34 37 6A <提示信息:1字节> <电量码:1字节>
+            // <变比:6字节> <误差:7字节> <电压:7字节> <电流:7字节> <频率:7字节>
+            // <极性:1字节> <分接位:3字节>  <计算变比:6字节> XOR 0D
+            if (packet.Length < 47 || packet[0] != 0x6A)
+            {
+                return;
+            }
+            int offset = 3; // 跳过设备状态、提示信息、电量码 三个字节
+            byte[] bRatio = new byte[6];
+            byte[] bError = new byte[7];
+            byte[] bVoltage = new byte[7];
+            byte[] bCurrent = new byte[7];
+            byte[] bFrequence = new byte[7];
+            byte[] bCalculatedRatio = new byte[6];
+            Array.Copy(packet, offset, bRatio, 0, 6);
+            offset += 6;
+            Array.Copy(packet, offset, bError, 0, 7);
+            offset += 7;
+            Array.Copy(packet, offset, bVoltage, 0, 7);
+            offset += 7;
+            Array.Copy(packet, offset, bCurrent, 0, 7);
+            offset += 7;
+            Array.Copy(packet, offset, bFrequence, 0, 7);
+            offset += 7;
+            offset += (1 + 3);
+            Array.Copy(packet, offset, bCalculatedRatio, 0, 6);
+            offset += 6;
+
+            string strRatio = Encoding.ASCII.GetString(bRatio);
+            string strError = Encoding.ASCII.GetString(bError);
+            string strVoltage = Encoding.ASCII.GetString(bVoltage);
+            string strCurrent = Encoding.ASCII.GetString(bCurrent);
+            string strFrequence = Encoding.ASCII.GetString(bFrequence);
+            string strCalculatedRatio = Encoding.ASCII.GetString(bCalculatedRatio);
+            float ratio = Utils.ParseFloat(strRatio);
+            float error = Utils.ParseFloat(strError);
+            float voltage = Utils.ParseFloat(strVoltage);
+            float current = Utils.ParseFloat(strCurrent);
+            float frequence = Utils.ParseFloat(strFrequence);
+            float calculatedRatio = Utils.ParseFloat(strCalculatedRatio);
         }
 
         // 主机打开，每400豪秒访问一次从机（寻机命令）或是发送命令，只有发送寻机命令

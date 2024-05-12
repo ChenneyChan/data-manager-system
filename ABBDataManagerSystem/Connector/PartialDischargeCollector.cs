@@ -73,7 +73,7 @@ namespace ABBDataManagerSystem.Connector
                 return 0;
             }
             bool nC = buff[offset + 8] == 0x6e;
-            string str = Encoding.UTF8.GetString(buff, 2 + offset, 6);
+            string str = Encoding.ASCII.GetString(buff, 2 + offset, 6);
             float value = Utils.ParseFloat(str);
             if (nC)
             {
