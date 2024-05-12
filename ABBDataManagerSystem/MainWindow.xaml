@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ABBDataManagerSystem"
         xmlns:hc="https://handyorg.github.io/handycontrol"
         mc:Ignorable="d"
-        Title="信息化试验系统" Height="800" Width="1200" WindowStartupLocation="CenterScreen" Closing="Window_Closing">
+        Title="信息化试验系统" Height="1000" Width="1200" WindowStartupLocation="CenterScreen" Closing="Window_Closing" WindowState="Maximized">
     <Window.Resources>
         <Style TargetType="MenuItem">
             <Setter Property="FontSize" Value="14"/>

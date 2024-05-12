@@ -5,32 +5,39 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ABBDataManagerSystem.Pages" 
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
-             mc:Ignorable="d" Background="White" Loaded="UserControl_Loaded" Unloaded="UserControl_Unloaded" d:DesignHeight="594" d:DesignWidth="832">
+             mc:Ignorable="d" Background="White" Loaded="UserControl_Loaded" Unloaded="UserControl_Unloaded" d:DesignHeight="640" d:DesignWidth="983.856">
     <UserControl.Resources>
-        <sys:Double x:Key="borderThickness">2</sys:Double>
+        <sys:Double x:Key="tableCellFontSize">18</sys:Double>
+        <sys:Double x:Key="tableHeaderFontSize">22</sys:Double>
         <!--<Style TargetType="{x:Type GridViewColumnHeader}" BasedOn="{StaticResource {x:Type GridViewColumnHeader}}">
             <Setter Property="HorizontalContentAlignment" Value="Center" />
-            --><!--<Setter Property="Background" Value="#FF347071"/>-->
-            <!--<Setter Property="Foreground" Value="White"/>--><!--
+            -->
+        <!--<Setter Property="Background" Value="#FF347071"/>-->
+        <!--<Setter Property="Foreground" Value="White"/>-->
+        <!--
             <Setter Property="FontSize" Value="24"/>
         </Style>-->
         <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
-            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontSize" Value="16"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
         <Style TargetType="Button" BasedOn="{StaticResource ButtonInfo}">
-            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontSize" Value="16"/>
             <Setter Property="Width" Value="120"/>
-            <Setter Property="Height" Value="40"/>
+            <Setter Property="Height" Value="36"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
         <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
-            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontSize" Value="16"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
         <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
-            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontSize" Value="16"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style TargetType="Border">
+            <Setter Property="BorderThickness" Value="1.5"/>
+            <Setter Property="BorderBrush" Value="Black"/>
         </Style>
     </UserControl.Resources>
     <Grid Margin="30,20,30,20">
@@ -88,7 +95,7 @@
         </StackPanel>
         <Grid Grid.Row="3" Margin="10">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
             <!--列表分组-->
@@ -99,7 +106,7 @@
                     <DataGridTextColumn Header="电阻" Width="120" Binding="{Binding Resistance}" IsReadOnly="True"/>
                 </DataGrid.Columns>
             </DataGrid>
-            <Grid Grid.Column="1" Margin="20">
+            <Grid Grid.Column="1" Margin="20" Width="400" Height="300" VerticalAlignment="Top" HorizontalAlignment="Left">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*"/>
                     <ColumnDefinition Width="1.5*"/>
@@ -113,43 +120,43 @@
                     <RowDefinition Height="1*"/>
                     <RowDefinition Height="1*"/>
                 </Grid.RowDefinitions>
-                <TextBlock Text="高压侧" Grid.Column="1" FontSize="24" Style="{StaticResource TextBlockLargeBold}" HorizontalAlignment="Center"/>
-                <TextBlock Text="低压侧" Grid.Column="2" FontSize="24" Style="{StaticResource TextBlockLargeBold}" HorizontalAlignment="Center"/>
-                <TextBlock Text="是否激活" Grid.Column="0" Grid.Row="1" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <TextBlock Text="当前状态" Grid.Column="0" Grid.Row="2" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <TextBlock Text="实时电阻" Grid.Column="0" Grid.Row="3" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <TextBlock Text="实时电流" Grid.Column="0" Grid.Row="4" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <TextBlock Text="定时电阻" Grid.Column="0" Grid.Row="5" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <TextBlock Text="NA" Grid.Column="1" Grid.Row="1" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center" Name="tbCH1Enabled"/>
-                <TextBlock Text="NA" Grid.Column="2" Grid.Row="1" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center" Name="tbCH2Enabled"/>
-                <TextBlock Text="NA" Grid.Column="1" Grid.Row="2" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center" Name="tbCH1Status"/>
-                <TextBlock Text="NA" Grid.Column="2" Grid.Row="2" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center" Name="tbCH2Status"/>
-                <TextBlock Text="NA" Grid.Column="1" Grid.Row="3" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center" Name="tbCH1RealTimeResistance"/>
-                <TextBlock Text="NA" Grid.Column="2" Grid.Row="3" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center" Name="tbCH2RealTimeResistance"/>
-                <TextBlock Text="NA" Grid.Column="1" Grid.Row="4" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center" Name="tbCH1RealTimeCurrent"/>
-                <TextBlock Text="NA" Grid.Column="2" Grid.Row="4" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center" Name="tbCH2RealTimeCurrent"/>
-                <TextBlock Text="NA" Grid.Column="1" Grid.Row="5" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center" Name="tbCH1TimedResistance"/>
-                <TextBlock Text="NA" Grid.Column="2" Grid.Row="5" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center" Name="tbCH2TimedResistance"/>
-                <Border Grid.Column="0" Grid.Row="0" BorderThickness="2" BorderBrush="Gray"/>
-                <Border Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" BorderThickness="2" BorderBrush="Gray"/>
-                <Border Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" BorderThickness="2" BorderBrush="Gray"/>
-                <Border Grid.Column="0" Grid.Row="0" Grid.RowSpan="4" BorderThickness="2" BorderBrush="Gray"/>
-                <Border Grid.Column="0" Grid.Row="0" Grid.RowSpan="5" BorderThickness="2" BorderBrush="Gray"/>
-                <Border Grid.Column="0" Grid.Row="0" Grid.RowSpan="6" BorderThickness="2" BorderBrush="Gray"/>
+                <TextBlock Text="高压侧" Grid.Column="1" FontSize="{StaticResource tableHeaderFontSize}" Style="{StaticResource TextBlockLargeBold}" HorizontalAlignment="Center"/>
+                <TextBlock Text="低压侧" Grid.Column="2" FontSize="{StaticResource tableHeaderFontSize}" Style="{StaticResource TextBlockLargeBold}" HorizontalAlignment="Center"/>
+                <TextBlock Text="是否激活" Grid.Column="0" Grid.Row="1" FontSize="{StaticResource tableCellFontSize}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <TextBlock Text="当前状态" Grid.Column="0" Grid.Row="2" FontSize="{StaticResource tableCellFontSize}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <TextBlock Text="实时电阻" Grid.Column="0" Grid.Row="3" FontSize="{StaticResource tableCellFontSize}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <TextBlock Text="实时电流" Grid.Column="0" Grid.Row="4" FontSize="{StaticResource tableCellFontSize}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <TextBlock Text="定时电阻" Grid.Column="0" Grid.Row="5" FontSize="{StaticResource tableCellFontSize}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <TextBlock Text="NA" Grid.Column="1" Grid.Row="1" FontSize="{StaticResource tableCellFontSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Name="tbCH1Enabled"/>
+                <TextBlock Text="NA" Grid.Column="2" Grid.Row="1" FontSize="{StaticResource tableCellFontSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Name="tbCH2Enabled"/>
+                <TextBlock Text="NA" Grid.Column="1" Grid.Row="2" FontSize="{StaticResource tableCellFontSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Name="tbCH1Status"/>
+                <TextBlock Text="NA" Grid.Column="2" Grid.Row="2" FontSize="{StaticResource tableCellFontSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Name="tbCH2Status"/>
+                <TextBlock Text="NA" Grid.Column="1" Grid.Row="3" FontSize="{StaticResource tableCellFontSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Name="tbCH1RealTimeResistance"/>
+                <TextBlock Text="NA" Grid.Column="2" Grid.Row="3" FontSize="{StaticResource tableCellFontSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Name="tbCH2RealTimeResistance"/>
+                <TextBlock Text="NA" Grid.Column="1" Grid.Row="4" FontSize="{StaticResource tableCellFontSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Name="tbCH1RealTimeCurrent"/>
+                <TextBlock Text="NA" Grid.Column="2" Grid.Row="4" FontSize="{StaticResource tableCellFontSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Name="tbCH2RealTimeCurrent"/>
+                <TextBlock Text="NA" Grid.Column="1" Grid.Row="5" FontSize="{StaticResource tableCellFontSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Name="tbCH1TimedResistance"/>
+                <TextBlock Text="NA" Grid.Column="2" Grid.Row="5" FontSize="{StaticResource tableCellFontSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Name="tbCH2TimedResistance"/>
+                <Border Grid.Column="0" Grid.Row="0" />
+                <Border Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" />
+                <Border Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" />
+                <Border Grid.Column="0" Grid.Row="0" Grid.RowSpan="4" />
+                <Border Grid.Column="0" Grid.Row="0" Grid.RowSpan="5" />
+                <Border Grid.Column="0" Grid.Row="0" Grid.RowSpan="6" />
 
-                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" BorderThickness="2" BorderBrush="Gray"/>
-                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="2" BorderThickness="3,2,2,2" BorderBrush="Gray"/>
-                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="3" BorderThickness="2" BorderBrush="Gray"/>
-                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="4" BorderThickness="2" BorderBrush="Gray"/>
-                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="5" BorderThickness="2" BorderBrush="Gray"/>
-                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="6" BorderThickness="2" BorderBrush="Gray"/>
+                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" />
+                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="2" />
+                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="3" />
+                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="4" />
+                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="5" />
+                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="6" />
 
-                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" BorderThickness="2" BorderBrush="Gray"/>
-                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Grid.RowSpan="2" BorderThickness="2" BorderBrush="Gray"/>
-                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Grid.RowSpan="3" BorderThickness="2" BorderBrush="Gray"/>
-                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Grid.RowSpan="4" BorderThickness="2" BorderBrush="Gray"/>
-                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Grid.RowSpan="5" BorderThickness="2" BorderBrush="Gray"/>
-                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Grid.RowSpan="6" BorderThickness="2" BorderBrush="Gray"/>
+                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" />
+                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Grid.RowSpan="2" />
+                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Grid.RowSpan="3" />
+                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Grid.RowSpan="4" />
+                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Grid.RowSpan="5" />
+                <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Grid.RowSpan="6" />
             </Grid>
         </Grid>
         <TextBlock Grid.Row="4" Text="Debug Packet: " FontSize="12" TextWrapping="Wrap" Name="tbDebugMsg" VerticalAlignment="Top"/>

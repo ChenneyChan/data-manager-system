@@ -4,17 +4,23 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ABBDataManagerSystem.Pages"
-             xmlns:hc="https://handyorg.github.io/handycontrol"
-             mc:Ignorable="d" Background="White" Loaded="UserControl_Loaded" Unloaded="UserControl_Unloaded" d:DesignHeight="1111" d:DesignWidth="1411">
+             xmlns:hc="https://handyorg.github.io/handycontrol" xmlns:sys="clr-namespace:System;assembly=netstandard"
+             mc:Ignorable="d" Loaded="UserControl_Loaded" Unloaded="UserControl_Unloaded" d:DesignHeight="1052" d:DesignWidth="1830">
     <UserControl.Resources>
+        <sys:Double x:Key="textBoxHeigh">36</sys:Double>
         <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
-            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontSize" Value="16"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
+        <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="Height" Value="30"/>
+        </Style>
         <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontSize" Value="16"/>
             <Setter Property="Width" Value="120"/>
-            <Setter Property="Height" Value="40"/>
+            <Setter Property="Height" Value="36"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
         <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
@@ -37,14 +43,14 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="1*"/>
-            <RowDefinition Height="60"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0">
             <TextBlock HorizontalAlignment="Left" Margin="0,10" TextAlignment="Center" TextWrapping="Wrap" Text="金源JYT-A变比测量仪" FontSize="24" FontWeight="Bold"/>
         </StackPanel>
+
         <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="0, 10">
             <TextBlock Text="连接" Margin="0, 0, 10, 0" FontWeight="Bold"/>
-            <ToggleButton IsChecked="{Binding ContextMenuIsShow}" Style="{StaticResource ToggleButtonSwitch}"  Margin="0, 0, 20, 0" Name="swConnect" Checked="swConnect_CheckedChange" Unchecked="swConnect_CheckedChange">
+            <ToggleButton IsChecked="{Binding ContextMenuIsShow}" Style="{StaticResource ToggleButtonSwitch}"  hc:IconSwitchElement.GeometrySelected="{StaticResource RightGeometry}"  Margin="0, 0, 20, 0" Name="swConnect" Checked="swConnect_CheckedChange" Unchecked="swConnect_CheckedChange">
                 <ToggleButton.Background>
                     <SolidColorBrush Color="{DynamicResource SecondaryTextColor}"/>
                 </ToggleButton.Background>
@@ -63,16 +69,16 @@
             </StackPanel>
 
             <!--<StackPanel HorizontalAlignment="Left" Orientation="Horizontal" VerticalAlignment="Top" Margin="10,0">
-                <CheckBox Content="高压侧" VerticalAlignment="Center" Name="cbCH1"/>
-                <Viewbox Width="10"/>
-                <ComboBox Width="100" Name="cbHVCurrents"/>
-                <Viewbox Width="10"/>
-                <CheckBox Content="低压侧" VerticalAlignment="Center" Name="cbCH2"/>
-                <Viewbox Width="10"/>
-                <ComboBox Width="100" Name="cbLVCurrents"/>
-            </StackPanel>-->
+        <CheckBox Content="高压侧" VerticalAlignment="Center" Name="cbCH1"/>
+        <Viewbox Width="10"/>
+        <ComboBox Width="100" Name="cbHVCurrents"/>
+        <Viewbox Width="10"/>
+        <CheckBox Content="低压侧" VerticalAlignment="Center" Name="cbCH2"/>
+        <Viewbox Width="10"/>
+        <ComboBox Width="100" Name="cbLVCurrents"/>
+    </StackPanel>-->
         </StackPanel>
-        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,10">
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,5">
             <TextBlock Width="80" Text="测试类型" VerticalAlignment="Center" Margin="0, 0, 10, 0"/>
             <ComboBox Name="cbTestMode" Width="120" SelectedIndex="0" SelectionChanged="cbTestMode_SelectionChanged">
                 <ComboBoxItem Content="三相测试"/>
@@ -86,7 +92,7 @@
             <TextBlock Width="120" Text="低压电压(kV)" VerticalAlignment="Center" Margin="20, 0, 10, 0"/>
             <hc:NumericUpDown Width="120" Name="tbLowVoltage" Value="1.0" ValueFormat="N2" FontSize="18"/>
         </StackPanel>
-        <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0, 10">
+        <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0, 5">
             <TextBlock Width="80" Text="分接位置" VerticalAlignment="Center" Margin="0, 0, 10, 0"/>
             <ComboBox Name="cbTappingPoint" Width="120" SelectedIndex="0">
             </ComboBox>
@@ -97,7 +103,7 @@
             <TextBlock Width="120" Text="分接间距(%)" VerticalAlignment="Center" Margin="20, 0, 10, 0"/>
             <hc:NumericUpDown Width="120" Name="tbConnectionGap" Value="5" FontSize="18" Minimum="0" ValueFormat="N1" />
         </StackPanel>
-        <StackPanel Grid.Row="4" Orientation="Horizontal" Margin="0, 10">
+        <StackPanel Grid.Row="4" Orientation="Horizontal" Margin="0, 5">
             <TextBlock Width="140" Text="同极性显示(单相)" VerticalAlignment="Center" Margin="0, 0, 10, 0"/>
             <ComboBox Name="cbHomopolarityDisplay" Width="120" SelectedIndex="0">
             </ComboBox>
@@ -110,13 +116,17 @@
             <TextBlock Text="-" Margin="5, 0"/>
             <hc:NumericUpDown Width="120" Name="tbGroup" Value="0" FontSize="18" Minimum="0" Maximum="11"/>
         </StackPanel>
-        <Grid Grid.Row="5" Margin="0,20,0,10" >
+        <Grid Grid.Row="5" Margin="0,10,0,5" >
             <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <TabControl SelectionChanged="TabControl_SelectionChanged" Grid.Column="0">
-                <TabItem Header="单相测试" FontSize="18" Height="40" Name="tiSinglePhase">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <TabControl SelectionChanged="TabControl_SelectionChanged" Grid.Column="0" MaxHeight="600" MaxWidth="800" VerticalAlignment="Top" HorizontalAlignment="Left">
+                <TabItem Header="单相测试" FontSize="18" Height="{StaticResource textBoxHeigh}" Name="tiSinglePhase">
                     <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" Style="{StaticResource ScrollViewerNativeBaseStyle}">
                         <Grid Margin="40" MinHeight="300" MinWidth="600">
                             <Grid.ColumnDefinitions>
@@ -136,7 +146,7 @@
                                     <ColumnDefinition Width="1*"/>
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Text="变比" Grid.Column="0" Margin="10, 0"/>
-                                <TextBox Height="40" Grid.Column="1" IsReadOnly="True"/>
+                                <TextBox Height="{StaticResource textBoxHeigh}" Grid.Column="1" IsReadOnly="True"/>
                             </Grid>
 
                             <Grid Grid.Row="0" Grid.Column="1">
@@ -145,7 +155,7 @@
                                     <ColumnDefinition Width="1*"/>
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Text="误差" Grid.Column="0" Margin="10, 0"/>
-                                <TextBox Height="40" Grid.Column="1" IsReadOnly="True"/>
+                                <TextBox Height="{StaticResource textBoxHeigh}" Grid.Column="1" IsReadOnly="True"/>
                             </Grid>
 
                             <Grid Grid.Row="1" Grid.Column="0">
@@ -154,7 +164,7 @@
                                     <ColumnDefinition Width="1*"/>
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Text="电压" Grid.Column="0" Margin="10, 0"/>
-                                <TextBox Height="40" Grid.Column="1" IsReadOnly="True"/>
+                                <TextBox Height="{StaticResource textBoxHeigh}" Grid.Column="1" IsReadOnly="True"/>
                             </Grid>
 
                             <Grid Grid.Row="1" Grid.Column="1">
@@ -163,7 +173,7 @@
                                     <ColumnDefinition Width="1*"/>
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Text="电流" Grid.Column="0" Margin="10, 0"/>
-                                <TextBox Height="40" Grid.Column="1" IsReadOnly="True"/>
+                                <TextBox Height="{StaticResource textBoxHeigh}" Grid.Column="1" IsReadOnly="True"/>
                             </Grid>
 
                             <Grid Grid.Row="1" Grid.Column="2">
@@ -172,7 +182,7 @@
                                     <ColumnDefinition Width="1*"/>
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Text="频率" Grid.Column="0" Margin="10, 0"/>
-                                <TextBox Height="40" Grid.Column="1" IsReadOnly="True"/>
+                                <TextBox Height="{StaticResource textBoxHeigh}" Grid.Column="1" IsReadOnly="True"/>
                             </Grid>
 
                             <Grid Grid.Row="2" Grid.Column="0">
@@ -181,7 +191,7 @@
                                     <ColumnDefinition Width="1*"/>
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Text="分接位" Grid.Column="0" Margin="10, 0"/>
-                                <TextBox Height="40" Grid.Column="1" IsReadOnly="True"/>
+                                <TextBox Height="{StaticResource textBoxHeigh}" Grid.Column="1" IsReadOnly="True"/>
                             </Grid>
 
                             <Grid Grid.Row="2" Grid.Column="1">
@@ -190,7 +200,7 @@
                                     <ColumnDefinition Width="1*"/>
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Text="极性" Grid.Column="0" Margin="10, 0"/>
-                                <TextBox Height="40" Grid.Column="1" IsReadOnly="True"/>
+                                <TextBox Height="{StaticResource textBoxHeigh}" Grid.Column="1" IsReadOnly="True"/>
                             </Grid>
 
                             <Grid Grid.Row="3" Grid.Column="0">
@@ -199,12 +209,12 @@
                                     <ColumnDefinition Width="1*"/>
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Text="计算变比" Grid.Column="0" Margin="10, 0"/>
-                                <TextBox Height="40" Grid.Column="1" IsReadOnly="True"/>
+                                <TextBox Height="{StaticResource textBoxHeigh}" Grid.Column="1" IsReadOnly="True"/>
                             </Grid>
                         </Grid>
                     </ScrollViewer>
                 </TabItem>
-                <TabItem Header="三相测试" FontSize="18" Height="40" Name="tiThreePhase">
+                <TabItem Header="三相测试" FontSize="18" Height="{StaticResource textBoxHeigh}" Name="tiThreePhase">
                     <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" Style="{StaticResource ScrollViewerNativeBaseStyle}">
                         <Grid Margin="40" MinHeight="360" MinWidth="600">
                             <Grid.ColumnDefinitions>
@@ -235,31 +245,31 @@
                             <TextBlock Text="计算变比 " FontSize="20" Grid.Column="0" Grid.Row="7" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             <TextBlock Text="频率 " FontSize="20" Grid.Column="2" Grid.Row="6" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                             <TextBlock Text="分接位" FontSize="20" Grid.Column="2" Grid.Row="7" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                            <TextBox FontSize="20" Grid.Column="1" Grid.Row="1" Height="40" Margin="10, 0" IsReadOnly="True"/>
-                            <TextBox FontSize="20" Grid.Column="1" Grid.Row="2" Height="40" Margin="10, 0" IsReadOnly="True"/>
-                            <TextBox FontSize="20" Grid.Column="1" Grid.Row="3" Height="40" Margin="10, 0" IsReadOnly="True"/>
-                            <TextBox FontSize="20" Grid.Column="1" Grid.Row="4" Height="40" Margin="10, 0" IsReadOnly="True"/>
-                            <TextBox FontSize="20" Grid.Column="1" Grid.Row="5" Height="40" Margin="10, 0" IsReadOnly="True"/>
-                            <TextBox FontSize="20" Grid.Column="1" Grid.Row="6" Height="40" Margin="10, 0" IsReadOnly="True"/>
-                            <TextBox FontSize="20" Grid.Column="1" Grid.Row="7" Height="40" Margin="10, 0" IsReadOnly="True"/>
-                            <TextBox FontSize="20" Grid.Column="2" Grid.Row="1" Height="40" Margin="10, 0" IsReadOnly="True"/>
-                            <TextBox FontSize="20" Grid.Column="2" Grid.Row="2" Height="40" Margin="10, 0" IsReadOnly="True"/>
-                            <TextBox FontSize="20" Grid.Column="2" Grid.Row="3" Height="40" Margin="10, 0" IsReadOnly="True"/>
-                            <TextBox FontSize="20" Grid.Column="2" Grid.Row="4" Height="40" Margin="10, 0" IsReadOnly="True"/>
-                            <TextBox FontSize="20" Grid.Column="2" Grid.Row="5" Height="40" Margin="10, 0" IsReadOnly="True"/>
-                            <TextBox FontSize="20" Grid.Column="3" Grid.Row="1" Height="40" Margin="10, 0" IsReadOnly="True"/>
-                            <TextBox FontSize="20" Grid.Column="3" Grid.Row="2" Height="40" Margin="10, 0" IsReadOnly="True"/>
-                            <TextBox FontSize="20" Grid.Column="3" Grid.Row="3" Height="40" Margin="10, 0" IsReadOnly="True"/>
-                            <TextBox FontSize="20" Grid.Column="3" Grid.Row="4" Height="40" Margin="10, 0" IsReadOnly="True"/>
-                            <TextBox FontSize="20" Grid.Column="3" Grid.Row="5" Height="40" Margin="10, 0" IsReadOnly="True"/>
-                            <TextBox FontSize="20" Grid.Column="3" Grid.Row="6" Height="40" Margin="10, 0" IsReadOnly="True"/>
-                            <TextBox FontSize="20" Grid.Column="3" Grid.Row="7" Height="40" Margin="10, 0" IsReadOnly="True"/>
+                            <TextBox FontSize="20" Grid.Column="1" Grid.Row="1" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
+                            <TextBox FontSize="20" Grid.Column="1" Grid.Row="2" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
+                            <TextBox FontSize="20" Grid.Column="1" Grid.Row="3" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
+                            <TextBox FontSize="20" Grid.Column="1" Grid.Row="4" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
+                            <TextBox FontSize="20" Grid.Column="1" Grid.Row="5" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
+                            <TextBox FontSize="20" Grid.Column="1" Grid.Row="6" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
+                            <TextBox FontSize="20" Grid.Column="1" Grid.Row="7" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
+                            <TextBox FontSize="20" Grid.Column="2" Grid.Row="1" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
+                            <TextBox FontSize="20" Grid.Column="2" Grid.Row="2" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
+                            <TextBox FontSize="20" Grid.Column="2" Grid.Row="3" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
+                            <TextBox FontSize="20" Grid.Column="2" Grid.Row="4" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
+                            <TextBox FontSize="20" Grid.Column="2" Grid.Row="5" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
+                            <TextBox FontSize="20" Grid.Column="3" Grid.Row="1" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
+                            <TextBox FontSize="20" Grid.Column="3" Grid.Row="2" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
+                            <TextBox FontSize="20" Grid.Column="3" Grid.Row="3" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
+                            <TextBox FontSize="20" Grid.Column="3" Grid.Row="4" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
+                            <TextBox FontSize="20" Grid.Column="3" Grid.Row="5" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
+                            <TextBox FontSize="20" Grid.Column="3" Grid.Row="6" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
+                            <TextBox FontSize="20" Grid.Column="3" Grid.Row="7" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True"/>
                         </Grid>
                     </ScrollViewer>
                 </TabItem>
             </TabControl>
 
-            <Grid Grid.Column="1" Margin="10" Width="600" Height="680" HorizontalAlignment="Left" VerticalAlignment="Top">
+            <Grid Grid.Column="1" Margin="10" Grid.RowSpan="2"  Width="600" Height="680" HorizontalAlignment="Left" VerticalAlignment="Top" >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
@@ -294,46 +304,46 @@
                 <TextBlock Text="BC/bc" Grid.Row="2" Grid.Column="4" HorizontalAlignment="Center"/>
                 <TextBlock Text="CA/ca" Grid.Row="2" Grid.Column="5" HorizontalAlignment="Center"/>
                 <!--<TextBlock Text="1"  Grid.Row="3" Grid.Column="0" HorizontalAlignment="Center"/>
-                <TextBox Grid.Row="3" Grid.Column="1" HorizontalAlignment="Center" MinWidth="80" Height="40" IsReadOnly="True"/>
-                <TextBox Grid.Row="3" Grid.Column="2" HorizontalAlignment="Center" MinWidth="80" Height="40" IsReadOnly="True"/>
-                <TextBox Grid.Row="3" Grid.Column="3" HorizontalAlignment="Center" MinWidth="80" Height="40" IsReadOnly="True"/>
-                <TextBox Grid.Row="3" Grid.Column="4" HorizontalAlignment="Center" MinWidth="80" Height="40" IsReadOnly="True"/>
-                <TextBox Grid.Row="3" Grid.Column="5" HorizontalAlignment="Center" MinWidth="80" Height="40" IsReadOnly="True"/>
+                <TextBox Grid.Row="3" Grid.Column="1" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
+                <TextBox Grid.Row="3" Grid.Column="2" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
+                <TextBox Grid.Row="3" Grid.Column="3" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
+                <TextBox Grid.Row="3" Grid.Column="4" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
+                <TextBox Grid.Row="3" Grid.Column="5" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
 
                 <TextBlock Text="2"  Grid.Row="4" Grid.Column="0" HorizontalAlignment="Center"/>
-                <TextBox Grid.Row="4" Grid.Column="1" HorizontalAlignment="Center" MinWidth="80" Height="40" IsReadOnly="True"/>
-                <TextBox Grid.Row="4" Grid.Column="2" HorizontalAlignment="Center" MinWidth="80" Height="40" IsReadOnly="True"/>
-                <TextBox Grid.Row="4" Grid.Column="3" HorizontalAlignment="Center" MinWidth="80" Height="40" IsReadOnly="True"/>
-                <TextBox Grid.Row="4" Grid.Column="4" HorizontalAlignment="Center" MinWidth="80" Height="40" IsReadOnly="True"/>
-                <TextBox Grid.Row="4" Grid.Column="5" HorizontalAlignment="Center" MinWidth="80" Height="40" IsReadOnly="True"/>
+                <TextBox Grid.Row="4" Grid.Column="1" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
+                <TextBox Grid.Row="4" Grid.Column="2" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
+                <TextBox Grid.Row="4" Grid.Column="3" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
+                <TextBox Grid.Row="4" Grid.Column="4" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
+                <TextBox Grid.Row="4" Grid.Column="5" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
 
                 <TextBlock Text="3"  Grid.Row="5" Grid.Column="0" HorizontalAlignment="Center"/>
-                <TextBox Grid.Row="5" Grid.Column="1" HorizontalAlignment="Center" MinWidth="80" Height="40" IsReadOnly="True"/>
-                <TextBox Grid.Row="5" Grid.Column="2" HorizontalAlignment="Center" MinWidth="80" Height="40" IsReadOnly="True"/>
-                <TextBox Grid.Row="5" Grid.Column="3" HorizontalAlignment="Center" MinWidth="80" Height="40" IsReadOnly="True"/>
-                <TextBox Grid.Row="5" Grid.Column="4" HorizontalAlignment="Center" MinWidth="80" Height="40" IsReadOnly="True"/>
-                <TextBox Grid.Row="5" Grid.Column="5" HorizontalAlignment="Center" MinWidth="80" Height="40" IsReadOnly="True"/>
+                <TextBox Grid.Row="5" Grid.Column="1" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
+                <TextBox Grid.Row="5" Grid.Column="2" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
+                <TextBox Grid.Row="5" Grid.Column="3" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
+                <TextBox Grid.Row="5" Grid.Column="4" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
+                <TextBox Grid.Row="5" Grid.Column="5" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
 
                 <TextBlock Text="3"  Grid.Row="5" Grid.Column="0" HorizontalAlignment="Center"/>
-                <TextBox Grid.Row="5" Grid.Column="1" HorizontalAlignment="Center" MinWidth="80" Height="40" IsReadOnly="True"/>
-                <TextBox Grid.Row="5" Grid.Column="2" HorizontalAlignment="Center" MinWidth="80" Height="40" IsReadOnly="True"/>
-                <TextBox Grid.Row="5" Grid.Column="3" HorizontalAlignment="Center" MinWidth="80" Height="40" IsReadOnly="True"/>
-                <TextBox Grid.Row="5" Grid.Column="4" HorizontalAlignment="Center" MinWidth="80" Height="40" IsReadOnly="True"/>
-                <TextBox Grid.Row="5" Grid.Column="5" HorizontalAlignment="Center" MinWidth="80" Height="40" IsReadOnly="True"/>
+                <TextBox Grid.Row="5" Grid.Column="1" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
+                <TextBox Grid.Row="5" Grid.Column="2" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
+                <TextBox Grid.Row="5" Grid.Column="3" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
+                <TextBox Grid.Row="5" Grid.Column="4" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
+                <TextBox Grid.Row="5" Grid.Column="5" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
 
                 <TextBlock Text="4"  Grid.Row="6" Grid.Column="0" HorizontalAlignment="Center"/>
-                <TextBox Grid.Row="6" Grid.Column="1" HorizontalAlignment="Center" MinWidth="80" Height="40" IsReadOnly="True"/>
-                <TextBox Grid.Row="6" Grid.Column="2" HorizontalAlignment="Center" MinWidth="80" Height="40" IsReadOnly="True"/>
-                <TextBox Grid.Row="6" Grid.Column="3" HorizontalAlignment="Center" MinWidth="80" Height="40" IsReadOnly="True"/>
-                <TextBox Grid.Row="6" Grid.Column="4" HorizontalAlignment="Center" MinWidth="80" Height="40" IsReadOnly="True"/>
-                <TextBox Grid.Row="6" Grid.Column="5" HorizontalAlignment="Center" MinWidth="80" Height="40" IsReadOnly="True"/>
+                <TextBox Grid.Row="6" Grid.Column="1" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
+                <TextBox Grid.Row="6" Grid.Column="2" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
+                <TextBox Grid.Row="6" Grid.Column="3" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
+                <TextBox Grid.Row="6" Grid.Column="4" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
+                <TextBox Grid.Row="6" Grid.Column="5" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
 
                 <TextBlock Text="5"  Grid.Row="7" Grid.Column="0" HorizontalAlignment="Center"/>
-                <TextBox Grid.Row="7" Grid.Column="1" HorizontalAlignment="Center" MinWidth="80" Height="40" IsReadOnly="True"/>
-                <TextBox Grid.Row="7" Grid.Column="2" HorizontalAlignment="Center" MinWidth="80" Height="40" IsReadOnly="True"/>
-                <TextBox Grid.Row="7" Grid.Column="3" HorizontalAlignment="Center" MinWidth="80" Height="40" IsReadOnly="True"/>
-                <TextBox Grid.Row="7" Grid.Column="4" HorizontalAlignment="Center" MinWidth="80" Height="40" IsReadOnly="True"/>
-                <TextBox Grid.Row="7" Grid.Column="5" HorizontalAlignment="Center" MinWidth="80" Height="40" IsReadOnly="True"/>-->
+                <TextBox Grid.Row="7" Grid.Column="1" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
+                <TextBox Grid.Row="7" Grid.Column="2" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
+                <TextBox Grid.Row="7" Grid.Column="3" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
+                <TextBox Grid.Row="7" Grid.Column="4" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>
+                <TextBox Grid.Row="7" Grid.Column="5" HorizontalAlignment="Center" MinWidth="80" Height="{StaticResource textBoxHeigh}" IsReadOnly="True"/>-->
 
                 <Views:TappingVoltageRatioFields x:Name="tvrTappingPoint1" Grid.Row="3" TappingIndex="1" Grid.ColumnSpan="6"/>
                 <Views:TappingVoltageRatioFields x:Name="tvrTappingPoint2" Grid.Row="4" TappingIndex="2" Grid.ColumnSpan="6"/>
@@ -367,16 +377,17 @@
                     <Button Width="60" Content="↓" Style="{StaticResource ButtonInfo}" Height="30" FontSize="18"/>
                 </StackPanel>
             </Grid>
+            <StackPanel Orientation="Horizontal" Grid.Row="2" MaxWidth="800">
+                <Button Content="复位"     Style="{StaticResource ButtonInfo}"  Height="{StaticResource textBoxHeigh}" Width="120" FontSize="18"  Margin="0, 0, 10, 0" Name="btReset" Click="btReset_Click"/>
+                <Button Content="下发参数" Style="{StaticResource ButtonInfo}"  Height="{StaticResource textBoxHeigh}" Width="120" FontSize="18"  Margin="0, 0, 10, 0" Name="btSetParameters" Click="btSetParameters_Click"/>
+                <Button Content="测试"     Style="{StaticResource ButtonInfo}"  Height="{StaticResource textBoxHeigh}" Width="120" FontSize="18"  Margin="0, 0, 10, 0" Name="btStartTest" Click="btStartTest_Click"/>
+                <Button Content="重测"     Style="{StaticResource ButtonInfo}"  Height="{StaticResource textBoxHeigh}" Width="120" FontSize="18"  Margin="0, 0, 10, 0" Name="btReTest" Click="btReTest_Click"/>
+                <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                    <TextBox IsReadOnly="True" Name="tbDebug" VerticalContentAlignment="Top" Width="400"/>
+                </ScrollViewer>
+            </StackPanel>
         </Grid>
 
-        <StackPanel Orientation="Horizontal" Grid.Row="6">
-            <Button Content="复位"     Style="{StaticResource ButtonInfo}"  Height="40" Width="120" FontSize="18"  Margin="0, 0, 10, 0" Name="btReset" Click="btReset_Click"/>
-            <Button Content="下发参数" Style="{StaticResource ButtonInfo}"  Height="40" Width="120" FontSize="18"  Margin="0, 0, 10, 0" Name="btSetParameters" Click="btSetParameters_Click"/>
-            <Button Content="测试"     Style="{StaticResource ButtonInfo}"  Height="40" Width="120" FontSize="18"  Margin="0, 0, 10, 0" Name="btStartTest" Click="btStartTest_Click"/>
-            <Button Content="重测"     Style="{StaticResource ButtonInfo}"  Height="40" Width="120" FontSize="18"  Margin="0, 0, 10, 0" Name="btReTest" Click="btReTest_Click"/>
-            <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-                <TextBox IsReadOnly="True" Name="tbDebug" VerticalContentAlignment="Top" Width="400"/>
-            </ScrollViewer>
-        </StackPanel>
+
     </Grid>
 </UserControl>
