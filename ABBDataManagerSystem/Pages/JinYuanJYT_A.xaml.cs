@@ -13,6 +13,8 @@ namespace ABBDataManagerSystem.Pages
     {
         private Dictionary<string, TappingVoltageRatioFields> RatioValueFields = new Dictionary<string, TappingVoltageRatioFields>();
         private JinYuanJYTACollector? Collector = null;
+        private bool IsTesting = false;
+        private int Interval = 200;
 
         public JinYuanJYT_A()
         {
@@ -107,6 +109,7 @@ namespace ABBDataManagerSystem.Pages
             cbBoundRate.IsEnabled = swConnect.IsChecked != true;
             if (swConnect.IsChecked != true && Collector != null)
             {
+                IsTesting = false;
                 Collector.Disconnect();
                 Collector = null;
             }
@@ -119,8 +122,100 @@ namespace ABBDataManagerSystem.Pages
                     {
                         swConnect.IsChecked = false;
                     }
+                    else
+                    {
+                        IsTesting = true;
+                        new Thread(() =>
+                        {
+                            while (IsTesting)
+                            {
+                                Thread.Sleep(this.Interval);
+                                bool needReset = false;
+                                var result = Collector.ReadPacket(ref needReset);
+                                if (needReset)
+                                {
+                                }
+                                Dispatcher.Invoke(new Action(() => { HandleResult(result); }));
+                            }
+                        }).Start();
+                    }
 
                 }).Start();
+            }
+        }
+
+        private void HandleResult(JinYuanJYTACollector.JinYunJYTATestResult? result)
+        {
+            if (result == null)
+            {
+                return;
+            }
+            if (Collector == null)
+            {
+                tbDeviceState.Text = "设备未连接";
+                return;
+            }
+
+            #region 状态信息
+            foreach (var item in JinYuanJYTACollector.DeviceStateMap)
+            {
+                if (item.Value == Collector.deviceState)
+                {
+                    tbDeviceState.Text = item.Key;
+                    break;
+                }
+            }
+
+            foreach (var item in JinYuanJYTACollector.PowerCodeTypeMap)
+            {
+                if (item.Value == Collector.powerCode)
+                {
+                    tbDevicePowerInfo.Text = item.Key;
+                    break;
+                }
+            }
+
+            foreach (var item in JinYuanJYTACollector.TipInfoTypeMap)
+            {
+                if (item.Value == Collector.tipInfo)
+                {
+                    tbTipInfo.Text = item.Key;
+                    break;
+                }
+            }
+            #endregion
+
+            if (result.IsSinglePhase)
+            {
+                tbSingleRatio.Text = Utils.FloatFormat(result.Ratio[0]);
+                tbSingleVoltage.Text = Utils.FloatFormat(result.Voltage[0]);
+                tbSingleCurrent.Text = Utils.FloatFormat(result.Current[0]);
+                tbSingleCalculatedRatio.Text = Utils.FloatFormat(result.CalculatedRatio);
+                tbSingleError.Text = Utils.FloatFormat(result.Error[0]);
+                tbSingleTappingPosition.Text = result.TappingPosition;
+                tbPolarity.Text = result.Polarity.ToString();
+                tbSingleFrequence.Text = Utils.FloatFormat(result.Frequence);
+            }
+            else
+            {
+                tbRatioA.Text = Utils.FloatFormat(result.Ratio[0]);
+                tbRatioB.Text = Utils.FloatFormat(result.Ratio[1]);
+                tbRatioC.Text = Utils.FloatFormat(result.Ratio[2]);
+                tbTurnRatioA.Text = Utils.FloatFormat(result.TurnRatio[0]);
+                tbTurnRatioB.Text = Utils.FloatFormat(result.TurnRatio[1]);
+                tbTurnRatioC.Text = Utils.FloatFormat(result.TurnRatio[2]);
+                tbVoltageA.Text = Utils.FloatFormat(result.Voltage[0]);
+                tbVoltageB.Text = Utils.FloatFormat(result.Voltage[1]);
+                tbVoltageC.Text = Utils.FloatFormat(result.Voltage[2]);
+                tbCurrentA.Text = Utils.FloatFormat(result.Current[0]);
+                tbCurrentB.Text = Utils.FloatFormat(result.Current[1]);
+                tbCurrentC.Text = Utils.FloatFormat(result.Current[2]);
+                tbCalculatedRatio.Text = Utils.FloatFormat(result.CalculatedRatio);
+                tbErrorA.Text = Utils.FloatFormat(result.Error[0]);
+                tbErrorB.Text = Utils.FloatFormat(result.Error[1]);
+                tbErrorC.Text = Utils.FloatFormat(result.Error[2]);
+                tbTappingPosition.Text = result.TappingPosition;
+                tbFrequence.Text = Utils.FloatFormat(result.Frequence);
             }
         }
 
@@ -131,7 +226,12 @@ namespace ABBDataManagerSystem.Pages
 
         private void UserControl_Unloaded(object sender, RoutedEventArgs e)
         {
-
+            if (Collector != null)
+            {
+                Collector.Disconnect();
+                Collector = null;
+            }
+            IsTesting = false;
         }
 
         private void cbTestMode_SelectionChanged(object sender, SelectionChangedEventArgs e)
