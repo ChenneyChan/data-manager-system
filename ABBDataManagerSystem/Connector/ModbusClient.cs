@@ -70,7 +70,7 @@ namespace ABBDataManagerSystem.Connector
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Modbus communication error: " + ex.Message);
+                Console.WriteLine("Modbus communication Error: " + ex.Message);
             }
         }
     }

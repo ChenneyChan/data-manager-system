@@ -244,7 +244,7 @@ namespace ABBDataManagerSystem
                 }
                 catch (Exception ex)
                 {
-                    AppendMsg("Fail to process, error: " + ex.Message);
+                    AppendMsg("Fail to process, Error: " + ex.Message);
                 }
             }).Start();
         }

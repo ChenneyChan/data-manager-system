@@ -33,8 +33,8 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         #region Variables
         private readonly string[] errorMsg = new string[14];
         private readonly string[] updateRateList = new string[10];  //update rate combo list(foreach)
-        private readonly string[,] voltageList = new string[2, 13]; //voltage combo list(while)
-        private readonly string[,] currentList = new string[2, 23]; //current combo list(direct)
+        private readonly string[,] voltageList = new string[2, 13]; //Voltage combo list(while)
+        private readonly string[,] currentList = new string[2, 23]; //Current combo list(direct)
         private readonly string[] eList = new string[12];           //element combo list(while)
         public Funstr[] List = new Funstr[119];
         private readonly string[] oList = new string[103];         //order combo list(foreach)
@@ -163,11 +163,11 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             errorMsg[4] = "Incompatible PC";             //  32  5 Check the hardware you are using.  
             errorMsg[5] = "Illegal parameter";           //  64  6 Check parameter type etc. 
             errorMsg[6] = "";
-            errorMsg[7] = "Send error";                  // 256  8 Check the wiring, address, and ID.
-            errorMsg[8] = "Receive error";               // 512  9 Check whether an error occurred on the device.  
+            errorMsg[7] = "Send Error";                  // 256  8 Check the wiring, address, and ID.
+            errorMsg[8] = "Receive Error";               // 512  9 Check whether an Error occurred on the device.  
             errorMsg[9] = "Received data not block data";//1024 10
             errorMsg[10] = "";
-            errorMsg[11] = "System error";                //4096 12 There is a problem with the operating environment.  
+            errorMsg[11] = "System Error";                //4096 12 There is a problem with the operating environment.  
             errorMsg[12] = "Illegal device ID";           //8192 13 Use the ID of the device acquired by the initialization function. 
             errorMsg[13] = "";
         }
@@ -1117,7 +1117,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         {
             if (errorID == 0)
             {
-                ErrInfoText.Text = "Getting error failed!";
+                ErrInfoText.Text = "Getting Error failed!";
                 Log.Error("Power Analyzer Error: " + ErrInfoText.Text);
                 return;
             }
@@ -1268,7 +1268,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             //when crest factor == 3, set ranges.
             if (crestFactor == "3")
             {
-                //#set voltage list#
+                //#set Voltage list#
                 n = 0;
                 while (voltageList[0, n] != "")
                 {
@@ -1276,7 +1276,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                     n++;
                 }
                 cbVoltageRange.Items.Add(rangeListAuto);
-                //#set current list#
+                //#set Current list#
                 n = 0;
                 while (currentList[0, n] != "")
                 {
@@ -1289,7 +1289,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             //when crest factor == 6, set ranges.
             else if ((crestFactor == "6") || (crestFactor == "A6"))
             {
-                //#set voltage list#
+                //#set Voltage list#
                 n = 0;
                 while (voltageList[1, n] != "")
                 {
@@ -1297,7 +1297,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                     n++;
                 }
                 cbVoltageRange.Items.Add(rangeListAuto);
-                //#set current list#
+                //#set Current list#
                 n = 0;
                 while (currentList[1, n] != "")
                 {
@@ -1352,7 +1352,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             SetReceiveMonitor(range);
             range = CutLeft("\n", ref range);//cut left with LF.
 
-            //wether have external current sensor input
+            //wether have external Current sensor input
             string external;
             external = "";
             external = CutLeft(",", ref range);//cut left with ",".
@@ -1541,7 +1541,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         //***************************
         private void ErrInfoGetCommand_Click(object sender, System.EventArgs e)
         {
-            //----------------------#queries error from instrument#
+            //----------------------#queries Error from instrument#
             string msg;
             string errInfo = "";
             msg = ":STATUS:ERROR?";
@@ -2021,7 +2021,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
          * P3W4 = Three-phase, four-wire system
          * [3P3W]
          * V3A3 = Three-phase, three-wire
-         * system with a three-voltage, threecurrent method
+         * system with a three-Voltage, threecurrent method
          * [3P3W(3V3A)]
          * 
          * • Example for a 3-element model

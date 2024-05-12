@@ -1,11 +1,4 @@
-﻿using ABBDataManagerSystem.Configs;
-using NPOI.POIFS.FileSystem;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
+﻿using System.Text;
 
 namespace ABBDataManagerSystem.Connector
 {
@@ -307,7 +300,7 @@ namespace ABBDataManagerSystem.Connector
         public void SendStartTest()
         {
             byte typeByte = TestTypeCommandMap[TestType];
-            Collector.SendCommand(new byte[] { 0x64, typeByte });
+            Collector.SendCommand(new byte[] { 0x64, typeByte, 0x31 });
         }
 
         // 注：测试一次完成后，需要再次测试时，发送此命令。
@@ -360,21 +353,6 @@ namespace ABBDataManagerSystem.Connector
             }
         }
         #endregion
-
-        public class JinYuanJYTAPacketInfo
-        {
-            public DeviceState deviceState;
-
-            public JinYuanJYTAPacketInfo()
-            {
-
-            }
-
-            public override string ToString()
-            {
-                return "";
-            }
-        }
 
         public static Dictionary<byte, string> CHStatusMap = new Dictionary<byte, string>()
         {
@@ -561,7 +539,7 @@ namespace ABBDataManagerSystem.Connector
             { 0x35, PowerCodeType.ExternalPower },
         };
 
-        public JinYuanJYTAPacketInfo? ReadPacket(ref bool needReset)
+        public JinYunJYTATestResult? ReadPacket(ref bool needReset)
         {
             needReset = false;
             if (Collector == null)
@@ -613,52 +591,175 @@ namespace ABBDataManagerSystem.Connector
                 return null;
             }
 
+            if (deviceState == DeviceState.SinglePhaseTest)
+            {
+                return ProcessSinglePhaseTestResult(packet);
+            }
+
+            if (deviceState == DeviceState.TreePhaseTest)
+            {
+                return ProcessThreePhaseTestResult(packet);
+            }
+
             return null;
         }
 
-        private void ProcessSingleTestResult(byte[] packet)
+        private JinYunJYTATestResult? ProcessThreePhaseTestResult(byte[] packet)
+        {
+            // 7E 54 55 31 32 36 6B <提示信息:1字节> <电量码:1字节> 
+            // < 变比A:6字节 > < 变比B:6字节 > < 变比C:6字节 >
+            // < 匝比A:6字节 > < 匝比B:6字节 > < 匝比C:6字节 >
+            // < 误差A:7字节 > < 误差B:7字节 > < 误差C:7字节 >
+            // < 试验电压A:7字节 > < 试验电压B:7字节 > < 试验电压C:7字节 >
+            // < 励磁电流A:7字节 > < 励磁电流B:7字节 > < 励磁电流C:7字节 >
+            // < 联结方式:8字节 > < 分接位:3字节 > < 频率:7字节 > < 计算变比:6字节 > XOR 0D
+
+            if (packet.Length < 126 || packet[0] != 0x6B)
+            {
+                return null;
+            }
+            int offset = 3; // 跳过设备状态、提示信息、电量码 三个字节
+            string strRatioA = Encoding.ASCII.GetString(packet, offset, 6);
+            offset += 6;
+            string strRatioB = Encoding.ASCII.GetString(packet, offset, 6);
+            offset += 6;
+            string strRatioC = Encoding.ASCII.GetString(packet, offset, 6);
+            offset += 6;
+
+            string strTurnRatioA = Encoding.ASCII.GetString(packet, offset, 6);
+            offset += 6;
+            string strTurnRatioB = Encoding.ASCII.GetString(packet, offset, 6);
+            offset += 6;
+            string strTurnRatioC = Encoding.ASCII.GetString(packet, offset, 6);
+            offset += 6;
+
+            string strErrorA = Encoding.ASCII.GetString(packet, offset, 7);
+            offset += 7;
+            string strErrorB = Encoding.ASCII.GetString(packet, offset, 7);
+            offset += 7;
+            string strErrorC = Encoding.ASCII.GetString(packet, offset, 7);
+            offset += 7;
+
+            string strVoltageA = Encoding.ASCII.GetString(packet, offset, 7);
+            offset += 7;
+            string strVoltageB = Encoding.ASCII.GetString(packet, offset, 7);
+            offset += 7;
+            string strVoltageC = Encoding.ASCII.GetString(packet, offset, 7);
+            offset += 7;
+
+            string strCurrentA = Encoding.ASCII.GetString(packet, offset, 7);
+            offset += 7;
+            string strCurrentB = Encoding.ASCII.GetString(packet, offset, 7);
+            offset += 7;
+            string strCurrentC = Encoding.ASCII.GetString(packet, offset, 7);
+            offset += 7;
+
+            string strConnectionType = Encoding.ASCII.GetString(packet, offset, 8);
+            offset += 8;
+
+            string tappingPosition = Encoding.ASCII.GetString(packet, offset, 3);
+            offset += 3;
+
+            string strFrequence = Encoding.ASCII.GetString(packet, offset, 7);
+            offset += 7;
+
+            string strCalculatedRatio = Encoding.ASCII.GetString(packet, offset, 6);
+            offset += 6;
+
+            float ratioA = Utils.ParseFloat(strRatioA);
+            float ratioB = Utils.ParseFloat(strRatioB);
+            float ratioC = Utils.ParseFloat(strRatioC);
+            float turnRatioA = Utils.ParseFloat(strTurnRatioA);
+            float turnRatioB = Utils.ParseFloat(strTurnRatioB);
+            float turnRatioC = Utils.ParseFloat(strTurnRatioC);
+            float errorA = Utils.ParseFloat(strErrorA);
+            float errorB = Utils.ParseFloat(strErrorB);
+            float errorC = Utils.ParseFloat(strErrorC);
+            float voltageA = Utils.ParseFloat(strVoltageA);
+            float voltageB = Utils.ParseFloat(strVoltageB);
+            float voltageC = Utils.ParseFloat(strVoltageC);
+            float currentA = Utils.ParseFloat(strCurrentA);
+            float currentB = Utils.ParseFloat(strCurrentB);
+            float currentC = Utils.ParseFloat(strCurrentC);
+            float frequence = Utils.ParseFloat(strFrequence);
+            float calculatedRatio = Utils.ParseFloat(strCalculatedRatio);
+
+            return new JinYunJYTATestResult()
+            {
+                IsSinglePhase = false,
+                Ratio = new float[] { ratioA, ratioB, ratioC },
+                Error = new float[] { errorA, errorB, errorC },
+                Voltage = new float[] { voltageA, voltageB, voltageC },
+                Current = new float[] { currentA, currentB, currentC },
+                TurnRatio = new float[] { turnRatioA, turnRatioB, turnRatioC },
+                Frequence = frequence,
+                CalculatedRatio = calculatedRatio,
+                TappingPosition = tappingPosition,
+                ConnectionType = strConnectionType,
+            };
+        }
+
+        private JinYunJYTATestResult? ProcessSinglePhaseTestResult(byte[] packet)
         {
             // 7E 54 55 30 34 37 6A <提示信息:1字节> <电量码:1字节>
             // <变比:6字节> <误差:7字节> <电压:7字节> <电流:7字节> <频率:7字节>
             // <极性:1字节> <分接位:3字节>  <计算变比:6字节> XOR 0D
             if (packet.Length < 47 || packet[0] != 0x6A)
             {
-                return;
+                return null;
             }
             int offset = 3; // 跳过设备状态、提示信息、电量码 三个字节
-            byte[] bRatio = new byte[6];
-            byte[] bError = new byte[7];
-            byte[] bVoltage = new byte[7];
-            byte[] bCurrent = new byte[7];
-            byte[] bFrequence = new byte[7];
-            byte[] bCalculatedRatio = new byte[6];
-            Array.Copy(packet, offset, bRatio, 0, 6);
+            string strRatio = Encoding.ASCII.GetString(packet, offset, 6);
             offset += 6;
-            Array.Copy(packet, offset, bError, 0, 7);
+            string strError = Encoding.ASCII.GetString(packet, offset, 7);
             offset += 7;
-            Array.Copy(packet, offset, bVoltage, 0, 7);
+            string strVoltage = Encoding.ASCII.GetString(packet, offset, 7);
             offset += 7;
-            Array.Copy(packet, offset, bCurrent, 0, 7);
+            string strCurrent = Encoding.ASCII.GetString(packet, offset, 7);
             offset += 7;
-            Array.Copy(packet, offset, bFrequence, 0, 7);
+            string strFrequence = Encoding.ASCII.GetString(packet, offset, 7);
             offset += 7;
-            offset += (1 + 3);
-            Array.Copy(packet, offset, bCalculatedRatio, 0, 6);
+            byte polarity = packet[offset];
+            string tappingPosition = Encoding.ASCII.GetString(packet, offset, 3);
+            offset += 3;
+            string strCalculatedRatio = Encoding.ASCII.GetString(packet, offset, 6);
             offset += 6;
-
-            string strRatio = Encoding.ASCII.GetString(bRatio);
-            string strError = Encoding.ASCII.GetString(bError);
-            string strVoltage = Encoding.ASCII.GetString(bVoltage);
-            string strCurrent = Encoding.ASCII.GetString(bCurrent);
-            string strFrequence = Encoding.ASCII.GetString(bFrequence);
-            string strCalculatedRatio = Encoding.ASCII.GetString(bCalculatedRatio);
             float ratio = Utils.ParseFloat(strRatio);
             float error = Utils.ParseFloat(strError);
             float voltage = Utils.ParseFloat(strVoltage);
             float current = Utils.ParseFloat(strCurrent);
             float frequence = Utils.ParseFloat(strFrequence);
             float calculatedRatio = Utils.ParseFloat(strCalculatedRatio);
+
+            return new JinYunJYTATestResult()
+            {
+                IsSinglePhase = true,
+                Ratio = new float[] { ratio, 0, 0 },
+                Error = new float[] { error, 0, 0 },
+                Voltage = new float[] { voltage, 0, 0 },
+                Current = new float[] { current, 0, 0 },
+                Frequence = frequence,
+                CalculatedRatio = calculatedRatio,
+                Polarity = polarity,
+                TappingPosition = tappingPosition,
+            };
         }
+
+        public class JinYunJYTATestResult
+        {
+            public bool IsSinglePhase = true;
+            public float[] Ratio;
+            public float[] Error;
+            public float[] Voltage;
+            public float[] Current;
+            public float[] TurnRatio;
+            public float Frequence;
+            public float CalculatedRatio;
+            public byte Polarity;
+            public string TappingPosition = string.Empty;
+            public string ConnectionType = string.Empty;
+        }
+
 
         // 主机打开，每400豪秒访问一次从机（寻机命令）或是发送命令，只有发送寻机命令
     }

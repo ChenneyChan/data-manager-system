@@ -188,7 +188,7 @@ namespace ABBDataManagerSystem.Pages
                 }
                 catch (Exception ex)
                 {
-                    Log.Error("Process SinglePhaseCmdPacket error " + ex.Message);
+                    Log.Error("Process SinglePhaseCmdPacket Error " + ex.Message);
                 }
             }
         }
