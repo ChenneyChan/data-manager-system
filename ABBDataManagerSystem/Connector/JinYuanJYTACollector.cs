@@ -469,21 +469,21 @@ namespace ABBDataManagerSystem.Connector
             { LowVoltageConnectionType.Type_NULL, 0x38 },
         };
 
-        public static Dictionary<string, DeviceState> DeviceStateMap = new Dictionary<string, DeviceState>()
+        public static Dictionary<DeviceState, string> DeviceStateMap = new Dictionary<DeviceState, string>()
         {
-            { "初始",  DeviceState.Initial },
-            { "自检",  DeviceState.SelfeCheck },
-            { "主菜单",  DeviceState.MainMenu },
-            { "单相参数设置", DeviceState.SinglePhaseSetting },
-            { "三相参数设置", DeviceState.TreePhaseSetting },
-            { "三相自动参数设置", DeviceState.TreePhaseAutoSetting },
-            { "单相测试", DeviceState.SinglePhaseTest },
-            { "三相测试", DeviceState.TreePhaseTest },
-            { "三相自动测试", DeviceState.TreePhaseAutoTest},
-            { "电压保护", DeviceState.VoltageProtection},
-            { "电流保护", DeviceState.CurrentProtection },
-            { "过热保护", DeviceState.OverheatProtection },
-            { "其他状态", DeviceState.OtherState },
+            { DeviceState.Initial             , "初始" },
+            { DeviceState.SelfeCheck          , "自检" },
+            { DeviceState.MainMenu            , "主菜单" },
+            { DeviceState.SinglePhaseSetting  , "单相参数设置" },
+            { DeviceState.TreePhaseSetting    , "三相参数设置" },
+            { DeviceState.TreePhaseAutoSetting, "三相自动参数设置" },
+            { DeviceState.SinglePhaseTest     , "单相测试" },
+            { DeviceState.TreePhaseTest       , "三相测试" },
+            { DeviceState.TreePhaseAutoTest   , "三相自动测试" },
+            { DeviceState.VoltageProtection   , "电压保护" },
+            { DeviceState.CurrentProtection   , "电流保护" },
+            { DeviceState.OverheatProtection  , "过热保护" },
+            { DeviceState.OtherState          , "其他状态" },
         };
 
         public static Dictionary<byte, DeviceState> DeviceStateCmdMap = new Dictionary<byte, DeviceState>()
@@ -503,12 +503,12 @@ namespace ABBDataManagerSystem.Connector
             { 0x7A, DeviceState.OtherState },
         };
 
-        public static Dictionary<string, TipInfoType> TipInfoTypeMap = new Dictionary<string, TipInfoType>()
+        public static Dictionary<TipInfoType, string> TipInfoTypeMap = new Dictionary<TipInfoType, string>()
         {
-            { "",  TipInfoType.Null},
-            { "测试中",  TipInfoType.Testing},
-            { "测试结束",  TipInfoType.TestDone},
-            { "测试错误",  TipInfoType.TestError},
+            { TipInfoType.Null,      "" },
+            { TipInfoType.Testing,   "测试中" },
+            { TipInfoType.TestDone,  "测试结束" },
+            { TipInfoType.TestError, "测试错误" },
         };
 
         public static Dictionary<byte, TipInfoType> TipInfoTypeByteMap = new Dictionary<byte, TipInfoType>()
@@ -519,14 +519,14 @@ namespace ABBDataManagerSystem.Connector
             { 0x33, TipInfoType.TestError },
         };
 
-        public static Dictionary<string, PowerCodeType> PowerCodeTypeMap = new Dictionary<string, PowerCodeType>()
+        public static Dictionary<PowerCodeType, string> PowerCodeTypeMap = new Dictionary<PowerCodeType, string>()
         {
-            { "100", PowerCodeType.Full},
-            { "75", PowerCodeType.Percent75},
-            { "50", PowerCodeType.Percent50},
-            { "25", PowerCodeType.Percent25},
-            { "0",  PowerCodeType.Percent0},
-            { "外部供电",  PowerCodeType.ExternalPower},
+            { PowerCodeType.Full,            "100"          },
+            { PowerCodeType.Percent75,       "75"           },
+            { PowerCodeType.Percent50,       "50"           },
+            { PowerCodeType.Percent25,       "25"           },
+            { PowerCodeType.Percent0,        "0"            },
+            { PowerCodeType.ExternalPower,   "外部供电"     },
         };
 
         public static Dictionary<byte, PowerCodeType> PowerCodeTypeByteMap = new Dictionary<byte, PowerCodeType>()
@@ -541,7 +541,7 @@ namespace ABBDataManagerSystem.Connector
 
         public static HighVoltageConnectionType? GetHighConnectionType(string connection)
         {
-            foreach( var item in HighVoltageConnectionTypeMap)
+            foreach (var item in HighVoltageConnectionTypeMap)
             {
                 if (item.Key == connection)
                 {
@@ -574,7 +574,7 @@ namespace ABBDataManagerSystem.Connector
             }
             return null;
         }
-       
+
 
         public JinYunJYTATestResult? ReadPacket(ref bool needReset)
         {

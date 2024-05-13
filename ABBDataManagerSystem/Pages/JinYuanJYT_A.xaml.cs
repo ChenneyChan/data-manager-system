@@ -1,6 +1,7 @@
 ﻿using ABBDataManagerSystem.Connector;
 using ABBDataManagerSystem.Pages.Views;
 using System.IO.Ports;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using static ABBDataManagerSystem.Connector.JinYuanJYTACollector;
@@ -128,15 +129,15 @@ namespace ABBDataManagerSystem.Pages
                         IsTesting = true;
                         new Thread(() =>
                         {
-                            while (IsTesting)
+                            while (IsTesting && Collector != null)
                             {
-                                Thread.Sleep(this.Interval);
                                 bool needReset = false;
                                 var result = Collector.ReadPacket(ref needReset);
                                 if (needReset)
                                 {
                                 }
                                 Dispatcher.Invoke(new Action(() => { HandleResult(result); }));
+                                Thread.Sleep(this.Interval);
                             }
                         }).Start();
                     }
@@ -147,10 +148,6 @@ namespace ABBDataManagerSystem.Pages
 
         private void HandleResult(JinYuanJYTACollector.JinYunJYTATestResult? result)
         {
-            if (result == null)
-            {
-                return;
-            }
             if (Collector == null)
             {
                 tbDeviceState.Text = "设备未连接";
@@ -158,34 +155,24 @@ namespace ABBDataManagerSystem.Pages
             }
 
             #region 状态信息
-            foreach (var item in JinYuanJYTACollector.DeviceStateMap)
+            if (JinYuanJYTACollector.DeviceStateMap.Keys.Contains(Collector.deviceState))
             {
-                if (item.Value == Collector.deviceState)
-                {
-                    tbDeviceState.Text = item.Key;
-                    break;
-                }
+                tbDeviceState.Text = JinYuanJYTACollector.DeviceStateMap[Collector.deviceState];
             }
-
-            foreach (var item in JinYuanJYTACollector.PowerCodeTypeMap)
+            if (JinYuanJYTACollector.PowerCodeTypeMap.Keys.Contains(Collector.powerCode))
             {
-                if (item.Value == Collector.powerCode)
-                {
-                    tbDevicePowerInfo.Text = item.Key;
-                    break;
-                }
+                tbDevicePowerInfo.Text = JinYuanJYTACollector.PowerCodeTypeMap[Collector.powerCode];
             }
-
-            foreach (var item in JinYuanJYTACollector.TipInfoTypeMap)
+            if (JinYuanJYTACollector.TipInfoTypeMap.Keys.Contains(Collector.tipInfo))
             {
-                if (item.Value == Collector.tipInfo)
-                {
-                    tbTipInfo.Text = item.Key;
-                    break;
-                }
+                tbTipInfo.Text = JinYuanJYTACollector.TipInfoTypeMap[Collector.tipInfo];
             }
             #endregion
 
+            if (result == null)
+            {
+                return;
+            }
             if (result.IsSinglePhase)
             {
                 tbSingleRatio.Text = Utils.FloatFormat(result.Ratio[0]);
