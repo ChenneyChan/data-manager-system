@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ABBDataManagerSystem.Pages"
              xmlns:hc="https://handyorg.github.io/handycontrol" xmlns:sys="clr-namespace:System;assembly=netstandard"
-             mc:Ignorable="d" Loaded="UserControl_Loaded" Unloaded="UserControl_Unloaded" d:DesignHeight="967.073" d:DesignWidth="1599.875">
+             mc:Ignorable="d" Loaded="UserControl_Loaded" Unloaded="UserControl_Unloaded" d:DesignHeight="967.073" d:DesignWidth="1599.875" Background="#FFDDDDDD"> 
     <UserControl.Resources>
         <sys:Double x:Key="textBoxHeigh">36</sys:Double>
         <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
@@ -63,7 +63,7 @@
             </StackPanel>
         </StackPanel>
 
-        <hc:Divider Grid.Row="2" Height="5" Margin="0"/>
+        <hc:Divider Grid.Row="2" Height="5" Margin="0" LineStroke="#FFB0B0B0"/>
         <Grid Grid.Row="3">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -125,7 +125,7 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-                            <TabControl SelectionChanged="TabControl_SelectionChanged" Grid.Column="0" Height="600" Width="730" VerticalAlignment="Top" HorizontalAlignment="Left">
+                            <TabControl SelectionChanged="TabControl_SelectionChanged" Grid.Column="0" Height="600" Width="730" VerticalAlignment="Top" HorizontalAlignment="Left" BorderBrush="Black" BorderThickness="1.5">
                                 <TabItem Header="单相测试" FontSize="18" Height="{StaticResource textBoxHeigh}" Name="tiSinglePhase">
                                     <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" Style="{StaticResource ScrollViewerNativeBaseStyle}" >
                                         <Grid Margin="40" MinHeight="300" MinWidth="600">
@@ -349,10 +349,10 @@
 
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="14" Grid.ColumnSpan="6" Margin="6">
                                 <TextBlock Text="连接组1" Margin="0, 0, 10, 0"/>
-                                <TextBox Width="120" Height="36" Margin="0, 0, 20, 0"/>
+                                <TextBox Width="120" Height="36" Margin="0, 0, 20, 0" Name="tbConnectionGroup1"/>
                                 <TextBlock Text="连接组2" Margin="0, 0, 10, 0"/>
-                                <TextBox Width="120" Height="36" Margin="0, 0, 20, 0"/>
-                                <Button Width="60" Content="↓" Style="{StaticResource ButtonInfo}" Height="30" FontSize="18"/>
+                                <TextBox Width="120" Height="36" Margin="0, 0, 20, 0" Name="tbConnectionGroup2"/>
+                                <Button Width="120" Content="确认数据" Style="{StaticResource ButtonInfo}" Height="40" FontSize="18" Click="Button_Click"/>
                             </StackPanel>
                         </Grid>
                     </Grid>

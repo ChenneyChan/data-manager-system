@@ -64,7 +64,7 @@ namespace ABBDataManagerSystem.Pages.Views
             set { _IsSelected = value; UpdateDisplay(); }
         }
 
-        private System.Windows.Media.Brush OriginBackGroud;
+        private Brush OriginBackGroud;
 
         public TappingVoltageRatioFields()
         {

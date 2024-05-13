@@ -1,7 +1,6 @@
 ﻿using ABBDataManagerSystem.Connector;
 using ABBDataManagerSystem.Pages.Views;
 using System.IO.Ports;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using static ABBDataManagerSystem.Connector.JinYuanJYTACollector;
@@ -14,9 +13,11 @@ namespace ABBDataManagerSystem.Pages
     public partial class JinYuanJYT_A : UserControl
     {
         private Dictionary<string, TappingVoltageRatioFields> RatioValueFields = new Dictionary<string, TappingVoltageRatioFields>();
+        private Dictionary<string, JinYunJYTATestResult> SavedResults = new Dictionary<string, JinYunJYTATestResult>();
         private JinYuanJYTACollector? Collector = null;
         private bool IsTesting = false;
         private int Interval = 200;
+        private JinYunJYTATestResult? CurrentResult = null;
 
         public JinYuanJYT_A()
         {
@@ -90,7 +91,7 @@ namespace ABBDataManagerSystem.Pages
             cbTestTapping.SelectedIndex = 0;
         }
 
-        private TappingVoltageRatioFields? GetSelectedTVR()
+        private TappingVoltageRatioFields? GetSelectedTVR(ref string fieldKey)
         {
             if (cbTestTapping.SelectedIndex < 0)
             {
@@ -102,6 +103,7 @@ namespace ABBDataManagerSystem.Pages
             {
                 index = "21";
             }
+            fieldKey = index;
             return RatioValueFields[index];
         }
 
@@ -173,6 +175,7 @@ namespace ABBDataManagerSystem.Pages
             {
                 return;
             }
+            CurrentResult = result;
             if (result.IsSinglePhase)
             {
                 tbSingleRatio.Text = Utils.FloatFormat(result.Ratio[0]);
@@ -310,7 +313,8 @@ namespace ABBDataManagerSystem.Pages
 
         private void cbTestTapping_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var tvr = GetSelectedTVR();
+            string key = "";
+            var tvr = GetSelectedTVR(ref key);
             if (tvr == null)
             {
                 return;
@@ -325,6 +329,33 @@ namespace ABBDataManagerSystem.Pages
                 {
                     item.IsSelected = true;
                 }
+            }
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            if (CurrentResult == null)
+            {
+                return;
+            }
+            string key = "";
+            var tvr = GetSelectedTVR(ref key);
+            if (tvr == null)
+            {
+                return;
+            }
+            SavedResults[key] = CurrentResult;
+            tvr.ValueAB = CurrentResult.Ratio[0];
+            tvr.ValueBC = CurrentResult.Ratio[1];
+            tvr.ValueCA = CurrentResult.Ratio[2];
+            tvr.CalculatedRatio = CurrentResult.Ratio[3];
+            if (tvr != tvrTappingPoint21)
+            {
+                tbConnectionGroup1.Text = CurrentResult.ConnectionType;
+            }
+            else
+            {
+                tbConnectionGroup2.Text = CurrentResult.ConnectionType;
             }
         }
     }
