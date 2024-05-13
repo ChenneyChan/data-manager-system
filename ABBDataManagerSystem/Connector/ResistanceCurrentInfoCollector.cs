@@ -26,8 +26,8 @@ namespace ABBDataManagerSystem.Connector
         {
             serialPort = new SerialPort(portName, baudRate, Parity.None, 8, StopBits.One)
             {
-                ReadTimeout = 2000,
-                WriteTimeout = 2000,
+                ReadTimeout = 200,
+                WriteTimeout = 200,
             };
         }
 
@@ -76,8 +76,8 @@ namespace ABBDataManagerSystem.Connector
             byte[] lenArray = Encoding.UTF8.GetBytes(lenStr);
 
             packet[0] = 0x7E; // 报文头
-            packet[1] = 0x3E; // 从机地址高字节
-            packet[2] = 0x3E; // 从机地址低字节
+            packet[1] = DeviceAddress[0]; // 从机地址高字节
+            packet[2] = DeviceAddress[1]; // 从机地址低字节
             packet[3] = (byte)lenArray[0];  // 数据和命令长度高字节
             packet[4] = (byte)lenArray[1];  // 数据和命令长度低字节
 
