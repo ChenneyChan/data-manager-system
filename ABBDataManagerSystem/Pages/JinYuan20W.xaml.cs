@@ -126,16 +126,23 @@ namespace ABBDataManagerSystem.Pages
                     CH2CurrentConfig = JinYuan20WCollector.GetCH2CurrentConfig(cbLVCurrents.SelectedItem.ToString()),
                     TestType = JinYuan20WCollector.TestTypeMap[cbTestType.SelectedItem.ToString()],
                 };
-                if (!Collector.Connect())
+                new Thread(() =>
                 {
-                    Collector = null;
-                    IsConneted = false;
-                    swConnect.IsChecked = false;
-                }
+                    if (!Collector.Connect())
+                    {
+                        Collector = null;
+                        IsConneted = false;
+                        swConnect.IsChecked = false;
+                    }
+                    else
+                    {
+                        StartSyncState();
+                    }
+                }).Start();
             }
             else
             {
-                StopCollect();
+                StopSyncState();
                 if (Collector != null)
                 {
                     Collector.Disconnect();
@@ -180,7 +187,8 @@ namespace ABBDataManagerSystem.Pages
                     var packet = Collector.ReadPacket();
                     if (packet != null)
                     {
-                        Dispatcher.Invoke(() => {
+                        Dispatcher.Invoke(() =>
+                        {
                             UpdateDisplayByPacket(packet);
                         });
                     }
@@ -213,7 +221,7 @@ namespace ABBDataManagerSystem.Pages
             tbDebugMsg.Text = "Debug Packet: " + packet.ToString();
         }
 
-        private void btStart_Click(object sender, RoutedEventArgs e)
+        private void StartSyncState()
         {
             if (!IsConneted || IsCollecting)
             {
@@ -222,7 +230,7 @@ namespace ABBDataManagerSystem.Pages
             // 创建一个ManualResetEvent，初始状态为未设置（false）  
             ResetEvent = new ManualResetEvent(false);
             IsCollecting = true;
-            UpdateControlEnableState();
+            Dispatcher.Invoke(new Action(() => { UpdateControlEnableState(); }));
             Log.Info("Start 20W Collect...");
 
             // 创建一个新线程并执行任务  
@@ -242,12 +250,15 @@ namespace ABBDataManagerSystem.Pages
             }).Start();
         }
 
-        private void btStop_Click(object sender, RoutedEventArgs e)
+        private void btStart_Click(object sender, RoutedEventArgs e)
         {
-            StopCollect();
         }
 
-        private void StopCollect()
+        private void btStop_Click(object sender, RoutedEventArgs e)
+        {
+        }
+
+        private void StopSyncState()
         {
             if (!IsCollecting)
             {
@@ -259,6 +270,38 @@ namespace ABBDataManagerSystem.Pages
                 ResetEvent.Set();
             }
             UpdateControlEnableState();
+        }
+
+        private void cbCH1_CheckedChange(object sender, RoutedEventArgs e)
+        {
+            if (Collector != null)
+            {
+                Collector.CH1Enabled = cbCH1.IsChecked == true;
+            }
+        }
+
+        private void cbCH2_CheckedChange(object sender, RoutedEventArgs e)
+        {
+            if (Collector != null)
+            {
+                Collector.CH2Enabled = cbCH2.IsChecked == true;
+            }
+        }
+
+        private void cbHVCurrents_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (Collector != null)
+            {
+                Collector.CH1CurrentConfig = JinYuan20WCollector.GetCH1CurrentConfig(cbHVCurrents.SelectedItem.ToString());
+            }
+        }
+
+        private void cbLVCurrents_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (Collector != null)
+            {
+                Collector.CH2CurrentConfig = JinYuan20WCollector.GetCH2CurrentConfig(cbLVCurrents.SelectedItem.ToString());
+            }
         }
     }
 

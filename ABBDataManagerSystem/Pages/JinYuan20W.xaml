@@ -69,13 +69,13 @@
             </StackPanel>
 
             <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" VerticalAlignment="Top" Margin="10,0">
-                <CheckBox Content="高压侧" VerticalAlignment="Center" Name="cbCH1"/>
+                <CheckBox Content="高压侧" VerticalAlignment="Center" Name="cbCH1" Checked="cbCH1_CheckedChange" Unchecked="cbCH1_CheckedChange"/>
                 <Viewbox Width="10"/>
-                <ComboBox Width="100" Name="cbHVCurrents"/>
+                <ComboBox Width="100" Name="cbHVCurrents" SelectionChanged="cbHVCurrents_SelectionChanged"/>
                 <Viewbox Width="10"/>
-                <CheckBox Content="低压侧" VerticalAlignment="Center" Name="cbCH2"/>
+                <CheckBox Content="低压侧" VerticalAlignment="Center" Name="cbCH2" Checked="cbCH2_CheckedChange" Unchecked="cbCH2_CheckedChange"/>
                 <Viewbox Width="10"/>
-                <ComboBox Width="100" Name="cbLVCurrents"/>
+                <ComboBox Width="100" Name="cbLVCurrents" SelectionChanged="cbLVCurrents_SelectionChanged"/>
             </StackPanel>
         </StackPanel>
 
@@ -159,6 +159,8 @@
                 <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Grid.RowSpan="6" />
             </Grid>
         </Grid>
-        <TextBlock Grid.Row="4" Text="Debug Packet: " FontSize="12" TextWrapping="Wrap" Name="tbDebugMsg" VerticalAlignment="Top"/>
+        <ScrollViewer Grid.Row="4" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <TextBlock Text="Debug Packet: " FontSize="12" TextWrapping="Wrap" Name="tbDebugMsg" VerticalAlignment="Top"/>
+        </ScrollViewer>
     </Grid>
 </UserControl>
