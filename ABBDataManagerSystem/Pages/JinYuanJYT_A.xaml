@@ -130,9 +130,9 @@
                                     <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" Style="{StaticResource ScrollViewerNativeBaseStyle}" >
                                         <Grid Margin="40" MinHeight="300" MinWidth="600">
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition/>
-                                                <ColumnDefinition/>
-                                                <ColumnDefinition/>
+                                                <ColumnDefinition Width="1.1*"/>
+                                                <ColumnDefinition Width="1*"/>
+                                                <ColumnDefinition Width="1*"/>
                                             </Grid.ColumnDefinitions>
                                             <Grid.RowDefinitions>
                                                 <RowDefinition/>
@@ -142,10 +142,10 @@
                                             </Grid.RowDefinitions>
                                             <Grid Grid.Row="0" Grid.Column="0">
                                                 <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="60"/>
+                                                    <ColumnDefinition Width="84"/>
                                                     <ColumnDefinition Width="1*"/>
                                                 </Grid.ColumnDefinitions>
-                                                <TextBlock Text="变比" Grid.Column="0" Margin="10, 0"/>
+                                                <TextBlock Text="变比" Grid.Column="0" Margin="10, 0" FontSize="20" HorizontalAlignment="Right"/>
                                                 <TextBox Height="{StaticResource textBoxHeigh}" Grid.Column="1" IsReadOnly="True" Name="tbSingleRatio"/>
                                             </Grid>
 
@@ -154,16 +154,16 @@
                                                     <ColumnDefinition Width="60"/>
                                                     <ColumnDefinition Width="1*"/>
                                                 </Grid.ColumnDefinitions>
-                                                <TextBlock Text="误差" Grid.Column="0" Margin="10, 0"/>
+                                                <TextBlock Text="误差" Grid.Column="0" Margin="10, 0" FontSize="20" />
                                                 <TextBox Height="{StaticResource textBoxHeigh}" Grid.Column="1" IsReadOnly="True" Name="tbSingleError"/>
                                             </Grid>
 
                                             <Grid Grid.Row="1" Grid.Column="0">
                                                 <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="60"/>
+                                                    <ColumnDefinition Width="84"/>
                                                     <ColumnDefinition Width="1*"/>
                                                 </Grid.ColumnDefinitions>
-                                                <TextBlock Text="电压" Grid.Column="0" Margin="10, 0"/>
+                                                <TextBlock Text="电压" Grid.Column="0" Margin="10, 0" HorizontalAlignment="Right" FontSize="20" />
                                                 <TextBox Height="{StaticResource textBoxHeigh}" Grid.Column="1" IsReadOnly="True" Name="tbSingleVoltage"/>
                                             </Grid>
 
@@ -172,7 +172,7 @@
                                                     <ColumnDefinition Width="60"/>
                                                     <ColumnDefinition Width="1*"/>
                                                 </Grid.ColumnDefinitions>
-                                                <TextBlock Text="电流" Grid.Column="0" Margin="10, 0"/>
+                                                <TextBlock Text="电流" Grid.Column="0" Margin="10, 0" FontSize="20" />
                                                 <TextBox Height="{StaticResource textBoxHeigh}" Grid.Column="1" IsReadOnly="True" Name="tbSingleCurrent"/>
                                             </Grid>
 
@@ -181,16 +181,16 @@
                                                     <ColumnDefinition Width="60"/>
                                                     <ColumnDefinition Width="1*"/>
                                                 </Grid.ColumnDefinitions>
-                                                <TextBlock Text="频率" Grid.Column="0" Margin="10, 0"/>
+                                                <TextBlock Text="频率" Grid.Column="0" Margin="10, 0" FontSize="20" />
                                                 <TextBox Height="{StaticResource textBoxHeigh}" Grid.Column="1" IsReadOnly="True" Name="tbSingleFrequence"/>
                                             </Grid>
 
                                             <Grid Grid.Row="2" Grid.Column="0">
                                                 <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="100"/>
+                                                    <ColumnDefinition Width="84"/>
                                                     <ColumnDefinition Width="1*"/>
                                                 </Grid.ColumnDefinitions>
-                                                <TextBlock Text="分接位" Grid.Column="0" Margin="10, 0"/>
+                                                <TextBlock Text="分接位" Grid.Column="0" Margin="10, 0" FontSize="20"  HorizontalAlignment="Right"/>
                                                 <TextBox Height="{StaticResource textBoxHeigh}" Grid.Column="1" IsReadOnly="True" Name="tbSingleTappingPosition"/>
                                             </Grid>
 
@@ -199,16 +199,16 @@
                                                     <ColumnDefinition Width="60"/>
                                                     <ColumnDefinition Width="1*"/>
                                                 </Grid.ColumnDefinitions>
-                                                <TextBlock Text="极性" Grid.Column="0" Margin="10, 0"/>
+                                                <TextBlock Text="极性" Grid.Column="0" Margin="10, 0" FontSize="20" />
                                                 <TextBox Height="{StaticResource textBoxHeigh}" Grid.Column="1" IsReadOnly="True" Name="tbPolarity"/>
                                             </Grid>
 
                                             <Grid Grid.Row="3" Grid.Column="0">
                                                 <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="100"/>
+                                                    <ColumnDefinition Width="84"/>
                                                     <ColumnDefinition Width="1*"/>
                                                 </Grid.ColumnDefinitions>
-                                                <TextBlock Text="计算变比" Grid.Column="0" Margin="10, 0"/>
+                                                <TextBlock Text="计算变比" Grid.Column="0" Margin="10, 0" FontSize="20"  HorizontalAlignment="Right"/>
                                                 <TextBox Height="{StaticResource textBoxHeigh}" Grid.Column="1" IsReadOnly="True" Name="tbSingleCalculatedRatio"/>
                                             </Grid>
                                         </Grid>
