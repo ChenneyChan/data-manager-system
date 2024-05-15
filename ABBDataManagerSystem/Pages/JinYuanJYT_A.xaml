@@ -119,13 +119,13 @@
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <Grid Grid.Column="0" >
+                        <Grid Grid.Column="0" Margin="10">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-                            <TabControl SelectionChanged="TabControl_SelectionChanged" Grid.Column="0" Height="600" Width="730" VerticalAlignment="Top" HorizontalAlignment="Left" BorderBrush="Black" BorderThickness="1.5">
+                            <TabControl SelectionChanged="TabControl_SelectionChanged" Grid.Column="0" Height="626" Width="730" VerticalAlignment="Top" HorizontalAlignment="Left" Background="#FFDDDDDD">
                                 <TabItem Header="单相测试" FontSize="18" Height="{StaticResource textBoxHeigh}" Name="tiSinglePhase">
                                     <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" Style="{StaticResource ScrollViewerNativeBaseStyle}" >
                                         <Grid Margin="40" MinHeight="300" MinWidth="600">
@@ -268,8 +268,9 @@
                                     </ScrollViewer>
                                 </TabItem>
                             </TabControl>
+                            <Border Grid.Column="0" BorderBrush="#FF1F1F1F" BorderThickness="1.5" Width="730" Height="626" VerticalAlignment="Top" HorizontalAlignment="Left"/>
 
-                            <StackPanel Orientation="Horizontal" Grid.Row="1" MaxWidth="800">
+                            <StackPanel Orientation="Horizontal" Grid.Row="1" MaxWidth="800" Margin="0, 10, 0, 0">
                                 <StackPanel Orientation="Horizontal" Margin="0, 0, 10, 0" VerticalAlignment="Center">
                                     <TextBlock Text="分接选择" Width="80" Margin="0,0,10,0" FontWeight="Bold"/>
                                     <ComboBox  Width="120" Name="cbTestTapping" SelectionChanged="cbTestTapping_SelectionChanged"/>
