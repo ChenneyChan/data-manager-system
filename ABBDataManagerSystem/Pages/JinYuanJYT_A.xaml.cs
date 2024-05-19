@@ -344,11 +344,6 @@ namespace ABBDataManagerSystem.Pages
             {
                 return;
             }
-            SavedResults[key] = CurrentResult;
-            tvr.ValueAB = CurrentResult.Ratio[0];
-            tvr.ValueBC = CurrentResult.Ratio[1];
-            tvr.ValueCA = CurrentResult.Ratio[2];
-            tvr.CalculatedRatio = CurrentResult.Ratio[3];
             if (tvr != tvrTappingPoint21)
             {
                 tbConnectionGroup1.Text = CurrentResult.ConnectionType;
@@ -357,6 +352,25 @@ namespace ABBDataManagerSystem.Pages
             {
                 tbConnectionGroup2.Text = CurrentResult.ConnectionType;
             }
+        }
+
+        private void btConfirm_Click(object sender, RoutedEventArgs e)
+        {
+            if (CurrentResult == null)
+            {
+                return;
+            }
+            string key = "";
+            var tvr = GetSelectedTVR(ref key);
+            if (tvr == null)
+            {
+                return;
+            }
+            SavedResults[key] = CurrentResult;
+            tvr.ValueAB = CurrentResult.Ratio[0];
+            tvr.ValueBC = CurrentResult.Ratio[1];
+            tvr.ValueCA = CurrentResult.Ratio[2];
+            tvr.CalculatedRatio = CurrentResult.Ratio[3];
         }
     }
 }
