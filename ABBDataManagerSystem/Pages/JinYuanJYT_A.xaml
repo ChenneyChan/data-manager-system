@@ -8,11 +8,12 @@
              mc:Ignorable="d" Loaded="UserControl_Loaded" Unloaded="UserControl_Unloaded" d:DesignHeight="967.073" d:DesignWidth="1599.875" Background="#FFDDDDDD"> 
     <UserControl.Resources>
         <sys:Double x:Key="textBoxHeigh">36</sys:Double>
+        <Color x:Key="borderColor">#FF2A2A2A</Color>
         <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
             <Setter Property="FontSize" Value="16"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
-        <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+        <Style TargetType="hc:TextBox" BasedOn="{StaticResource GlobalTextBoxStyle}">
             <Setter Property="FontSize" Value="16"/>
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
             <Setter Property="Height" Value="30"/>
@@ -27,9 +28,12 @@
             <Setter Property="FontSize" Value="18"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
-        <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
+        <Style TargetType="hc:ComboBox" BasedOn="{StaticResource GlobalComboBoxStyle}">
             <Setter Property="FontSize" Value="18"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style TargetType="hc:NumericUpDown" BasedOn="{StaticResource GlobalNumericUpDownStyle}">
+            
         </Style>
     </UserControl.Resources>
     <Grid Margin="30,20,30,20">
@@ -51,15 +55,15 @@
             </ToggleButton>
             <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" VerticalAlignment="Top">
                 <TextBlock TextWrapping="Wrap" Text="串口" VerticalAlignment="Center" Width="40" Margin="0,0,10,0"/>
-                <ComboBox Width="120" Name="cbSerialPort"/>
+                <hc:ComboBox Width="120" Name="cbSerialPort"/>
             </StackPanel>
             <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" VerticalAlignment="Top">
                 <TextBlock Width="60" Text="波特率" VerticalAlignment="Center" Margin="20, 0, 10, 0"/>
-                <ComboBox Width="120"  VerticalAlignment="Center" Name="cbBoundRate" SelectedIndex="1">
+                <hc:ComboBox Width="120"  VerticalAlignment="Center" Name="cbBoundRate" SelectedIndex="1">
                     <ComboBoxItem Content="4800"/>
                     <ComboBoxItem Content="9600"/>
                     <ComboBoxItem Content="12800"/>
-                </ComboBox>
+                </hc:ComboBox>
             </StackPanel>
         </StackPanel>
 
@@ -74,13 +78,13 @@
                     <StackPanel Orientation="Vertical" Margin="10">
                         <StackPanel Orientation="Vertical" Margin="0" HorizontalAlignment="Left">
                             <TextBlock Width="80" Text="测试类型" VerticalAlignment="Center" Margin="0,0,0,5" HorizontalAlignment="Left"/>
-                            <ComboBox Name="cbTestMode" Width="120" SelectedIndex="0" SelectionChanged="cbTestMode_SelectionChanged" HorizontalAlignment="Left">
+                            <hc:ComboBox Name="cbTestMode" Width="120" SelectedIndex="0" SelectionChanged="cbTestMode_SelectionChanged" HorizontalAlignment="Left">
                                 <ComboBoxItem Content="三相测试"/>
                                 <ComboBoxItem Content="单相测试"/>
-                            </ComboBox>
+                            </hc:ComboBox>
                             <TextBlock Width="80" Text="试验电压" VerticalAlignment="Center" Margin="0,10,0,5" HorizontalAlignment="Left"/>
-                            <ComboBox Name="cbVoltageConfig" Width="120" SelectedIndex="0" HorizontalAlignment="Left">
-                            </ComboBox>
+                            <hc:ComboBox Name="cbVoltageConfig" Width="120" SelectedIndex="0" HorizontalAlignment="Left">
+                            </hc:ComboBox>
                             <TextBlock Width="120" Text="高压电压(kV)" VerticalAlignment="Center" Margin="0,10,0,5" HorizontalAlignment="Left"/>
                             <hc:NumericUpDown Width="120" Name="tbHighVoltage" Value="1.0" ValueFormat="N2" FontSize="18" HorizontalAlignment="Left"/>
                             <TextBlock Width="120" Text="低压电压(kV)" VerticalAlignment="Center" Margin="0,10,0,5"  HorizontalAlignment="Left"/>
@@ -88,8 +92,8 @@
                         </StackPanel>
                         <StackPanel Orientation="Vertical" Margin="0" HorizontalAlignment="Left">
                             <TextBlock Width="80" Text="分接位置" VerticalAlignment="Center" Margin="0,10,0,5" HorizontalAlignment="Left"/>
-                            <ComboBox Name="cbTappingPoint" Width="120" SelectedIndex="0" HorizontalAlignment="Left">
-                            </ComboBox>
+                            <hc:ComboBox Name="cbTappingPoint" Width="120" SelectedIndex="0" HorizontalAlignment="Left">
+                            </hc:ComboBox>
                             <TextBlock Width="80" Text="额定分接" VerticalAlignment="Center" Margin="0,10,0,5" HorizontalAlignment="Left"/>
                             <hc:NumericUpDown Width="120" Name="tbRatedTapping" Value="3" FontSize="18" Minimum="0" HorizontalAlignment="Left"/>
                             <TextBlock Width="120" Text="正分接数" VerticalAlignment="Center" Margin="0,10,0,5" HorizontalAlignment="Left"/>
@@ -99,14 +103,14 @@
                         </StackPanel>
                         <StackPanel Orientation="Vertical" Margin="0">
                             <TextBlock Width="140" Text="同极性显示(单相)" VerticalAlignment="Center" Margin="0,10,0,5" HorizontalAlignment="Left"/>
-                            <ComboBox Name="cbHomopolarityDisplay" Width="120" SelectedIndex="0" HorizontalAlignment="Left">
-                            </ComboBox>
+                            <hc:ComboBox Name="cbHomopolarityDisplay" Width="120" SelectedIndex="0" HorizontalAlignment="Left">
+                            </hc:ComboBox>
                             <TextBlock Width="80" Text="联结方式" VerticalAlignment="Center" Margin="0,10,0,5" HorizontalAlignment="Left"/>
-                            <ComboBox Name="cbHighVoltageConnection" Width="80" SelectedIndex="0" HorizontalAlignment="Left">
-                            </ComboBox>
+                            <hc:ComboBox Name="cbHighVoltageConnection" Width="80" SelectedIndex="0" HorizontalAlignment="Left">
+                            </hc:ComboBox>
                             <TextBlock Text="-" Margin="0"/>
-                            <ComboBox Name="cbLowVoltageConnection" Width="80" SelectedIndex="0" HorizontalAlignment="Left">
-                            </ComboBox>
+                            <hc:ComboBox Name="cbLowVoltageConnection" Width="80" SelectedIndex="0" HorizontalAlignment="Left">
+                            </hc:ComboBox>
                             <TextBlock Text="-" Margin="0"/>
                             <hc:NumericUpDown Width="120" Name="tbGroup" Value="0" FontSize="18" Minimum="0" Maximum="11" HorizontalAlignment="Left"/>
                         </StackPanel>
@@ -146,7 +150,7 @@
                                                     <ColumnDefinition Width="1*"/>
                                                 </Grid.ColumnDefinitions>
                                                 <TextBlock Text="变比" Grid.Column="0" Margin="10, 0" FontSize="20" HorizontalAlignment="Right"/>
-                                                <TextBox Height="{StaticResource textBoxHeigh}" Grid.Column="1" IsReadOnly="True" Name="tbSingleRatio"/>
+                                                <hc:TextBox Height="{StaticResource textBoxHeigh}" Grid.Column="1" IsReadOnly="True" Name="tbSingleRatio"/>
                                             </Grid>
 
                                             <Grid Grid.Row="0" Grid.Column="1">
@@ -155,7 +159,7 @@
                                                     <ColumnDefinition Width="1*"/>
                                                 </Grid.ColumnDefinitions>
                                                 <TextBlock Text="误差" Grid.Column="0" Margin="10, 0" FontSize="20" />
-                                                <TextBox Height="{StaticResource textBoxHeigh}" Grid.Column="1" IsReadOnly="True" Name="tbSingleError"/>
+                                                <hc:TextBox Height="{StaticResource textBoxHeigh}" Grid.Column="1" IsReadOnly="True" Name="tbSingleError"/>
                                             </Grid>
 
                                             <Grid Grid.Row="1" Grid.Column="0">
@@ -164,7 +168,7 @@
                                                     <ColumnDefinition Width="1*"/>
                                                 </Grid.ColumnDefinitions>
                                                 <TextBlock Text="电压" Grid.Column="0" Margin="10, 0" HorizontalAlignment="Right" FontSize="20" />
-                                                <TextBox Height="{StaticResource textBoxHeigh}" Grid.Column="1" IsReadOnly="True" Name="tbSingleVoltage"/>
+                                                <hc:TextBox Height="{StaticResource textBoxHeigh}" Grid.Column="1" IsReadOnly="True" Name="tbSingleVoltage"/>
                                             </Grid>
 
                                             <Grid Grid.Row="1" Grid.Column="1">
@@ -173,7 +177,7 @@
                                                     <ColumnDefinition Width="1*"/>
                                                 </Grid.ColumnDefinitions>
                                                 <TextBlock Text="电流" Grid.Column="0" Margin="10, 0" FontSize="20" />
-                                                <TextBox Height="{StaticResource textBoxHeigh}" Grid.Column="1" IsReadOnly="True" Name="tbSingleCurrent"/>
+                                                <hc:TextBox Height="{StaticResource textBoxHeigh}" Grid.Column="1" IsReadOnly="True" Name="tbSingleCurrent"/>
                                             </Grid>
 
                                             <Grid Grid.Row="1" Grid.Column="2">
@@ -182,7 +186,7 @@
                                                     <ColumnDefinition Width="1*"/>
                                                 </Grid.ColumnDefinitions>
                                                 <TextBlock Text="频率" Grid.Column="0" Margin="10, 0" FontSize="20" />
-                                                <TextBox Height="{StaticResource textBoxHeigh}" Grid.Column="1" IsReadOnly="True" Name="tbSingleFrequence"/>
+                                                <hc:TextBox Height="{StaticResource textBoxHeigh}" Grid.Column="1" IsReadOnly="True" Name="tbSingleFrequence"/>
                                             </Grid>
 
                                             <Grid Grid.Row="2" Grid.Column="0">
@@ -191,7 +195,7 @@
                                                     <ColumnDefinition Width="1*"/>
                                                 </Grid.ColumnDefinitions>
                                                 <TextBlock Text="分接位" Grid.Column="0" Margin="10, 0" FontSize="20"  HorizontalAlignment="Right"/>
-                                                <TextBox Height="{StaticResource textBoxHeigh}" Grid.Column="1" IsReadOnly="True" Name="tbSingleTappingPosition"/>
+                                                <hc:TextBox Height="{StaticResource textBoxHeigh}" Grid.Column="1" IsReadOnly="True" Name="tbSingleTappingPosition"/>
                                             </Grid>
 
                                             <Grid Grid.Row="2" Grid.Column="1">
@@ -200,7 +204,7 @@
                                                     <ColumnDefinition Width="1*"/>
                                                 </Grid.ColumnDefinitions>
                                                 <TextBlock Text="极性" Grid.Column="0" Margin="10, 0" FontSize="20" />
-                                                <TextBox Height="{StaticResource textBoxHeigh}" Grid.Column="1" IsReadOnly="True" Name="tbPolarity"/>
+                                                <hc:TextBox Height="{StaticResource textBoxHeigh}" Grid.Column="1" IsReadOnly="True" Name="tbPolarity"/>
                                             </Grid>
 
                                             <Grid Grid.Row="3" Grid.Column="0">
@@ -209,7 +213,7 @@
                                                     <ColumnDefinition Width="1*"/>
                                                 </Grid.ColumnDefinitions>
                                                 <TextBlock Text="计算变比" Grid.Column="0" Margin="10, 0" FontSize="20"  HorizontalAlignment="Right"/>
-                                                <TextBox Height="{StaticResource textBoxHeigh}" Grid.Column="1" IsReadOnly="True" Name="tbSingleCalculatedRatio"/>
+                                                <hc:TextBox Height="{StaticResource textBoxHeigh}" Grid.Column="1" IsReadOnly="True" Name="tbSingleCalculatedRatio"/>
                                             </Grid>
                                         </Grid>
                                     </ScrollViewer>
@@ -245,25 +249,25 @@
                                             <TextBlock Text="计算变比 " FontSize="20" Grid.Column="0" Grid.Row="7" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                             <TextBlock Text="频率 " FontSize="20" Grid.Column="2" Grid.Row="6" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                                             <TextBlock Text="分接位" FontSize="20" Grid.Column="2" Grid.Row="7" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                                            <TextBox FontSize="20" Grid.Column="1" Grid.Row="1" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True" Name="tbRatioA"/>
-                                            <TextBox FontSize="20" Grid.Column="1" Grid.Row="2" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True" Name="tbTurnRatioA"/>
-                                            <TextBox FontSize="20" Grid.Column="1" Grid.Row="3" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True" Name="tbErrorA"/>
-                                            <TextBox FontSize="20" Grid.Column="1" Grid.Row="4" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True" Name="tbVoltageA"/>
-                                            <TextBox FontSize="20" Grid.Column="1" Grid.Row="5" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True" Name="tbCurrentA"/>
-                                            <TextBox FontSize="20" Grid.Column="1" Grid.Row="6" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True" Name="tbConnectionType"/>
-                                            <TextBox FontSize="20" Grid.Column="1" Grid.Row="7" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True" Name="tbCalculatedRatio"/>
-                                            <TextBox FontSize="20" Grid.Column="2" Grid.Row="1" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True" Name="tbRatioB"/>
-                                            <TextBox FontSize="20" Grid.Column="2" Grid.Row="2" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True" Name="tbTurnRatioB"/>
-                                            <TextBox FontSize="20" Grid.Column="2" Grid.Row="3" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True" Name="tbErrorB"/>
-                                            <TextBox FontSize="20" Grid.Column="2" Grid.Row="4" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True" Name="tbVoltageB"/>
-                                            <TextBox FontSize="20" Grid.Column="2" Grid.Row="5" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True" Name="tbCurrentB"/>
-                                            <TextBox FontSize="20" Grid.Column="3" Grid.Row="1" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True" Name="tbRatioC"/>
-                                            <TextBox FontSize="20" Grid.Column="3" Grid.Row="2" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True" Name="tbTurnRatioC"/>
-                                            <TextBox FontSize="20" Grid.Column="3" Grid.Row="3" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True" Name="tbErrorC"/>
-                                            <TextBox FontSize="20" Grid.Column="3" Grid.Row="4" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True" Name="tbVoltageC"/>
-                                            <TextBox FontSize="20" Grid.Column="3" Grid.Row="5" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True" Name="tbCurrentC"/>
-                                            <TextBox FontSize="20" Grid.Column="3" Grid.Row="6" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True" Name="tbFrequence"/>
-                                            <TextBox FontSize="20" Grid.Column="3" Grid.Row="7" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True" Name="tbTappingPosition"/>
+                                            <hc:TextBox FontSize="20" Grid.Column="1" Grid.Row="1" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True" Name="tbRatioA"/>
+                                            <hc:TextBox FontSize="20" Grid.Column="1" Grid.Row="2" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True" Name="tbTurnRatioA"/>
+                                            <hc:TextBox FontSize="20" Grid.Column="1" Grid.Row="3" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True" Name="tbErrorA"/>
+                                            <hc:TextBox FontSize="20" Grid.Column="1" Grid.Row="4" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True" Name="tbVoltageA"/>
+                                            <hc:TextBox FontSize="20" Grid.Column="1" Grid.Row="5" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True" Name="tbCurrentA"/>
+                                            <hc:TextBox FontSize="20" Grid.Column="1" Grid.Row="6" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True" Name="tbConnectionType"/>
+                                            <hc:TextBox FontSize="20" Grid.Column="1" Grid.Row="7" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True" Name="tbCalculatedRatio"/>
+                                            <hc:TextBox FontSize="20" Grid.Column="2" Grid.Row="1" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True" Name="tbRatioB"/>
+                                            <hc:TextBox FontSize="20" Grid.Column="2" Grid.Row="2" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True" Name="tbTurnRatioB"/>
+                                            <hc:TextBox FontSize="20" Grid.Column="2" Grid.Row="3" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True" Name="tbErrorB"/>
+                                            <hc:TextBox FontSize="20" Grid.Column="2" Grid.Row="4" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True" Name="tbVoltageB"/>
+                                            <hc:TextBox FontSize="20" Grid.Column="2" Grid.Row="5" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True" Name="tbCurrentB"/>
+                                            <hc:TextBox FontSize="20" Grid.Column="3" Grid.Row="1" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True" Name="tbRatioC"/>
+                                            <hc:TextBox FontSize="20" Grid.Column="3" Grid.Row="2" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True" Name="tbTurnRatioC"/>
+                                            <hc:TextBox FontSize="20" Grid.Column="3" Grid.Row="3" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True" Name="tbErrorC"/>
+                                            <hc:TextBox FontSize="20" Grid.Column="3" Grid.Row="4" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True" Name="tbVoltageC"/>
+                                            <hc:TextBox FontSize="20" Grid.Column="3" Grid.Row="5" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True" Name="tbCurrentC"/>
+                                            <hc:TextBox FontSize="20" Grid.Column="3" Grid.Row="6" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True" Name="tbFrequence"/>
+                                            <hc:TextBox FontSize="20" Grid.Column="3" Grid.Row="7" Height="{StaticResource textBoxHeigh}" Margin="10, 0" IsReadOnly="True" Name="tbTappingPosition"/>
                                         </Grid>
                                     </ScrollViewer>
                                 </TabItem>
@@ -273,7 +277,7 @@
                             <StackPanel Orientation="Horizontal" Grid.Row="1" MaxWidth="800" Margin="0, 10, 0, 0">
                                 <StackPanel Orientation="Horizontal" Margin="0, 0, 10, 0" VerticalAlignment="Center">
                                     <TextBlock Text="分接选择" Width="80" Margin="0,0,10,0" FontWeight="Bold"/>
-                                    <ComboBox  Width="120" Name="cbTestTapping" SelectionChanged="cbTestTapping_SelectionChanged"/>
+                                    <hc:ComboBox  Width="120" Name="cbTestTapping" SelectionChanged="cbTestTapping_SelectionChanged"/>
                                 </StackPanel>
                                 <Button Content="复位"     Style="{StaticResource ButtonInfo}"  Height="{StaticResource textBoxHeigh}" Width="120" FontSize="18"  Margin="0, 0, 10, 0" Name="btReset" Click="btReset_Click"/>
                                 <Button Content="下发参数" Style="{StaticResource ButtonInfo}"  Height="{StaticResource textBoxHeigh}" Width="120" FontSize="18"  Margin="0, 0, 10, 0" Name="btSetParameters" Click="btSetParameters_Click"/>
@@ -350,9 +354,9 @@
 
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="14" Grid.ColumnSpan="6" Margin="6">
                                 <TextBlock Text="连接组1" Margin="0, 0, 10, 0"/>
-                                <TextBox Width="120" Height="36" Margin="0, 0, 20, 0" Name="tbConnectionGroup1"/>
+                                <hc:TextBox Width="120" Height="36" Margin="0, 0, 20, 0" Name="tbConnectionGroup1"/>
                                 <TextBlock Text="连接组2" Margin="0, 0, 10, 0"/>
-                                <TextBox Width="120" Height="36" Margin="0, 0, 20, 0" Name="tbConnectionGroup2"/>
+                                <hc:TextBox Width="120" Height="36" Margin="0, 0, 20, 0" Name="tbConnectionGroup2"/>
                                 <Button Width="120" Content="确认数据" Style="{StaticResource ButtonInfo}" Height="40" FontSize="18" Click="Button_Click"/>
                             </StackPanel>
                         </Grid>

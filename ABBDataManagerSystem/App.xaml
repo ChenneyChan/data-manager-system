@@ -2,6 +2,7 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:ABBDataManagerSystem"
+             xmlns:hc="https://handyorg.github.io/handycontrol"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
@@ -9,6 +10,21 @@
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDefault.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+            <Brush x:Key="PrimaryBorderBrush">Gray</Brush>
+            <!-- 修改 HandyControl ComboBox 的边框颜色 -->
+            <Style TargetType="hc:ComboBox" BasedOn="{StaticResource {x:Type hc:ComboBox}}" x:Key="GlobalComboBoxStyle">
+                <Setter Property="BorderBrush" Value="{StaticResource PrimaryBorderBrush}" />
+            </Style>
+
+            <!-- 修改 HandyControl TextBox 的边框颜色 -->
+            <Style TargetType="hc:TextBox" BasedOn="{StaticResource {x:Type hc:TextBox}}" x:Key="GlobalTextBoxStyle">
+                <Setter Property="BorderBrush" Value="{StaticResource PrimaryBorderBrush}" />
+            </Style>
+
+            <!-- 修改 HandyControl NumericUpDown 的边框颜色 -->
+            <Style TargetType="hc:NumericUpDown" BasedOn="{StaticResource {x:Type hc:NumericUpDown}}" x:Key="GlobalNumericUpDownStyle">
+                <Setter Property="BorderBrush" Value="{StaticResource PrimaryBorderBrush}" />
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
