@@ -30,6 +30,8 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
         private DataTable DataTableSource = new DataTable();
 
+        private HarmonicInfo? HarmonicInfoView = null;
+
         #region Variables
         private readonly string[] errorMsg = new string[14];
         private readonly string[] updateRateList = new string[10];  //update rate combo list(foreach)
@@ -62,6 +64,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             btSetUpdateRate.Click += BtSetUpdateRate_Click;
             btHarmonic.Click += BtHarmonic_Click;
             InitListItem();
+            InitHarmonicItems();
 
             Timer1 = new DispatcherTimer();
             Timer1.Tick += Timer1_Tick; // 注册 Tick 事件处理程序  
@@ -83,8 +86,12 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
         private void BtHarmonic_Click(object sender, RoutedEventArgs e)
         {
-            Growl.Info("暂未实现！");
-            new HarmonicInfo { WindowStartupLocation = WindowStartupLocation.CenterScreen }.ShowDialog();
+            HarmonicInfoView = new HarmonicInfo(HarmonicCount, () =>
+            {
+                this.HarmonicInfoView = null;
+            })
+            { WindowStartupLocation = WindowStartupLocation.CenterScreen };
+            HarmonicInfoView.ShowDialog();
         }
 
         private void BtSetUpdateRate_Click(object sender, RoutedEventArgs e)
@@ -1242,7 +1249,12 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             for (n = 0; n < ItemSettings.Count; n++)
             {
                 //set display
-                ItemSettings[n].Value = Utils.ParseFloat(CutLeft(",", ref data));
+                string valueStr = CutLeft(",", ref data);
+                if (valueStr.Trim().Length == 0)
+                {
+                    break;
+                }
+                ItemSettings[n].Value = Utils.ParseFloat(valueStr);
             }
             RefreshValueDisplay();
         }
@@ -2096,12 +2108,12 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         #endregion
 
         #region Functions Defination
-        private class FCODefine
+        public class FCODefine
         {
             public string Function { set; get; } = string.Empty;
             public string Element { set; get; } = string.Empty;
             public string Order { set; get; } = string.Empty;
-            public float Value { set; get; } = 0;
+            public float? Value { set; get; } = null;
         }
 
         /**
@@ -2129,6 +2141,39 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             new FCODefine {Function = "fU", Element = "0", Order = ""},
         };
 
+        private int HarmonicOffset = -1;
+        private int TotalCount = -1;
+        private static readonly int HarmonicCount = 36;
+
+        private void InitHarmonicItems()
+        {
+            HarmonicOffset = ItemSettings.Count;
+            for (int x = 1; x <= 3; x++)
+            {
+                ItemSettings.Add(new FCODefine { Function = "UK", Element = $"{x}", Order = "Total" });
+                ItemSettings.Add(new FCODefine { Function = "UK", Element = $"{x}", Order = "DC" });
+                for (int i = 1; i <= HarmonicCount; i++)
+                {
+                    ItemSettings.Add(new FCODefine { Function = "UK", Element = $"{x}", Order = $"{i}" });
+                }
+
+                ItemSettings.Add(new FCODefine { Function = "IK", Element = $"{x}", Order = "Total" });
+                ItemSettings.Add(new FCODefine { Function = "IK", Element = $"{x}", Order = "DC" });
+                for (int i = 1; i <= HarmonicCount; i++)
+                {
+                    ItemSettings.Add(new FCODefine { Function = "IK", Element = $"{x}", Order = $"{i}" });
+                }
+
+                ItemSettings.Add(new FCODefine { Function = "PK", Element = $"{x}", Order = "Total" });
+                ItemSettings.Add(new FCODefine { Function = "PK", Element = $"{x}", Order = "DC" });
+                for (int i = 1; i <= HarmonicCount; i++)
+                {
+                    ItemSettings.Add(new FCODefine { Function = "PK", Element = $"{x}", Order = $"{i}" });
+                }
+            }
+            TotalCount = ItemSettings.Count;
+        }
+
         private FCODefine? GetFCO(string Function, string Element)
         {
             foreach (var item in ItemSettings)
@@ -2141,11 +2186,11 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             return null;
         }
 
-        private float GetFCOValue(string Function, string Element)
+        private float? GetFCOValue(string Function, string Element)
         {
             var fco = GetFCO(Function, Element);
             if (fco != null) { return fco.Value; }
-            return -1;
+            return null;
         }
 
         #endregion
@@ -2164,23 +2209,23 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             var rowElement3 = DataTableSource.Rows[2];
             var rowMean = DataTableSource.Rows[3];
 
-            float urms1 = GetFCOValue("URMS", "1");
-            float urms2 = GetFCOValue("URMS", "2");
-            float urms3 = GetFCOValue("URMS", "3");
+            float? urms1 = GetFCOValue("URMS", "1");
+            float? urms2 = GetFCOValue("URMS", "2");
+            float? urms3 = GetFCOValue("URMS", "3");
 
-            float irms1 = GetFCOValue("IRMS", "1");
-            float irms2 = GetFCOValue("IRMS", "2");
-            float irms3 = GetFCOValue("IRMS", "3");
+            float? irms1 = GetFCOValue("IRMS", "1");
+            float? irms2 = GetFCOValue("IRMS", "2");
+            float? irms3 = GetFCOValue("IRMS", "3");
 
-            float umn1 = GetFCOValue("UMN", "1");
-            float umn2 = GetFCOValue("UMN", "2");
-            float umn3 = GetFCOValue("UMN", "3");
+            float? umn1 = GetFCOValue("UMN", "1");
+            float? umn2 = GetFCOValue("UMN", "2");
+            float? umn3 = GetFCOValue("UMN", "3");
 
-            float p1 = GetFCOValue("P", "1");
-            float p2 = GetFCOValue("P", "2");
-            float p3 = GetFCOValue("P", "3");
+            float? p1 = GetFCOValue("P", "1");
+            float? p2 = GetFCOValue("P", "2");
+            float? p3 = GetFCOValue("P", "3");
 
-            float fu = GetFCOValue("fU", "0");
+            float? fu = GetFCOValue("fU", "0");
 
             rowElement1[INDEX_URMS] = urms1;
             rowElement2[INDEX_URMS] = urms2;
@@ -2203,6 +2248,11 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             rowMean[INDEX_P] = (p1 + p2 + p3);
 
             rowElement1[INDEX_FU] = fu;
+
+            if (HarmonicInfoView != null)
+            {
+                HarmonicInfoView.HandleUpdate(ItemSettings, HarmonicOffset, HarmonicCount);
+            }
         }
     }
 }

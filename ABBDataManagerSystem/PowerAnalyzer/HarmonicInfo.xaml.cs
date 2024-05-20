@@ -1,38 +1,111 @@
 ﻿using System.Data;
 using System.Windows;
+using static ABBDataManagerSystem.PowerAnalyzer.UCPowerAanlyzer;
 
 namespace ABBDataManagerSystem.PowerAnalyzer
 {
+
+    public delegate void OnClosed();
+
     /// <summary>
     /// HamonicInfo.xaml 的交互逻辑
     /// </summary>
     public partial class HarmonicInfo : Window
     {
+        private OnClosed? onClosed = null;
+
+        private int PhaseHarmonicCount = 0;
+
         DataTable DataTableElementA;
 
         DataTable DataTableElementB;
 
         DataTable DataTableElementC;
 
-        public HarmonicInfo()
+        public HarmonicInfo(int phaseHarmonicCount = 36, OnClosed? onClosed = null)
         {
             InitializeComponent();
+            this.onClosed = onClosed;
+            this.PhaseHarmonicCount = phaseHarmonicCount;
 
-            DataTableElementA = new DataTable();
-            DataTableElementB = new DataTable();
-            DataTableElementC = new DataTable();
-            DataTableElementA.Columns.Add("次数", typeof(string));
-            DataTableElementA.Columns.Add("电压", typeof(float));
-            DataTableElementA.Columns.Add("电流", typeof(float));
-            DataTableElementA.Columns.Add("功率", typeof(float));
+            DataTableElementA = InitDataTable();
+            DataTableElementB = InitDataTable();
+            DataTableElementC = InitDataTable();
 
-            DataTableElementA.Rows.Add("Total", 0, 0, 0);
-            for (int i = 1; i <= 30; i++)
+            this.DataContext = new { DataTableElementA = DataTableElementA, DataTableElementB = DataTableElementB, DataTableElementC = DataTableElementC };
+            new Thread(() =>
             {
-                DataTableElementA.Rows.Add(i.ToString(), 0, 0, 0);
-            }
+                Thread.Sleep(1000);
+                DataTableElementA.Rows[0]["电压"] = 200f;
+            }).Start();
+        }
 
-            this.DataContext = new { DataTableElementA = DataTableElementA, DataTableElementB = DataTableElementA, DataTableElementC = DataTableElementA };
+        private DataTable InitDataTable()
+        {
+            DataTable dt = new DataTable();
+            dt.Columns.Add("次数", typeof(string));
+            dt.Columns.Add("电压", typeof(float));
+            dt.Columns.Add("电流", typeof(float));
+            dt.Columns.Add("功率", typeof(float));
+
+            dt.Rows.Add("Total", 0, 0, 0);
+            dt.Rows.Add("DC", 0, 0, 0);
+            for (int i = 1; i <= PhaseHarmonicCount; i++)
+            {
+                dt.Rows.Add(i.ToString(), 0, 0, 0);
+            }
+            return dt;
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            if (onClosed != null) onClosed();
+        }
+
+        public void HandleUpdate(List<FCODefine> items, int harmonicOffset, int phaseHarmonicCount)
+        {
+            int singlePhaseCount = 1 + 1 + PhaseHarmonicCount;
+            int phaseTotalCount = 3 * singlePhaseCount; // （Total、DC、1~PhaseHarmonicCount）* 3（UK\IK\PK）
+            for (int i = harmonicOffset; i < items.Count; i++)
+            {
+                int index = i - harmonicOffset;
+                int phase = (int)(index / phaseTotalCount) + 1;
+                DataTable? dt = null;
+                switch (phase)
+                {
+                    case 1:
+                        dt = DataTableElementA;
+                        break;
+                    case 2:
+                        dt = DataTableElementB;
+                        break;
+                    case 3:
+                        dt = DataTableElementC;
+                        break;
+                }
+                if (dt == null)
+                {
+                    break;
+                }
+                int offset = index % phaseTotalCount;
+                int ukikpk = (int)(offset / singlePhaseCount);
+                string secondKey = ukikpk == 0 ? "电压" : (ukikpk == 1 ? "电流" : "功率");
+                index = offset % singlePhaseCount;
+                //string key = "";
+                //switch(index)
+                //{
+                //    case 0:
+                //        key = "Total";
+                //        break;
+                //    case 1:
+                //        key = "DC";
+                //        break;
+                //    default:
+                //        key = $"{index - 1}";
+                //        break;
+                //}
+                dt.Rows[index][secondKey] = items[i].Value;
+            }
         }
     }
 }
