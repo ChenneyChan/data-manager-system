@@ -161,6 +161,9 @@ namespace ABBDataManagerSystem.Pages
 
             btStart.IsEnabled = IsConneted && !IsCollecting;
             btStop.IsEnabled = IsConneted && IsCollecting;
+
+            cbHVCurrents.IsEnabled = cbCH1.IsChecked == true;
+            cbLVCurrents.IsEnabled = cbCH2.IsChecked == true;
         }
 
         private void UserControl_Unloaded(object sender, RoutedEventArgs e)
@@ -274,6 +277,7 @@ namespace ABBDataManagerSystem.Pages
 
         private void cbCH1_CheckedChange(object sender, RoutedEventArgs e)
         {
+            cbHVCurrents.IsEnabled = cbCH1.IsChecked == true;
             if (Collector != null)
             {
                 Collector.CH1Enabled = cbCH1.IsChecked == true;
@@ -282,6 +286,7 @@ namespace ABBDataManagerSystem.Pages
 
         private void cbCH2_CheckedChange(object sender, RoutedEventArgs e)
         {
+            cbLVCurrents.IsEnabled = cbCH2.IsChecked == true;
             if (Collector != null)
             {
                 Collector.CH2Enabled = cbCH2.IsChecked == true;

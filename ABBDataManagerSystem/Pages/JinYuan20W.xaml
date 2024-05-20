@@ -61,6 +61,11 @@
                 </hc:ComboBox>
             </StackPanel>
 
+            <hc:ButtonGroup Visibility="Collapsed" Margin="10,0,0,0" Orientation="Horizontal" Style="{StaticResource ButtonGroupSolid}">
+                <RadioButton Content="高压通道" FontSize="18"/>
+                <RadioButton Content="低压通道" FontSize="18" IsChecked="False"/>
+            </hc:ButtonGroup>
+            
             <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" VerticalAlignment="Top" Margin="10,0">
                 <CheckBox Content="高压侧" VerticalAlignment="Center" Name="cbCH1" Checked="cbCH1_CheckedChange" Unchecked="cbCH1_CheckedChange"/>
                 <Viewbox Width="10"/>
