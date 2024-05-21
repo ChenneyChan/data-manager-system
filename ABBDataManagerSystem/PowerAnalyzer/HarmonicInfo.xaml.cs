@@ -33,11 +33,6 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             DataTableElementC = InitDataTable();
 
             this.DataContext = new { DataTableElementA = DataTableElementA, DataTableElementB = DataTableElementB, DataTableElementC = DataTableElementC };
-            new Thread(() =>
-            {
-                Thread.Sleep(1000);
-                DataTableElementA.Rows[0]["电压"] = 200f;
-            }).Start();
         }
 
         private DataTable InitDataTable()
@@ -91,19 +86,6 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 int ukikpk = (int)(offset / singlePhaseCount);
                 string secondKey = ukikpk == 0 ? "电压" : (ukikpk == 1 ? "电流" : "功率");
                 index = offset % singlePhaseCount;
-                //string key = "";
-                //switch(index)
-                //{
-                //    case 0:
-                //        key = "Total";
-                //        break;
-                //    case 1:
-                //        key = "DC";
-                //        break;
-                //    default:
-                //        key = $"{index - 1}";
-                //        break;
-                //}
                 dt.Rows[index][secondKey] = items[i].Value;
             }
         }
