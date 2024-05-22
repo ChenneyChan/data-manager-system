@@ -92,11 +92,11 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 cbGPIB.Items.Add(itme);
             }
             cbGPIB.SelectedIndex = 0;
-            rbGPIB.IsChecked = true;
 
             rbGPIB.Checked += RbGPIB_Checked;
             rbSerial.Checked += RbUSB_Checked;
             rbEthNet.Checked += RbEthNet_Checked;
+            rbEthNet.IsChecked = true;
         }
         #endregion
 
@@ -167,19 +167,19 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             int len = 256;
             decode = new StringBuilder(256);
 
-            //if (rbGPIB.IsChecked == true)
-            //{
-            //    //when GPIB is selected, connect with GPIB port.
-            //    connection.devAddress = cbGPIB.Text;
-            //    connection.wireType = 1;
-            //}
-            //else if (rbEthNet.IsChecked == true)
-            //{
-            //    //when Ether is selected, connect with Ether port.
-            //    //set the address, username and password.
-            //    connection.devAddress = cbIP.Text;
-            //    connection.wireType = 8;
-            //}
+            if (rbGPIB.IsChecked == true)
+            {
+                //when GPIB is selected, connect with GPIB port.
+                connection.devAddress = cbGPIB.Text;
+                connection.wireType = 1;
+            }
+            else if (rbEthNet.IsChecked == true)
+            {
+                //when Ether is selected, connect with Ether port.
+                //set the address, username and password.
+                connection.devAddress = cbIP.Text;
+                connection.wireType = 8;
+            }
             //else if (rbSerial.IsChecked == true)
             //{
             //    //when USB is selected, connect with USB port.//
@@ -187,27 +187,28 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             //    connection.devAddress = decode.ToString();
             //    connection.wireType = 7;
             //}
-            ////run connection.
-            //if (connection.Initialize() == 0)
-            //{
-            //    WriteConnectSettings();
-            //    //if successed, close this form and display main form.
-            //    //        this.Close();
-            //    //this.Visible = false; // todo
-            //    return;
-            //}
-
-            // 如下是测试代码
-            var window = new Window()
+            //run connection.
+            if (connection.Initialize() == 0)
             {
-                Width = 1600,
-                Height = 800,
-                Title = "功率分析仪",
-                WindowStartupLocation = WindowStartupLocation.CenterScreen,
-            };
-            this.Close();
-            window.Content = new UCPowerAanlyzer();
-            window.ShowDialog();
+                WriteConnectSettings();
+                //if successed, close this form and display main form.
+                //        this.Close();
+                //this.Visible = false; // todo
+                // 如下是测试代码
+                var window = new Window()
+                {
+                    Width = 1600,
+                    Height = 800,
+                    Title = "功率分析仪",
+                    WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                };
+                this.Close();
+                window.Content = new UCPowerAanlyzer();
+                window.ShowDialog();
+                return;
+            }
+            MessageBox.Show("请搜索并选择设备");
+
             //if failed, select to try again or abort.
             //tryAgain = MessageBox.Show("Can not connect with the instrument, try again?", "Connection failed.", MessageBoxButton.OKCancel, MessageBoxImage.Error);
             return;
@@ -301,6 +302,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 {
                     cbIP.Items.Add(list[n].adr);
                 }
+                cbIP.SelectedIndex = 0;
             }
             else
             {
@@ -420,7 +422,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
         private void btCancel_Click(object sender, RoutedEventArgs e)
         {
-
+            this.Close();
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using HandyControl.Controls;
 using NPOI.SS.Formula.Functions;
 using System.Data;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
@@ -53,6 +54,9 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         Connection connection = new Connection();
         private DispatcherTimer Timer1;
         private EncodeType encodeType = EncodeType.ASCII;
+
+        private bool IsCollecting = false;
+        private bool IsEnableDebug = false;
 
         #endregion
 
@@ -127,7 +131,9 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
         private void btRangeSet_Click(object sender, RoutedEventArgs e)
         {
-            RangeSetCommand(3);
+            RangeSetCommand(0);
+            RangeSetCommand(1);
+            RangeSetCommand(2);
         }
 
         private void btRatioSet_Click(object sender, RoutedEventArgs e)
@@ -998,7 +1004,9 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             GetRanges(0);
 
             // get  ratios for all elemenets
-            GetRatios();
+            //GetRatios();
+
+            GetWiringSystem();
             return;
         }
 
@@ -1094,8 +1102,16 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         //***********************************************
         private void SetSendMonitor(string msg)
         {
-            tbSendCommand.Text += msg + "\r\n";
-            tbSendCommand.ScrollToEnd();
+
+            if (IsEnableDebug)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    tbSendCommand.Text += msg + "\r\n";
+                    tbSendCommand.ScrollToEnd();
+                });
+            }
+
         }
         #endregion
 
@@ -1107,8 +1123,15 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         //*****************************************
         private void SetReceiveMonitor(string data)
         {
-            tbReceiveMsg.Text += data + "\r\n";
-            tbSendCommand.ScrollToEnd();
+
+            if (IsEnableDebug)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    tbReceiveMsg.Text += data + "\r\n";
+                    tbReceiveMsg.ScrollToEnd();
+                });
+            }
         }
         #endregion
 
@@ -1122,27 +1145,44 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         //********************************************
         private void DispError(int errorID)
         {
-            if (errorID == 0)
+            if (!IsEnableDebug)
             {
-                ErrInfoText.Text = "Getting Error failed!";
-                Log.Error("Power Analyzer Error: " + ErrInfoText.Text);
                 return;
             }
-            int n = 0;
-            while (2 << n != errorID)
+            Dispatcher.Invoke(() =>
             {
-                n++;
-            }
-            //set errorMsg to display.
-            ErrInfoText.Text = errorMsg[n];
-            Log.Error("Power Analyzer Error: " + ErrInfoText.Text);
+                if (errorID == 0)
+                {
+                    ErrInfoText.Text = "Getting Error failed!";
+                    Log.Error("Power Analyzer Error: " + ErrInfoText.Text);
+                    return;
+                }
+                int n = 0;
+                while (2 << n != errorID)
+                {
+                    n++;
+                }
+                if (n < errorMsg.Length)
+                {
+                    //set errorMsg to display.
+                    ErrInfoText.Text = errorMsg[n];
+                }
+                Log.Error("Power Analyzer Error: " + ErrInfoText.Text);
+            });
         }
+
         private void DispError(string errorInfo)
         {
-            //set errorMsg to display.
-            ErrInfoText.Text = errorInfo;
-            Log.Error("Power Analyzer Error: " + ErrInfoText.Text);
-
+            if (!IsEnableDebug)
+            {
+                return;
+            }
+            Dispatcher.Invoke(() =>
+            {
+                //set errorMsg to display.
+                ErrInfoText.Text = errorInfo;
+                Log.Error("Power Analyzer Error: " + ErrInfoText.Text);
+            });
         }
         #endregion
 
@@ -1152,6 +1192,8 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         //********************************************
         private void GetItemData()
         {
+            string dumpMsg = "";
+            Stopwatch s = new();
             int n;
             int rtn;
             string msg;
@@ -1159,6 +1201,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             ///----------------------#get data#
             msg = ":NUMERIC:NORMAL:VALUE?";
 
+            s.Start();
             ///----------------------#send message#
             SetSendMonitor(msg);
             //###ASCII:TmcSend(); FLOAT:TmcSendBuLength()###
@@ -1175,7 +1218,9 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 DispError(connection.GetLastError());
                 return;
             }
-
+            s.Stop();
+            dumpMsg += ($"step1 {s.ElapsedMilliseconds}ms ");
+            s.Start();
             ///----------------------#receive values#
             int maxLength = 0;
             int realLength = 0;
@@ -1246,6 +1291,10 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 SetReceiveMonitor(outputValue);
             }
 
+            s.Stop();
+            dumpMsg += ($"step2 {s.ElapsedMilliseconds}ms ");
+            s.Start();
+
             for (n = 0; n < ItemSettings.Count; n++)
             {
                 //set display
@@ -1254,9 +1303,20 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 {
                     break;
                 }
+                if (valueStr == "NAN" || valueStr == "INF")
+                {
+                    continue;
+                }
                 ItemSettings[n].Value = Utils.ParseFloat(valueStr);
             }
+            s.Stop();
+            dumpMsg += ($"step3 {s.ElapsedMilliseconds}ms ");
+            s.Start();
+
             RefreshValueDisplay();
+            s.Stop();
+            dumpMsg += ($"step4 {s.ElapsedMilliseconds}ms ");
+            Log.Error("Test Analyze: " + dumpMsg);
         }
         #endregion
 
@@ -1420,11 +1480,11 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             msg = cbVoltageRange.Text;
             if (msg != "AUTO")
             {
-                msg = ":INPUT:VOLTAGE:RANGE:ELEMENT" + (elementIndex + 1).ToString() + " " + cbVoltageRange.Text;
+                msg = ":INPUT:VOLTAGE:RANGE " + cbVoltageRange.Text;
             }
             else
             {
-                msg = ":INPUT:VOLT:AUTO:ELEMENT" + (elementIndex + 1).ToString() + " " + "ON";
+                msg = ":INPUT:VOLT:AUTO " + "ON";
             }
             SetSendMonitor(msg);
             int rtn = connection.Send(msg);
@@ -1445,13 +1505,13 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             if (msg != "AUTO")
             {
                 if (rtn_tmp > 0)
-                    msg = ":INPUT:CURRENT:RANGE:ELEMENT" + (elementIndex + 1).ToString() + " " + "EXTERNAL," + " " + cbCurrentRange.Text;
+                    msg = ":INPUT:CURRENT:RANGE EXTERNAL," + " " + cbCurrentRange.Text;
                 else
-                    msg = ":INPUT:CURRENT:RANGE:ELEMENT" + (elementIndex + 1).ToString() + " " + cbCurrentRange.Text;
+                    msg = ":INPUT:CURRENT:RANGE " + cbCurrentRange.Text;
             }
             else
             {
-                msg = ":INPUT:CURRENT:AUTO:ELEMENT" + (elementIndex + 1).ToString() + " " + "ON";
+                msg = ":INPUT:CURRENT:AUTO " + "ON";
             }
             SetSendMonitor(msg);
             rtn = connection.Send(msg);
@@ -1778,9 +1838,20 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         //********************************************
         private void GetDataSgCommand_Click()
         {
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
             SetBaseConfig();
+            stopwatch.Stop();
+            Log.Info($"SetBaseConfig cost {stopwatch.ElapsedMilliseconds}ms");
+            stopwatch.Start();
             SendItemSettings();
+            stopwatch.Stop();
+            Log.Info($"SendItemSettings cost {stopwatch.ElapsedMilliseconds}ms");
+
+            stopwatch.Start();
             GetItemData();
+            stopwatch.Stop();
+            Log.Info($"GetItemData cost {stopwatch.ElapsedMilliseconds}ms");
         }
         #endregion
 
@@ -1794,40 +1865,48 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             if (btRequestContinue.Content == "停止采集")
             {
                 Timer1.Stop();
+                IsCollecting = false;
                 btRequestContinue.Content = "持续采集";
             }
             //----------------------#getting datas#
             else
             {
+                IsCollecting = true;
                 SetBaseConfig();
-                SendItemSettings();
-
-                //reset filter1.
-                string msg = ":STATUS:FILTER1 FALL";
-                SetSendMonitor(msg);
-                int rtn = connection.Send(msg);
-                if (rtn != 0)
+                new Thread(() =>
                 {
-                    DispError(connection.GetLastError());
-                    return;
-                }
-                //************************************
-                msg = ":STATUS:EESR?";
-                String eesr = "";
-                SetSendMonitor(msg);
-                if (!QueriesData(20, msg, ref eesr))
-                {
-                    return;
-                }
-                SetReceiveMonitor(eesr);
-                //************************************
+                    SendItemSettings();
 
-                //reset other controls' display.
-                btRequestContinue.IsEnabled = true;
-                btRequestContinue.Content = "停止采集";
-                //set timer interval and start getting data.
-                Timer1.Start();
-                Timer1.Interval = TimeSpan.FromMilliseconds(10);
+                    //reset filter1.
+                    string msg = ":STATUS:FILTER1 FALL";
+                    SetSendMonitor(msg);
+                    int rtn = connection.Send(msg);
+                    if (rtn != 0)
+                    {
+                        DispError(connection.GetLastError());
+                        return;
+                    }
+                    //************************************
+                    msg = ":STATUS:EESR?";
+                    String eesr = "";
+                    SetSendMonitor(msg);
+                    if (!QueriesData(20, msg, ref eesr))
+                    {
+                        return;
+                    }
+                    SetReceiveMonitor(eesr);
+                    //************************************
+
+                    //reset other controls' display.
+                    Dispatcher.Invoke(() =>
+                    {
+                        btRequestContinue.IsEnabled = true;
+                        btRequestContinue.Content = "停止采集";
+                        //set timer interval and start getting data.
+                        Timer1.Start();
+                        Timer1.Interval = TimeSpan.FromMilliseconds(200);
+                    });
+                }).Start();
             }
         }
         #endregion
@@ -1953,35 +2032,42 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         //********************************************
         private bool GetRatios()
         {
-            ///---------------------#Query Voltage Transformer Ratio#
-            string tem_auto = "";
-            string msg = ":INPUT:SCALING:VT?";
-            SetSendMonitor(msg);
-            if (!QueriesData(50, msg, ref tem_auto))
+            try
             {
-                DispError(connection.GetLastError());
+                ///---------------------#Query Voltage Transformer Ratio#
+                string tem_auto = "";
+                string msg = ":INPUT:SCALING:VT?"; // :SCAL:VT:ELEM1 0.5000;ELEM2 0.5000;ELEM3 0.5000
+                SetSendMonitor(msg);
+                if (!QueriesData(50, msg, ref tem_auto))
+                {
+                    DispError(connection.GetLastError());
+                    return false;
+                }
+                SetReceiveMonitor(tem_auto);
+                tem_auto = CutLeft("\n", ref tem_auto);//cut left with LF.
+                float vtRatio = Convert.ToSingle(tem_auto);
+                tbVT.Value = Utils.ParseFloat(vtRatio.ToString());
+
+                ///---------------------#Query Current Transformer Ratio#
+                tem_auto = "";
+                msg = ":INPUT:SCALING:CT?"; // :SCAL:CT:ELEM1 0.5000;ELEM2 0.5000;ELEM3 0.5000
+                SetSendMonitor(msg);
+                if (!QueriesData(50, msg, ref tem_auto))
+                {
+                    DispError(connection.GetLastError());
+                    return false;
+                }
+                SetReceiveMonitor(tem_auto);
+                tem_auto = CutLeft("\n", ref tem_auto);//cut left with LF.
+                float ctRatio = Convert.ToSingle(tem_auto);
+                tbCT.Value = Utils.ParseFloat(ctRatio.ToString());
+
+                return true;
+            }
+            catch
+            {
                 return false;
             }
-            SetReceiveMonitor(tem_auto);
-            tem_auto = CutLeft("\n", ref tem_auto);//cut left with LF.
-            float vtRatio = Convert.ToSingle(tem_auto);
-            cbVoltageRatio.Text = vtRatio.ToString();
-
-            ///---------------------#Query Current Transformer Ratio#
-            tem_auto = "";
-            msg = ":INPUT:SCALING:CT?";
-            SetSendMonitor(msg);
-            if (!QueriesData(50, msg, ref tem_auto))
-            {
-                DispError(connection.GetLastError());
-                return false;
-            }
-            SetReceiveMonitor(tem_auto);
-            tem_auto = CutLeft("\n", ref tem_auto);//cut left with LF.
-            float ctRatio = Convert.ToSingle(tem_auto);
-            cbCurrentRatio.Text = ctRatio.ToString();
-
-            return true;
         }
         #endregion
 
@@ -1992,7 +2078,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         private void RatioSetCommand()
         {
             ///---------------------#Send Voltage Transformer#
-            string msg = ":INPUT:SCALING:VT:ALL " + cbVoltageRange.Text;
+            string msg = ":INPUT:SCALING:VT:ALL " + tbVT.Value.ToString();
             SetSendMonitor(msg);
             int rtn = connection.Send(msg);
             if (rtn != 0)
@@ -2003,7 +2089,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             }
 
             ///---------------------#Send Current Transformer#
-            msg = ":INPUT:SCALING:CT:ALL " + cbCurrentRatio.Text;
+            msg = ":INPUT:SCALING:CT:ALL " + tbCT.Value.ToString();
             SetSendMonitor(msg);
             rtn = connection.Send(msg);
             if (rtn != 0)
@@ -2012,7 +2098,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 ///when setting failed, resume the original value.
                 GetRatios();
             }
-            GetRatios();
+            //GetRatios();
         }
         #endregion
 
@@ -2195,15 +2281,15 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
         #endregion
 
-        private static readonly int INDEX_URMS = 1;
-        private static readonly int INDEX_UMN = 2;
-        private static readonly int INDEX_IRMS = 3;
-        private static readonly int INDEX_P = 4;
-        private static readonly int INDEX_FU = 5;
+        private static readonly string INDEX_URMS = "有效电压";
+        private static readonly string INDEX_UMN = "平均电压";
+        private static readonly string INDEX_IRMS = "有效电流";
+        private static readonly string INDEX_P = "损耗";
+        private static readonly string INDEX_FU = "电压频率";
 
         private void RefreshValueDisplay()
         {
-            DataTableSource.Rows.Add("Σ", 0, 0, 0, 0, "");
+            //DataTableSource.Rows.Add("Σ", 0, 0, 0, 0, "");
             var rowElement1 = DataTableSource.Rows[0];
             var rowElement2 = DataTableSource.Rows[1];
             var rowElement3 = DataTableSource.Rows[2];
@@ -2253,6 +2339,11 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             {
                 HarmonicInfoView.HandleUpdate(ItemSettings, HarmonicOffset, HarmonicCount);
             }
+        }
+
+        private void CbEnableDebug_Checked(object sender, RoutedEventArgs e)
+        {
+            IsEnableDebug = CbEnableDebug.IsChecked == true;
         }
     }
 }

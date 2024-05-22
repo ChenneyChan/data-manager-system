@@ -86,7 +86,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 int ukikpk = (int)(offset / singlePhaseCount);
                 string secondKey = ukikpk == 0 ? "电压" : (ukikpk == 1 ? "电流" : "功率");
                 index = offset % singlePhaseCount;
-                dt.Rows[index][secondKey] = items[i].Value;
+                dt.Rows[index][secondKey] = items[i].Value != null ? items[i].Value : -1;
             }
         }
     }
