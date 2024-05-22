@@ -55,41 +55,10 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            List<string> gbibs = new List<string>() {
-                "1",
-            "2",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7",
-            "8",
-            "9",
-            "10",
-            "11",
-            "12",
-            "13",
-            "14",
-            "15",
-            "16",
-            "17",
-            "18",
-            "19",
-            "20",
-            "21",
-            "22",
-            "23",
-            "24",
-            "25",
-            "26",
-            "27",
-            "28",
-            "29",
-            "30" };
             cbGPIB.Items.Clear();
-            foreach (var itme in gbibs)
+            for (int i = 1; i <= 30; i++)
             {
-                cbGPIB.Items.Add(itme);
+                cbGPIB.Items.Add($"{i}");
             }
             cbGPIB.SelectedIndex = 0;
 
@@ -97,6 +66,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             rbSerial.Checked += RbUSB_Checked;
             rbEthNet.Checked += RbEthNet_Checked;
             rbEthNet.IsChecked = true;
+            GetConnectSettings();
         }
         #endregion
 
@@ -344,13 +314,19 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             StringBuilder buff = new StringBuilder(16);
             //GPIB
             GetPrivateProfileString(Ini_Sec_Connect, Ini_Key_GPIB_Address, "", buff, 16, INIPATH);
-            //AddressCombo.Text = buff.ToString();
+
             //USBTMC
             GetPrivateProfileString(Ini_Sec_Connect, Ini_Key_USB_Serial, "", buff, 16, INIPATH);
             //UsbSerialNoTextBox.Text = buff.ToString();
             //Ether(VXI11)
             GetPrivateProfileString(Ini_Sec_Connect, Ini_Key_Ether_IPAddr, "", buff, 16, INIPATH);
-            //IpAddressText.Text = buff.ToString();
+            var ipAddress = buff.ToString();
+            if (ipAddress.Length > 0)
+            {
+                cbIP.Items.Add(ipAddress);
+                cbIP.SelectedIndex = 0;
+                // 找到 ComboBox 中的字符串选项
+            }
         }
         #endregion
 

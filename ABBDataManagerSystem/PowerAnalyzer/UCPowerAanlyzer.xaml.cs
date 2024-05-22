@@ -1,10 +1,8 @@
 ﻿using HandyControl.Controls;
-using NPOI.SS.Formula.Functions;
 using System.Data;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Interop;
 using System.Windows.Threading;
 using Yokogawa.Tm.WT1800CommSample.cs;
 
@@ -52,7 +50,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         private bool wt1800e_commandTypeEmulate;
 
         Connection connection = new Connection();
-        private DispatcherTimer Timer1;
+        private System.Timers.Timer Timer1;
         private EncodeType encodeType = EncodeType.ASCII;
 
         private bool IsCollecting = false;
@@ -70,9 +68,11 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             InitListItem();
             InitHarmonicItems();
 
-            Timer1 = new DispatcherTimer();
-            Timer1.Tick += Timer1_Tick; // 注册 Tick 事件处理程序  
-            Timer1.Interval = TimeSpan.FromSeconds(1); // 设置时间间隔为1秒  
+            Timer1 = new();
+            Timer1.Elapsed += Timer1_Tick;
+            Timer1.Interval = 1000;
+            Timer1.Enabled = false;
+            Timer1.AutoReset = true;
 
             DataTableSource.Columns.Add("表头", typeof(string));
             DataTableSource.Columns.Add("有效电压", typeof(float));
@@ -131,9 +131,16 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
         private void btRangeSet_Click(object sender, RoutedEventArgs e)
         {
-            RangeSetCommand(0);
-            RangeSetCommand(1);
-            RangeSetCommand(2);
+            RangeSetCommand();
+
+            try
+            {
+                GetRanges(0);
+            } 
+            catch
+            {
+
+            }
         }
 
         private void btRatioSet_Click(object sender, RoutedEventArgs e)
@@ -1001,7 +1008,14 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             GetOption();
 
             // get range set for element 1
-            GetRanges(0);
+            try
+            {
+                GetRanges(0);
+            }
+            catch
+            {
+
+            }
 
             // get  ratios for all elemenets
             //GetRatios();
@@ -1020,7 +1034,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         {
             //close connection after exiting.
             connection.Finish();
-            if (Timer1.IsEnabled)
+            if (Timer1.Enabled)
             {
                 Timer1.Stop();
             }
@@ -1220,11 +1234,13 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             }
             s.Stop();
             dumpMsg += ($"step1 {s.ElapsedMilliseconds}ms ");
+
             s.Start();
             ///----------------------#receive values#
             int maxLength = 0;
             int realLength = 0;
             string data = "";
+            List<float> values = new List<float>();
 
             if (encodeType == EncodeType.ASCII)
             {
@@ -1266,7 +1282,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                         DispError(connection.GetLastError());
                         return;
                     }
-                    for (n = 0; n <= realLength - 1; n++)
+                    for (n = 0; n <= realLength - 1 && IsEnableDebug; n++)
                     {
                         /****************************************************/
                         temstr = byteData[n].ToString("X");
@@ -1284,38 +1300,49 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                         bytes[2] = byteData[n * 4 + 1];
                         bytes[1] = byteData[n * 4 + 2];
                         bytes[0] = byteData[n * 4 + 3];
-                        floatBuf = System.BitConverter.ToSingle(bytes, 0);
-                        data += floatBuf.ToString() + ",";
+                        floatBuf = BitConverter.ToSingle(bytes, 0);
+                        //data += floatBuf.ToString() + ",";
+                        values.Add(floatBuf);
                     }
                 }
                 SetReceiveMonitor(outputValue);
             }
-
             s.Stop();
             dumpMsg += ($"step2 {s.ElapsedMilliseconds}ms ");
-            s.Start();
 
+            s.Start();
             for (n = 0; n < ItemSettings.Count; n++)
             {
                 //set display
-                string valueStr = CutLeft(",", ref data);
-                if (valueStr.Trim().Length == 0)
+                if (encodeType == EncodeType.ASCII)
                 {
-                    break;
+                    string valueStr = CutLeft(",", ref data);
+                    if (valueStr.Trim().Length == 0)
+                    {
+                        break;
+                    }
+                    if (valueStr == "NAN" || valueStr == "INF")
+                    {
+                        continue;
+                    }
+                    ItemSettings[n].Value = Utils.ParseFloat(valueStr);
                 }
-                if (valueStr == "NAN" || valueStr == "INF")
+                else
                 {
-                    continue;
+                    if (n < values.Count)
+                    {
+                        ItemSettings[n].Value = values[n];
+                    }
                 }
-                ItemSettings[n].Value = Utils.ParseFloat(valueStr);
             }
             s.Stop();
             dumpMsg += ($"step3 {s.ElapsedMilliseconds}ms ");
-            s.Start();
 
-            RefreshValueDisplay();
+            s.Start();
+            Task.Run(() => { RefreshValueDisplay(); });            
             s.Stop();
             dumpMsg += ($"step4 {s.ElapsedMilliseconds}ms ");
+
             Log.Error("Test Analyze: " + dumpMsg);
         }
         #endregion
@@ -1473,7 +1500,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         //********************************************
         ///Set Range of Selected Element#
         //********************************************
-        private void RangeSetCommand(int elementIndex)
+        private void RangeSetCommand(int elementIndex = 0)
         {
             ///---------------------#Send Voltage Range#
             string msg;
@@ -1491,8 +1518,6 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             if (rtn != 0)
             {
                 DispError(connection.GetLastError());
-                ///when setting failed, resume the original value.
-                GetRanges(elementIndex);
             }
 
             ///---------------------#Send Current Range#
@@ -1518,10 +1543,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             if (rtn != 0)
             {
                 DispError(connection.GetLastError());
-                ///when setting failed, resume the original value.
-                GetRanges(elementIndex);
             }
-            GetRanges(Currentelement);
         }
         #endregion
 
@@ -1807,19 +1829,22 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         ///Timer Event
         ///</summary>
         //*********************************
-        private void Timer1_Tick(object? sender, System.EventArgs e)
+        private void Timer1_Tick(object? sender, EventArgs e)
         {
             string eesr = "";
             string msg = ":STATUS:EESR?";
-            SetSendMonitor(msg);
-            if (!QueriesData(20, msg, ref eesr))
+            if (IsEnableDebug)
             {
-                return;
+                SetSendMonitor(msg);
+                if (!QueriesData(20, msg, ref eesr))
+                {
+                    return;
+                }
+                SetReceiveMonitor(eesr);
+                eesr = CutLeft("\n", ref eesr); //cut left with LF.
             }
-            SetReceiveMonitor(eesr);
-            eesr = CutLeft("\n", ref eesr); //cut left with LF.
 
-            if ((Convert.ToInt64(eesr) & 0X00000001) == 1)
+            if ((Convert.ToInt64(eesr) & 0X00000001) == 1 || !IsEnableDebug)
             {
                 GetItemData();
             }
@@ -1833,25 +1858,41 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         #endregion
 
         #region GetDataSingle
+        private bool IsSingleCollecting = false;
         //********************************************
         ///GetData Single
         //********************************************
         private void GetDataSgCommand_Click()
         {
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
-            SetBaseConfig();
-            stopwatch.Stop();
-            Log.Info($"SetBaseConfig cost {stopwatch.ElapsedMilliseconds}ms");
-            stopwatch.Start();
-            SendItemSettings();
-            stopwatch.Stop();
-            Log.Info($"SendItemSettings cost {stopwatch.ElapsedMilliseconds}ms");
+            if (IsCollecting || IsSingleCollecting)
+            {
+                return;
+            }
+            btRequestSingle.IsEnabled = false;
+            Task.Run(() =>
+            {
+                IsSingleCollecting = true;
+                Stopwatch stopwatch = new Stopwatch();
+                stopwatch.Start();
+                SetBaseConfig();
+                stopwatch.Stop();
+                Log.Info($"SetBaseConfig cost {stopwatch.ElapsedMilliseconds}ms");
+                
+                stopwatch.Start();
+                SendItemSettings();
+                stopwatch.Stop();
+                Log.Info($"SendItemSettings cost {stopwatch.ElapsedMilliseconds}ms");
 
-            stopwatch.Start();
-            GetItemData();
-            stopwatch.Stop();
-            Log.Info($"GetItemData cost {stopwatch.ElapsedMilliseconds}ms");
+                stopwatch.Start();
+                GetItemData();
+                stopwatch.Stop();
+                Log.Info($"GetItemData cost {stopwatch.ElapsedMilliseconds}ms");
+                IsSingleCollecting = false;
+                Dispatcher.Invoke(() =>
+                {
+                    btRequestSingle.IsEnabled = true;
+                });
+            });
         }
         #endregion
 
@@ -1862,7 +1903,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         private void GetDataURateCommand_Click()
         {
             //----------------------#resume all#
-            if (btRequestContinue.Content == "停止采集")
+            if (IsCollecting)
             {
                 Timer1.Stop();
                 IsCollecting = false;
@@ -1873,7 +1914,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             {
                 IsCollecting = true;
                 SetBaseConfig();
-                new Thread(() =>
+                Task.Run(() =>
                 {
                     SendItemSettings();
 
@@ -1897,16 +1938,16 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                     SetReceiveMonitor(eesr);
                     //************************************
 
+                    //set timer interval and start getting data.
+                    Timer1.Start();
+
                     //reset other controls' display.
                     Dispatcher.Invoke(() =>
                     {
                         btRequestContinue.IsEnabled = true;
                         btRequestContinue.Content = "停止采集";
-                        //set timer interval and start getting data.
-                        Timer1.Start();
-                        Timer1.Interval = TimeSpan.FromMilliseconds(200);
                     });
-                }).Start();
+                });
             }
         }
         #endregion
@@ -2183,9 +2224,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         #region Set Rang + Ratio + WiringSystem
         private void SetBaseConfig()
         {
-            RangeSetCommand(0);
-            RangeSetCommand(1);
-            RangeSetCommand(2);
+            RangeSetCommand();
 
             RatioSetCommand();
 
@@ -2229,7 +2268,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
         private int HarmonicOffset = -1;
         private int TotalCount = -1;
-        private static readonly int HarmonicCount = 36;
+        private static readonly int HarmonicCount = 30;
 
         private void InitHarmonicItems()
         {
@@ -2290,28 +2329,28 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         private void RefreshValueDisplay()
         {
             //DataTableSource.Rows.Add("Σ", 0, 0, 0, 0, "");
+            float? irms1 = ItemSettings[0].Value; // GetFCOValue("IRMS", "1");
+            float? irms2 = ItemSettings[1].Value; // GetFCOValue("IRMS", "2");
+            float? irms3 = ItemSettings[2].Value; // GetFCOValue("IRMS", "3");
+
+            float? urms1 = ItemSettings[3].Value; // GetFCOValue("URMS", "1");
+            float? urms2 = ItemSettings[4].Value; // GetFCOValue("URMS", "2");
+            float? urms3 = ItemSettings[5].Value; // GetFCOValue("URMS", "3");
+
+            float? umn1 = ItemSettings[6].Value; // GetFCOValue("UMN", "1");
+            float? umn2 = ItemSettings[7].Value; // GetFCOValue("UMN", "2");
+            float? umn3 = ItemSettings[8].Value; // GetFCOValue("UMN", "3");
+
+            float? p1 = ItemSettings[9].Value;  // GetFCOValue("P", "1");
+            float? p2 = ItemSettings[10].Value; // GetFCOValue("P", "2");
+            float? p3 = ItemSettings[11].Value; // GetFCOValue("P", "3");
+
+            float? fu = ItemSettings[12].Value; // GetFCOValue("fU", "0");
+
             var rowElement1 = DataTableSource.Rows[0];
             var rowElement2 = DataTableSource.Rows[1];
             var rowElement3 = DataTableSource.Rows[2];
             var rowMean = DataTableSource.Rows[3];
-
-            float? urms1 = GetFCOValue("URMS", "1");
-            float? urms2 = GetFCOValue("URMS", "2");
-            float? urms3 = GetFCOValue("URMS", "3");
-
-            float? irms1 = GetFCOValue("IRMS", "1");
-            float? irms2 = GetFCOValue("IRMS", "2");
-            float? irms3 = GetFCOValue("IRMS", "3");
-
-            float? umn1 = GetFCOValue("UMN", "1");
-            float? umn2 = GetFCOValue("UMN", "2");
-            float? umn3 = GetFCOValue("UMN", "3");
-
-            float? p1 = GetFCOValue("P", "1");
-            float? p2 = GetFCOValue("P", "2");
-            float? p3 = GetFCOValue("P", "3");
-
-            float? fu = GetFCOValue("fU", "0");
 
             rowElement1[INDEX_URMS] = urms1;
             rowElement2[INDEX_URMS] = urms2;
