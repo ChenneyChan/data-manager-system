@@ -3,6 +3,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Interop;
 using System.Windows.Threading;
 using Yokogawa.Tm.WT1800CommSample.cs;
 
@@ -55,6 +56,15 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
         private bool IsCollecting = false;
         private bool IsEnableDebug = false;
+
+        private string? SelectedVoltageRange = null;
+        private string? SelectedCurrentRange = null;
+
+        private float? SelectedVT = null;
+        private float? SelectedCT = null;
+
+        private string? SelectedWiringSystem = null;
+        private string? SelectedUpdateRate = null;
 
         #endregion
 
@@ -1504,45 +1514,50 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         {
             ///---------------------#Send Voltage Range#
             string msg;
-            msg = cbVoltageRange.Text;
-            if (msg != "AUTO")
+            if (SelectedVoltageRange != null && SelectedVoltageRange.Length > 0)
             {
-                msg = ":INPUT:VOLTAGE:RANGE " + cbVoltageRange.Text;
-            }
-            else
-            {
-                msg = ":INPUT:VOLT:AUTO " + "ON";
-            }
-            SetSendMonitor(msg);
-            int rtn = connection.Send(msg);
-            if (rtn != 0)
-            {
-                DispError(connection.GetLastError());
+                msg = SelectedVoltageRange;
+                if (msg != "AUTO")
+                {
+                    msg = ":INPUT:VOLTAGE:RANGE " + msg;
+                }
+                else
+                {
+                    msg = ":INPUT:VOLT:AUTO " + "ON";
+                }
+                SetSendMonitor(msg);
+                int rtn = connection.Send(msg);
+                if (rtn != 0)
+                {
+                    DispError(connection.GetLastError());
+                }
             }
 
             ///---------------------#Send Current Range#
-            int rtn_tmp = -1;
-            string Current_Sen;
-            Current_Sen = cbCurrentRange.Text;
-            rtn_tmp = Current_Sen.IndexOf("V");
+            if (SelectedCurrentRange != null && SelectedCurrentRange.Length > 0)
+            {
+                int rtn_tmp = -1;
+                string Current_Sen = SelectedCurrentRange;
+                rtn_tmp = Current_Sen.IndexOf("V");
 
-            msg = cbCurrentRange.Text;
-            if (msg != "AUTO")
-            {
-                if (rtn_tmp > 0)
-                    msg = ":INPUT:CURRENT:RANGE EXTERNAL," + " " + cbCurrentRange.Text;
+                msg = Current_Sen;
+                if (msg != "AUTO")
+                {
+                    if (rtn_tmp > 0)
+                        msg = ":INPUT:CURRENT:RANGE EXTERNAL," + " " + msg;
+                    else
+                        msg = ":INPUT:CURRENT:RANGE " + msg;
+                }
                 else
-                    msg = ":INPUT:CURRENT:RANGE " + cbCurrentRange.Text;
-            }
-            else
-            {
-                msg = ":INPUT:CURRENT:AUTO " + "ON";
-            }
-            SetSendMonitor(msg);
-            rtn = connection.Send(msg);
-            if (rtn != 0)
-            {
-                DispError(connection.GetLastError());
+                {
+                    msg = ":INPUT:CURRENT:AUTO " + "ON";
+                }
+                SetSendMonitor(msg);
+                int rtn = connection.Send(msg);
+                if (rtn != 0)
+                {
+                    DispError(connection.GetLastError());
+                }
             }
         }
         #endregion
@@ -1869,7 +1884,8 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 return;
             }
             btRequestSingle.IsEnabled = false;
-            Task.Run(() =>
+            UpdateSelectedConfigs();
+            ThreadPool.QueueUserWorkItem((o) =>
             {
                 IsSingleCollecting = true;
                 Stopwatch stopwatch = new Stopwatch();
@@ -1914,7 +1930,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             {
                 IsCollecting = true;
                 SetBaseConfig();
-                Task.Run(() =>
+                ThreadPool.QueueUserWorkItem((o) =>
                 {
                     SendItemSettings();
 
@@ -2119,26 +2135,29 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         private void RatioSetCommand()
         {
             ///---------------------#Send Voltage Transformer#
-            string msg = ":INPUT:SCALING:VT:ALL " + tbVT.Value.ToString();
-            SetSendMonitor(msg);
-            int rtn = connection.Send(msg);
-            if (rtn != 0)
+            if (SelectedVT != null)
             {
-                DispError(connection.GetLastError());
-                ///when setting failed, resume the original value.
-                GetRatios();
+                string msg = ":INPUT:SCALING:VT:ALL " + SelectedVT.ToString();
+                SetSendMonitor(msg);
+                int rtn = connection.Send(msg);
+                if (rtn != 0)
+                {
+                    DispError(connection.GetLastError());
+                }
             }
 
             ///---------------------#Send Current Transformer#
-            msg = ":INPUT:SCALING:CT:ALL " + tbCT.Value.ToString();
-            SetSendMonitor(msg);
-            rtn = connection.Send(msg);
-            if (rtn != 0)
+            if (SelectedCT != null)
             {
-                DispError(connection.GetLastError());
-                ///when setting failed, resume the original value.
-                GetRatios();
+                string msg = ":INPUT:SCALING:CT:ALL " + SelectedCT.ToString();
+                SetSendMonitor(msg);
+                int rtn = connection.Send(msg);
+                if (rtn != 0)
+                {
+                    DispError(connection.GetLastError());
+                }
             }
+
             //GetRatios();
         }
         #endregion
@@ -2204,12 +2223,12 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         //********************************************
         private void WiringSetCommand()
         {
-            if (cbWire.SelectedIndex < 0)
+            if (SelectedWiringSystem == null || SelectedWiringSystem.Length == 0)
             {
                 return;
             }
             ///---------------------#Send Wiring System#
-            string msg = ":INPUT:WIRING " + cbWire.Text;
+            string msg = ":INPUT:WIRING " + SelectedWiringSystem;
             SetSendMonitor(msg);
             int rtn = connection.Send(msg);
             if (rtn != 0)
@@ -2217,7 +2236,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 DispError(connection.GetLastError());
             }
 
-            GetWiringSystem();
+            //GetWiringSystem();
         }
         #endregion
 
@@ -2383,6 +2402,18 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         private void CbEnableDebug_Checked(object sender, RoutedEventArgs e)
         {
             IsEnableDebug = CbEnableDebug.IsChecked == true;
+        }
+
+        private void UpdateSelectedConfigs()
+        {
+            SelectedVoltageRange = cbVoltageRange.SelectedItem != null ? cbVoltageRange.SelectedItem.ToString() : null;
+            SelectedCurrentRange = cbCurrentRange.SelectedItem != null ? cbCurrentRange.SelectedItem.ToString() : null;
+
+            SelectedVT = (float?)tbVT.Value;
+            SelectedCT = (float?)tbCT.Value;
+
+            SelectedUpdateRate = cbUpdateRate.SelectedItem != null ? cbUpdateRate.SelectedItem.ToString() : null;
+            SelectedWiringSystem = cbWire.SelectedItem != null ? cbWire.SelectedItem.ToString() : null;
         }
     }
 }
