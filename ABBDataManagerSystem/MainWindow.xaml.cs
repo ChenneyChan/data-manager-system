@@ -280,5 +280,24 @@ namespace ABBDataManagerSystem
             };
             tabControl.Items.Add(item);
         }
+
+        private void btThreadTest_Click(object sender, RoutedEventArgs e)
+        {
+            tbMsg.Text += "\r\nStart Thread Test!";
+            ThreadPool.QueueUserWorkItem((o) =>
+            {
+                Dispatcher.Invoke(new Action(() => { tbMsg.Text += "\r\nThreadPool Start!" + DateTime.Now.ToString("hh-mm-ss"); }));
+                Thread.Sleep(2000);
+                Dispatcher.Invoke(new Action(() => { tbMsg.Text += "\r\nThreadPool Done!" + DateTime.Now.ToString("hh-mm-ss"); }));
+            });
+            Task.Run(() =>
+            {
+                Thread.Sleep(2000);
+                Dispatcher.Invoke(new Action(() => { tbMsg.Text += "\r\nTask Start!" + DateTime.Now.ToString("hh-mm-ss"); }));
+                Thread.Sleep(1000);
+                Dispatcher.Invoke(new Action(() => { tbMsg.Text += "\r\nTask Done!" + DateTime.Now.ToString("hh-mm-ss"); }));
+            });
+            tbMsg.Text += "\r\nStart Thread UITread Done!";
+        }
     }
 }

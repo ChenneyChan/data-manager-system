@@ -46,7 +46,7 @@
             <Separator></Separator>
             <Button Content="功率分析仪" Click="PowerAnalyzeTest_Click"></Button>
             <Separator></Separator>
-            <Button Content="功率分析仪-不搜索" Click="PowerAnalyze2Test_Click"></Button>
+            <Button Content="功率分析仪-不搜索" Click="PowerAnalyze2Test_Click" Visibility="Visible"></Button>
             <Separator></Separator>
             <Button Content="金源JYT-A" Click="JinYuanJYT_A_Click"/>
         </ToolBar>
@@ -64,6 +64,7 @@
                         <Button Content="谐波" Name="btHarmonicTest" Click="btHarmonicTest_Click" Height="30" Width="120"/>
                         <Button Content="50W串口测试" Name="btStartSerialTest" Click="btStartSerialTest_Click" Height="30" Width="120"/>
                         <Button Content="温度测试" Name="btStartTempTest" Click="btStartTempTest_Click" Height="30" Width="120"/>
+                        <Button Content="后台任务调试" Name="btThreadTest" Click="btThreadTest_Click" Height="30" Width="120"/>
                     </StackPanel>
                     <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto" HorizontalAlignment="Left">
                         <TextBlock Width="400" Height="Auto" TextWrapping="Wrap" Text="输出：" Name="tbMsg"/>
