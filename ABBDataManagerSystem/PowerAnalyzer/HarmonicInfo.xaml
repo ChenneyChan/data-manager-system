@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ABBDataManagerSystem.PowerAnalyzer"
         mc:Ignorable="d"
-        Title="谐波数据" Height="520" Width="1019" Closed="Window_Closed">
+        Title="谐波数据" Height="800" Width="1600" Closed="Window_Closed">
     <Window.Resources>
         <!--<Style TargetType="DataGridCell" BasedOn="{StaticResource {x:Type DataGridCell}}">
             <Setter Property="FontSize" Value="16"/>

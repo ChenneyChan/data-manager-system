@@ -35,6 +35,31 @@
         <Style TargetType="hc:NumericUpDown" BasedOn="{StaticResource GlobalNumericUpDownStyle}">
             
         </Style>
+         <!-- 定义一个新的样式用于 hc:TextBox -->
+        <Style TargetType="{x:Type hc:TextBox}" x:Key="TextBoxWithTitle">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type hc:TextBox}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock 
+                                Text="{Binding (hc:InfoElement.Title), RelativeSource={RelativeSource TemplatedParent}}"
+                                FontSize="16" 
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                Margin="5" />
+                            <hc:TextBox  Grid.Column="1"/>
+                            <Border Grid.Row="1" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                                <ScrollViewer x:Name="PART_ContentHost" Margin="0"/>
+                            </Border>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </UserControl.Resources>
     <Grid Margin="30,20,30,20">
         <Grid.RowDefinitions>
@@ -64,6 +89,13 @@
                     <ComboBoxItem Content="9600"/>
                     <ComboBoxItem Content="12800"/>
                 </hc:ComboBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="20, 0">
+                <hc:TextBox Width="180"  hc:InfoElement.Title="序号"   hc:InfoElement.TitlePlacement="Left" Text="1LCT11223344" Margin="0,0, 10, 0" Name="tbProductSequence"/>
+                <hc:TextBox Width="180"  hc:InfoElement.Title="分接"   hc:InfoElement.TitlePlacement="Left" Text="+-2*2.5%" Margin="0,0, 10, 0" Name="tbTapping"/>
+                <hc:TextBox Width="160"  hc:InfoElement.Title="高压kV" hc:InfoElement.TitlePlacement="Left" Text="10000" Margin="0,0, 10, 0" Name="tbRatedHighVoltage"/>
+                <hc:TextBox Width="160"  hc:InfoElement.Title="低压kV" hc:InfoElement.TitlePlacement="Left" Text="400" Margin="0,0, 10, 0" Name="tbRatedLowVoltage"/>
+                <Button Content="应用" Width="80" Style="{StaticResource ButtonInfo}" Name="btApply" Click="btApply_Click"/>
             </StackPanel>
         </StackPanel>
 

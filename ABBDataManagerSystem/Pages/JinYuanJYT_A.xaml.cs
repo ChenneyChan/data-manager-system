@@ -18,6 +18,7 @@ namespace ABBDataManagerSystem.Pages
         private bool IsTesting = false;
         private int Interval = 200;
         private JinYunJYTATestResult? CurrentResult = null;
+        private static readonly int MAX_HV_COUNT = 9;
 
         public JinYuanJYT_A()
         {
@@ -371,6 +372,40 @@ namespace ABBDataManagerSystem.Pages
             tvr.ValueBC = CurrentResult.Ratio[1];
             tvr.ValueCA = CurrentResult.Ratio[2];
             tvr.CalculatedRatio = CurrentResult.Ratio[3];
+        }
+
+        private void btApply_Click(object sender, RoutedEventArgs e)
+        {
+            string tapping = tbTapping.Text.Trim();
+            int? hv = Utils.ParseIntNull(tbRatedHighVoltage.Text);
+            int? lv = Utils.ParseIntNull(tbRatedLowVoltage.Text);
+            if (tapping.Length == 0 || hv == null)
+            {
+                return;
+            }
+            int id = 0; 
+            if ((id = tapping.IndexOf("+-")) < 0)
+            {
+                return;
+            }
+            var strs = tapping.Split("*");
+            if (strs.Length != 2)
+            {
+                return;
+            }
+            var count = int.Parse(strs[0].Replace("+-", ""));
+            var gap = float.Parse(strs[1].Replace("%", "")) * 0.01f;
+
+            for (int i = count; i >= -count;  i--)
+            {
+                float v = (float)hv * (1.0f + gap * i);
+                if (i + count + 1 > MAX_HV_COUNT)
+                {
+                    return;
+                }
+                string key = $"{i + count + 1}";
+                RatioValueFields[key].TappingVoltage = v;
+            }
         }
     }
 }
