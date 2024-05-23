@@ -3,6 +3,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Threading;
 using Yokogawa.Tm.WT1800CommSample.cs;
 
@@ -1952,6 +1953,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 Timer1.Stop();
                 IsCollecting = false;
                 btRequestContinue.Content = "持续采集";
+                btRequestContinue.Background = new SolidColorBrush(Color.FromRgb(0x45, 0xF5, 0x21)); // FFEF2B2B
             }
             //----------------------#getting datas#
             else
@@ -1994,6 +1996,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                     {
                         btRequestContinue.IsEnabled = true;
                         btRequestContinue.Content = "停止采集";
+                        btRequestContinue.Background = new SolidColorBrush(Color.FromRgb(0xEF, 0x2B, 0x2B)); // FFEF2B2B
                     });
                 });
             }
@@ -2010,6 +2013,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             {
                 btRequestContinue.IsEnabled = true;
                 btRequestContinue.Content = "持续采集";
+                btRequestContinue.Background = new SolidColorBrush(Color.FromRgb(0x45, 0xF5, 0x21)); // FFEF2B2B
             });
         }
         #endregion
