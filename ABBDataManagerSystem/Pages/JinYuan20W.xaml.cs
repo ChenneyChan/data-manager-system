@@ -132,7 +132,10 @@ namespace ABBDataManagerSystem.Pages
                     {
                         Collector = null;
                         IsConneted = false;
-                        swConnect.IsChecked = false;
+                        Dispatcher.Invoke(() =>
+                        {
+                            swConnect.IsChecked = false;
+                        });
                     }
                     else
                     {
@@ -313,7 +316,13 @@ namespace ABBDataManagerSystem.Pages
 
         private void btTest_Click(object sender, RoutedEventArgs e)
         {
-
+            if (!IsConneted)
+            {
+                MessageBox.Show("请先连接设备！");
+                return;
+            }
+            panelConfig.IsEnabled = false;
+            panelTestChoice.IsEnabled = false;
         }
 
         private void btSetInterval_Click(object sender, RoutedEventArgs e)
@@ -338,6 +347,12 @@ namespace ABBDataManagerSystem.Pages
                 btSetInterval.Visibility = Visibility.Visible;
                 btTest.Visibility = Visibility.Collapsed;
             }
+        }
+
+        private void btQuitTest_Click(object sender, RoutedEventArgs e)
+        {
+            panelConfig.IsEnabled = true;
+            panelTestChoice.IsEnabled = true;
         }
     }
 
