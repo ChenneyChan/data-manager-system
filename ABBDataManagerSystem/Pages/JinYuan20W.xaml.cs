@@ -1,4 +1,5 @@
 ﻿using ABBDataManagerSystem.Connector;
+using ABBDataManagerSystem.Pages.Views;
 using System.Collections.ObjectModel;
 using System.IO.Ports;
 using System.Windows;
@@ -19,9 +20,18 @@ namespace ABBDataManagerSystem.Pages
         private ManualResetEvent? ResetEvent = null;
         private bool CommandChange = false;
 
+        private Dictionary<string, ToggleButton> highVoltageToggleButtons = new Dictionary<string, ToggleButton>();
+        private Dictionary<string, ToggleButton> lowVoltageToggleButtons = new Dictionary<string, ToggleButton>();
+        private Dictionary<string, ToggleButton> tappingToggleButtons = new Dictionary<string, ToggleButton>();
+
+        private string SelectedHighVoltageTapping = "";
+        private string SelectedLowVoltageTapping = "";
+        private string SelectedTapping = "";
+        
         public JinYuan20W()
         {
             InitializeComponent();
+            InitToggleButtons();
 
             dataItems.Add(new CurrentResistanceInfo() { Current = 101.2f, SortIndex = 42, Resistance = 222.2f });
             dataItems.Add(new CurrentResistanceInfo() { Current = 101.2f, SortIndex = 39, Resistance = 222.2f });
@@ -46,6 +56,34 @@ namespace ABBDataManagerSystem.Pages
 
             // 数据绑定
             this.DataContext = new { Items = dataItems };
+        }
+
+        private void InitToggleButtons()
+        {
+            highVoltageToggleButtons.Add("AB", tbAB);
+            highVoltageToggleButtons.Add("AO", tbAO);
+            highVoltageToggleButtons.Add("BC", tbBC);
+            highVoltageToggleButtons.Add("BO", tbBO);
+            highVoltageToggleButtons.Add("CA", tbCA);
+            highVoltageToggleButtons.Add("CO", tbCO);
+
+            lowVoltageToggleButtons.Add("ab", tbab);
+            lowVoltageToggleButtons.Add("ao", tbao);
+            lowVoltageToggleButtons.Add("bc", tbbc);
+            lowVoltageToggleButtons.Add("bo", tbbo);
+            lowVoltageToggleButtons.Add("ca", tbca);
+            lowVoltageToggleButtons.Add("co", tbco);
+
+            tappingToggleButtons.Add("1", tbTapping1);
+            tappingToggleButtons.Add("2", tbTapping2);
+            tappingToggleButtons.Add("3", tbTapping3);
+            tappingToggleButtons.Add("4", tbTapping4);
+            tappingToggleButtons.Add("5", tbTapping5);
+            tappingToggleButtons.Add("6", tbTapping6);
+            tappingToggleButtons.Add("7", tbTapping7);
+            tappingToggleButtons.Add("8", tbTapping8);
+            tappingToggleButtons.Add("9", tbTapping9);
+            tappingToggleButtons.Add("21", tbTapping21);
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
@@ -321,8 +359,15 @@ namespace ABBDataManagerSystem.Pages
                 MessageBox.Show("请先连接设备！");
                 return;
             }
+            if (cbCH1.IsChecked != true && cbCH2.IsChecked != true)
+            {
+                MessageBox.Show("必须选择一个通道才可以开始测试！");
+                return;
+            }
             panelConfig.IsEnabled = false;
             panelTestChoice.IsEnabled = false;
+
+            panelCommonTestControl.IsEnabled = true;
         }
 
         private void btSetInterval_Click(object sender, RoutedEventArgs e)
@@ -353,6 +398,96 @@ namespace ABBDataManagerSystem.Pages
         {
             panelConfig.IsEnabled = true;
             panelTestChoice.IsEnabled = true;
+            panelCommonTestControl.IsEnabled = false;
+        }
+
+        private void HighVoltageSelectedTappingChange(object sender, RoutedEventArgs e)
+        {
+            var b = sender as ToggleButton;
+            if (b == null)
+            {
+                return;
+            }
+            if (b.IsChecked)
+            {
+                foreach (var item in highVoltageToggleButtons)
+                {
+                    if (item.Value == b)
+                    {
+                        SelectedHighVoltageTapping = item.Key;
+                    }
+                    else
+                    {
+                        item.Value.IsChecked = false;
+                    }
+                }
+            } 
+            else
+            {
+                SelectedHighVoltageTapping = "";
+            }
+            DumpSelectedTapping();
+        }
+
+        private void LowVoltageSelectedTappingChange(object sender, RoutedEventArgs e)
+        {
+            var b = sender as ToggleButton;
+            if (b == null)
+            {
+                return;
+            }
+            if (b.IsChecked)
+            {
+                foreach (var item in lowVoltageToggleButtons)
+                {
+                    if (item.Value == b)
+                    {
+                        SelectedLowVoltageTapping = item.Key;
+                    }
+                    else
+                    {
+                        item.Value.IsChecked = false;
+                    }
+                }
+            }
+            else
+            {
+                SelectedLowVoltageTapping = "";
+            }
+            DumpSelectedTapping();
+        }
+
+        private void TappingSelectedTappingChange(object sender, RoutedEventArgs e)
+        {
+            var b = sender as ToggleButton;
+            if (b == null)
+            {
+                return;
+            }
+            if (b.IsChecked)
+            {
+                foreach (var item in tappingToggleButtons)
+                {
+                    if (item.Value == b)
+                    {
+                        SelectedTapping = item.Key;
+                    }
+                    else
+                    {
+                        item.Value.IsChecked = false;
+                    }
+                }
+            }
+            else
+            {
+                SelectedTapping = "";
+            }
+            DumpSelectedTapping();
+        }
+
+        private void DumpSelectedTapping()
+        {
+            tbDebugMsg.Text = $"{SelectedTapping} - {SelectedHighVoltageTapping} - {SelectedLowVoltageTapping}";
         }
     }
 

@@ -1,0 +1,31 @@
+﻿<UserControl x:Class="ABBDataManagerSystem.Pages.Views.TappingResistanceFields"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ABBDataManagerSystem.Pages.Views"
+             xmlns:hc="https://handyorg.github.io/handycontrol"
+             mc:Ignorable="d" 
+             d:DesignHeight="60" d:DesignWidth="600">
+    <UserControl.Resources>
+        <Style TargetType="hc:TextBox" BasedOn="{StaticResource GlobalTextBoxStyle}">
+            <Setter Property="TextAlignment" Value="Center"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="IsReadOnly" Value="True"/>
+            <Setter Property="Text" Value="123.23"/>
+        </Style>
+    </UserControl.Resources>
+    <Grid Margin="0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <hc:TextBox Name="tbResistanceAB" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" MinWidth="60" Height="Auto" Margin="4" Padding="0"/>
+        <hc:TextBox Name="tbResistanceBC" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center" MinWidth="60" Height="Auto" Margin="4" Padding="0"/>
+        <hc:TextBox Name="tbResistanceCA" Grid.Row="0" Grid.Column="2" HorizontalAlignment="Center" MinWidth="60" Height="Auto" Margin="4" Padding="0"/>
+        <Border Grid.Column="0" Grid.Row="0" BorderThickness="1,0,0,1" BorderBrush="Black"></Border>
+        <Border Grid.Column="1" Grid.Row="0" BorderThickness="1,0,0,1" BorderBrush="Black"></Border>
+        <Border Grid.Column="2" Grid.Row="0" BorderThickness="1,0,1,1" BorderBrush="Black"></Border>
+    </Grid>
+</UserControl>

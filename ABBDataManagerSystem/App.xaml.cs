@@ -17,6 +17,7 @@ namespace ABBDataManagerSystem
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
         }
 
+        #region 全局异常捕获处理
         // WPF UI线程未捕获异常处理事件
         private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
@@ -154,5 +155,6 @@ namespace ABBDataManagerSystem
             MiniDumpIgnoreInaccessibleMemory = 0x00020000,
             MiniDumpWithTokenInformation = 0x00040000,
         }
+        #endregion
     }
 }

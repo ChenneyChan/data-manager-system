@@ -4,15 +4,17 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ABBDataManagerSystem.PowerAnalyzer"
+             xmlns:hc="https://handyorg.github.io/handycontrol"
              mc:Ignorable="d" Title="功率分析仪设备选择"
-             Height="294" Width="478" Loaded="Window_Loaded" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+             Height="294" Width="478" Loaded="Window_Loaded" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Background="#FFDDDDDD">
     <Window.Resources>
         <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
             <Setter Property="FontSize" Value="16"/>
             <Setter Property="Height" Value="40"/>
             <Setter Property="Width" Value="120"/>
+            <Setter Property="BorderBrush" Value="{StaticResource PrimaryBorderBrush}"/>
         </Style>
-        <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
+        <Style TargetType="hc:ComboBox" BasedOn="{StaticResource GlobalComboBoxStyle}">
             <Setter Property="FontSize" Value="16"/>
             <Setter Property="Height" Value="40"/>
         </Style>
@@ -36,18 +38,18 @@
         <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" Height="Auto">
             <RadioButton Name="rbGPIB" Content="GPIB" Width="80" VerticalAlignment="Center"/>
             <TextBlock Text="地址" Width="80" VerticalAlignment="Center"/>
-            <ComboBox Name="cbGPIB" Width="180"/>
+            <hc:ComboBox Name="cbGPIB" Width="180"/>
         </StackPanel>
         <StackPanel Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Center" Height="Auto">
             <RadioButton Name="rbSerial" Content="串口" Width="80" VerticalAlignment="Center"/>
             <TextBlock Text="串口" Width="80" VerticalAlignment="Center"/>
-            <ComboBox Name="cbSerial" Width="180"/>
+            <hc:ComboBox Name="cbSerial" Width="180"/>
             <Button Name="btSerachSerial" Width="80" Margin="8, 0, 0, 0" Content="搜索" Click="btSerachSerial_Click"/>
         </StackPanel>
         <StackPanel Grid.Row="4" Orientation="Horizontal" VerticalAlignment="Center" Height="Auto">
             <RadioButton Name="rbEthNet" Content="网口" Width="80" VerticalAlignment="Center"/>
             <TextBlock Text="IP地址" Width="80" VerticalAlignment="Center"/>
-            <ComboBox Name="cbIP" Width="180"/>
+            <hc:ComboBox Name="cbIP" Width="180"/>
             <Button Name="btSerachIP" Width="80" Margin="8, 0, 0, 0" Content="搜索" Click="btSerachIP_Click"/>
         </StackPanel>
         <StackPanel Grid.Row="6" Orientation="Horizontal" VerticalAlignment="Center" Height="Auto" HorizontalAlignment="Center">

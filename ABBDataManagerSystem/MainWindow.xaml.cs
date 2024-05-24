@@ -55,16 +55,13 @@ namespace ABBDataManagerSystem
 
         private void JnYuan20WTest_Click(object sender, RoutedEventArgs e)
         {
-            var window = new Window()
+            var item = new TabItem()
             {
-                Title = "金源20W测试仪",
-                Width = 1200,
-                Height = 900,
-                WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                Content = new JinYuan20W(),
+                Header = "金源20W测试仪",
+                IsSelected = true,
             };
-            var uc = new JinYuan20W();
-            window.Content = uc;
-            window.ShowDialog();
+            tabControl.Items.Add(item);
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

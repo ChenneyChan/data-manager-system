@@ -68,7 +68,8 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
         private int HarmonicOffset = -1;
         private int TotalCount = -1;
-        private static readonly int HarmonicCount = 20;
+        private static readonly int HarmonicCount = 22;
+        private static readonly int MAX_MONITOR_BUFFER_LEN = 3000;
 
         #endregion
 
@@ -1137,7 +1138,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             {
                 Dispatcher.Invoke(() =>
                 {
-                    if (tbSendCommand.Text.Length > 1000)
+                    if (tbSendCommand.Text.Length > MAX_MONITOR_BUFFER_LEN)
                     {
                         tbSendCommand.Text = "";
                     }
@@ -1160,7 +1161,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             {
                 Dispatcher.Invoke(() =>
                 {
-                    if (tbReceiveMsg.Text.Length > 1000)
+                    if (tbReceiveMsg.Text.Length > MAX_MONITOR_BUFFER_LEN)
                     {
                         tbReceiveMsg.Text = "";
                     }
@@ -1336,7 +1337,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                         bytes[0] = byteData[n * 4 + 3];
                         floatBuf = BitConverter.ToSingle(bytes, 0);
                         //data += floatBuf.ToString() + ",";
-                        values.Add(floatBuf);
+                        values.Add(floatBuf <= 10000000 ? floatBuf : 0);
                     }
                 }
                 SetReceiveMonitor(outputValue);
@@ -1344,6 +1345,14 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             s.Stop();
             dumpMsg += ($"step2 {s.ElapsedMilliseconds}ms ");
 
+            if (IsHold)
+            {
+                Log.Error("Final Test Analyze: " + dumpMsg);
+                IsProcessing = false;
+                return;
+            }
+
+            #region 更新数据，并显示
             s.Start();
             for (n = 0; n < ItemSettings.Count; n++)
             {
@@ -1379,6 +1388,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
             Log.Error("Final Test Analyze: " + dumpMsg);
             IsProcessing = false;
+            #endregion
         }
         #endregion
 
@@ -1890,7 +1900,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
             //if ((Convert.ToInt64(eesr) & 0X00000001) == 1 || eesr.Length == 0)
             //{
-                GetItemData();
+            GetItemData();
             //}
         }
 
@@ -2153,6 +2163,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             tem_auto = CutLeft("\n", ref tem_auto);//cut left with LF.
             tem_auto = CutLeft(";", ref tem_auto);
             float vtRatio = Convert.ToSingle(tem_auto);
+            Log.Info("Parsed VT is " + vtRatio + " " + tem_auto);
             tbVT.Value = Utils.ParseFloat(vtRatio.ToString());
 
             ///---------------------#Query Current Transformer Ratio#
@@ -2169,6 +2180,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             tem_auto = CutLeft("\n", ref tem_auto);//cut left with LF.
             tem_auto = CutLeft(";", ref tem_auto);
             float ctRatio = Convert.ToSingle(tem_auto);
+            Log.Info("Parsed CT is " + ctRatio + " " + tem_auto);
             tbCT.Value = Utils.ParseFloat(ctRatio.ToString());
 
             return true;
@@ -2185,7 +2197,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             Log.Info($"SetRatios, VT = {SelectedVT} CT = {SelectedCT}");
             if (SelectedVT != null && SelectedVT > 0)
             {
-                string msg = ":INPUT:SCALING:VT:ALL " + SelectedVT.ToString();
+                string msg = ":INPUT:SCALING:VT " + SelectedVT.ToString();
                 SetSendMonitor(msg);
                 int rtn = connection.Send(msg);
                 if (rtn != 0)
@@ -2197,7 +2209,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             ///---------------------#Send Current Transformer#
             if (SelectedCT != null && SelectedCT > 0)
             {
-                string msg = ":INPUT:SCALING:CT:ALL " + SelectedCT.ToString();
+                string msg = ":INPUT:SCALING:CT " + SelectedCT.ToString();
                 SetSendMonitor(msg);
                 int rtn = connection.Send(msg);
                 if (rtn != 0)
@@ -2456,7 +2468,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
         private void CbIsBinary_Checked(object sender, RoutedEventArgs e)
         {
-            if (IsCollecting) 
+            if (IsCollecting)
             {
                 CbIsBinary.IsChecked = encodeType == EncodeType.BINARY;
                 return;
@@ -2511,6 +2523,21 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 SetReceiveMonitor(data);
                 data = CutLeft("\n", ref data);
             }
+        }
+
+        private bool IsHold = false;
+
+        private void btHold_Click(object sender, RoutedEventArgs e)
+        {
+            if (IsHold)
+            {
+                btHold.Background = new SolidColorBrush(Color.FromRgb(0x45, 0xF5, 0x21)); // FFEF2B2B
+            }
+            else
+            {
+                btHold.Background = new SolidColorBrush(Color.FromRgb(0xEF, 0x2B, 0x2B)); // FFEF2B2B
+            }
+            IsHold = !IsHold;
         }
     }
 }

@@ -36,6 +36,7 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition Height="60"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -43,16 +44,19 @@
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0" Orientation="Horizontal" Grid.ColumnSpan="2">
+        <StackPanel Grid.Row="0">
+            <TextBlock HorizontalAlignment="Left" Margin="0,10" TextAlignment="Center" TextWrapping="Wrap" Text="横河功率分析仪" FontSize="24" FontWeight="Bold"/>
+        </StackPanel>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Grid.ColumnSpan="2">
             <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="设备型号" VerticalAlignment="Center" Margin="0, 0, 20, 0"/>
-            <hc:TextBox HorizontalAlignment="Left" TextWrapping="NoWrap" Text="" VerticalAlignment="Center" Width="244" Name="tbModelType" Margin="0, 0, 40, 0" />
+            <hc:TextBox HorizontalAlignment="Left" TextWrapping="NoWrap" Text="" VerticalAlignment="Center" Width="244" Name="tbModelType" Margin="0, 0, 40, 0" IsReadOnly="True"/>
             <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="刷新频率" VerticalAlignment="Center" Margin="0, 0, 20, 0"/>
             <hc:ComboBox HorizontalAlignment="Left"  VerticalAlignment="Center" Width="120" Name="cbUpdateRate" Margin="0, 0, 20, 0"/>
             <Button Content="设置" Width="60" Name="btSetUpdateRate" BorderBrush="DarkGray"/>
-            <CheckBox Content="显示调测信息" FontSize="18" IsChecked="True" Margin="5,0" Name="CbEnableDebug" Checked="CbEnableDebug_Checked" Unchecked="CbEnableDebug_Checked"/>
+            <CheckBox Content="显示调测信息" FontSize="18" IsChecked="True" Margin="20,0,5,0" Name="CbEnableDebug" Checked="CbEnableDebug_Checked" Unchecked="CbEnableDebug_Checked"/>
             <CheckBox Content="BIN" FontSize="18" IsChecked="True" Margin="5,0" Name="CbIsBinary" Checked="CbIsBinary_Checked" Unchecked="CbIsBinary_Checked"/>
         </StackPanel>
-        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0, 10, 0, 10" Grid.ColumnSpan="2">
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0, 10, 0, 10" Grid.ColumnSpan="2">
             <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="电压范围" VerticalAlignment="Center" Margin="0, 0, 20, 0"/>
             <hc:ComboBox HorizontalAlignment="Left"  VerticalAlignment="Center" Width="120" Name="cbVoltageRange" Margin="0, 0, 40, 0"/>
             <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="电流范围" VerticalAlignment="Center" Margin="0, 0, 20, 0"/>
@@ -62,25 +66,26 @@
             <hc:ComboBox HorizontalAlignment="Left"  VerticalAlignment="Center" Width="120" Name="cbWire" Margin="0, 0, 20, 0"/>
             <Button Name="btWireSet" Width="60" Content="设置" Click="btWireSet_Click" BorderBrush="DarkGray"/>
         </StackPanel>
-        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0, 10, 0, 10" Grid.ColumnSpan="2">
+        <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0, 10, 0, 10" Grid.ColumnSpan="2">
             <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="电压互感器" VerticalAlignment="Center" Margin="0, 0, 20, 0"/>
             <hc:ComboBox HorizontalAlignment="Left" Visibility="Collapsed" VerticalAlignment="Center" Width="120" Name="cbVoltageRatio" Margin="0, 0, 40, 0"/>
-            <hc:NumericUpDown Width="80" Name="tbVT" FontSize="18" Minimum="0" Margin="5, 0"/>
+            <hc:NumericUpDown Width="100" Name="tbVT" FontSize="18" Minimum="0" Margin="5, 0" DecimalPlaces="2" />
             <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="电流互感器" VerticalAlignment="Center" Margin="0, 0, 20, 0"/>
             <hc:ComboBox HorizontalAlignment="Left"  Visibility="Collapsed" VerticalAlignment="Center" Width="120" Name="cbCurrentRatio" Margin="0, 0, 20, 0"/>
-            <hc:NumericUpDown Width="80" Name="tbCT" FontSize="18" Minimum="0" Margin="5,0 "/>
+            <hc:NumericUpDown Width="100" Name="tbCT" FontSize="18" Minimum="0" Margin="5,0 " DecimalPlaces="2" />
             <Button Name="btRatioSet" Width="60" Content="设置" Click="btRatioSet_Click" BorderBrush="DarkGray"/>
             <hc:TextBox TextWrapping="NoWrap" Width="360" Margin="10,0" Name="tbCmd"/>
-            <Button Content="发送命令" Background="Aquamarine" Name="btSendCmd" Click="btSendCmd_Click" BorderBrush="DarkGray"/>
+            <Button Content="发送模拟命令" Background="Aquamarine" Name="btSendCmd" Click="btSendCmd_Click" BorderBrush="DarkGray"/>
         </StackPanel>
-        <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0, 10, 0, 10">
+        <StackPanel Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0, 10, 0, 10">
             <Button Content="采集一次" Background="#FFEF2B2B" BorderBrush="#FF585555" Width="120" Name="btRequestSingle" HorizontalAlignment="Left" Margin="0, 0, 20, 0" />
             <Button Content="持续采集" Background="#FF45F521" BorderBrush="#FF585555" Width="120" Name="btRequestContinue" Margin="0, 0, 20, 0"/>
             <!--<Button Content="持续获取（定时器）" Style="{StaticResource ButtonInfo}" Width="180" Name="btRequestTimer" HorizontalAlignment="Right"/>-->
+            <Button Content="保持" Background="#FF45F521" BorderBrush="#FF585555" Width="60" Name="btHold" Margin="0, 0, 20, 0" Click="btHold_Click"/>
             <Button Content="谐波" Background="#FF45F521" BorderBrush="#FF585555" Width="60" Name="btHarmonic" Margin="0, 0, 20, 0"/>
             <TextBlock Name="ErrInfoText" Width="120" TextAlignment="Center" Margin="20, 0,0,0" Text="" Visibility="Collapsed"/>
         </StackPanel>
-        <DataGrid Margin="10" Grid.Row="3" Grid.RowSpan="2" Name="dataGrid" ItemsSource="{Binding DataTableSource}" 
+        <DataGrid Margin="10" Grid.Row="4" Grid.RowSpan="2" Name="dataGrid" ItemsSource="{Binding DataTableSource}" 
                   FontSize="18" CanUserSortColumns="False" GridLinesVisibility="None" CanUserReorderColumns="False" CanUserResizeColumns="False"
                   Width="500" HorizontalAlignment="Left" MaxHeight="400" VerticalAlignment="Top" CanUserAddRows="False" CanUserDeleteRows="False" 
                   CanUserResizeRows="False" AutoGenerateColumns="False">
@@ -100,17 +105,17 @@
                 <DataGridTextColumn Header="电压频率" Binding="{Binding Path=电压频率, StringFormat='F2'}" IsReadOnly="True" CellStyle="{StaticResource DataGridCellStyle}"/>
             </DataGrid.Columns>
         </DataGrid>
-        <ScrollViewer Margin="10" Grid.Column="1" Grid.Row="3" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Disabled" Name="ScrollSendCommand">
+        <ScrollViewer Margin="10" Grid.Column="1" Grid.Row="4" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Disabled" Name="ScrollSendCommand">
             <hc:TextBox Text=""  Name="tbSendCommand" IsReadOnly="True"
                        TextWrapping="Wrap"   HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Top" BorderThickness="0"
                        Padding="10" />
         </ScrollViewer>
-        <ScrollViewer Margin="10" Grid.Column="1" Grid.Row="4" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Disabled" Name="ScrollReceiveMsg">
+        <ScrollViewer Margin="10" Grid.Column="1" Grid.Row="5" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Disabled" Name="ScrollReceiveMsg">
             <hc:TextBox Text=""  Name="tbReceiveMsg" IsReadOnly="True"
                        TextWrapping="Wrap"   HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Top" BorderThickness="0"
                        Padding="10" />
         </ScrollViewer>
-        <Border Grid.Column="1" Grid.Row="3" BorderThickness="1" BorderBrush="LightGray" Margin="10"/>
         <Border Grid.Column="1" Grid.Row="4" BorderThickness="1" BorderBrush="LightGray" Margin="10"/>
+        <Border Grid.Column="1" Grid.Row="5" BorderThickness="1" BorderBrush="LightGray" Margin="10"/>
     </Grid>
 </UserControl>
