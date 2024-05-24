@@ -403,8 +403,13 @@ namespace ABBDataManagerSystem.Pages
                 {
                     return;
                 }
-                string key = $"{i + count + 1}";
+                var maxKey = i + count + 1;
+                string key = $"{maxKey}";
                 RatioValueFields[key].TappingVoltage = v;
+            }
+            for (int i = (count * 2 + 1) + 1; i <= MAX_HV_COUNT; i++)
+            {
+                RatioValueFields[i.ToString()].TappingVoltage = 0;
             }
         }
     }
