@@ -132,7 +132,10 @@ namespace ABBDataManagerSystem.Pages
                     {
                         Collector = null;
                         IsConneted = false;
-                        swConnect.IsChecked = false;
+                        Dispatcher.Invoke(() =>
+                        {
+                            swConnect.IsChecked = false;
+                        });
                     }
                     else
                     {
@@ -159,8 +162,8 @@ namespace ABBDataManagerSystem.Pages
             cbBoundRate.IsEnabled = !IsConneted;
             cbSerialPort.IsEnabled = !IsConneted;
 
-            btStart.IsEnabled = IsConneted && !IsCollecting;
-            btStop.IsEnabled = IsConneted && IsCollecting;
+            //btStart.IsEnabled = IsConneted && !IsCollecting;
+            //btStop.IsEnabled = IsConneted && IsCollecting;
 
             cbHVCurrents.IsEnabled = cbCH1.IsChecked == true;
             cbLVCurrents.IsEnabled = cbCH2.IsChecked == true;
@@ -253,14 +256,6 @@ namespace ABBDataManagerSystem.Pages
             }).Start();
         }
 
-        private void btStart_Click(object sender, RoutedEventArgs e)
-        {
-        }
-
-        private void btStop_Click(object sender, RoutedEventArgs e)
-        {
-        }
-
         private void StopSyncState()
         {
             if (!IsCollecting)
@@ -307,6 +302,57 @@ namespace ABBDataManagerSystem.Pages
             {
                 Collector.CH2CurrentConfig = JinYuan20WCollector.GetCH2CurrentConfig(cbLVCurrents.SelectedItem.ToString());
             }
+        }
+
+        private void btTime_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void btRecord_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void btTest_Click(object sender, RoutedEventArgs e)
+        {
+            if (!IsConneted)
+            {
+                MessageBox.Show("请先连接设备！");
+                return;
+            }
+            panelConfig.IsEnabled = false;
+            panelTestChoice.IsEnabled = false;
+        }
+
+        private void btSetInterval_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void cbTestType_SelectionChanged(object sender, RoutedEventArgs e)
+        {
+            string? selectedType = cbTestType.SelectedItem != null ? cbTestType.SelectedItem.ToString() : null;
+            if (selectedType == null)
+            {
+                return;
+            }
+            if (selectedType.Contains("常规"))
+            {
+                btSetInterval.Visibility = Visibility.Collapsed;
+                btTest.Visibility = Visibility.Visible;
+            }
+            else if (selectedType.Contains("温升"))
+            {
+                btSetInterval.Visibility = Visibility.Visible;
+                btTest.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void btQuitTest_Click(object sender, RoutedEventArgs e)
+        {
+            panelConfig.IsEnabled = true;
+            panelTestChoice.IsEnabled = true;
         }
     }
 
