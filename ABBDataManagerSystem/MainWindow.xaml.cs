@@ -66,6 +66,19 @@ namespace ABBDataManagerSystem
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            foreach (var item in tabControl.Items)
+            {
+                var tabItem = item as TabItem;
+                if  (tabItem == null)
+                {
+                    continue;
+                }
+                var closeable = tabItem.Content as ICloseable;
+                if (closeable != null)
+                {
+                    closeable.Close();
+                }
+            }
             Configs.Configs.SaveToFile();
         }
 

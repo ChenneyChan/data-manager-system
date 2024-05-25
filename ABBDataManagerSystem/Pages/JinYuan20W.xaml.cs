@@ -11,7 +11,7 @@ namespace ABBDataManagerSystem.Pages
     /// <summary>
     /// JinYuan20W.xaml 的交互逻辑
     /// </summary>
-    public partial class JinYuan20W : UserControl
+    public partial class JinYuan20W : UserControl, ICloseable
     {
         private JinYuan20WCollector? Collector = null;
         private List<CurrentResistanceInfo> dataItems = new List<CurrentResistanceInfo>();
@@ -21,6 +21,7 @@ namespace ABBDataManagerSystem.Pages
         private ManualResetEvent? ResetEvent = null;
         private bool CommandChange = false;
 
+        private Dictionary<string, TappingResistanceFields> tappingResistanceFields = new Dictionary<string, TappingResistanceFields>();
         private Dictionary<string, ToggleButton> highVoltageToggleButtons = new Dictionary<string, ToggleButton>();
         private Dictionary<string, ToggleButton> lowVoltageToggleButtons = new Dictionary<string, ToggleButton>();
         private Dictionary<string, ToggleButton> tappingToggleButtons = new Dictionary<string, ToggleButton>();
@@ -35,6 +36,8 @@ namespace ABBDataManagerSystem.Pages
         {
             InitializeComponent();
             InitToggleButtons();
+            InitTappings();
+            btSetInterval.Visibility = Visibility.Collapsed;
 
             dataItems.Add(new CurrentResistanceInfo() { Current = 101.2f, SortIndex = 42, Resistance = 222.2f });
             dataItems.Add(new CurrentResistanceInfo() { Current = 101.2f, SortIndex = 39, Resistance = 222.2f });
@@ -92,6 +95,26 @@ namespace ABBDataManagerSystem.Pages
             testTypeToggleButtons.Add(TestType20W.TemperatureRise10Sec, tbTestTypeTempRise10s);
             testTypeToggleButtons.Add(TestType20W.TemperatureRise30Sec, tbTestTypeTempRise30s);
             testTypeToggleButtons.Add(TestType20W.TemperatureRise60Sec, tbTestTypeTempRise60s);
+        }
+
+        private void InitTappings()
+        {
+            tappingResistanceFields.Add("1", trTap1);
+            tappingResistanceFields.Add("2", trTap2);
+            tappingResistanceFields.Add("3", trTap3);
+            tappingResistanceFields.Add("4", trTap4);
+            tappingResistanceFields.Add("5", trTap5);
+            tappingResistanceFields.Add("6", trTap6);
+            tappingResistanceFields.Add("7", trTap7);
+            tappingResistanceFields.Add("8", trTap8);
+            tappingResistanceFields.Add("9", trTap9);
+            tappingResistanceFields.Add("10", trTap10);
+
+            tappingResistanceFields.Add("11", trTap11);
+            tappingResistanceFields.Add("12", trTap12);
+
+            tappingResistanceFields.Add("21", trTap21);
+            tappingResistanceFields.Add("22", trTap22);
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
@@ -216,6 +239,11 @@ namespace ABBDataManagerSystem.Pages
         }
 
         private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+
+        public void Close()
         {
             IsCollecting = false;
             if (Collector != null)
@@ -436,6 +464,28 @@ namespace ABBDataManagerSystem.Pages
                 SelectedTesting = null;
             }
             DumpSelectedTapping();
+
+            if (SelectedTesting == null)
+            {
+                btTest.Visibility = Visibility.Collapsed;
+                btSetInterval.Visibility = Visibility.Collapsed;
+            }
+            else if (SelectedTesting == TestType20W.CommonTest)
+            {
+                btTest.Visibility = Visibility.Visible;
+                btSetInterval.Visibility = Visibility.Collapsed;
+
+                panelTappingChoice.Visibility = Visibility.Visible;
+                panelCommonTestResult.Visibility = Visibility.Visible;
+            } 
+            else
+            {
+                btTest.Visibility = Visibility.Collapsed;
+                btSetInterval.Visibility = Visibility.Visible;
+
+                panelTappingChoice.Visibility = Visibility.Collapsed;
+                panelCommonTestResult.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void HighVoltageSelectedTappingChange(object sender, RoutedEventArgs e)

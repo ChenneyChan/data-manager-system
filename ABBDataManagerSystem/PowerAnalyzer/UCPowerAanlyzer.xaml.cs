@@ -24,7 +24,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
     /// <summary>
     /// UCPowerAanlyzer.xaml 的交互逻辑
     /// </summary>
-    public partial class UCPowerAanlyzer : UserControl
+    public partial class UCPowerAanlyzer : UserControl, ICloseable
     {
         enum EncodeType { ASCII, BINARY }
 
@@ -1049,6 +1049,11 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         ///Dialog Close
         //********************************************
         private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+
+        public void Close()
         {
             //close connection after exiting.
             connection.Finish();

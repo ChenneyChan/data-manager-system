@@ -8,7 +8,7 @@ namespace ABBDataManagerSystem.Pages.Views
     /// </summary>
     public partial class TappingResistanceFields : UserControl
     {
-        private float _ValueAB = 100;
+        private float _ValueAB = 0;
 
         public float ValueAB
         {
@@ -16,7 +16,7 @@ namespace ABBDataManagerSystem.Pages.Views
             set { _ValueAB = value; UpdateDisplay(); }
         }
 
-        private float _ValueBC = 100;
+        private float _ValueBC = 0;
 
         public float ValueBC
         {
@@ -24,7 +24,7 @@ namespace ABBDataManagerSystem.Pages.Views
             set { _ValueBC = value; UpdateDisplay(); }
         }
 
-        private float _ValueCA = 100;
+        private float _ValueCA = 0;
 
         public float ValueCA
         {

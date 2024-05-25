@@ -26,6 +26,16 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <!-- 你可以在这里添加鼠标悬停、按下等状态的触发器 -->
+                            <!-- Trigger for Disabled state -->
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Background" Value="#D3D3D3" />
+                                <Setter Property="BorderBrush" Value="#A9A9A9" />
+                            </Trigger>
+                            <!-- Trigger for MouseOver state -->
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#FF4500" />
+                                <Setter Property="BorderBrush" Value="#FF6347" />
+                            </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>

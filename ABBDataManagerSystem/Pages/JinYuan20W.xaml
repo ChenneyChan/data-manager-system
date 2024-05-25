@@ -21,12 +21,22 @@
             <Setter Property="Width" Value="120"/>
             <Setter Property="Height" Value="36"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Background" Value="Aquamarine"/>
+            <Setter Property="Foreground" Value="Black"/>
+            <!--<Setter Property="FontWeight" Value="Bold"/>-->
+        </Style>
+        <Style TargetType="Views:ToggleButton">
+            <Setter Property="Height" Value="36"/>
         </Style>
         <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
             <Setter Property="FontSize" Value="16"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
         <Style TargetType="hc:ComboBox" BasedOn="{StaticResource GlobalComboBoxStyle}">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style TargetType="hc:TextBox" BasedOn="{StaticResource GlobalTextBoxStyle}">
             <Setter Property="FontSize" Value="16"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
@@ -96,8 +106,8 @@
             </StackPanel>
             <!--<Button Content="时间" HorizontalAlignment="Left" Margin="0,0,10,0" Name="btTime" Click="btTime_Click"/>
             <Button Content="记录" HorizontalAlignment="Left" Margin="0,0,10,0" Name="btRecord" Click="btRecord_Click"/>-->
-            <Button Content="常规测试" HorizontalAlignment="Left" Margin="0,0,10,0" Name="btTest" Click="btTest_Click"/>
-            <Button Content="定时" HorizontalAlignment="Left" Margin="0,0,10,0" Name="btSetInterval" Click="btSetInterval_Click"/>
+            <Button Content="常规测试" HorizontalAlignment="Left" Margin="10,0,10,0" FontWeight="Bold" Foreground="DarkBlue" Name="btTest" Click="btTest_Click"/>
+            <Button Content="定时"     HorizontalAlignment="Left" Margin="10,0,10,0" FontWeight="Bold" Foreground="DarkBlue" Name="btSetInterval" Click="btSetInterval_Click"/>
         </StackPanel>
         <Grid Grid.Row="3" Margin="10">
             <Grid.ColumnDefinitions>
@@ -106,50 +116,52 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <StackPanel Orientation="Vertical" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0, 20, 5, 0" Width="200">
-                <!--<TextBlock Text="绕组" HorizontalAlignment="Center" FontSize="18" Margin="0, 0, 0, 10"/>-->
-                <TextBlock Text="分接" HorizontalAlignment="Center" FontSize="18" Margin="0, 0, 0, 10" FontWeight="Bold"/>
-                <WrapPanel Orientation="Horizontal">
-                    <Views:ToggleButton ButtonContent="1分接"   Width="{StaticResource tbContentWidth}" Height="{StaticResource tbContentHeight}" CheckedChange="TappingSelectedTappingChange" x:Name="tbTapping1"/>
-                    <Views:ToggleButton ButtonContent="2分接"   Width="{StaticResource tbContentWidth}" Height="{StaticResource tbContentHeight}" CheckedChange="TappingSelectedTappingChange" x:Name="tbTapping2"/>
-                    <Views:ToggleButton ButtonContent="3分接"   Width="{StaticResource tbContentWidth}" Height="{StaticResource tbContentHeight}" CheckedChange="TappingSelectedTappingChange" x:Name="tbTapping3"/>
-                    <Views:ToggleButton ButtonContent="4分接"   Width="{StaticResource tbContentWidth}" Height="{StaticResource tbContentHeight}" CheckedChange="TappingSelectedTappingChange" x:Name="tbTapping4"/>
-                    <Views:ToggleButton ButtonContent="5分接"   Width="{StaticResource tbContentWidth}" Height="{StaticResource tbContentHeight}" CheckedChange="TappingSelectedTappingChange" x:Name="tbTapping5"/>
-                    <Views:ToggleButton ButtonContent="6分接"   Width="{StaticResource tbContentWidth}" Height="{StaticResource tbContentHeight}" CheckedChange="TappingSelectedTappingChange" x:Name="tbTapping6"/>
-                    <Views:ToggleButton ButtonContent="7分接"   Width="{StaticResource tbContentWidth}" Height="{StaticResource tbContentHeight}" CheckedChange="TappingSelectedTappingChange" x:Name="tbTapping7"/>
-                    <Views:ToggleButton ButtonContent="8分接"   Width="{StaticResource tbContentWidth}" Height="{StaticResource tbContentHeight}" CheckedChange="TappingSelectedTappingChange" x:Name="tbTapping8"/>
-                    <Views:ToggleButton ButtonContent="9分接"   Width="{StaticResource tbContentWidth}" Height="{StaticResource tbContentHeight}" CheckedChange="TappingSelectedTappingChange" x:Name="tbTapping9"/>
-                    <Views:ToggleButton ButtonContent="2-1分接" Width="{StaticResource tbContentWidth}" Height="{StaticResource tbContentHeight}" CheckedChange="TappingSelectedTappingChange" x:Name="tbTapping21"/>
-                </WrapPanel>
-                <hc:Divider Margin="5"/>
-                <TextBlock Text="高压绕组" HorizontalAlignment="Center" FontSize="18" Margin="0, 0, 0, 10" FontWeight="Bold"/>
-                <StackPanel Orientation="Horizontal">
-                    <Views:ToggleButton ButtonContent="A - B" Width="{StaticResource tbContentWidth}" Height="{StaticResource tbContentHeight}" CheckedChange="HighVoltageSelectedTappingChange" x:Name="tbAB"/>
-                    <Views:ToggleButton ButtonContent="A - 0" Width="{StaticResource tbContentWidth}" Height="{StaticResource tbContentHeight}" CheckedChange="HighVoltageSelectedTappingChange" x:Name="tbAO"/>
+            <ScrollViewer>
+                <StackPanel Orientation="Vertical" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0, 20, 5, 0" Width="200" Name="panelTappingChoice">
+                    <!--<TextBlock Text="绕组" HorizontalAlignment="Center" FontSize="18" Margin="0, 0, 0, 10"/>-->
+                    <TextBlock Text="分接" HorizontalAlignment="Center" FontSize="18" Margin="0, 0, 0, 10" FontWeight="Bold"/>
+                    <WrapPanel Orientation="Horizontal">
+                        <Views:ToggleButton ButtonContent="1分接"   Width="{StaticResource tbContentWidth}" Height="{StaticResource tbContentHeight}" CheckedChange="TappingSelectedTappingChange" x:Name="tbTapping1"/>
+                        <Views:ToggleButton ButtonContent="2分接"   Width="{StaticResource tbContentWidth}" Height="{StaticResource tbContentHeight}" CheckedChange="TappingSelectedTappingChange" x:Name="tbTapping2"/>
+                        <Views:ToggleButton ButtonContent="3分接"   Width="{StaticResource tbContentWidth}" Height="{StaticResource tbContentHeight}" CheckedChange="TappingSelectedTappingChange" x:Name="tbTapping3"/>
+                        <Views:ToggleButton ButtonContent="4分接"   Width="{StaticResource tbContentWidth}" Height="{StaticResource tbContentHeight}" CheckedChange="TappingSelectedTappingChange" x:Name="tbTapping4"/>
+                        <Views:ToggleButton ButtonContent="5分接"   Width="{StaticResource tbContentWidth}" Height="{StaticResource tbContentHeight}" CheckedChange="TappingSelectedTappingChange" x:Name="tbTapping5"/>
+                        <Views:ToggleButton ButtonContent="6分接"   Width="{StaticResource tbContentWidth}" Height="{StaticResource tbContentHeight}" CheckedChange="TappingSelectedTappingChange" x:Name="tbTapping6"/>
+                        <Views:ToggleButton ButtonContent="7分接"   Width="{StaticResource tbContentWidth}" Height="{StaticResource tbContentHeight}" CheckedChange="TappingSelectedTappingChange" x:Name="tbTapping7"/>
+                        <Views:ToggleButton ButtonContent="8分接"   Width="{StaticResource tbContentWidth}" Height="{StaticResource tbContentHeight}" CheckedChange="TappingSelectedTappingChange" x:Name="tbTapping8"/>
+                        <Views:ToggleButton ButtonContent="9分接"   Width="{StaticResource tbContentWidth}" Height="{StaticResource tbContentHeight}" CheckedChange="TappingSelectedTappingChange" x:Name="tbTapping9"/>
+                        <Views:ToggleButton ButtonContent="2-1分接" Width="{StaticResource tbContentWidth}" Height="{StaticResource tbContentHeight}" CheckedChange="TappingSelectedTappingChange" x:Name="tbTapping21"/>
+                    </WrapPanel>
+                    <hc:Divider Margin="5"/>
+                    <TextBlock Text="高压绕组" HorizontalAlignment="Center" FontSize="18" Margin="0, 0, 0, 10" FontWeight="Bold"/>
+                    <StackPanel Orientation="Horizontal">
+                        <Views:ToggleButton ButtonContent="A - B" Width="{StaticResource tbContentWidth}" Height="{StaticResource tbContentHeight}" CheckedChange="HighVoltageSelectedTappingChange" x:Name="tbAB"/>
+                        <Views:ToggleButton ButtonContent="A - 0" Width="{StaticResource tbContentWidth}" Height="{StaticResource tbContentHeight}" CheckedChange="HighVoltageSelectedTappingChange" x:Name="tbAO"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Views:ToggleButton ButtonContent="B - C" Width="{StaticResource tbContentWidth}" Height="{StaticResource tbContentHeight}" CheckedChange="HighVoltageSelectedTappingChange" x:Name="tbBC"/>
+                        <Views:ToggleButton ButtonContent="B - 0" Width="{StaticResource tbContentWidth}" Height="{StaticResource tbContentHeight}" CheckedChange="HighVoltageSelectedTappingChange" x:Name="tbBO"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Views:ToggleButton ButtonContent="C - A" Width="{StaticResource tbContentWidth}" Height="{StaticResource tbContentHeight}" CheckedChange="HighVoltageSelectedTappingChange" x:Name="tbCA"/>
+                        <Views:ToggleButton ButtonContent="C - 0" Width="{StaticResource tbContentWidth}" Height="{StaticResource tbContentHeight}" CheckedChange="HighVoltageSelectedTappingChange" x:Name="tbCO"/>
+                    </StackPanel>
+                    <hc:Divider Margin="5"/>
+                    <TextBlock Text="低压绕组" HorizontalAlignment="Center" FontSize="18" Margin="0, 0, 0, 10" FontWeight="Bold"/>
+                    <StackPanel Orientation="Horizontal">
+                        <Views:ToggleButton ButtonContent="a - b" Width="{StaticResource tbContentWidth}" Height="{StaticResource tbContentHeight}" CheckedChange="LowVoltageSelectedTappingChange" x:Name="tbab"/>
+                        <Views:ToggleButton ButtonContent="a - o" Width="{StaticResource tbContentWidth}" Height="{StaticResource tbContentHeight}" CheckedChange="LowVoltageSelectedTappingChange" x:Name="tbao"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Views:ToggleButton ButtonContent="b - c" Width="{StaticResource tbContentWidth}" Height="{StaticResource tbContentHeight}" CheckedChange="LowVoltageSelectedTappingChange" x:Name="tbbc"/>
+                        <Views:ToggleButton ButtonContent="b - o" Width="{StaticResource tbContentWidth}" Height="{StaticResource tbContentHeight}" CheckedChange="LowVoltageSelectedTappingChange" x:Name="tbbo"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Views:ToggleButton ButtonContent="c - a" Width="{StaticResource tbContentWidth}" Height="{StaticResource tbContentHeight}" CheckedChange="LowVoltageSelectedTappingChange" x:Name="tbca"/>
+                        <Views:ToggleButton ButtonContent="c - o" Width="{StaticResource tbContentWidth}" Height="{StaticResource tbContentHeight}" CheckedChange="LowVoltageSelectedTappingChange" x:Name="tbco"/>
+                    </StackPanel>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <Views:ToggleButton ButtonContent="B - C" Width="{StaticResource tbContentWidth}" Height="{StaticResource tbContentHeight}" CheckedChange="HighVoltageSelectedTappingChange" x:Name="tbBC"/>
-                    <Views:ToggleButton ButtonContent="B - 0" Width="{StaticResource tbContentWidth}" Height="{StaticResource tbContentHeight}" CheckedChange="HighVoltageSelectedTappingChange" x:Name="tbBO"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <Views:ToggleButton ButtonContent="C - A" Width="{StaticResource tbContentWidth}" Height="{StaticResource tbContentHeight}" CheckedChange="HighVoltageSelectedTappingChange" x:Name="tbCA"/>
-                    <Views:ToggleButton ButtonContent="C - 0" Width="{StaticResource tbContentWidth}" Height="{StaticResource tbContentHeight}" CheckedChange="HighVoltageSelectedTappingChange" x:Name="tbCO"/>
-                </StackPanel>
-                <hc:Divider Margin="5"/>
-                <TextBlock Text="低压绕组" HorizontalAlignment="Center" FontSize="18" Margin="0, 0, 0, 10" FontWeight="Bold"/>
-                <StackPanel Orientation="Horizontal">
-                    <Views:ToggleButton ButtonContent="a - b" Width="{StaticResource tbContentWidth}" Height="{StaticResource tbContentHeight}" CheckedChange="LowVoltageSelectedTappingChange" x:Name="tbab"/>
-                    <Views:ToggleButton ButtonContent="a - o" Width="{StaticResource tbContentWidth}" Height="{StaticResource tbContentHeight}" CheckedChange="LowVoltageSelectedTappingChange" x:Name="tbao"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <Views:ToggleButton ButtonContent="b - c" Width="{StaticResource tbContentWidth}" Height="{StaticResource tbContentHeight}" CheckedChange="LowVoltageSelectedTappingChange" x:Name="tbbc"/>
-                    <Views:ToggleButton ButtonContent="b - o" Width="{StaticResource tbContentWidth}" Height="{StaticResource tbContentHeight}" CheckedChange="LowVoltageSelectedTappingChange" x:Name="tbbo"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <Views:ToggleButton ButtonContent="c - a" Width="{StaticResource tbContentWidth}" Height="{StaticResource tbContentHeight}" CheckedChange="LowVoltageSelectedTappingChange" x:Name="tbca"/>
-                    <Views:ToggleButton ButtonContent="c - o" Width="{StaticResource tbContentWidth}" Height="{StaticResource tbContentHeight}" CheckedChange="LowVoltageSelectedTappingChange" x:Name="tbco"/>
-                </StackPanel>
-            </StackPanel>
+            </ScrollViewer>
             <!--列表分组-->
             <DataGrid Visibility="Collapsed" Grid.Row="0" Grid.Column="0" Name="lvUsers" AutoGenerateColumns="False" ItemsSource="{Binding Items}" FontSize="18" CanUserAddRows="False" CanUserDeleteRows="False" CanUserSortColumns="False">
                 <DataGrid.Columns>
@@ -158,7 +170,9 @@
                     <DataGridTextColumn Header="电阻" Width="120" Binding="{Binding Resistance}" IsReadOnly="True"/>
                 </DataGrid.Columns>
             </DataGrid>
-            <Grid Grid.Column="1" Width="580" MinHeight="620">
+
+            <ScrollViewer Grid.Column="1" >
+                <Grid Width="580" MinHeight="660" Name="panelCommonTestResult">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition/>
@@ -191,6 +205,11 @@
                     <RowDefinition/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
+                <StackPanel Orientation="Horizontal" Margin="400, 0, 0, 0" Grid.ColumnSpan="6">
+                    <TextBlock Text="温度"/>
+                    <hc:TextBox Width="60" Margin="5,0,0,0" Text="21.0" TextAlignment="Center" BorderThickness="0" Name="tbTemperature"/>
+                    <TextBlock Text="℃"/>
+                </StackPanel>
                 <TextBlock Text="高压（串联）" Grid.ColumnSpan="6" HorizontalAlignment="Center" FontWeight="Bold"/>
                 <TextBlock Grid.Row="1" Grid.Column="0" Grid.RowSpan="2" Text="绕组" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 <TextBlock Grid.Row="1" Grid.Column="1" Grid.RowSpan="2" Text="分接位置" VerticalAlignment="Center" HorizontalAlignment="Center"/>
@@ -209,20 +228,20 @@
                 <TextBlock Grid.Row="9" Grid.Column="1" Text="7" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 <TextBlock Grid.Row="10" Grid.Column="1" Text="8" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 <TextBlock Grid.Row="11" Grid.Column="1" Text="9" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <Views:TappingResistanceFields Grid.Row="3" Grid.Column="2"  Grid.ColumnSpan="3"/>
-                <Views:TappingResistanceFields Grid.Row="4" Grid.Column="2"  Grid.ColumnSpan="3"/>
-                <Views:TappingResistanceFields Grid.Row="5" Grid.Column="2"  Grid.ColumnSpan="3"/>
-                <Views:TappingResistanceFields Grid.Row="6" Grid.Column="2"  Grid.ColumnSpan="3"/>
-                <Views:TappingResistanceFields Grid.Row="7" Grid.Column="2"  Grid.ColumnSpan="3"/>
-                <Views:TappingResistanceFields Grid.Row="8" Grid.Column="2"  Grid.ColumnSpan="3"/>
-                <Views:TappingResistanceFields Grid.Row="9" Grid.Column="2"  Grid.ColumnSpan="3"/>
-                <Views:TappingResistanceFields Grid.Row="10" Grid.Column="2"  Grid.ColumnSpan="3"/>
-                <Views:TappingResistanceFields Grid.Row="11" Grid.Column="2"  Grid.ColumnSpan="3"/>
+                <Views:TappingResistanceFields Grid.Row="3" Grid.Column="2"  Grid.ColumnSpan="3" x:Name="trTap1"/>
+                <Views:TappingResistanceFields Grid.Row="4" Grid.Column="2"  Grid.ColumnSpan="3" x:Name="trTap2"/>
+                <Views:TappingResistanceFields Grid.Row="5" Grid.Column="2"  Grid.ColumnSpan="3" x:Name="trTap3"/>
+                <Views:TappingResistanceFields Grid.Row="6" Grid.Column="2"  Grid.ColumnSpan="3" x:Name="trTap4"/>
+                <Views:TappingResistanceFields Grid.Row="7" Grid.Column="2"  Grid.ColumnSpan="3" x:Name="trTap5"/>
+                <Views:TappingResistanceFields Grid.Row="8" Grid.Column="2"  Grid.ColumnSpan="3" x:Name="trTap6"/>
+                <Views:TappingResistanceFields Grid.Row="9" Grid.Column="2"  Grid.ColumnSpan="3" x:Name="trTap7"/>
+                <Views:TappingResistanceFields Grid.Row="10" Grid.Column="2"  Grid.ColumnSpan="3" x:Name="trTap8"/>
+                <Views:TappingResistanceFields Grid.Row="11" Grid.Column="2"  Grid.ColumnSpan="3" x:Name="trTap9"/>
                 <TextBlock Grid.Row="12" Grid.Column="1" Grid.RowSpan="2" Text="额定分接" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap"/>
                 <TextBlock Grid.Row="12" Grid.Column="2" Text="A~O" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 <TextBlock Grid.Row="12" Grid.Column="3" Text="B~O" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 <TextBlock Grid.Row="12" Grid.Column="4" Text="C~O" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <Views:TappingResistanceFields Grid.Row="13" Grid.Column="2"  Grid.ColumnSpan="3"/>
+                <Views:TappingResistanceFields Grid.Row="13" Grid.Column="2"  Grid.ColumnSpan="3" x:Name="trTap10"/>
                 <TextBlock Grid.Row="14" Grid.Column="0" Grid.RowSpan="4" Text="低压一" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap"/>
                 <TextBlock Grid.Row="18" Grid.Column="0" Grid.RowSpan="4" Text="低压二" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap"/>
                 <TextBlock Grid.Row="14" Grid.Column="1" Grid.RowSpan="2" Text="线电压" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap"/>
@@ -232,19 +251,24 @@
                 <TextBlock Grid.Row="14" Grid.Column="2" Text="a~b" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 <TextBlock Grid.Row="14" Grid.Column="3" Text="b~c" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 <TextBlock Grid.Row="14" Grid.Column="4" Text="c~a" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <Views:TappingResistanceFields Grid.Row="15" Grid.Column="2"  Grid.ColumnSpan="3"/>
+                <Views:TappingResistanceFields Grid.Row="15" Grid.Column="2"  Grid.ColumnSpan="3" x:Name="trTap11"/>
                 <TextBlock Grid.Row="16" Grid.Column="2" Text="a~o" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 <TextBlock Grid.Row="16" Grid.Column="3" Text="b~o" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 <TextBlock Grid.Row="16" Grid.Column="4" Text="c~o" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <Views:TappingResistanceFields Grid.Row="17" Grid.Column="2"  Grid.ColumnSpan="3"/>
+                <Views:TappingResistanceFields Grid.Row="17" Grid.Column="2"  Grid.ColumnSpan="3" x:Name="trTap12"/>
                 <TextBlock Grid.Row="18" Grid.Column="2" Text="a~b" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 <TextBlock Grid.Row="18" Grid.Column="3" Text="b~c" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 <TextBlock Grid.Row="18" Grid.Column="4" Text="c~a" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <Views:TappingResistanceFields Grid.Row="19" Grid.Column="2"  Grid.ColumnSpan="3"/>
+                <Views:TappingResistanceFields Grid.Row="19" Grid.Column="2"  Grid.ColumnSpan="3" x:Name="trTap21"/>
                 <TextBlock Grid.Row="20" Grid.Column="2" Text="a~o" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 <TextBlock Grid.Row="20" Grid.Column="3" Text="b~o" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 <TextBlock Grid.Row="20" Grid.Column="4" Text="c~o" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <Views:TappingResistanceFields Grid.Row="21" Grid.Column="2"  Grid.ColumnSpan="3"/>
+                <Views:TappingResistanceFields Grid.Row="21" Grid.Column="2"  Grid.ColumnSpan="3" x:Name="trTap22"/>
+                <hc:TextBox Grid.Column="5" Grid.Row="3" Grid.RowSpan="11" Height="30" Width="80" BorderThickness="0" Name="tbHVMaxUnbalanceDiff"/>
+                <hc:TextBox Grid.Column="5" Grid.Row="14" Grid.RowSpan="2" Height="30" Width="80" BorderThickness="0" Name="tbLVMaxUnbalanceDiff11"/>
+                <hc:TextBox Grid.Column="5" Grid.Row="16" Grid.RowSpan="2" Height="30" Width="80" BorderThickness="0" Name="tbLVMaxUnbalanceDiff12"/>
+                <hc:TextBox Grid.Column="5" Grid.Row="18" Grid.RowSpan="2" Height="30" Width="80" BorderThickness="0" Name="tbLVMaxUnbalanceDiff21"/>
+                <hc:TextBox Grid.Column="5" Grid.Row="20" Grid.RowSpan="2" Height="30" Width="80" BorderThickness="0" Name="tbLVMaxUnbalanceDiff22"/>
                 <!--绘制边框-->
                 <Border Grid.Column="0" Grid.Row="1" Grid.RowSpan="2" BorderThickness="1"/>
                 <Border Grid.Column="1" Grid.Row="1" Grid.RowSpan="2" Grid.ColumnSpan="1" BorderThickness="0, 1, 0, 1"/>
@@ -296,6 +320,7 @@
                 <Border Grid.Row="18" Grid.Column="5" Grid.RowSpan="2" BorderThickness="0, 0, 1, 1"/>
                 <Border Grid.Row="20" Grid.Column="5" Grid.RowSpan="2" BorderThickness="0, 0, 1, 1"/>
             </Grid>
+            </ScrollViewer>
             
             <Grid Grid.Column="3" Margin="20" Width="400" Height="310" VerticalAlignment="Top" HorizontalAlignment="Left">
                 <Grid.ColumnDefinitions>

@@ -7,10 +7,11 @@ using static ABBDataManagerSystem.Connector.JinYuanJYTACollector;
 
 namespace ABBDataManagerSystem.Pages
 {
+
     /// <summary>
     /// JinYuanJYT_A.xaml 的交互逻辑
     /// </summary>
-    public partial class JinYuanJYT_A : UserControl
+    public partial class JinYuanJYT_A : UserControl, ICloseable
     {
         private Dictionary<string, TappingVoltageRatioFields> RatioValueFields = new Dictionary<string, TappingVoltageRatioFields>();
         private Dictionary<string, JinYunJYTATestResult> SavedResults = new Dictionary<string, JinYunJYTATestResult>();
@@ -217,6 +218,11 @@ namespace ABBDataManagerSystem.Pages
         }
 
         private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+
+        public void Close()
         {
             if (Collector != null)
             {

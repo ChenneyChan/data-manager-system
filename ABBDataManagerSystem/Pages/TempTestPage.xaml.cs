@@ -17,7 +17,7 @@ namespace ABBDataManagerSystem.Pages
     /// <summary>
     /// TempTestPage.xaml 的交互逻辑
     /// </summary>
-    public partial class TempTestPage : UserControl
+    public partial class TempTestPage : UserControl, ICloseable
     {
         private static bool Simulate = false;
 
@@ -267,11 +267,15 @@ namespace ABBDataManagerSystem.Pages
             });
         }
 
-        private void Destroy()
+        public void Close()
         {
             if (IsCollecting)
             {
                 IsCollecting = false;
+            }
+            if (ResetEvent != null)
+            {
+                ResetEvent.Set();
             }
         }
 
@@ -609,7 +613,7 @@ namespace ABBDataManagerSystem.Pages
 
         private void UserControl_Unloaded(object sender, RoutedEventArgs e)
         {
-            Destroy();
+            Close();
         }
 
         private void mcbSelectedSlots_SelectionChanged(object sender, SelectionChangedEventArgs e)
