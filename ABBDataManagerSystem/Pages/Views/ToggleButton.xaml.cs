@@ -29,11 +29,20 @@ namespace ABBDataManagerSystem.Pages.Views
             set { _IsChecked = value; UpdateBackground(); }
         }
 
+        private float _GridMargin = 5;
+
+        public float GridMargin
+        {
+            get { return _GridMargin; }
+            set { _GridMargin = value; UpdateMargin(); }
+        }
+
 
         public ToggleButton()
         {
             InitializeComponent();
             UpdateBackground();
+            UpdateMargin();
             btContentButton.Content = _ButtonContent;
         }
        
@@ -53,6 +62,11 @@ namespace ABBDataManagerSystem.Pages.Views
             IsChecked = !IsChecked;
             UpdateBackground();
             if (CheckedChange != null) { CheckedChange(this, e); };
+        }
+
+        private void UpdateMargin()
+        {
+            mainGrid.Margin = new Thickness(_GridMargin);
         }
     }
 }

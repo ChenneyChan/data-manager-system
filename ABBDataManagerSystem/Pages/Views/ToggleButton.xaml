@@ -32,7 +32,7 @@
             </Setter>
         </Style>
     </UserControl.Resources>
-    <Grid Margin="5">
+    <Grid Margin="5" Name="mainGrid">
         <Button Content="Cneterd Text" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Name="btContentButton" Click="btContentButton_Click" Style="{StaticResource RoundedButtonStyle}" FontSize="16"/>
     </Grid>
 </UserControl>

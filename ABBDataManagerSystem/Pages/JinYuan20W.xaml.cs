@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO.Ports;
 using System.Windows;
 using System.Windows.Controls;
+using static ABBDataManagerSystem.Connector.JinYuan20WCollector;
 
 namespace ABBDataManagerSystem.Pages
 {
@@ -23,10 +24,12 @@ namespace ABBDataManagerSystem.Pages
         private Dictionary<string, ToggleButton> highVoltageToggleButtons = new Dictionary<string, ToggleButton>();
         private Dictionary<string, ToggleButton> lowVoltageToggleButtons = new Dictionary<string, ToggleButton>();
         private Dictionary<string, ToggleButton> tappingToggleButtons = new Dictionary<string, ToggleButton>();
+        private Dictionary<TestType20W, ToggleButton> testTypeToggleButtons = new Dictionary<TestType20W, ToggleButton>();
 
         private string SelectedHighVoltageTapping = "";
         private string SelectedLowVoltageTapping = "";
         private string SelectedTapping = "";
+        private TestType20W? SelectedTesting = TestType20W.CommonTest;
         
         public JinYuan20W()
         {
@@ -84,6 +87,11 @@ namespace ABBDataManagerSystem.Pages
             tappingToggleButtons.Add("8", tbTapping8);
             tappingToggleButtons.Add("9", tbTapping9);
             tappingToggleButtons.Add("21", tbTapping21);
+
+            testTypeToggleButtons.Add(TestType20W.CommonTest, tbTestTypeCommon);
+            testTypeToggleButtons.Add(TestType20W.TemperatureRise10Sec, tbTestTypeTempRise10s);
+            testTypeToggleButtons.Add(TestType20W.TemperatureRise30Sec, tbTestTypeTempRise30s);
+            testTypeToggleButtons.Add(TestType20W.TemperatureRise60Sec, tbTestTypeTempRise60s);
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
@@ -401,6 +409,35 @@ namespace ABBDataManagerSystem.Pages
             panelCommonTestControl.IsEnabled = false;
         }
 
+
+        private void TestTypeSelectedTappingChange(object sender, RoutedEventArgs e)
+        {
+            ToggleButton? b = sender as ToggleButton;
+            if (b == null)
+            {
+                return;
+            }
+            if (b.IsChecked)
+            {
+                foreach (var item in testTypeToggleButtons)
+                {
+                    if (item.Value == b)
+                    {
+                        SelectedTesting = item.Key;
+                    }
+                    else
+                    {
+                        item.Value.IsChecked = false;
+                    }
+                }
+            }
+            else
+            {
+                SelectedTesting = null;
+            }
+            DumpSelectedTapping();
+        }
+
         private void HighVoltageSelectedTappingChange(object sender, RoutedEventArgs e)
         {
             var b = sender as ToggleButton;
@@ -487,7 +524,16 @@ namespace ABBDataManagerSystem.Pages
 
         private void DumpSelectedTapping()
         {
-            tbDebugMsg.Text = $"{SelectedTapping} - {SelectedHighVoltageTapping} - {SelectedLowVoltageTapping}";
+            string testing = "";
+            foreach(var item in TestTypeMap)
+            {
+                if (item.Value == SelectedTesting)
+                {
+                    testing = item.Key;
+                    break;
+                }
+            }
+            tbDebugMsg.Text = $"{testing} - {SelectedTapping} - {SelectedHighVoltageTapping} - {SelectedLowVoltageTapping}";
         }
     }
 
