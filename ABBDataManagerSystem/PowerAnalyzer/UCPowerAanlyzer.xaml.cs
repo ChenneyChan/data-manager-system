@@ -68,7 +68,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
         private int HarmonicOffset = -1;
         private int TotalCount = -1;
-        private static readonly int HarmonicCount = 22;
+        private static readonly int HarmonicCount = 30;
         private static readonly int MAX_MONITOR_BUFFER_LEN = 3000;
 
         #endregion
@@ -1402,6 +1402,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         //********************************************
         private bool GetRanges(int elementIndex)
         {
+            Log.Info("Try GetRanges...");
             int n;
             string msg;
 
@@ -2149,6 +2150,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         //********************************************
         private bool GetRatios()
         {
+            Log.Info("Try GetRatios...");
             ///---------------------#Query Voltage Transformer Ratio#
             string tem_auto = "";
             string msg = ":INPUT:SCALING:VT?"; // :SCAL:VT:ELEM1 0.5000;ELEM2 0.5000;ELEM3 0.5000
