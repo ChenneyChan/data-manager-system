@@ -1272,7 +1272,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             int maxLength = 0;
             int realLength = 0;
             string data = "";
-            List<float> values = new List<float>();
+            List<float?> values = new List<float?>();
 
             if (encodeType == EncodeType.ASCII)
             {
@@ -1329,15 +1329,25 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                         //outputValue = outputValue + (byteData[n].ToString("X"));
                         /*****************************************************/
                     }
+
+                    // Invalid Is 0x7E951BEE, Data Over Is 0x7E94F56A
                     for (n = 0; n < realLength / 4; n++)
                     {
                         bytes[3] = byteData[n * 4];
                         bytes[2] = byteData[n * 4 + 1];
                         bytes[1] = byteData[n * 4 + 2];
                         bytes[0] = byteData[n * 4 + 3];
-                        floatBuf = BitConverter.ToSingle(bytes, 0);
-                        //data += floatBuf.ToString() + ",";
-                        values.Add(floatBuf <= 10000000 ? floatBuf : 0);
+                        if ((bytes[3] == 0x7E && bytes[2] == 0x95 && bytes[1] == 0x1B && bytes[0] == 0xEE)
+                            || (bytes[3] == 0x7E && bytes[2] == 0x94 && bytes[1] == 0xF5 && bytes[0] == 0x6A))
+                        {
+                            values.Add(null);
+                        }
+                        else
+                        {
+                            floatBuf = BitConverter.ToSingle(bytes, 0);
+                            //data += floatBuf.ToString() + ",";
+                            values.Add(floatBuf);
+                        }
                     }
                 }
                 SetReceiveMonitor(outputValue);

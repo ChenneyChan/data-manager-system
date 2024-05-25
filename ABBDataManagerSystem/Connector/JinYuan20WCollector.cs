@@ -19,9 +19,9 @@ namespace ABBDataManagerSystem.Connector
         public enum TestType20W
         {
             CommonTest,
-            TemperatureRaise10Minute,
-            TemperatureRaise30Minute,
-            TemperatureRaise60Minute,
+            TemperatureRise10Sec,
+            TemperatureRise30Sec,
+            TemperatureRise60Sec,
         }
 
         // CH1高压侧 CH2低压侧
@@ -144,9 +144,9 @@ namespace ABBDataManagerSystem.Connector
             switch (type)
             {
                 case TestType20W.CommonTest: return 0x30;
-                case TestType20W.TemperatureRaise10Minute: return 0x31;
-                case TestType20W.TemperatureRaise30Minute: return 0x32;
-                case TestType20W.TemperatureRaise60Minute: return 0x33;
+                case TestType20W.TemperatureRise10Sec: return 0x31;
+                case TestType20W.TemperatureRise30Sec: return 0x32;
+                case TestType20W.TemperatureRise60Sec: return 0x33;
                 default:
                     return 0x30;
             }
@@ -157,11 +157,11 @@ namespace ABBDataManagerSystem.Connector
             switch (type)
             {
                 case 0x31:
-                    return TestType20W.TemperatureRaise10Minute;
+                    return TestType20W.TemperatureRise10Sec;
                 case 0x32:
-                    return TestType20W.TemperatureRaise30Minute;
+                    return TestType20W.TemperatureRise30Sec;
                 case 0x33:
-                    return TestType20W.TemperatureRaise60Minute;
+                    return TestType20W.TemperatureRise60Sec;
                 case 0x30:
                 default:
                     return TestType20W.CommonTest;
@@ -266,9 +266,9 @@ namespace ABBDataManagerSystem.Connector
         public static Dictionary<string, TestType20W> TestTypeMap = new Dictionary<string, TestType20W>()
         {
             { "常规测试",  TestType20W.CommonTest},
-            { "温升测试-10秒",  TestType20W.TemperatureRaise10Minute},
-            { "温升测试-30秒",  TestType20W.TemperatureRaise30Minute},
-            { "温升测试-60秒",  TestType20W.TemperatureRaise60Minute},
+            { "温升测试-10秒",  TestType20W.TemperatureRise10Sec},
+            { "温升测试-30秒",  TestType20W.TemperatureRise30Sec},
+            { "温升测试-60秒",  TestType20W.TemperatureRise60Sec},
         };
 
         public static Dictionary<string, CH1Currents> CH1CurrentsMap = new Dictionary<string, CH1Currents>()
