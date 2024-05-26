@@ -103,12 +103,6 @@
             <Views:ToggleButton Width="100" GridMargin="0" Margin="5,0" CheckedChange="TestTypeSelectedTappingChange" ButtonContent="温升冷电阻" x:Name="tbTestTypeTempRiseCool"/>
             <Views:ToggleButton Width="100" GridMargin="0" Margin="60, 0, 5,0" CheckedChange="LowVoltageLevelSelectedChange" ButtonContent="低压一" x:Name="tbLowVoltageLevel1"/>
             <Views:ToggleButton Width="100" GridMargin="0" Margin="5,0" CheckedChange="LowVoltageLevelSelectedChange" ButtonContent="低压二" x:Name="tbLowVoltageLevel2"/>
-            <StackPanel HorizontalAlignment="Left" Margin="0,0,10,0" Orientation="Horizontal" VerticalAlignment="Center" Visibility="Collapsed">
-                <TextBlock TextWrapping="Wrap" Text="测试类型" VerticalAlignment="Center" Margin="0, 0, 10, 0"/>
-                <hc:ComboBox Width="160" Name="cbTestType" SelectionChanged="cbTestType_SelectionChanged"/>
-            </StackPanel>
-            <!--<Button Content="时间" HorizontalAlignment="Left" Margin="0,0,10,0" Name="btTime" Click="btTime_Click"/>
-            <Button Content="记录" HorizontalAlignment="Left" Margin="0,0,10,0" Name="btRecord" Click="btRecord_Click"/>-->
         </StackPanel>
         <Grid Grid.Row="3" Margin="10">
             <Grid.ColumnDefinitions>
@@ -173,10 +167,11 @@
             <DataGrid Visibility="Collapsed" Grid.Row="0" Grid.Column="0" Name="lvUsers" AutoGenerateColumns="False" ItemsSource="{Binding Items}" FontSize="18" CanUserAddRows="False" CanUserDeleteRows="False" CanUserSortColumns="False">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="次数" Width="80"  Binding="{Binding SortIndex}"  IsReadOnly="True"/>
-                    <DataGridTextColumn Header="高压电流" Width="120" Binding="{Binding Current}"    IsReadOnly="True"/>
-                    <DataGridTextColumn Header="高压电阻" Width="120" Binding="{Binding Resistance}" IsReadOnly="True"/>
-                    <DataGridTextColumn Header="低压电流" Width="120" Binding="{Binding Current}"    IsReadOnly="True"/>
-                    <DataGridTextColumn Header="低压电阻" Width="120" Binding="{Binding Resistance}" IsReadOnly="True"/>
+                    <DataGridTextColumn Header="采集时间" Width="120" Binding="{Binding CurrentTime}"  IsReadOnly="True"/>
+                    <DataGridTextColumn Header="高压电流" Width="120" Binding="{Binding CurrentHV}"    IsReadOnly="True"/>
+                    <DataGridTextColumn Header="高压电阻" Width="120" Binding="{Binding ResistanceHV}" IsReadOnly="True"/>
+                    <DataGridTextColumn Header="低压电流" Width="120" Binding="{Binding CurrentLV}"    IsReadOnly="True"/>
+                    <DataGridTextColumn Header="低压电阻" Width="120" Binding="{Binding ResistanceLV}" IsReadOnly="True"/>
                 </DataGrid.Columns>
             </DataGrid>
 
@@ -383,7 +378,7 @@
                 <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Grid.RowSpan="5" />
                 <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Grid.RowSpan="6" />
             </Grid>
-            <Grid  Grid.Column="2" Margin="20" Width="600" Height="340" VerticalAlignment="Top" HorizontalAlignment="Left">
+            <Grid  Grid.Column="2" Margin="20" Width="800" Height="340" VerticalAlignment="Top" HorizontalAlignment="Left">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="160"/>
@@ -402,7 +397,7 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="1*"/>
                     </Grid.RowDefinitions>
-                    <TextBlock Text="0.00 A" Margin="5" Name="tbCH1Current" />
+                    <TextBlock Text="0.00 A" Margin="5" Name="tbCH1Current" FontSize="24"/>
                     <TextBlock Text="0.000 mΩ" Margin="5" Grid.Row="1" FontSize="48" Name="tbCH1Resistance"/>
                 </Grid>
                 <Grid Grid.Row="1" Grid.Column="1">
@@ -411,7 +406,7 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="1*"/>
                     </Grid.RowDefinitions>
-                    <TextBlock Text="0.00 A" Margin="5"  Name="tbCH2Current"/>
+                    <TextBlock Text="0.00 A" Margin="5"  Name="tbCH2Current" FontSize="24"/>
                     <TextBlock Text="0.000 mΩ" Margin="5" Grid.Row="1" FontSize="48"  Name="tbCH2Resistance"/>
                 </Grid>
                 <Grid Grid.Row="2" Grid.ColumnSpan="2" Margin="0, 20">
@@ -421,7 +416,7 @@
                         <ColumnDefinition Width="1*"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock Text="常规-高压CH1-5A" TextAlignment="Center" HorizontalAlignment="Stretch" Name="tbCH1TestConfig" FontSize="24"/>
-                    <TextBox Text="10:00" Grid.Column="1" Name="TestingTimer" IsReadOnly="True" FontSize="24" BorderThickness="1" BorderBrush="Gray"/>
+                    <TextBox Text="00:00" Grid.Column="1" Name="TestingTimer" IsReadOnly="True" FontSize="24" BorderThickness="1" BorderBrush="Gray"/>
                     <TextBlock Text="常规-低压CH2-5A" TextAlignment="Center" HorizontalAlignment="Stretch" Name="tbCH2TestConfig" FontSize="24" Grid.Column="2"/>
                 </Grid>
                 <Grid Grid.Row="3" Grid.ColumnSpan="2" Margin="20" Name="panelCommonTestControl" IsEnabled="True">
@@ -431,11 +426,13 @@
                         <ColumnDefinition Width="1*"/>
                     </Grid.ColumnDefinitions>
                     <Button Content="开始" FontWeight="Bold" Foreground="DarkBlue" Name="btCommonTest" Click="btCommonTest_Click"/>
-                    <Button Content="定时" FontWeight="Bold" Foreground="DarkBlue" Name="btSetInterval" Click="btSetInterval_Click" Visibility="Collapsed"/>
+                    <Button Content="定时" FontWeight="Bold" Foreground="DarkBlue" Name="btStartTiming" Click="btStartTiming_Click" Visibility="Collapsed"/>
+                    <Button Content="开始" FontWeight="Bold" Foreground="DarkBlue" Grid.Column="1" Name="btTempRiseTest" Click="btTempRiseTest_Click" IsEnabled="False"/>
                     <Button Content="复位" FontWeight="Bold" Foreground="DarkBlue" Grid.Column="1" Name="btQuitTest" Click="btQuitTest_Click"/>
                     <!--<Button Style="{StaticResource ButtonDanger}" Width="100" Height="40" Content="退出" Name="btQuitTest" Click="btQuitTest_Click"/>-->
                     <!--<Button Style="{StaticResource ButtonDanger}" Width="100" Height="40" Content="保存" Grid.Column="1" Name="btSaveRecord"/>-->
                     <Button Content="打印" FontWeight="Bold" Foreground="DarkBlue" Grid.Column="2" Name="btPrint" Click="btPrint_Click"/>
+                    <Button Content="复位" FontWeight="Bold" Foreground="DarkBlue" Grid.Column="2" Name="btQuitTestTempRise" Click="btQuitTestTempRise_Click"/>
                 </Grid>
                 <Border Grid.Row="0" Grid.Column="0" BorderThickness="1" Margin="0, 0, 5 ,0"/>
                 <Border Grid.Row="0" Grid.Column="1" BorderThickness="1" Margin="0, 0, 0 ,0"/>
