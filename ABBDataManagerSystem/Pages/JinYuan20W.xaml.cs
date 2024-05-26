@@ -2,8 +2,10 @@
 using ABBDataManagerSystem.Pages.Views;
 using System.Collections.ObjectModel;
 using System.IO.Ports;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 using static ABBDataManagerSystem.Connector.JinYuan20WCollector;
 
 namespace ABBDataManagerSystem.Pages
@@ -31,10 +33,15 @@ namespace ABBDataManagerSystem.Pages
         private string SelectedLowVoltageTapping = "";
         private string SelectedTapping = "";
         private TestType20W? SelectedTesting = TestType20W.CommonTest;
+
+        private DispatcherTimer TimerSecond;
+        private int SecondElapsed = 0;
+        private bool IsCommonTesting = false;
         
         public JinYuan20W()
         {
             InitializeComponent();
+            InitTimer();
             InitToggleButtons();
             InitTappings();
             btSetInterval.Visibility = Visibility.Collapsed;
@@ -115,6 +122,33 @@ namespace ABBDataManagerSystem.Pages
 
             tappingResistanceFields.Add("21", trTap21);
             tappingResistanceFields.Add("22", trTap22);
+        }
+
+        private void InitTimer()
+        {
+            TimerSecond = new DispatcherTimer();
+            TimerSecond.Interval = TimeSpan.FromSeconds(1);
+            TimerSecond.Tick += TimerSecond_Tick;
+        }
+
+        private void TimerSecond_Tick(object? sender, EventArgs e)
+        {
+            SecondElapsed += 1;
+            if (SecondElapsed > 60 * 60) 
+            {
+                SecondElapsed = 0;
+            }
+            UpdateClockDisplay();
+        }
+
+        private void UpdateClockDisplay()
+        {
+            int minutes = SecondElapsed / 60;
+            int seconds = SecondElapsed % 60;
+
+            string mm = minutes < 10 ? $"0{minutes}" : minutes.ToString();
+            string ss = seconds < 10 ? $"0{seconds}" : seconds.ToString();
+            TestingTimer.Text = $"{mm}:{ss}";
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
@@ -251,6 +285,10 @@ namespace ABBDataManagerSystem.Pages
                 Collector.Disconnect();
                 Collector = null;
             }
+            if (TimerSecond.IsEnabled == true)
+            {
+                TimerSecond.Stop();
+            }
         }
 
         private void CollectDataOnce()
@@ -270,9 +308,9 @@ namespace ABBDataManagerSystem.Pages
                         Dispatcher.Invoke(() =>
                         {
                             UpdateDisplayByPacket(packet);
+                            UpdateRealTimePanelDisplay(packet);
                         });
                     }
-
                 }
                 catch (Exception ex)
                 {
@@ -388,6 +426,8 @@ namespace ABBDataManagerSystem.Pages
 
         }
 
+
+        // 常规测试
         private void btTest_Click(object sender, RoutedEventArgs e)
         {
             if (!IsConneted)
@@ -404,6 +444,46 @@ namespace ABBDataManagerSystem.Pages
             panelTestChoice.IsEnabled = false;
 
             panelCommonTestControl.IsEnabled = true;
+
+            SecondElapsed = 0;
+            UpdateClockDisplay();
+            TimerSecond.Start();
+
+            Collector?.SetParameters();
+            Collector?.SetCommonTest();
+            IsCommonTesting = true;
+
+            UpdatePanelTestConfigDisplay();
+        }
+
+        private void UpdatePanelTestConfigDisplay()
+        {
+            if (cbCH1.IsChecked == true)
+            {
+                tbCH1TestConfig.Text = "常规-高压CH1-" + cbHVCurrents.Text;
+            }
+            else
+            {
+                tbCH1TestConfig.Text = "";
+            }
+            if (cbCH2.IsChecked == true)
+            {
+                tbCH2TestConfig.Text = "常规-低压CH2-" + cbLVCurrents.Text;
+            }
+            else
+            {
+                tbCH2TestConfig.Text = "";
+            }
+        }
+
+        private void UpdateRealTimePanelDisplay(JinYuan20WCollector.JinYuan20WPacketInfo packet)
+        {
+            tbCH1Current.Text = Utils.FloatFormat(packet.ch1RealTimeCurrent, 2) + " A";
+            tbCH2Current.Text = Utils.FloatFormat(packet.ch2RealTimeCurrent, 2) + " A";
+            tbCH1Resistance.Text = Utils.FloatFormat(packet.ch1RealTimeResistance, 3) + " mΩ";
+            tbCH2Resistance.Text = Utils.FloatFormat(packet.ch2RealTimeResistance, 3) + " mΩ";
+            tbCH1State.Text = JinYuan20WCollector.CHStatusMap[packet.ch1Status];
+            tbCH2State.Text = JinYuan20WCollector.CHStatusMap[packet.ch2Status];
         }
 
         private void btSetInterval_Click(object sender, RoutedEventArgs e)
@@ -435,9 +515,11 @@ namespace ABBDataManagerSystem.Pages
             panelConfig.IsEnabled = true;
             panelTestChoice.IsEnabled = true;
             panelCommonTestControl.IsEnabled = false;
+            TimerSecond.Stop();
+            IsCommonTesting = false;
         }
 
-
+        #region 试验和分接选择
         private void TestTypeSelectedTappingChange(object sender, RoutedEventArgs e)
         {
             ToggleButton? b = sender as ToggleButton;
@@ -585,6 +667,7 @@ namespace ABBDataManagerSystem.Pages
             }
             tbDebugMsg.Text = $"{testing} - {SelectedTapping} - {SelectedHighVoltageTapping} - {SelectedLowVoltageTapping}";
         }
+        #endregion
     }
 
 }

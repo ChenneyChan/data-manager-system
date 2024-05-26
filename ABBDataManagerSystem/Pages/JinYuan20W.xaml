@@ -160,6 +160,11 @@
                         <Views:ToggleButton ButtonContent="c - a" Width="{StaticResource tbContentWidth}" Height="{StaticResource tbContentHeight}" CheckedChange="LowVoltageSelectedTappingChange" x:Name="tbca"/>
                         <Views:ToggleButton ButtonContent="c - o" Width="{StaticResource tbContentWidth}" Height="{StaticResource tbContentHeight}" CheckedChange="LowVoltageSelectedTappingChange" x:Name="tbco"/>
                     </StackPanel>
+                    <TextBlock Text="低压" HorizontalAlignment="Center" FontSize="18" Margin="0, 0, 0, 10" FontWeight="Bold"/>
+                    <WrapPanel Orientation="Horizontal">
+                        <Views:ToggleButton ButtonContent="低压一"   Width="{StaticResource tbContentWidth}" Height="{StaticResource tbContentHeight}" CheckedChange="TappingSelectedTappingChange" x:Name="tbTappingLV1"/>
+                        <Views:ToggleButton ButtonContent="低压二"   Width="{StaticResource tbContentWidth}" Height="{StaticResource tbContentHeight}" CheckedChange="TappingSelectedTappingChange" x:Name="tbTappingLV2"/>
+                    </WrapPanel>
                 </StackPanel>
             </ScrollViewer>
             <!--列表分组-->
@@ -374,7 +379,7 @@
                 <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Grid.RowSpan="5" />
                 <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Grid.RowSpan="6" />
             </Grid>
-            <Grid  Grid.Column="2" Margin="20" Width="600" Height="290" VerticalAlignment="Top" HorizontalAlignment="Left">
+            <Grid  Grid.Column="2" Margin="20" Width="600" Height="320" VerticalAlignment="Top" HorizontalAlignment="Left">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="160"/>
@@ -387,14 +392,14 @@
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Row="0" Grid.Column="0" Text="【正在测试】" Foreground="#FFED0E0E" Margin="5" Name="tbCH1State" />
                 <TextBlock Grid.Row="0" Grid.Column="1" Text="【正在测试】" Foreground="#FFED0E0E" Margin="5" Name="tbCH2State" />
-                <Grid Grid.Row="1" Grid.Column="0">
+                <Grid Grid.Row="1" Grid.Column="0" Margin="0, 5, 0, 0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="1*"/>
                     </Grid.RowDefinitions>
-                    <TextBlock Text="5.01 A" Margin="5" Name="tbCH1Current" />
-                    <TextBlock Text="19.008 mΩ" Margin="5" Grid.Row="1" FontSize="48" Name="tbCH1Resistance"/>
+                    <TextBlock Text="0.00 A" Margin="5" Name="tbCH1Current" />
+                    <TextBlock Text="0.000 mΩ" Margin="5" Grid.Row="1" FontSize="48" Name="tbCH1Resistance"/>
                 </Grid>
                 <Grid Grid.Row="1" Grid.Column="1">
                     <Grid.RowDefinitions>
@@ -402,18 +407,18 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="1*"/>
                     </Grid.RowDefinitions>
-                    <TextBlock Text="5.01 A" Margin="5"  Name="tbCH2Current"/>
-                    <TextBlock Text="19.008 mΩ" Margin="5" Grid.Row="1" FontSize="48"  Name="tbCH2Resistance"/>
+                    <TextBlock Text="0.00 A" Margin="5"  Name="tbCH2Current"/>
+                    <TextBlock Text="0.000 mΩ" Margin="5" Grid.Row="1" FontSize="48"  Name="tbCH2Resistance"/>
                 </Grid>
-                <Grid Grid.Row="2" Grid.ColumnSpan="2" Margin="0, 5">
+                <Grid Grid.Row="2" Grid.ColumnSpan="2" Margin="0, 10">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*"/>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="1*"/>
                     </Grid.ColumnDefinitions>
-                    <TextBlock Text="常规-高压CH1-5A" TextAlignment="Center" HorizontalAlignment="Stretch" Name="tbCH1TestConfig"/>
-                    <TextBox Text="10:00" Grid.Column="1" Name="TestingTimer" IsReadOnly="True"/>
-                    <TextBlock Text="常规-高压CH1-5A" TextAlignment="Center" HorizontalAlignment="Stretch" Name="tbCH2TestConfig" Grid.Column="2"/>
+                    <TextBlock Text="常规-高压CH1-5A" TextAlignment="Center" HorizontalAlignment="Stretch" Name="tbCH1TestConfig" FontSize="18"/>
+                    <TextBox Text="10:00" Grid.Column="1" Name="TestingTimer" IsReadOnly="True" FontSize="18"/>
+                    <TextBlock Text="常规-低压CH2-5A" TextAlignment="Center" HorizontalAlignment="Stretch" Name="tbCH2TestConfig" FontSize="18" Grid.Column="2"/>
                 </Grid>
                 <Grid Grid.Row="3" Grid.ColumnSpan="2" Margin="10" Name="panelCommonTestControl" IsEnabled="False">
                     <Grid.ColumnDefinitions>
@@ -427,8 +432,8 @@
                 </Grid>
                 <Border Grid.Row="0" Grid.Column="0" BorderThickness="1" Margin="0, 0, 5 ,0"/>
                 <Border Grid.Row="0" Grid.Column="1" BorderThickness="1" Margin="0, 0, 0 ,0"/>
-                <Border Grid.Row="1" Grid.Column="0" BorderThickness="1" Margin="0, 0, 5 ,0"/>
-                <Border Grid.Row="1" Grid.Column="1" BorderThickness="1" Margin="0, 0, 0 ,0"/>
+                <Border Grid.Row="1" Grid.Column="0" BorderThickness="1" Margin="0, 5, 5 ,0"/>
+                <Border Grid.Row="1" Grid.Column="1" BorderThickness="1" Margin="0, 5, 0 ,0"/>
                 <Border Grid.Row="2" Grid.ColumnSpan="2" BorderThickness="1" Margin="0, 5"/>
                 <Border Grid.Row="3" Grid.ColumnSpan="2" BorderThickness="1" Margin="0, 5"/>
             </Grid>
