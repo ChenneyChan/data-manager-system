@@ -37,7 +37,11 @@ namespace ABBDataManagerSystem.Pages
         private DispatcherTimer TimerSecond;
         private int SecondElapsed = 0;
         private bool IsCommonTesting = false;
-        
+        private int SelectedLowVoltageLevel = 0;
+
+        private JinYuan20WCollector.JinYuan20WPacketInfo? lastPacket = null;
+
+
         public JinYuan20W()
         {
             InitializeComponent();
@@ -45,19 +49,20 @@ namespace ABBDataManagerSystem.Pages
             InitToggleButtons();
             InitTappings();
             btSetInterval.Visibility = Visibility.Collapsed;
+            panelTappingChoice.Visibility = Visibility.Collapsed;
 
-            dataItems.Add(new CurrentResistanceInfo() { Current = 101.2f, SortIndex = 42, Resistance = 222.2f });
-            dataItems.Add(new CurrentResistanceInfo() { Current = 101.2f, SortIndex = 39, Resistance = 222.2f });
+            dataItems.Add(new CurrentResistanceInfo() { Current = 101.2f, SortIndex = 1, Resistance = 222.2f });
+            dataItems.Add(new CurrentResistanceInfo() { Current = 101.2f, SortIndex = 2, Resistance = 222.2f });
+            dataItems.Add(new CurrentResistanceInfo() { Current = 101.2f, SortIndex = 3, Resistance = 222.2f });
+            dataItems.Add(new CurrentResistanceInfo() { Current = 101.2f, SortIndex = 4, Resistance = 222.2f });
+            dataItems.Add(new CurrentResistanceInfo() { Current = 101.2f, SortIndex = 5, Resistance = 222.2f });
+            dataItems.Add(new CurrentResistanceInfo() { Current = 101.2f, SortIndex = 6, Resistance = 222.2f });
             dataItems.Add(new CurrentResistanceInfo() { Current = 101.2f, SortIndex = 7, Resistance = 222.2f });
-            dataItems.Add(new CurrentResistanceInfo() { Current = 101.2f, SortIndex = 42, Resistance = 222.2f });
-            dataItems.Add(new CurrentResistanceInfo() { Current = 101.2f, SortIndex = 39, Resistance = 222.2f });
             dataItems.Add(new CurrentResistanceInfo() { Current = 101.2f, SortIndex = 7, Resistance = 222.2f });
-            dataItems.Add(new CurrentResistanceInfo() { Current = 101.2f, SortIndex = 42, Resistance = 222.2f });
-            dataItems.Add(new CurrentResistanceInfo() { Current = 101.2f, SortIndex = 39, Resistance = 222.2f });
-            dataItems.Add(new CurrentResistanceInfo() { Current = 101.2f, SortIndex = 7, Resistance = 222.2f });
-            dataItems.Add(new CurrentResistanceInfo() { Current = 101.2f, SortIndex = 42, Resistance = 222.2f });
-            dataItems.Add(new CurrentResistanceInfo() { Current = 101.2f, SortIndex = 39, Resistance = 222.2f });
-            dataItems.Add(new CurrentResistanceInfo() { Current = 101.2f, SortIndex = 7, Resistance = 222.2f });
+            dataItems.Add(new CurrentResistanceInfo() { Current = 101.2f, SortIndex = 9, Resistance = 222.2f });
+            dataItems.Add(new CurrentResistanceInfo() { Current = 101.2f, SortIndex = 10, Resistance = 222.2f });
+            dataItems.Add(new CurrentResistanceInfo() { Current = 101.2f, SortIndex = 11, Resistance = 222.2f });
+            dataItems.Add(new CurrentResistanceInfo() { Current = 101.2f, SortIndex = 12, Resistance = 222.2f });
 
             // 数据模型
             items2 = new ObservableCollection<MyItem>
@@ -124,6 +129,7 @@ namespace ABBDataManagerSystem.Pages
             tappingResistanceFields.Add("22", trTap22);
         }
 
+        #region 计数器的Timer
         private void InitTimer()
         {
             TimerSecond = new DispatcherTimer();
@@ -150,6 +156,7 @@ namespace ABBDataManagerSystem.Pages
             string ss = seconds < 10 ? $"0{seconds}" : seconds.ToString();
             TestingTimer.Text = $"{mm}:{ss}";
         }
+        #endregion
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
@@ -291,6 +298,7 @@ namespace ABBDataManagerSystem.Pages
             }
         }
 
+        #region 采集数据
         private void CollectDataOnce()
         {
             if (Collector != null)
@@ -317,26 +325,6 @@ namespace ABBDataManagerSystem.Pages
                     Log.Error("Process SinglePhaseCmdPacket Error " + ex.Message);
                 }
             }
-        }
-
-        private void UpdateDisplayByPacket(JinYuan20WCollector.JinYuan20WPacketInfo packet)
-        {
-            tbCH1Enabled.Text = packet.ch1Enabled ? "是" : "否";
-            tbCH2Enabled.Text = packet.ch2Enabled ? "是" : "否";
-
-            tbCH1Status.Text = JinYuan20WCollector.CHStatusMap[packet.ch1Status];
-            tbCH2Status.Text = JinYuan20WCollector.CHStatusMap[packet.ch2Status];
-
-            tbCH1RealTimeCurrent.Text = Utils.FloatFormat(packet.ch1RealTimeCurrent);
-            tbCH2RealTimeCurrent.Text = Utils.FloatFormat(packet.ch2RealTimeCurrent);
-
-            tbCH1RealTimeResistance.Text = Utils.FloatFormat(packet.ch1RealTimeResistance);
-            tbCH2RealTimeResistance.Text = Utils.FloatFormat(packet.ch2RealTimeResistance);
-
-            tbCH1TimedResistance.Text = Utils.FloatFormat(packet.ch1TimedResistance);
-            tbCH2TimedResistance.Text = Utils.FloatFormat(packet.ch2TimedResistance);
-
-            tbDebugMsg.Text = "Debug Packet: " + packet.ToString();
         }
 
         private void StartSyncState()
@@ -381,7 +369,9 @@ namespace ABBDataManagerSystem.Pages
             }
             UpdateControlEnableState();
         }
+        #endregion
 
+        #region 修改配置，下发给Collector
         private void cbCH1_CheckedChange(object sender, RoutedEventArgs e)
         {
             cbHVCurrents.IsEnabled = cbCH1.IsChecked == true;
@@ -415,6 +405,7 @@ namespace ABBDataManagerSystem.Pages
                 Collector.CH2CurrentConfig = JinYuan20WCollector.GetCH2CurrentConfig(cbLVCurrents.SelectedItem.ToString());
             }
         }
+        #endregion
 
         private void btTime_Click(object sender, RoutedEventArgs e)
         {
@@ -427,8 +418,8 @@ namespace ABBDataManagerSystem.Pages
         }
 
 
-        // 常规测试
-        private void btTest_Click(object sender, RoutedEventArgs e)
+        #region 开始常规测试
+        private void btCommonTest_Click(object sender, RoutedEventArgs e)
         {
             if (!IsConneted)
             {
@@ -440,10 +431,9 @@ namespace ABBDataManagerSystem.Pages
                 MessageBox.Show("必须选择一个通道才可以开始测试！");
                 return;
             }
+            lastPacket = null;
             panelConfig.IsEnabled = false;
             panelTestChoice.IsEnabled = false;
-
-            panelCommonTestControl.IsEnabled = true;
 
             SecondElapsed = 0;
             UpdateClockDisplay();
@@ -454,8 +444,11 @@ namespace ABBDataManagerSystem.Pages
             IsCommonTesting = true;
 
             UpdatePanelTestConfigDisplay();
+            btCommonTest.IsEnabled = false;
         }
+        #endregion
 
+        #region 页面实时刷新
         private void UpdatePanelTestConfigDisplay()
         {
             if (cbCH1.IsChecked == true)
@@ -482,9 +475,31 @@ namespace ABBDataManagerSystem.Pages
             tbCH2Current.Text = Utils.FloatFormat(packet.ch2RealTimeCurrent, 2) + " A";
             tbCH1Resistance.Text = Utils.FloatFormat(packet.ch1RealTimeResistance, 3) + " mΩ";
             tbCH2Resistance.Text = Utils.FloatFormat(packet.ch2RealTimeResistance, 3) + " mΩ";
-            tbCH1State.Text = JinYuan20WCollector.CHStatusMap[packet.ch1Status];
-            tbCH2State.Text = JinYuan20WCollector.CHStatusMap[packet.ch2Status];
+            tbCH1State.Text = "【" + JinYuan20WCollector.CHStatusMap[packet.ch1Status] + "】";
+            tbCH2State.Text = "【" + JinYuan20WCollector.CHStatusMap[packet.ch2Status] + "】";
+            lastPacket = packet;
         }
+
+        private void UpdateDisplayByPacket(JinYuan20WCollector.JinYuan20WPacketInfo packet)
+        {
+            tbCH1Enabled.Text = packet.ch1Enabled ? "是" : "否";
+            tbCH2Enabled.Text = packet.ch2Enabled ? "是" : "否";
+
+            tbCH1Status.Text = JinYuan20WCollector.CHStatusMap[packet.ch1Status];
+            tbCH2Status.Text = JinYuan20WCollector.CHStatusMap[packet.ch2Status];
+
+            tbCH1RealTimeCurrent.Text = Utils.FloatFormat(packet.ch1RealTimeCurrent);
+            tbCH2RealTimeCurrent.Text = Utils.FloatFormat(packet.ch2RealTimeCurrent);
+
+            tbCH1RealTimeResistance.Text = Utils.FloatFormat(packet.ch1RealTimeResistance);
+            tbCH2RealTimeResistance.Text = Utils.FloatFormat(packet.ch2RealTimeResistance);
+
+            tbCH1TimedResistance.Text = Utils.FloatFormat(packet.ch1TimedResistance);
+            tbCH2TimedResistance.Text = Utils.FloatFormat(packet.ch2TimedResistance);
+
+            tbDebugMsg.Text = "Debug Packet: " + packet.ToString();
+        }
+        #endregion
 
         private void btSetInterval_Click(object sender, RoutedEventArgs e)
         {
@@ -500,24 +515,46 @@ namespace ABBDataManagerSystem.Pages
             }
             if (selectedType.Contains("常规"))
             {
-                btSetInterval.Visibility = Visibility.Collapsed;
-                btTest.Visibility = Visibility.Visible;
             }
             else if (selectedType.Contains("温升"))
             {
-                btSetInterval.Visibility = Visibility.Visible;
-                btTest.Visibility = Visibility.Collapsed;
             }
         }
 
+        #region 测试结束，填写数据
         private void btQuitTest_Click(object sender, RoutedEventArgs e)
         {
+            Collector?.SetRestCommand();
             panelConfig.IsEnabled = true;
             panelTestChoice.IsEnabled = true;
-            panelCommonTestControl.IsEnabled = false;
             TimerSecond.Stop();
             IsCommonTesting = false;
+            btCommonTest.IsEnabled = true;
+            if (tappingResistanceFields.Keys.Contains(SelectedTapping))
+            {
+                float value = 0;
+                if (lastPacket != null)
+                {
+                    if (lastPacket.ch1Enabled)
+                    {
+                        value = lastPacket.ch1RealTimeResistance;
+                    } 
+                    else if (lastPacket.ch2Enabled)
+                    {
+                        value = lastPacket.ch2RealTimeResistance;
+                    }
+                }
+                tappingResistanceFields[SelectedTapping].UpdateValueForActiveItem(value);
+            }
         }
+        #endregion
+
+        #region 测试仪打印数据
+        private void btPrint_Click(object sender, RoutedEventArgs e)
+        {
+            Collector?.SetPrintCommand();
+        }
+        #endregion
 
         #region 试验和分接选择
         private void TestTypeSelectedTappingChange(object sender, RoutedEventArgs e)
@@ -549,24 +586,26 @@ namespace ABBDataManagerSystem.Pages
 
             if (SelectedTesting == null)
             {
-                btTest.Visibility = Visibility.Collapsed;
+                btCommonTest.Visibility = Visibility.Collapsed;
                 btSetInterval.Visibility = Visibility.Collapsed;
             }
             else if (SelectedTesting == TestType20W.CommonTest)
             {
-                btTest.Visibility = Visibility.Visible;
+                btCommonTest.Visibility = Visibility.Visible;
                 btSetInterval.Visibility = Visibility.Collapsed;
 
-                panelTappingChoice.Visibility = Visibility.Visible;
+                //panelTappingChoice.Visibility = Visibility.Visible;
                 panelCommonTestResult.Visibility = Visibility.Visible;
+                lvUsers.Visibility = Visibility.Collapsed;
             } 
             else
             {
-                btTest.Visibility = Visibility.Collapsed;
+                btCommonTest.Visibility = Visibility.Collapsed;
                 btSetInterval.Visibility = Visibility.Visible;
 
-                panelTappingChoice.Visibility = Visibility.Collapsed;
+                //panelTappingChoice.Visibility = Visibility.Collapsed;
                 panelCommonTestResult.Visibility = Visibility.Collapsed;
+                lvUsers.Visibility = Visibility.Visible;
             }
         }
 
@@ -654,6 +693,29 @@ namespace ABBDataManagerSystem.Pages
             DumpSelectedTapping();
         }
 
+        // 低压1、低压2 选择
+        private void LowVoltageLevelSelectedChange(object sender, RoutedEventArgs e)
+        {
+            var b = sender as ToggleButton;
+            if (b == null)
+            {
+                return;
+            }
+            if (b == tbLowVoltageLevel1)
+            {
+                tbLowVoltageLevel2.IsChecked = false;
+                SelectedLowVoltageLevel = 1;
+            } 
+            else if(b == tbLowVoltageLevel2)
+            {
+                tbLowVoltageLevel1.IsChecked = false;
+                SelectedLowVoltageLevel = 2;
+            } else
+            {
+                SelectedLowVoltageLevel = 0;
+            }
+        }
+
         private void DumpSelectedTapping()
         {
             string testing = "";
@@ -666,6 +728,22 @@ namespace ABBDataManagerSystem.Pages
                 }
             }
             tbDebugMsg.Text = $"{testing} - {SelectedTapping} - {SelectedHighVoltageTapping} - {SelectedLowVoltageTapping}";
+        }
+        #endregion
+
+        #region 结果数据表格的激活状态切换
+        private void Trf_ActiveEvent(TappingResistanceFields obj, int index)
+        {
+            foreach(var item in tappingResistanceFields.Values)
+            {
+                if (item == obj)
+                {
+                    continue;
+                }
+                item.ResetSelection();
+            }
+            SelectedTapping = obj.TappingIndex;
+            DumpSelectedTapping();
         }
         #endregion
     }

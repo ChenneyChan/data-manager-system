@@ -105,6 +105,11 @@ namespace ABBDataManagerSystem.Connector
             Collector.SendCommand(new byte[] { 0x44 });
         }
 
+        public void SetPrintCommand()
+        {
+            Collector.SendCommand(new byte[] { 0x47 });
+        }
+
         public void SendRequest()
         {
             Collector.SendCommand(new byte[] { 0x48 });

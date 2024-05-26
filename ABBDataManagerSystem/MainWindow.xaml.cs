@@ -55,10 +55,15 @@ namespace ABBDataManagerSystem
 
         private void JnYuan20WTest_Click(object sender, RoutedEventArgs e)
         {
+            string title = "金源20W测试仪";
+            if (GetTabItemAndActive(title) != null)
+            {
+                return;
+            }
             var item = new TabItem()
             {
                 Content = new JinYuan20W(),
-                Header = "金源20W测试仪",
+                Header = title,
                 IsSelected = true,
             };
             tabControl.Items.Add(item);
@@ -271,10 +276,15 @@ namespace ABBDataManagerSystem
 
         private void PowerAnalyze2Test_Click(object sender, RoutedEventArgs e)
         {
+            string title = "功率分析仪";
+            if (GetTabItemAndActive(title) != null)
+            {
+                return;
+            }
             var item = new TabItem()
             {
                 Content = new UCPowerAanlyzer(),
-                Header = "功率分析仪",
+                Header = title,
                 IsSelected = true,
             };
             tabControl.Items.Add(item);
@@ -282,10 +292,15 @@ namespace ABBDataManagerSystem
 
         private void JinYuanJYT_A_Click(object sender, RoutedEventArgs e)
         {
+            string title = "金源JYT-A变比测试仪";
+            if (GetTabItemAndActive(title) != null)
+            {
+                return;
+            }
             var item = new TabItem()
             {
                 Content = new JinYuanJYT_A(),
-                Header = "金源JYT-A",
+                Header = title,
                 IsSelected = true
             };
             tabControl.Items.Add(item);
@@ -308,6 +323,24 @@ namespace ABBDataManagerSystem
                 Dispatcher.Invoke(new Action(() => { tbMsg.Text += "\r\nTask Done!" + DateTime.Now.ToString("hh-mm-ss"); }));
             });
             tbMsg.Text += "\r\nStart Thread UITread Done!";
+        }
+
+        private TabItem? GetTabItemAndActive(string title)
+        {
+            foreach(var item in tabControl.Items)
+            {
+                var tabItem = item as TabItem;
+                if (tabItem == null)
+                {
+                    continue;
+                }
+                if ((string)tabItem.Header == title)
+                {
+                    tabItem.IsSelected = true;
+                    return tabItem;
+                }
+            }
+            return null;
         }
     }
 }

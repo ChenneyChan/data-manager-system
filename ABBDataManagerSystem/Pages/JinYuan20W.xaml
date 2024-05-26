@@ -100,14 +100,15 @@
             <Views:ToggleButton Width="100" GridMargin="0" Margin="5,0" CheckedChange="TestTypeSelectedTappingChange" ButtonContent="温升10''" x:Name="tbTestTypeTempRise10s"/>
             <Views:ToggleButton Width="100" GridMargin="0" Margin="5,0" CheckedChange="TestTypeSelectedTappingChange" ButtonContent="温升30''" x:Name="tbTestTypeTempRise30s"/>
             <Views:ToggleButton Width="100" GridMargin="0" Margin="5,0" CheckedChange="TestTypeSelectedTappingChange" ButtonContent="温升60''" x:Name="tbTestTypeTempRise60s"/>
+            <Views:ToggleButton Width="100" GridMargin="0" Margin="5,0" CheckedChange="TestTypeSelectedTappingChange" ButtonContent="温升冷电阻" x:Name="tbTestTypeTempRiseCool"/>
+            <Views:ToggleButton Width="100" GridMargin="0" Margin="60, 0, 5,0" CheckedChange="LowVoltageLevelSelectedChange" ButtonContent="低压一" x:Name="tbLowVoltageLevel1"/>
+            <Views:ToggleButton Width="100" GridMargin="0" Margin="5,0" CheckedChange="LowVoltageLevelSelectedChange" ButtonContent="低压二" x:Name="tbLowVoltageLevel2"/>
             <StackPanel HorizontalAlignment="Left" Margin="0,0,10,0" Orientation="Horizontal" VerticalAlignment="Center" Visibility="Collapsed">
                 <TextBlock TextWrapping="Wrap" Text="测试类型" VerticalAlignment="Center" Margin="0, 0, 10, 0"/>
                 <hc:ComboBox Width="160" Name="cbTestType" SelectionChanged="cbTestType_SelectionChanged"/>
             </StackPanel>
             <!--<Button Content="时间" HorizontalAlignment="Left" Margin="0,0,10,0" Name="btTime" Click="btTime_Click"/>
             <Button Content="记录" HorizontalAlignment="Left" Margin="0,0,10,0" Name="btRecord" Click="btRecord_Click"/>-->
-            <Button Content="常规测试" HorizontalAlignment="Left" Margin="10,0,10,0" FontWeight="Bold" Foreground="DarkBlue" Name="btTest" Click="btTest_Click"/>
-            <Button Content="定时"     HorizontalAlignment="Left" Margin="10,0,10,0" FontWeight="Bold" Foreground="DarkBlue" Name="btSetInterval" Click="btSetInterval_Click"/>
         </StackPanel>
         <Grid Grid.Row="3" Margin="10">
             <Grid.ColumnDefinitions>
@@ -116,7 +117,8 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <ScrollViewer>
+            <!--这个用不到了-->
+            <ScrollViewer Visibility="Collapsed">
                 <StackPanel Orientation="Vertical" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0, 20, 5, 0" Width="200" Name="panelTappingChoice">
                     <!--<TextBlock Text="绕组" HorizontalAlignment="Center" FontSize="18" Margin="0, 0, 0, 10"/>-->
                     <TextBlock Text="分接" HorizontalAlignment="Center" FontSize="18" Margin="0, 0, 0, 10" FontWeight="Bold"/>
@@ -162,8 +164,8 @@
                     </StackPanel>
                     <TextBlock Text="低压" HorizontalAlignment="Center" FontSize="18" Margin="0, 0, 0, 10" FontWeight="Bold"/>
                     <WrapPanel Orientation="Horizontal">
-                        <Views:ToggleButton ButtonContent="低压一"   Width="{StaticResource tbContentWidth}" Height="{StaticResource tbContentHeight}" CheckedChange="TappingSelectedTappingChange" x:Name="tbTappingLV1"/>
-                        <Views:ToggleButton ButtonContent="低压二"   Width="{StaticResource tbContentWidth}" Height="{StaticResource tbContentHeight}" CheckedChange="TappingSelectedTappingChange" x:Name="tbTappingLV2"/>
+                        <Views:ToggleButton ButtonContent="低压一"   Width="{StaticResource tbContentWidth}" Height="{StaticResource tbContentHeight}" x:Name="tbTappingLV1"/>
+                        <Views:ToggleButton ButtonContent="低压二"   Width="{StaticResource tbContentWidth}" Height="{StaticResource tbContentHeight}" x:Name="tbTappingLV2"/>
                     </WrapPanel>
                 </StackPanel>
             </ScrollViewer>
@@ -171,163 +173,165 @@
             <DataGrid Visibility="Collapsed" Grid.Row="0" Grid.Column="0" Name="lvUsers" AutoGenerateColumns="False" ItemsSource="{Binding Items}" FontSize="18" CanUserAddRows="False" CanUserDeleteRows="False" CanUserSortColumns="False">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="次数" Width="80"  Binding="{Binding SortIndex}"  IsReadOnly="True"/>
-                    <DataGridTextColumn Header="电流" Width="120" Binding="{Binding Current}"    IsReadOnly="True"/>
-                    <DataGridTextColumn Header="电阻" Width="120" Binding="{Binding Resistance}" IsReadOnly="True"/>
+                    <DataGridTextColumn Header="高压电流" Width="120" Binding="{Binding Current}"    IsReadOnly="True"/>
+                    <DataGridTextColumn Header="高压电阻" Width="120" Binding="{Binding Resistance}" IsReadOnly="True"/>
+                    <DataGridTextColumn Header="低压电流" Width="120" Binding="{Binding Current}"    IsReadOnly="True"/>
+                    <DataGridTextColumn Header="低压电阻" Width="120" Binding="{Binding Resistance}" IsReadOnly="True"/>
                 </DataGrid.Columns>
             </DataGrid>
 
             <ScrollViewer Grid.Column="1" >
                 <Grid Width="580" MinHeight="660" Name="panelCommonTestResult">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
-                <StackPanel Orientation="Horizontal" Margin="400, 0, 0, 0" Grid.ColumnSpan="6">
-                    <TextBlock Text="温度"/>
-                    <hc:TextBox Width="60" Margin="5,0,0,0" Text="21.0" TextAlignment="Center" BorderThickness="0" Name="tbTemperature"/>
-                    <TextBlock Text="℃"/>
-                </StackPanel>
-                <TextBlock Text="高压（串联）" Grid.ColumnSpan="6" HorizontalAlignment="Center" FontWeight="Bold"/>
-                <TextBlock Grid.Row="1" Grid.Column="0" Grid.RowSpan="2" Text="绕组" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <TextBlock Grid.Row="1" Grid.Column="1" Grid.RowSpan="2" Text="分接位置" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <TextBlock Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="3" Text="实测值（Ω）" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <TextBlock Grid.Row="1" Grid.Column="5" Grid.RowSpan="2" Text="最大不平衡差（%）" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap"/>
-                <TextBlock Grid.Row="2" Grid.Column="2" Text="A~B" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <TextBlock Grid.Row="2" Grid.Column="3" Text="B~C" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <TextBlock Grid.Row="2" Grid.Column="4" Text="C~A" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <TextBlock Grid.Row="3" Grid.Column="0" Grid.RowSpan="11" Text="高压" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap"/>
-                <TextBlock Grid.Row="3" Grid.Column="1" Text="1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <TextBlock Grid.Row="4" Grid.Column="1" Text="2" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <TextBlock Grid.Row="5" Grid.Column="1" Text="3" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <TextBlock Grid.Row="6" Grid.Column="1" Text="4" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <TextBlock Grid.Row="7" Grid.Column="1" Text="5" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <TextBlock Grid.Row="8" Grid.Column="1" Text="6" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <TextBlock Grid.Row="9" Grid.Column="1" Text="7" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <TextBlock Grid.Row="10" Grid.Column="1" Text="8" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <TextBlock Grid.Row="11" Grid.Column="1" Text="9" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <Views:TappingResistanceFields Grid.Row="3" Grid.Column="2"  Grid.ColumnSpan="3" x:Name="trTap1"/>
-                <Views:TappingResistanceFields Grid.Row="4" Grid.Column="2"  Grid.ColumnSpan="3" x:Name="trTap2"/>
-                <Views:TappingResistanceFields Grid.Row="5" Grid.Column="2"  Grid.ColumnSpan="3" x:Name="trTap3"/>
-                <Views:TappingResistanceFields Grid.Row="6" Grid.Column="2"  Grid.ColumnSpan="3" x:Name="trTap4"/>
-                <Views:TappingResistanceFields Grid.Row="7" Grid.Column="2"  Grid.ColumnSpan="3" x:Name="trTap5"/>
-                <Views:TappingResistanceFields Grid.Row="8" Grid.Column="2"  Grid.ColumnSpan="3" x:Name="trTap6"/>
-                <Views:TappingResistanceFields Grid.Row="9" Grid.Column="2"  Grid.ColumnSpan="3" x:Name="trTap7"/>
-                <Views:TappingResistanceFields Grid.Row="10" Grid.Column="2"  Grid.ColumnSpan="3" x:Name="trTap8"/>
-                <Views:TappingResistanceFields Grid.Row="11" Grid.Column="2"  Grid.ColumnSpan="3" x:Name="trTap9"/>
-                <TextBlock Grid.Row="12" Grid.Column="1" Grid.RowSpan="2" Text="额定分接" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap"/>
-                <TextBlock Grid.Row="12" Grid.Column="2" Text="A~O" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <TextBlock Grid.Row="12" Grid.Column="3" Text="B~O" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <TextBlock Grid.Row="12" Grid.Column="4" Text="C~O" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <Views:TappingResistanceFields Grid.Row="13" Grid.Column="2"  Grid.ColumnSpan="3" x:Name="trTap10"/>
-                <TextBlock Grid.Row="14" Grid.Column="0" Grid.RowSpan="4" Text="低压一" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap"/>
-                <TextBlock Grid.Row="18" Grid.Column="0" Grid.RowSpan="4" Text="低压二" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap"/>
-                <TextBlock Grid.Row="14" Grid.Column="1" Grid.RowSpan="2" Text="线电压" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap"/>
-                <TextBlock Grid.Row="16" Grid.Column="1" Grid.RowSpan="2" Text="相电压" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap"/>
-                <TextBlock Grid.Row="18" Grid.Column="1" Grid.RowSpan="2" Text="线电压" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap"/>
-                <TextBlock Grid.Row="20" Grid.Column="1" Grid.RowSpan="2" Text="相电压" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap"/>
-                <TextBlock Grid.Row="14" Grid.Column="2" Text="a~b" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <TextBlock Grid.Row="14" Grid.Column="3" Text="b~c" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <TextBlock Grid.Row="14" Grid.Column="4" Text="c~a" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <Views:TappingResistanceFields Grid.Row="15" Grid.Column="2"  Grid.ColumnSpan="3" x:Name="trTap11"/>
-                <TextBlock Grid.Row="16" Grid.Column="2" Text="a~o" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <TextBlock Grid.Row="16" Grid.Column="3" Text="b~o" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <TextBlock Grid.Row="16" Grid.Column="4" Text="c~o" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <Views:TappingResistanceFields Grid.Row="17" Grid.Column="2"  Grid.ColumnSpan="3" x:Name="trTap12"/>
-                <TextBlock Grid.Row="18" Grid.Column="2" Text="a~b" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <TextBlock Grid.Row="18" Grid.Column="3" Text="b~c" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <TextBlock Grid.Row="18" Grid.Column="4" Text="c~a" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <Views:TappingResistanceFields Grid.Row="19" Grid.Column="2"  Grid.ColumnSpan="3" x:Name="trTap21"/>
-                <TextBlock Grid.Row="20" Grid.Column="2" Text="a~o" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <TextBlock Grid.Row="20" Grid.Column="3" Text="b~o" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <TextBlock Grid.Row="20" Grid.Column="4" Text="c~o" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <Views:TappingResistanceFields Grid.Row="21" Grid.Column="2"  Grid.ColumnSpan="3" x:Name="trTap22"/>
-                <hc:TextBox Grid.Column="5" Grid.Row="3" Grid.RowSpan="11" Height="30" Width="80" BorderThickness="0" Name="tbHVMaxUnbalanceDiff"/>
-                <hc:TextBox Grid.Column="5" Grid.Row="14" Grid.RowSpan="2" Height="30" Width="80" BorderThickness="0" Name="tbLVMaxUnbalanceDiff11"/>
-                <hc:TextBox Grid.Column="5" Grid.Row="16" Grid.RowSpan="2" Height="30" Width="80" BorderThickness="0" Name="tbLVMaxUnbalanceDiff12"/>
-                <hc:TextBox Grid.Column="5" Grid.Row="18" Grid.RowSpan="2" Height="30" Width="80" BorderThickness="0" Name="tbLVMaxUnbalanceDiff21"/>
-                <hc:TextBox Grid.Column="5" Grid.Row="20" Grid.RowSpan="2" Height="30" Width="80" BorderThickness="0" Name="tbLVMaxUnbalanceDiff22"/>
-                <!--绘制边框-->
-                <Border Grid.Column="0" Grid.Row="1" Grid.RowSpan="2" BorderThickness="1"/>
-                <Border Grid.Column="1" Grid.Row="1" Grid.RowSpan="2" Grid.ColumnSpan="1" BorderThickness="0, 1, 0, 1"/>
-                <Border Grid.Column="0" Grid.Row="3" Grid.RowSpan="11" Grid.ColumnSpan="1" BorderThickness="1, 0, 1, 1"/>
-                <!--<Border Grid.Column="0" Grid.Row="1" Grid.RowSpan="13" Grid.ColumnSpan="2" BorderThickness="1"/>-->
-                <Border Grid.Column="2" Grid.Row="1" Grid.RowSpan="1" Grid.ColumnSpan="3" BorderThickness="1, 1, 1, 1"/>
-                <Border Grid.Column="2" Grid.Row="1" Grid.RowSpan="2" Grid.ColumnSpan="3" BorderThickness="0, 0, 0, 1"/>
-                <Border Grid.Column="2" Grid.Row="2" Grid.RowSpan="1" Grid.ColumnSpan="1" BorderThickness="1, 0, 0, 0"/>
-                <Border Grid.Column="3" Grid.Row="2" Grid.RowSpan="1" Grid.ColumnSpan="1" BorderThickness="1, 0, 0, 0"/>
-                <Border Grid.Column="4" Grid.Row="2" Grid.RowSpan="1" Grid.ColumnSpan="1" BorderThickness="1, 0, 1, 0"/>
-                <Border Grid.Row="3" Grid.Column="1" BorderThickness="0, 0, 0, 1"/>
-                <Border Grid.Row="4" Grid.Column="1" BorderThickness="0, 0, 0, 1"/>
-                <Border Grid.Row="5" Grid.Column="1" BorderThickness="0, 0, 0, 1"/>
-                <Border Grid.Row="6" Grid.Column="1" BorderThickness="0, 0, 0, 1"/>
-                <Border Grid.Row="7" Grid.Column="1" BorderThickness="0, 0, 0, 1"/>
-                <Border Grid.Row="8" Grid.Column="1" BorderThickness="0, 0, 0, 1"/>
-                <Border Grid.Row="9" Grid.Column="1" BorderThickness="0, 0, 0, 1"/>
-                <Border Grid.Row="10" Grid.Column="1" BorderThickness="0, 0, 0, 1"/>
-                <Border Grid.Row="11" Grid.Column="1" BorderThickness="0, 0, 0, 1"/>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <StackPanel Orientation="Horizontal" Margin="400, 0, 0, 0" Grid.ColumnSpan="6">
+                        <TextBlock Text="温度"/>
+                        <hc:TextBox Width="60" Margin="5,0,0,0" Text="21.0" TextAlignment="Center" BorderThickness="0" Name="tbTemperature"/>
+                        <TextBlock Text="℃"/>
+                    </StackPanel>
+                    <TextBlock Text="高压（串联）" Grid.ColumnSpan="6" HorizontalAlignment="Center" FontWeight="Bold"/>
+                    <TextBlock Grid.Row="1" Grid.Column="0" Grid.RowSpan="2" Text="绕组" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Row="1" Grid.Column="1" Grid.RowSpan="2" Text="分接位置" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="3" Text="实测值（Ω）" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Row="1" Grid.Column="5" Grid.RowSpan="2" Text="最大不平衡差（%）" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap"/>
+                    <TextBlock Grid.Row="2" Grid.Column="2" Text="A~B" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Row="2" Grid.Column="3" Text="B~C" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Row="2" Grid.Column="4" Text="C~A" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Row="3" Grid.Column="0" Grid.RowSpan="11" Text="高压" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap"/>
+                    <TextBlock Grid.Row="3" Grid.Column="1" Text="1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Row="4" Grid.Column="1" Text="2" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Row="5" Grid.Column="1" Text="3" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Row="6" Grid.Column="1" Text="4" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Row="7" Grid.Column="1" Text="5" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Row="8" Grid.Column="1" Text="6" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Row="9" Grid.Column="1" Text="7" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Row="10" Grid.Column="1" Text="8" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Row="11" Grid.Column="1" Text="9" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <Views:TappingResistanceFields Grid.Row="3" Grid.Column="2"  Grid.ColumnSpan="3" x:Name="trTap1"  TappingIndex="1" ActiveEventCallback="Trf_ActiveEvent"/>
+                    <Views:TappingResistanceFields Grid.Row="4" Grid.Column="2"  Grid.ColumnSpan="3" x:Name="trTap2"  TappingIndex="2" ActiveEventCallback="Trf_ActiveEvent"/>
+                    <Views:TappingResistanceFields Grid.Row="5" Grid.Column="2"  Grid.ColumnSpan="3" x:Name="trTap3"  TappingIndex="3" ActiveEventCallback="Trf_ActiveEvent"/>
+                    <Views:TappingResistanceFields Grid.Row="6" Grid.Column="2"  Grid.ColumnSpan="3" x:Name="trTap4"  TappingIndex="4" ActiveEventCallback="Trf_ActiveEvent"/>
+                    <Views:TappingResistanceFields Grid.Row="7" Grid.Column="2"  Grid.ColumnSpan="3" x:Name="trTap5"  TappingIndex="5" ActiveEventCallback="Trf_ActiveEvent"/>
+                    <Views:TappingResistanceFields Grid.Row="8" Grid.Column="2"  Grid.ColumnSpan="3" x:Name="trTap6"  TappingIndex="6" ActiveEventCallback="Trf_ActiveEvent"/>
+                    <Views:TappingResistanceFields Grid.Row="9" Grid.Column="2"  Grid.ColumnSpan="3" x:Name="trTap7"  TappingIndex="7" ActiveEventCallback="Trf_ActiveEvent"/>
+                    <Views:TappingResistanceFields Grid.Row="10" Grid.Column="2"  Grid.ColumnSpan="3" x:Name="trTap8" TappingIndex="8" ActiveEventCallback="Trf_ActiveEvent"/>
+                    <Views:TappingResistanceFields Grid.Row="11" Grid.Column="2"  Grid.ColumnSpan="3" x:Name="trTap9" TappingIndex="9" ActiveEventCallback="Trf_ActiveEvent"/>
+                    <TextBlock Grid.Row="12" Grid.Column="1" Grid.RowSpan="2" Text="额定分接" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap"/>
+                    <TextBlock Grid.Row="12" Grid.Column="2" Text="A~O" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Row="12" Grid.Column="3" Text="B~O" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Row="12" Grid.Column="4" Text="C~O" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <Views:TappingResistanceFields Grid.Row="13" Grid.Column="2"  Grid.ColumnSpan="3" x:Name="trTap10" TappingIndex="10" ActiveEventCallback="Trf_ActiveEvent"/>
+                    <TextBlock Grid.Row="14" Grid.Column="0" Grid.RowSpan="4" Text="低压一" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap"/>
+                    <TextBlock Grid.Row="18" Grid.Column="0" Grid.RowSpan="4" Text="低压二" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap"/>
+                    <TextBlock Grid.Row="14" Grid.Column="1" Grid.RowSpan="2" Text="线电压" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap"/>
+                    <TextBlock Grid.Row="16" Grid.Column="1" Grid.RowSpan="2" Text="相电压" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap"/>
+                    <TextBlock Grid.Row="18" Grid.Column="1" Grid.RowSpan="2" Text="线电压" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap"/>
+                    <TextBlock Grid.Row="20" Grid.Column="1" Grid.RowSpan="2" Text="相电压" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap"/>
+                    <TextBlock Grid.Row="14" Grid.Column="2" Text="a~b" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Row="14" Grid.Column="3" Text="b~c" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Row="14" Grid.Column="4" Text="c~a" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <Views:TappingResistanceFields Grid.Row="15" Grid.Column="2"  Grid.ColumnSpan="3" x:Name="trTap11" TappingIndex="11" ActiveEventCallback="Trf_ActiveEvent"/>
+                    <TextBlock Grid.Row="16" Grid.Column="2" Text="a~o" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Row="16" Grid.Column="3" Text="b~o" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Row="16" Grid.Column="4" Text="c~o" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <Views:TappingResistanceFields Grid.Row="17" Grid.Column="2"  Grid.ColumnSpan="3" x:Name="trTap12" TappingIndex="12" ActiveEventCallback="Trf_ActiveEvent"/>
+                    <TextBlock Grid.Row="18" Grid.Column="2" Text="a~b" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Row="18" Grid.Column="3" Text="b~c" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Row="18" Grid.Column="4" Text="c~a" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <Views:TappingResistanceFields Grid.Row="19" Grid.Column="2"  Grid.ColumnSpan="3" x:Name="trTap21" TappingIndex="21" ActiveEventCallback="Trf_ActiveEvent"/>
+                    <TextBlock Grid.Row="20" Grid.Column="2" Text="a~o" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Row="20" Grid.Column="3" Text="b~o" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Row="20" Grid.Column="4" Text="c~o" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <Views:TappingResistanceFields Grid.Row="21" Grid.Column="2"  Grid.ColumnSpan="3" x:Name="trTap22" TappingIndex="22" ActiveEventCallback="Trf_ActiveEvent"/>
+                    <hc:TextBox Grid.Column="5" Grid.Row="3" Grid.RowSpan="11" Height="30" Width="80" BorderThickness="0" Name="tbHVMaxUnbalanceDiff"/>
+                    <hc:TextBox Grid.Column="5" Grid.Row="14" Grid.RowSpan="2" Height="30" Width="80" BorderThickness="0" Name="tbLVMaxUnbalanceDiff11"/>
+                    <hc:TextBox Grid.Column="5" Grid.Row="16" Grid.RowSpan="2" Height="30" Width="80" BorderThickness="0" Name="tbLVMaxUnbalanceDiff12"/>
+                    <hc:TextBox Grid.Column="5" Grid.Row="18" Grid.RowSpan="2" Height="30" Width="80" BorderThickness="0" Name="tbLVMaxUnbalanceDiff21"/>
+                    <hc:TextBox Grid.Column="5" Grid.Row="20" Grid.RowSpan="2" Height="30" Width="80" BorderThickness="0" Name="tbLVMaxUnbalanceDiff22"/>
+                    <!--绘制边框-->
+                    <Border Grid.Column="0" Grid.Row="1" Grid.RowSpan="2" BorderThickness="1"/>
+                    <Border Grid.Column="1" Grid.Row="1" Grid.RowSpan="2" Grid.ColumnSpan="1" BorderThickness="0, 1, 0, 1"/>
+                    <Border Grid.Column="0" Grid.Row="3" Grid.RowSpan="11" Grid.ColumnSpan="1" BorderThickness="1, 0, 1, 1"/>
+                    <!--<Border Grid.Column="0" Grid.Row="1" Grid.RowSpan="13" Grid.ColumnSpan="2" BorderThickness="1"/>-->
+                    <Border Grid.Column="2" Grid.Row="1" Grid.RowSpan="1" Grid.ColumnSpan="3" BorderThickness="1, 1, 1, 1"/>
+                    <Border Grid.Column="2" Grid.Row="1" Grid.RowSpan="2" Grid.ColumnSpan="3" BorderThickness="0, 0, 0, 1"/>
+                    <Border Grid.Column="2" Grid.Row="2" Grid.RowSpan="1" Grid.ColumnSpan="1" BorderThickness="1, 0, 0, 0"/>
+                    <Border Grid.Column="3" Grid.Row="2" Grid.RowSpan="1" Grid.ColumnSpan="1" BorderThickness="1, 0, 0, 0"/>
+                    <Border Grid.Column="4" Grid.Row="2" Grid.RowSpan="1" Grid.ColumnSpan="1" BorderThickness="1, 0, 1, 0"/>
+                    <Border Grid.Row="3" Grid.Column="1" BorderThickness="0, 0, 0, 1"/>
+                    <Border Grid.Row="4" Grid.Column="1" BorderThickness="0, 0, 0, 1"/>
+                    <Border Grid.Row="5" Grid.Column="1" BorderThickness="0, 0, 0, 1"/>
+                    <Border Grid.Row="6" Grid.Column="1" BorderThickness="0, 0, 0, 1"/>
+                    <Border Grid.Row="7" Grid.Column="1" BorderThickness="0, 0, 0, 1"/>
+                    <Border Grid.Row="8" Grid.Column="1" BorderThickness="0, 0, 0, 1"/>
+                    <Border Grid.Row="9" Grid.Column="1" BorderThickness="0, 0, 0, 1"/>
+                    <Border Grid.Row="10" Grid.Column="1" BorderThickness="0, 0, 0, 1"/>
+                    <Border Grid.Row="11" Grid.Column="1" BorderThickness="0, 0, 0, 1"/>
 
-                <Border Grid.Row="12" Grid.Column="1" Grid.RowSpan="2" BorderThickness="0, 0, 0, 1"/>
-                <Border Grid.Row="12" Grid.Column="2" Grid.RowSpan="1" BorderThickness="1, 0, 0, 1"/>
-                <Border Grid.Row="12" Grid.Column="3" Grid.RowSpan="1" BorderThickness="1, 0, 0, 1"/>
-                <Border Grid.Row="12" Grid.Column="4" Grid.RowSpan="1" BorderThickness="1, 0, 1, 1"/>
+                    <Border Grid.Row="12" Grid.Column="1" Grid.RowSpan="2" BorderThickness="0, 0, 0, 1"/>
+                    <Border Grid.Row="12" Grid.Column="2" Grid.RowSpan="1" BorderThickness="1, 0, 0, 1"/>
+                    <Border Grid.Row="12" Grid.Column="3" Grid.RowSpan="1" BorderThickness="1, 0, 0, 1"/>
+                    <Border Grid.Row="12" Grid.Column="4" Grid.RowSpan="1" BorderThickness="1, 0, 1, 1"/>
 
-                <Border Grid.Row="1" Grid.Column="6" Grid.RowSpan="2" BorderThickness="0, 1, 1, 1"/>
-                <Border Grid.Row="3" Grid.Column="6" Grid.RowSpan="11" BorderThickness="0, 0, 1, 1"/>
-                <Border Grid.Row="14" Grid.Column="0" Grid.RowSpan="4" BorderThickness="1, 0, 1, 1"/>
-                <Border Grid.Row="18" Grid.Column="0" Grid.RowSpan="4" BorderThickness="1, 0, 1, 1"/>
-                <Border Grid.Row="14" Grid.Column="1" Grid.RowSpan="2" BorderThickness="0, 0, 0, 1"/>
-                <Border Grid.Row="16" Grid.Column="1" Grid.RowSpan="2" BorderThickness="0, 0, 0, 1"/>
-                <Border Grid.Row="18" Grid.Column="1" Grid.RowSpan="2" BorderThickness="0, 0, 0, 1"/>
-                <Border Grid.Row="20" Grid.Column="1" Grid.RowSpan="2" BorderThickness="0, 0, 0, 1"/>
-                <Border Grid.Row="14" Grid.Column="2" Grid.RowSpan="1" BorderThickness="1, 0, 0, 1"/>
-                <Border Grid.Row="14" Grid.Column="3" Grid.RowSpan="1" BorderThickness="1, 0, 0, 1"/>
-                <Border Grid.Row="14" Grid.Column="4" Grid.RowSpan="1" BorderThickness="1, 0, 1, 1"/>
-                <Border Grid.Row="16" Grid.Column="2" Grid.RowSpan="1" BorderThickness="1, 0, 0, 1"/>
-                <Border Grid.Row="16" Grid.Column="3" Grid.RowSpan="1" BorderThickness="1, 0, 0, 1"/>
-                <Border Grid.Row="16" Grid.Column="4" Grid.RowSpan="1" BorderThickness="1, 0, 1, 1"/>
-                <Border Grid.Row="18" Grid.Column="2" Grid.RowSpan="1" BorderThickness="1, 0, 0, 1"/>
-                <Border Grid.Row="18" Grid.Column="3" Grid.RowSpan="1" BorderThickness="1, 0, 0, 1"/>
-                <Border Grid.Row="18" Grid.Column="4" Grid.RowSpan="1" BorderThickness="1, 0, 1, 1"/>
-                <Border Grid.Row="20" Grid.Column="2" Grid.RowSpan="1" BorderThickness="1, 0, 0, 1"/>
-                <Border Grid.Row="20" Grid.Column="3" Grid.RowSpan="1" BorderThickness="1, 0, 0, 1"/>
-                <Border Grid.Row="20" Grid.Column="4" Grid.RowSpan="1" BorderThickness="1, 0, 1, 1"/>
-                
-                <Border Grid.Row="14" Grid.Column="5" Grid.RowSpan="2" BorderThickness="0, 0, 1, 1"/>
-                <Border Grid.Row="16" Grid.Column="5" Grid.RowSpan="2" BorderThickness="0, 0, 1, 1"/>
-                <Border Grid.Row="18" Grid.Column="5" Grid.RowSpan="2" BorderThickness="0, 0, 1, 1"/>
-                <Border Grid.Row="20" Grid.Column="5" Grid.RowSpan="2" BorderThickness="0, 0, 1, 1"/>
-            </Grid>
+                    <Border Grid.Row="1" Grid.Column="6" Grid.RowSpan="2" BorderThickness="0, 1, 1, 1"/>
+                    <Border Grid.Row="3" Grid.Column="6" Grid.RowSpan="11" BorderThickness="0, 0, 1, 1"/>
+                    <Border Grid.Row="14" Grid.Column="0" Grid.RowSpan="4" BorderThickness="1, 0, 1, 1"/>
+                    <Border Grid.Row="18" Grid.Column="0" Grid.RowSpan="4" BorderThickness="1, 0, 1, 1"/>
+                    <Border Grid.Row="14" Grid.Column="1" Grid.RowSpan="2" BorderThickness="0, 0, 0, 1"/>
+                    <Border Grid.Row="16" Grid.Column="1" Grid.RowSpan="2" BorderThickness="0, 0, 0, 1"/>
+                    <Border Grid.Row="18" Grid.Column="1" Grid.RowSpan="2" BorderThickness="0, 0, 0, 1"/>
+                    <Border Grid.Row="20" Grid.Column="1" Grid.RowSpan="2" BorderThickness="0, 0, 0, 1"/>
+                    <Border Grid.Row="14" Grid.Column="2" Grid.RowSpan="1" BorderThickness="1, 0, 0, 1"/>
+                    <Border Grid.Row="14" Grid.Column="3" Grid.RowSpan="1" BorderThickness="1, 0, 0, 1"/>
+                    <Border Grid.Row="14" Grid.Column="4" Grid.RowSpan="1" BorderThickness="1, 0, 1, 1"/>
+                    <Border Grid.Row="16" Grid.Column="2" Grid.RowSpan="1" BorderThickness="1, 0, 0, 1"/>
+                    <Border Grid.Row="16" Grid.Column="3" Grid.RowSpan="1" BorderThickness="1, 0, 0, 1"/>
+                    <Border Grid.Row="16" Grid.Column="4" Grid.RowSpan="1" BorderThickness="1, 0, 1, 1"/>
+                    <Border Grid.Row="18" Grid.Column="2" Grid.RowSpan="1" BorderThickness="1, 0, 0, 1"/>
+                    <Border Grid.Row="18" Grid.Column="3" Grid.RowSpan="1" BorderThickness="1, 0, 0, 1"/>
+                    <Border Grid.Row="18" Grid.Column="4" Grid.RowSpan="1" BorderThickness="1, 0, 1, 1"/>
+                    <Border Grid.Row="20" Grid.Column="2" Grid.RowSpan="1" BorderThickness="1, 0, 0, 1"/>
+                    <Border Grid.Row="20" Grid.Column="3" Grid.RowSpan="1" BorderThickness="1, 0, 0, 1"/>
+                    <Border Grid.Row="20" Grid.Column="4" Grid.RowSpan="1" BorderThickness="1, 0, 1, 1"/>
+
+                    <Border Grid.Row="14" Grid.Column="5" Grid.RowSpan="2" BorderThickness="0, 0, 1, 1"/>
+                    <Border Grid.Row="16" Grid.Column="5" Grid.RowSpan="2" BorderThickness="0, 0, 1, 1"/>
+                    <Border Grid.Row="18" Grid.Column="5" Grid.RowSpan="2" BorderThickness="0, 0, 1, 1"/>
+                    <Border Grid.Row="20" Grid.Column="5" Grid.RowSpan="2" BorderThickness="0, 0, 1, 1"/>
+                </Grid>
             </ScrollViewer>
-            
-            <Grid Grid.Column="3" Margin="20" Width="400" Height="310" VerticalAlignment="Top" HorizontalAlignment="Left">
+
+            <Grid Grid.Column="3" Margin="20" Width="400" Height="310" VerticalAlignment="Top" HorizontalAlignment="Left" Visibility="Collapsed">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*"/>
                     <ColumnDefinition Width="1.5*"/>
@@ -379,7 +383,7 @@
                 <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Grid.RowSpan="5" />
                 <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Grid.RowSpan="6" />
             </Grid>
-            <Grid  Grid.Column="2" Margin="20" Width="600" Height="320" VerticalAlignment="Top" HorizontalAlignment="Left">
+            <Grid  Grid.Column="2" Margin="20" Width="600" Height="340" VerticalAlignment="Top" HorizontalAlignment="Left">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="160"/>
@@ -390,8 +394,8 @@
                     <ColumnDefinition Width="1*"/>
                     <ColumnDefinition Width="1*"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Grid.Row="0" Grid.Column="0" Text="【正在测试】" Foreground="#FFED0E0E" Margin="5" Name="tbCH1State" />
-                <TextBlock Grid.Row="0" Grid.Column="1" Text="【正在测试】" Foreground="#FFED0E0E" Margin="5" Name="tbCH2State" />
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="【等待测试】" Foreground="#FFED0E0E" Margin="5" Name="tbCH1State" />
+                <TextBlock Grid.Row="0" Grid.Column="1" Text="【等待测试】" Foreground="#FFED0E0E" Margin="5" Name="tbCH2State" />
                 <Grid Grid.Row="1" Grid.Column="0" Margin="0, 5, 0, 0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -410,25 +414,28 @@
                     <TextBlock Text="0.00 A" Margin="5"  Name="tbCH2Current"/>
                     <TextBlock Text="0.000 mΩ" Margin="5" Grid.Row="1" FontSize="48"  Name="tbCH2Resistance"/>
                 </Grid>
-                <Grid Grid.Row="2" Grid.ColumnSpan="2" Margin="0, 10">
+                <Grid Grid.Row="2" Grid.ColumnSpan="2" Margin="0, 20">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*"/>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="1*"/>
                     </Grid.ColumnDefinitions>
-                    <TextBlock Text="常规-高压CH1-5A" TextAlignment="Center" HorizontalAlignment="Stretch" Name="tbCH1TestConfig" FontSize="18"/>
-                    <TextBox Text="10:00" Grid.Column="1" Name="TestingTimer" IsReadOnly="True" FontSize="18"/>
-                    <TextBlock Text="常规-低压CH2-5A" TextAlignment="Center" HorizontalAlignment="Stretch" Name="tbCH2TestConfig" FontSize="18" Grid.Column="2"/>
+                    <TextBlock Text="常规-高压CH1-5A" TextAlignment="Center" HorizontalAlignment="Stretch" Name="tbCH1TestConfig" FontSize="24"/>
+                    <TextBox Text="10:00" Grid.Column="1" Name="TestingTimer" IsReadOnly="True" FontSize="24" BorderThickness="1" BorderBrush="Gray"/>
+                    <TextBlock Text="常规-低压CH2-5A" TextAlignment="Center" HorizontalAlignment="Stretch" Name="tbCH2TestConfig" FontSize="24" Grid.Column="2"/>
                 </Grid>
-                <Grid Grid.Row="3" Grid.ColumnSpan="2" Margin="10" Name="panelCommonTestControl" IsEnabled="False">
+                <Grid Grid.Row="3" Grid.ColumnSpan="2" Margin="20" Name="panelCommonTestControl" IsEnabled="True">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*"/>
                         <ColumnDefinition Width="1*"/>
                         <ColumnDefinition Width="1*"/>
                     </Grid.ColumnDefinitions>
-                    <Button Style="{StaticResource ButtonDanger}" Width="100" Height="40" Content="退出" Name="btQuitTest" Click="btQuitTest_Click"/>
-                    <Button Style="{StaticResource ButtonDanger}" Width="100" Height="40" Content="保存" Grid.Column="1" Name="btSaveRecord"/>
-                    <Button Style="{StaticResource ButtonDanger}" Width="100" Height="40" Content="打印" Grid.Column="2" Name="btPrint"/>
+                    <Button Content="开始" FontWeight="Bold" Foreground="DarkBlue" Name="btCommonTest" Click="btCommonTest_Click"/>
+                    <Button Content="定时" FontWeight="Bold" Foreground="DarkBlue" Name="btSetInterval" Click="btSetInterval_Click" Visibility="Collapsed"/>
+                    <Button Content="复位" FontWeight="Bold" Foreground="DarkBlue" Grid.Column="1" Name="btQuitTest" Click="btQuitTest_Click"/>
+                    <!--<Button Style="{StaticResource ButtonDanger}" Width="100" Height="40" Content="退出" Name="btQuitTest" Click="btQuitTest_Click"/>-->
+                    <!--<Button Style="{StaticResource ButtonDanger}" Width="100" Height="40" Content="保存" Grid.Column="1" Name="btSaveRecord"/>-->
+                    <Button Content="打印" FontWeight="Bold" Foreground="DarkBlue" Grid.Column="2" Name="btPrint" Click="btPrint_Click"/>
                 </Grid>
                 <Border Grid.Row="0" Grid.Column="0" BorderThickness="1" Margin="0, 0, 5 ,0"/>
                 <Border Grid.Row="0" Grid.Column="1" BorderThickness="1" Margin="0, 0, 0 ,0"/>
@@ -437,6 +444,7 @@
                 <Border Grid.Row="2" Grid.ColumnSpan="2" BorderThickness="1" Margin="0, 5"/>
                 <Border Grid.Row="3" Grid.ColumnSpan="2" BorderThickness="1" Margin="0, 5"/>
             </Grid>
+            <Image Grid.Column="2" Grid.ColumnSpan="2" Margin="409,558,-849,-1822" Source="/bdc5a78fac3adfc9011beb85f640519.jpg" Stretch="Fill"/>
         </Grid>
         <ScrollViewer Grid.Row="4" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Visibility="Visible">
             <TextBlock Text="Debug Packet: " FontSize="12" TextWrapping="Wrap" Name="tbDebugMsg" VerticalAlignment="Top"/>

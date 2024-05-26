@@ -14,6 +14,7 @@
             <Setter Property="IsReadOnly" Value="True"/>
             <Setter Property="Text" Value="123.23"/>
             <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="BorderBrush" Value="#FFFF2D2D"/>
         </Style>
     </UserControl.Resources>
     <Grid Margin="0">
@@ -22,9 +23,9 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <hc:TextBox Name="tbResistanceAB" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" MinWidth="60" Height="Auto" Margin="4" Padding="0"/>
-        <hc:TextBox Name="tbResistanceBC" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center" MinWidth="60" Height="Auto" Margin="4" Padding="0"/>
-        <hc:TextBox Name="tbResistanceCA" Grid.Row="0" Grid.Column="2" HorizontalAlignment="Center" MinWidth="60" Height="Auto" Margin="4" Padding="0"/>
+        <hc:TextBox Name="tbResistanceAB" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="4" Padding="0" PreviewMouseLeftButtonDown="tbResistance_MouseLeftButtonDown"/>
+        <hc:TextBox Name="tbResistanceBC" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="4" Padding="0" PreviewMouseLeftButtonDown="tbResistance_MouseLeftButtonDown"/>
+        <hc:TextBox Name="tbResistanceCA" Grid.Row="0" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="4" Padding="0" PreviewMouseLeftButtonDown="tbResistance_MouseLeftButtonDown"/>
         <Border Grid.Column="0" Grid.Row="0" BorderThickness="1,0,0,1" BorderBrush="Black"></Border>
         <Border Grid.Column="1" Grid.Row="0" BorderThickness="1,0,0,1" BorderBrush="Black"></Border>
         <Border Grid.Column="2" Grid.Row="0" BorderThickness="1,0,1,1" BorderBrush="Black"></Border>
