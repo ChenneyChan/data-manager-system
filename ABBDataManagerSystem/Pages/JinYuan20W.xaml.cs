@@ -2,7 +2,6 @@
 using ABBDataManagerSystem.Pages.Views;
 using System.Collections.ObjectModel;
 using System.IO.Ports;
-using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
@@ -15,6 +14,8 @@ namespace ABBDataManagerSystem.Pages
     /// </summary>
     public partial class JinYuan20W : UserControl, ICloseable
     {
+        private bool IsSimulate = true;
+        private Random random = new Random();
         private JinYuan20WCollector? Collector = null;
         private List<CurrentResistanceInfo> dataItems = new List<CurrentResistanceInfo>();
         private ObservableCollection<MyItem> items2;
@@ -455,6 +456,10 @@ namespace ABBDataManagerSystem.Pages
                     {
                         value = lastPacket.ch2RealTimeResistance;
                     }
+                }
+                if (value == 0 && IsSimulate)
+                {
+                    value = (float)random.Next() % 1000 + (float)random.NextDouble();
                 }
                 tappingResistanceFields[SelectedTapping].UpdateValueForActiveItem(value);
             }

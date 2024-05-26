@@ -432,7 +432,7 @@
                     <!--<Button Style="{StaticResource ButtonDanger}" Width="100" Height="40" Content="退出" Name="btQuitTest" Click="btQuitTest_Click"/>-->
                     <!--<Button Style="{StaticResource ButtonDanger}" Width="100" Height="40" Content="保存" Grid.Column="1" Name="btSaveRecord"/>-->
                     <Button Content="打印" FontWeight="Bold" Foreground="DarkBlue" Grid.Column="2" Name="btPrint" Click="btPrint_Click"/>
-                    <Button Content="复位" FontWeight="Bold" Foreground="DarkBlue" Grid.Column="2" Name="btQuitTestTempRise" Click="btQuitTestTempRise_Click"/>
+                    <Button Content="复位" FontWeight="Bold" Foreground="DarkBlue" Grid.Column="2" Name="btQuitTestTempRise" Click="btQuitTestTempRise_Click" Visibility="Collapsed"/>
                 </Grid>
                 <Border Grid.Row="0" Grid.Column="0" BorderThickness="1" Margin="0, 0, 5 ,0"/>
                 <Border Grid.Row="0" Grid.Column="1" BorderThickness="1" Margin="0, 0, 0 ,0"/>
