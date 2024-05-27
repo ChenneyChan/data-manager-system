@@ -66,8 +66,8 @@
                         <Button Content="温度测试" Name="btStartTempTest" Click="btStartTempTest_Click" Height="30" Width="120"/>
                         <Button Content="后台任务调试" Name="btThreadTest" Click="btThreadTest_Click" Height="30" Width="120"/>
                     </StackPanel>
-                    <TextBlock Width="400" Height="Auto" TextWrapping="Wrap" Text="输出：" Name="tbMsg"/>
-                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto" HorizontalAlignment="Left">
+                    <TextBlock Width="400" Height="Auto" TextWrapping="Wrap" Text="输出：" Name="tbMsg" Grid.Row="1"/>
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto" HorizontalAlignment="Left" Visibility="Collapsed">
                         <Grid Width="600">
                             <!-- Define Grid Rows and Columns -->
                             <Grid.RowDefinitions>

@@ -1,7 +1,9 @@
 ﻿using ABBDataManagerSystem.Connector;
 using ABBDataManagerSystem.Pages;
 using ABBDataManagerSystem.PowerAnalyzer;
+using ABBDataManagerSystem.Tools;
 using HandyControl.Controls;
+using Org.BouncyCastle.Bcpg;
 using System.IO.Ports;
 using System.Windows;
 using System.Windows.Controls;
@@ -134,82 +136,28 @@ namespace ABBDataManagerSystem
 
         bool IsTemp = false;
 
-        private const ushort Polynomial = 0x1021;
-        private const ushort InitialValue = 0xFFFF;
-        public ushort ComputeChecksum(byte[] bytes, int offset, int len)
-        {
-            ushort crc = InitialValue;
-            for (int i = offset; i < bytes.Length && i < len; ++i)
-            {
-                crc ^= (ushort)(bytes[i] << 8);
-                for (int j = 0; j < 8; ++j)
-                {
-                    if ((crc & 0x8000) != 0)
-                    {
-                        crc = (ushort)((crc << 1) ^ Polynomial);
-                    }
-                    else
-                    {
-                        crc <<= 1;
-                    }
-                }
-            }
-            return crc;
-        }
-
-
-        #region 计算CRC校验码
-        /// <summary>
-        /// 计算CRC校验码，并转换为十六进制字符串
-        /// Cyclic Redundancy Check 循环冗余校验码
-        /// 是数据通信领域中最常用的一种差错校验码
-        /// 特征是信息字段和校验字段的长度可以任意选定
-        /// </summary>
-        /// <param name="data"></param>
-        /// <returns></returns>
-        public static new byte[] get_CRC16_C(byte[] data, int offset, int len)
-        {
-            byte num = 0xff;
-            byte num2 = 0xff;
-
-            byte num3 = 1;
-            byte num4 = 160;
-            byte[] buffer = data;
-
-            for (int i = offset; i < buffer.Length && i < len; i++)
-            {
-                //位异或运算
-                num = (byte)(num ^ buffer[i]);
-
-                for (int j = 0; j <= 7; j++)
-                {
-                    byte num5 = num2;
-                    byte num6 = num;
-
-                    //位右移运算
-                    num2 = (byte)(num2 >> 1);
-                    num = (byte)(num >> 1);
-
-                    //位与运算
-                    if ((num5 & 1) == 1)
-                    {
-                        //位或运算
-                        num = (byte)(num | 0x80);
-                    }
-                    if ((num6 & 1) == 1)
-                    {
-                        num2 = (byte)(num2 ^ num4);
-                        num = (byte)(num ^ num3);
-                    }
-                }
-            }
-            return new byte[] { num, num2 };
-        }
-        #endregion
-
-
         private void btStartTempTest_Click(object sender, RoutedEventArgs e)
         {
+            byte[] request = {
+                1, // 从站地址
+                0x04, // 功能码（读取多个寄存器）
+                0x00, 0x00, // 起始寄存器地址（通道1的地址30001转换为16进制）
+                0x00, 0x28, // 寄存器个数（读取4个寄存器，即通道1至4）
+                0x00, 0x00 // CRC校验，需根据Modbus协议计算得出
+            };
+            var crcs = ModbusCRC.Calculate_CRC16_C(request, 0, request.Length - 2);
+            AppendMsg($"CRC1 IS = {crcs[0].ToString("X2")} {crcs[1].ToString("X2")}");
+
+            byte[] response = {
+                1, // 从站地址
+                0x04, // 功能码（读取多个寄存器）
+                0x02, // 字节数 
+                0x00, 0x64, // 寄存器数据
+                0x00, 0x00 // CRC校验，需根据Modbus协议计算得出
+            };
+            crcs = ModbusCRC.Calculate_CRC16_C(response, 0, response.Length - 2);
+            AppendMsg($"CRC2 IS = {crcs[0].ToString("X2")} {crcs[1].ToString("X2")}");
+
             if (IsTemp)
             {
                 IsTemp = false;
@@ -231,7 +179,7 @@ namespace ABBDataManagerSystem
                     ushort count = 15;
                     byte[] c = { (byte)(count >> 8 & 0xFF), (byte)(count & 0x00FF) };
                     var packet = new byte[] { 0x01, 0x04, start[0], start[1], c[0], c[1], 0x31, 0xCA };
-                    var crc = get_CRC16_C(packet, 0, packet.Length - 2);
+                    var crc = ModbusCRC.Calculate_CRC16_C(packet, 0, packet.Length - 2);
                     packet[packet.Length - 2] = crc[0];
                     packet[packet.Length - 1] = crc[1];
                     AppendMsg(crc[0].ToString("X2") + " " + crc[1].ToString("X2"));

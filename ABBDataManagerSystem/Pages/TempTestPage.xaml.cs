@@ -214,7 +214,7 @@ namespace ABBDataManagerSystem.Pages
             {
                 if (rbEthernet.IsChecked == true)
                 {
-                    tempModbusCollector = new TempModbusCollector(tbEthernetIP.Text, Utils.ParseInt(tbEthernetPort.Text), true);
+                    //tempModbusCollector = new TempModbusCollector(tbEthernetIP.Text, Utils.ParseInt(tbEthernetPort.Text), true);
                 }
                 else
                 {
