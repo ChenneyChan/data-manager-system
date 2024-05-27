@@ -14,7 +14,7 @@ namespace ABBDataManagerSystem.Pages
     /// </summary>
     public partial class JinYuan20W : UserControl, ICloseable
     {
-        private bool IsSimulate = true;
+        private bool IsSimulate = false;
         private Random random = new Random();
         private bool IsFirstLoaded = true;
         private JinYuan20WCollector? Collector = null;

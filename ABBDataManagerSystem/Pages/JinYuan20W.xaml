@@ -50,7 +50,7 @@
 
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="60"/>
+            <RowDefinition Height="40"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="1*"/>
@@ -442,7 +442,7 @@
                 <Border Grid.Row="3" Grid.ColumnSpan="2" BorderThickness="1" Margin="0, 5"/>
             </Grid>
         </Grid>
-        <ScrollViewer Grid.Row="4" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Visibility="Visible">
+        <ScrollViewer Grid.Row="4" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Visibility="Collapsed">
             <TextBlock Text="Debug Packet: " FontSize="12" TextWrapping="Wrap" Name="tbDebugMsg" VerticalAlignment="Top"/>
         </ScrollViewer>
     </Grid>
