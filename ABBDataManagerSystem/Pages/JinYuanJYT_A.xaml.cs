@@ -219,7 +219,7 @@ namespace ABBDataManagerSystem.Pages
 
         private void UserControl_Unloaded(object sender, RoutedEventArgs e)
         {
-            Close();
+            //Close();
         }
 
         public void Close()

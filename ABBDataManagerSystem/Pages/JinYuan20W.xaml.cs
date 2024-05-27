@@ -16,6 +16,7 @@ namespace ABBDataManagerSystem.Pages
     {
         private bool IsSimulate = true;
         private Random random = new Random();
+        private bool IsFirstLoaded = true;
         private JinYuan20WCollector? Collector = null;
         private List<CurrentResistanceInfo> dataItems = new List<CurrentResistanceInfo>();
         private ObservableCollection<MyItem> items2;
@@ -44,7 +45,7 @@ namespace ABBDataManagerSystem.Pages
         private bool IsTempRiseTesting = false;
         private int SelectedLowVoltageLevel = 0;
 
-        private JinYuan20WCollector.JinYuan20WPacketInfo? lastPacket = null;
+        private JinYuan20WPacketInfo? lastPacket = null;
 
 
         public JinYuan20W()
@@ -157,6 +158,11 @@ namespace ABBDataManagerSystem.Pages
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            if (!IsFirstLoaded)
+            {
+                return;
+            }
+            IsFirstLoaded = false;
             var ports = SerialPort.GetPortNames();
             Array.Sort(ports);
             foreach (var item in ports)
@@ -269,7 +275,7 @@ namespace ABBDataManagerSystem.Pages
 
         private void UserControl_Unloaded(object sender, RoutedEventArgs e)
         {
-            Close();
+            //Close();
         }
 
         public void Close()
