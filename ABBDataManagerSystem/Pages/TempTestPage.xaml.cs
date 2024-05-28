@@ -387,7 +387,7 @@ namespace ABBDataManagerSystem.Pages
             {
                 string msg;
                 int maxSelectedSlotIndex = SelectedSlots[SelectedSlots.Count - 1];
-                var listValues = tempModbusCollector.ReadData(maxSelectedSlotIndex, out msg);
+                var listValues = tempModbusCollector.ReadData(maxSelectedSlotIndex + 1, out msg);
                 for (int i = 0; i < SlotCount; i++)
                 {
                     if (SelectedSlots[i] >= listValues.Count)

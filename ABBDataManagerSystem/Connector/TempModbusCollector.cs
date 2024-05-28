@@ -94,7 +94,7 @@ namespace ABBDataManagerSystem.Connector
                     Log.Error("fail to open serial port " + e.Message);
                     return false;
                 }
-                //_modbusMaster = ModbusSerialMaster.CreateRtu(_serialPort);
+                _modbusMaster = ModbusSerialMaster.CreateRtu(_serialPort);
                 return true;
             }
         }
@@ -136,7 +136,7 @@ namespace ABBDataManagerSystem.Connector
             var crcs = ModbusCRC.Calculate_CRC16_C(request, 0, request.Length - 2);
             request[request.Length - 2] = crcs[0];
             request[request.Length - 1] = crcs[1];
-            int bufferLen = slotCount * 2 + 10;
+            int bufferLen = slotCount * 2 + 5;
             byte[] buffer = new byte[bufferLen];
             try
             {
@@ -144,6 +144,17 @@ namespace ABBDataManagerSystem.Connector
                 int byteRead = _serialPort.Read(buffer, 0, bufferLen);
                 Log.Info("ReadPacket Len is " + byteRead);
                 Utils.DumpBuffer(buffer, 0, byteRead);
+                if (byteRead <  bufferLen)
+                {
+                    Log.Error("Packet Len Error " + bufferLen + " " + byteRead);
+                    return null;
+                }
+                int byteLen = buffer[2];
+                Log.Info($"register info len is {byteLen}");
+                for (int i = 3; i < bufferLen; i++)
+                {
+
+                }
             }
             catch { }
             //// 假设10个连续通道的float型温度寄存器地址起始于30101（通道1）至301A（通道10）
@@ -180,7 +191,7 @@ namespace ABBDataManagerSystem.Connector
                 }
                 try
                 {
-                    ushort startAddress = 1000;
+                    ushort startAddress = 100;
                     if (isConfigRead)
                     {
                         startAddress = this.startIndex;
