@@ -20,6 +20,7 @@ namespace ABBDataManagerSystem.Pages
     public partial class TempTestPage : UserControl, ICloseable
     {
         private static bool Simulate = false;
+        private bool IsFirstLoad = true;
 
         private bool UsingSerial = true;
         private List<TemperatureSlotView> Slots = new List<TemperatureSlotView>();
@@ -138,13 +139,17 @@ namespace ABBDataManagerSystem.Pages
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            if (!IsFirstLoad)
+            {
+                return;
+            }
+            IsFirstLoad = false;
             UpdateByConfig();
             InitSlot();
             InitChartRange();
             tempCharts = new TempChartsNew(plotView, SelectedSlots);
             tempCharts.InitChart();
         }
-
 
         private void InitSlot()
         {
@@ -613,7 +618,7 @@ namespace ABBDataManagerSystem.Pages
 
         private void UserControl_Unloaded(object sender, RoutedEventArgs e)
         {
-            Close();
+            //Close();
         }
 
         private void mcbSelectedSlots_SelectionChanged(object sender, SelectionChangedEventArgs e)

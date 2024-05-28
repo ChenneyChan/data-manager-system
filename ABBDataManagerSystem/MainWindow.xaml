@@ -40,7 +40,7 @@
                 <Separator></Separator>
                 <Button Content="FileExplorer"></Button>
                 <Separator></Separator>-->
-            <Button Content="温度测量仪" Click="TemperatureTest_Click" Visibility="Visible"></Button>
+            <Button Content="盘古温度测量仪" Click="TemperatureTest_Click" Visibility="Visible"></Button>
             <Separator></Separator>
             <Button Content="金源20W 直流电阻" Click="JnYuan20WTest_Click" Visibility="Visible"></Button>
             <Separator></Separator>

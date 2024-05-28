@@ -25,23 +25,71 @@ namespace ABBDataManagerSystem
             new WindowSettings().ShowDialog();
         }
 
+        #region 测试页面加载
         private void PowerAnalyzeTest_Click(object sender, RoutedEventArgs e)
         {
             PowerAnalyze2Test_Click(sender, e);
         }
 
+        private void PowerAnalyze2Test_Click(object sender, RoutedEventArgs e)
+        {
+            string title = "功率分析仪";
+            if (GetTabItemAndActive(title) != null)
+            {
+                return;
+            }
+            var window = new PageDeviceSearch(() =>
+            {
+                Log.Info("MainWindow DeviceFound Callback..");
+                string title = "功率分析仪";
+                var item = new TabItem()
+                {
+                    Content = new UCPowerAanlyzer(),
+                    Header = title,
+                    IsSelected = true,
+                };
+                tabControl.Items.Add(item);
+            })
+            {
+                Title = "功率分析仪",
+                Width = 500,
+                Height = 300,
+                WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                ResizeMode = ResizeMode.NoResize
+            };
+            window.ShowDialog();
+        }
+
+        private void JinYuanJYT_A_Click(object sender, RoutedEventArgs e)
+        {
+            string title = "金源JYT-A变比测试仪";
+            if (GetTabItemAndActive(title) != null)
+            {
+                return;
+            }
+            var item = new TabItem()
+            {
+                Content = new JinYuanJYT_A(),
+                Header = title,
+                IsSelected = true
+            };
+            tabControl.Items.Add(item);
+        }
+
         private void TemperatureTest_Click(object sender, RoutedEventArgs e)
         {
-            var window = new Window()
+            string title = "盘古温度测试仪";
+            if (GetTabItemAndActive(title) != null)
             {
-                Title = "温度检测仪",
-                Width = 1200,
-                Height = 900,
-                WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                return;
+            }
+            var item = new TabItem()
+            {
+                Content = new TempTestPage(),
+                Header = title,
+                IsSelected = true,
             };
-            var uc = new TempTestPage();
-            window.Content = uc;
-            window.ShowDialog();
+            tabControl.Items.Add(item);
         }
 
         private void JnYuan20WTest_Click(object sender, RoutedEventArgs e)
@@ -60,6 +108,17 @@ namespace ABBDataManagerSystem
             tabControl.Items.Add(item);
         }
 
+        private void btHarmonicTest_Click(object sender, RoutedEventArgs e)
+        {
+            new HarmonicInfo()
+            {
+                Width = 1200,
+                Height = 800,
+                WindowStartupLocation = WindowStartupLocation.CenterScreen,
+            }.ShowDialog();
+        }
+        #endregion
+        
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             foreach (var item in tabControl.Items)
@@ -208,61 +267,6 @@ namespace ABBDataManagerSystem
                     AppendMsg("Fail to process, Error: " + ex.Message);
                 }
             }).Start();
-        }
-
-        private void btHarmonicTest_Click(object sender, RoutedEventArgs e)
-        {
-            new HarmonicInfo()
-            {
-                Width = 1200,
-                Height = 800,
-                WindowStartupLocation = WindowStartupLocation.CenterScreen,
-            }.ShowDialog();
-        }
-
-        private void PowerAnalyze2Test_Click(object sender, RoutedEventArgs e)
-        {
-            string title = "功率分析仪";
-            if (GetTabItemAndActive(title) != null)
-            {
-                return;
-            }
-            var window = new PageDeviceSearch(() =>
-            {
-                Log.Info("MainWindow DeviceFound Callback..");
-                string title = "功率分析仪";
-                var item = new TabItem()
-                {
-                    Content = new UCPowerAanlyzer(),
-                    Header = title,
-                    IsSelected = true,
-                };
-                tabControl.Items.Add(item);
-            })
-            {
-                Title = "功率分析仪",
-                Width = 500,
-                Height = 300,
-                WindowStartupLocation = WindowStartupLocation.CenterScreen,
-                ResizeMode = ResizeMode.NoResize
-            };
-            window.ShowDialog();
-        }
-
-        private void JinYuanJYT_A_Click(object sender, RoutedEventArgs e)
-        {
-            string title = "金源JYT-A变比测试仪";
-            if (GetTabItemAndActive(title) != null)
-            {
-                return;
-            }
-            var item = new TabItem()
-            {
-                Content = new JinYuanJYT_A(),
-                Header = title,
-                IsSelected = true
-            };
-            tabControl.Items.Add(item);
         }
 
         private void btThreadTest_Click(object sender, RoutedEventArgs e)
