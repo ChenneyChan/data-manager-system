@@ -2,11 +2,8 @@
 using ABBDataManagerSystem.Pages;
 using ABBDataManagerSystem.PowerAnalyzer;
 using ABBDataManagerSystem.Tools;
-using HandyControl.Controls;
-using Org.BouncyCastle.Bcpg;
 using System.IO.Ports;
 using System.Windows;
-using System.Windows.Controls;
 using TabItem = HandyControl.Controls.TabItem;
 using Window = System.Windows.Window;
 
@@ -30,15 +27,7 @@ namespace ABBDataManagerSystem
 
         private void PowerAnalyzeTest_Click(object sender, RoutedEventArgs e)
         {
-            var window = new PageDeviceSearch()
-            {
-                Title = "功率分析仪",
-                Width = 500,
-                Height = 300,
-                WindowStartupLocation = WindowStartupLocation.CenterScreen,
-                ResizeMode = ResizeMode.NoResize
-            };
-            window.ShowDialog();
+            PowerAnalyze2Test_Click(sender, e);
         }
 
         private void TemperatureTest_Click(object sender, RoutedEventArgs e)
@@ -229,13 +218,26 @@ namespace ABBDataManagerSystem
             {
                 return;
             }
-            var item = new TabItem()
+            var window = new PageDeviceSearch(() =>
             {
-                Content = new UCPowerAanlyzer(),
-                Header = title,
-                IsSelected = true,
+                Log.Info("MainWindow DeviceFound Callback..");
+                string title = "功率分析仪";
+                var item = new TabItem()
+                {
+                    Content = new UCPowerAanlyzer(),
+                    Header = title,
+                    IsSelected = true,
+                };
+                tabControl.Items.Add(item);
+            })
+            {
+                Title = "功率分析仪",
+                Width = 500,
+                Height = 300,
+                WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                ResizeMode = ResizeMode.NoResize
             };
-            tabControl.Items.Add(item);
+            window.ShowDialog();
         }
 
         private void JinYuanJYT_A_Click(object sender, RoutedEventArgs e)

@@ -7,14 +7,17 @@ using Yokogawa.Tm.WT1800CommSample.cs;
 
 namespace ABBDataManagerSystem.PowerAnalyzer
 {
+    public delegate void DeviceFoundEvent();
     /// <summary>
     /// UCDeviceSearch.xaml 的交互逻辑
     /// </summary>
     public partial class PageDeviceSearch : Window
     {
-        public PageDeviceSearch()
+        private DeviceFoundEvent? deviceFoundEvent;
+        public PageDeviceSearch(DeviceFoundEvent? _deviceFoundEvent = null)
         {
             InitializeComponent();
+            this.deviceFoundEvent = _deviceFoundEvent;
         }
 
         #region Variables
@@ -165,16 +168,20 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 //        this.Close();
                 //this.Visible = false; // todo
                 // 如下是测试代码
-                var window = new Window()
+                //var window = new Window()
+                //{
+                //    Width = 1600,
+                //    Height = 800,
+                //    Title = "功率分析仪",
+                //    WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                //};
+                //window.Content = new UCPowerAanlyzer();
+                //window.ShowDialog();
+                if (deviceFoundEvent != null)
                 {
-                    Width = 1600,
-                    Height = 800,
-                    Title = "功率分析仪",
-                    WindowStartupLocation = WindowStartupLocation.CenterScreen,
-                };
+                    deviceFoundEvent();
+                }
                 this.Close();
-                window.Content = new UCPowerAanlyzer();
-                window.ShowDialog();
                 return;
             }
             MessageBox.Show("请搜索并选择设备");
