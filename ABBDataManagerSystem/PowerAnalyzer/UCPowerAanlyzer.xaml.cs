@@ -2556,5 +2556,9 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             }
             IsHold = !IsHold;
         }
+
+        #region UDP广播数据给其他软件使用
+
+        #endregion
     }
 }

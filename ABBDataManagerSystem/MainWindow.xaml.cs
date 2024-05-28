@@ -127,12 +127,21 @@ namespace ABBDataManagerSystem
 
         private void btStartTempTest_Click(object sender, RoutedEventArgs e)
         {
+            //byte[] request = {
+            //    1, // 从站地址
+            //    0x04, // 功能码（读取多个寄存器）
+            //    0x00, 0x00, // 起始寄存器地址（通道1的地址30001转换为16进制）
+            //    0x00, 0x28, // 寄存器个数（读取4个寄存器，即通道1至4）
+            //    0x00, 0x00 // CRC校验，需根据Modbus协议计算得出
+            //};
+            //int startIndex = 000;
+            //int slotCount = 10;
             byte[] request = {
                 1, // 从站地址
                 0x04, // 功能码（读取多个寄存器）
-                0x00, 0x00, // 起始寄存器地址（通道1的地址30001转换为16进制）
-                0x00, 0x28, // 寄存器个数（读取4个寄存器，即通道1至4）
-                0x00, 0x00 // CRC校验，需根据Modbus协议计算得出
+                0x00, 0x64, // 起始寄存器地址（通道1的地址30001转换为16进制）
+                0x00, 0x0A, // 寄存器个数（读取4个寄存器，即通道1至4）
+                0x31, 0xD2  // CRC校验，需根据Modbus协议计算得出
             };
             var crcs = ModbusCRC.Calculate_CRC16_C(request, 0, request.Length - 2);
             AppendMsg($"CRC1 IS = {crcs[0].ToString("X2")} {crcs[1].ToString("X2")}");

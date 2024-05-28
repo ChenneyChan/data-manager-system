@@ -17,7 +17,7 @@ namespace ABBDataManagerSystem.Connector
         private SerialPort? _serialPort;
         private ModbusMaster? _modbusMaster;
 
-        private ushort startIndex = 0;
+        private ushort startIndex = 100;
         private ushort count = 0;
         private int recordLog = 0;
         private bool isConfigRead = false;
@@ -128,7 +128,7 @@ namespace ABBDataManagerSystem.Connector
             }
             byte[] request = {
                 1, // 从站地址
-                0x03, // 功能码（读取多个寄存器）
+                0x04, // 功能码（读取多个寄存器）
                 0x00, (byte)startIndex, // 起始寄存器地址（通道1的地址30001转换为16进制）
                 0x00, (byte)slotCount, // 寄存器个数（读取4个寄存器，即通道1至4）
                 0x00, 0x00  // CRC校验，需根据Modbus协议计算得出
