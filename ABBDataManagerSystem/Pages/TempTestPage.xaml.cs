@@ -19,7 +19,7 @@ namespace ABBDataManagerSystem.Pages
     /// </summary>
     public partial class TempTestPage : UserControl, ICloseable
     {
-        private static bool Simulate = true;
+        private static bool Simulate = false;
         private bool IsFirstLoad = true;
 
         private bool UsingSerial = true;

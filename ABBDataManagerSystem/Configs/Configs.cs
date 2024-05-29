@@ -38,7 +38,8 @@ namespace ABBDataManagerSystem.Configs
         #endregion
 
         #region 功率分析仪设置
-        
+        public static float? VT { set; get; } = null;  
+        public static float? CT { set; get; } = null;  
         #endregion
 
         #region 温度检测设置
@@ -56,6 +57,7 @@ namespace ABBDataManagerSystem.Configs
         static string INIPDSerial = "PartialDischargeSerial";
         static string INIDatabase = "Database";
         static string INITemperature = "Temperature";
+        static string INIPowerAnalyzer = "PowerAnalyzer";
 
         [DllImport("kernel32.dll", EntryPoint = "GetPrivateProfileString")]
         private static extern uint GetPrivateProfileString(
@@ -108,6 +110,12 @@ namespace ABBDataManagerSystem.Configs
             TPUsingSerialPort = Utils.ParseInt(buff.ToString());
             GetPrivateProfileString(INITemperature, "Interval", "", buff, 32, INIPATH);
             TPInterval = buff.ToString();
+
+            // 功率分析仪
+            GetPrivateProfileString(INIPowerAnalyzer, "VT", "", buff, 32, INIPATH);
+            VT = Utils.ParseFloatNull(buff.ToString());
+            GetPrivateProfileString(INIPowerAnalyzer, "CT", "", buff, 32, INIPATH);
+            CT = Utils.ParseFloatNull(buff.ToString());
         }
 
         public static void SaveToFile()
@@ -129,6 +137,10 @@ namespace ABBDataManagerSystem.Configs
             WritePrivateProfileString(INITemperature, "SelectedSlots", TPSlots, INIPATH);
             WritePrivateProfileString(INITemperature, "UsingSerialPort", TPUsingSerialPort.ToString(), INIPATH);
             WritePrivateProfileString(INITemperature, "Interval", TPInterval, INIPATH);
+
+            // 功率分析仪
+            WritePrivateProfileString(INIPowerAnalyzer, "VT", VT != null ? Utils.FloatFormat((float)VT, 4) : "" , INIPATH);
+            WritePrivateProfileString(INIPowerAnalyzer, "CT", CT != null ? Utils.FloatFormat((float)CT, 4) : "" , INIPATH);
         }
 
         #endregion

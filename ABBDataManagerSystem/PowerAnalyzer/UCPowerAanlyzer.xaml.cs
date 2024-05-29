@@ -68,7 +68,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
         private int HarmonicOffset = -1;
         private int TotalCount = -1;
-        private static readonly int HarmonicCount = 30;
+        private static readonly int HarmonicCount = 20;
         private static readonly int MAX_MONITOR_BUFFER_LEN = 3000;
 
         #endregion
@@ -101,11 +101,6 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             DataTableSource.Rows.Add("Σ", 0, 0, 0, 0, "");
 
             this.DataContext = new { DataTableSource };
-
-            for (int i = 0; i < ItemSettings.Count; i++)
-            {
-
-            }
         }
 
         private void BtHarmonic_Click(object sender, RoutedEventArgs e)
@@ -168,6 +163,12 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         {
             UpdateSelectedConfigs();
             RatioSetCommand();
+        }
+
+        private void btRatioGet_Click(object sender, RoutedEventArgs e)
+        {
+            GetRatios();
+            UpdateSelectedConfigs();
         }
 
         private void btWireSet_Click(object sender, RoutedEventArgs e)
@@ -1035,9 +1036,9 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             {
                 GetRanges(0);
             }
-            catch
+            catch(Exception ex)
             {
-
+                Log.Error($"Fail To Get Ranges, ${ex.Message}");
             }
 
             // get  ratios for all elemenets
@@ -1055,7 +1056,9 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         //********************************************
         private void UserControl_Unloaded(object sender, RoutedEventArgs e)
         {
-            Close();
+            //Close();
+            Configs.Configs.VT = SelectedVT;
+            Configs.Configs.CT = SelectedCT;
         }
 
         public void Close()
@@ -1066,6 +1069,9 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             {
                 Timer1.Stop();
             }
+
+            Configs.Configs.VT = SelectedVT;
+            Configs.Configs.CT = SelectedCT;
         }
         #endregion
 
@@ -1246,7 +1252,6 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 return;
             }
             IsProcessing = true;
-            Log.Info("Start GetItemData");
             string dumpMsg = "";
             Stopwatch s = new();
             int n;
@@ -1367,7 +1372,8 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
             if (IsHold)
             {
-                Log.Error("Final Test Analyze: " + dumpMsg);
+                if (IsEnableDebug)
+                    Log.Error("Final Test Analyze: " + dumpMsg);
                 IsProcessing = false;
                 return;
             }
@@ -1406,7 +1412,10 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             s.Stop();
             dumpMsg += ($"step4 {s.ElapsedMilliseconds}ms ");
 
-            Log.Error("Final Test Analyze: " + dumpMsg);
+            if (IsEnableDebug)
+            {
+                Log.Error("Final Test Analyze: " + dumpMsg);
+            }
             IsProcessing = false;
             #endregion
         }
@@ -1983,8 +1992,9 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             {
                 Timer1.Stop();
                 IsCollecting = false;
-                btRequestContinue.Content = "持续采集";
+                btRequestContinue.Content = "开始";
                 btRequestContinue.Background = new SolidColorBrush(Color.FromRgb(0x45, 0xF5, 0x21)); // FFEF2B2B
+                ToggleConfigButton();
             }
             //----------------------#getting datas#
             else
@@ -1992,6 +2002,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 UpdateSelectedConfigs();
                 btRequestContinue.IsEnabled = false;
                 IsCollecting = true;
+                ToggleConfigButton();
                 SetBaseConfig();
                 ThreadPool.QueueUserWorkItem((o) =>
                 {
@@ -2026,7 +2037,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                     Dispatcher.Invoke(() =>
                     {
                         btRequestContinue.IsEnabled = true;
-                        btRequestContinue.Content = "停止采集";
+                        btRequestContinue.Content = "停止";
                         btRequestContinue.Background = new SolidColorBrush(Color.FromRgb(0xEF, 0x2B, 0x2B)); // FFEF2B2B
                     });
                 });
@@ -2036,6 +2047,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         private void ResetCollecting()
         {
             IsCollecting = false;
+            ToggleConfigButton();
             if (Timer1.Enabled == true)
             {
                 Timer1.Stop();
@@ -2175,9 +2187,11 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             string tem_auto = "";
             string msg = ":INPUT:SCALING:VT?"; // :SCAL:VT:ELEM1 0.5000;ELEM2 0.5000;ELEM3 0.5000
             SetSendMonitor(msg);
-            if (!QueriesData(50, msg, ref tem_auto))
+            if (!QueriesData(100, msg, ref tem_auto))
             {
-                DispError(connection.GetLastError());
+                var error = connection.GetLastError();
+                DispError(error);
+                Log.Error($"GetRatios fail {error}");
                 return false;
             }
             Log.Info("GetRatios: VTMsg: " + msg + " Rsp: " + tem_auto);
@@ -2192,7 +2206,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             tem_auto = "";
             msg = ":INPUT:SCALING:CT?"; // :SCAL:CT:ELEM1 0.5000;ELEM2 0.5000;ELEM3 0.5000
             SetSendMonitor(msg);
-            if (!QueriesData(50, msg, ref tem_auto))
+            if (!QueriesData(100, msg, ref tem_auto))
             {
                 DispError(connection.GetLastError());
                 return false;
@@ -2240,7 +2254,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 }
             }
 
-            //GetRatios();
+            GetRatios();
         }
         #endregion
 
@@ -2419,6 +2433,14 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 }
             }
             TotalCount = ItemSettings.Count;
+
+            if (IsEnableDebug)
+            {
+                for (int i = 0; i < ItemSettings.Count; i++)
+                {
+                    Log.Info($"Item{i + 1} is {ItemSettings[i].Function} {ItemSettings[i].Element} {ItemSettings[i].Order}");
+                }
+            }
         }
 
         private FCODefine? GetFCO(string Function, string Element)
@@ -2453,7 +2475,9 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
         private void RefreshValueDisplay()
         {
-            if (IsRefreshing) { return; }
+            if (IsRefreshing) {
+                return; 
+            }
             IsRefreshing = true;
             //DataTableSource.Rows.Add("Σ", 0, 0, 0, 0, "");
             float? irms1 = ItemSettings[0].Value; // GetFCOValue("IRMS", "1");
@@ -2597,5 +2621,15 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         #region UDP广播数据给其他软件使用
 
         #endregion
+
+        private void ToggleConfigButton()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                panelConfig1.IsEnabled = !IsCollecting;
+                panelConfig2.IsEnabled = !IsCollecting;
+                panelConfig3.IsEnabled = !IsCollecting;
+            });
+        }
     }
 }

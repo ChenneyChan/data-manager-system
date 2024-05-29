@@ -28,11 +28,6 @@ namespace ABBDataManagerSystem
         #region 测试页面加载
         private void PowerAnalyzeTest_Click(object sender, RoutedEventArgs e)
         {
-            PowerAnalyze2Test_Click(sender, e);
-        }
-
-        private void PowerAnalyze2Test_Click(object sender, RoutedEventArgs e)
-        {
             string title = "功率分析仪";
             if (GetTabItemAndActive(title) != null)
             {
@@ -58,6 +53,22 @@ namespace ABBDataManagerSystem
                 ResizeMode = ResizeMode.NoResize
             };
             window.ShowDialog();
+        }
+
+        private void PowerAnalyze2Test_Click(object sender, RoutedEventArgs e)
+        {
+            string title = "功率分析仪2";
+            if (GetTabItemAndActive(title) != null)
+            {
+                return;
+            }
+            var item = new TabItem()
+            {
+                Content = new UCPowerAanlyzer(),
+                Header = title,
+                IsSelected = true,
+            };
+            tabControl.Items.Add(item);
         }
 
         private void JinYuanJYT_A_Click(object sender, RoutedEventArgs e)
