@@ -2275,14 +2275,39 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         //********************************************
         ///Set Wiring System Config#
         //********************************************
+        public static string RearrangeWireString(string input)
+        {
+            // 检查输入字符串是否恰好为4个字符  
+            if (input.Length != 4)
+            {
+                return input;
+            }
+
+            // 使用字符数组来重新排列字符串中的字符  
+            char[] chars = input.ToCharArray();
+            char temp;
+
+            // 交换字符以达到BADC的顺序  
+            temp = chars[0]; // A  
+            chars[0] = chars[1]; // B  
+            chars[1] = temp; // A 现在在第二个位置  
+
+            temp = chars[2]; // C  
+            chars[2] = chars[3]; // D  
+            chars[3] = temp; // C 现在在第四个位置  
+
+            // 转换回字符串并返回  
+            return new string(chars);
+        }
+
         private bool GetWiringSystem()
         {
             cbWire.Items.Clear();
-            cbWire.Items.Add("P1W2");
-            cbWire.Items.Add("P1W3");
-            cbWire.Items.Add("P3W3");
-            cbWire.Items.Add("P3W4");
-            cbWire.Items.Add("V3A3");
+            cbWire.Items.Add("1P2W");
+            cbWire.Items.Add("1P3W");
+            cbWire.Items.Add("3P3W");
+            cbWire.Items.Add("3P4W");
+            cbWire.Items.Add("3V3A");
             ///---------------------#Query Wiring System#
             string tem_auto = "";
             string msg = ":INPUT:WIRING?";
@@ -2294,7 +2319,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             }
             SetReceiveMonitor(tem_auto);
             tem_auto = CutLeft(",", ref tem_auto);//cut left with LF.
-            cbWire.Text = tem_auto;
+            cbWire.Text = RearrangeWireString(tem_auto);
             return true;
         }
         #endregion
@@ -2310,7 +2335,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 return;
             }
             ///---------------------#Send Wiring System#
-            string msg = ":INPUT:WIRING " + SelectedWiringSystem;
+            string msg = ":INPUT:WIRING " + RearrangeWireString(SelectedWiringSystem);
             SetSendMonitor(msg);
             int rtn = connection.Send(msg);
             if (rtn != 0)
@@ -2472,7 +2497,14 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             rowElement1[INDEX_P] = p1;
             rowElement2[INDEX_P] = p2;
             rowElement3[INDEX_P] = p3;
-            rowMean[INDEX_P] = (p1 + p2 + p3);
+            if (SelectedWiringSystem == "3V3A")
+            {
+                rowMean[INDEX_P] = (p1 + p2);
+            } 
+            else
+            {
+                rowMean[INDEX_P] = (p1 + p2 + p3);
+            }
 
             rowElement1[INDEX_FU] = fu;
 

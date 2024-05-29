@@ -186,6 +186,8 @@ namespace ABBDataManagerSystem
 
         private void btStartTempTest_Click(object sender, RoutedEventArgs e)
         {
+            AppendMsg(UCPowerAanlyzer.RearrangeWireString("P3C3"));
+            AppendMsg(UCPowerAanlyzer.RearrangeWireString("P3W4"));
             //byte[] request = {
             //    1, // 从站地址
             //    0x04, // 功能码（读取多个寄存器）
