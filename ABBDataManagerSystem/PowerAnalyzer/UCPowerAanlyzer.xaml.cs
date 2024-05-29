@@ -101,6 +101,11 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             DataTableSource.Rows.Add("Σ", 0, 0, 0, 0, "");
 
             this.DataContext = new { DataTableSource };
+
+            for (int i = 0; i < ItemSettings.Count; i++)
+            {
+
+            }
         }
 
         private void BtHarmonic_Click(object sender, RoutedEventArgs e)

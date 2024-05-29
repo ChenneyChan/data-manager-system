@@ -37,6 +37,9 @@ namespace ABBDataManagerSystem.Configs
 
         #endregion
 
+        #region 功率分析仪设置
+        
+        #endregion
 
         #region 温度检测设置
         public static string TPSerialPort { set; get; } = string.Empty;
