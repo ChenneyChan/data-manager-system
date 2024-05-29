@@ -59,6 +59,10 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
         private bool IsCollecting = false;
         private bool IsEnableDebug = false;
+        private bool IsShowHarmonic = false;
+
+        private bool IsHold = false;
+        private Object obj = new object();
 
         private string? SelectedVoltageRange = null;
         private string? SelectedCurrentRange = null;
@@ -70,8 +74,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         private string? SelectedUpdateRate = null;
 
         private int HarmonicOffset = -1;
-        private int TotalCount = -1;
-        private static readonly int HarmonicCount = 20;
+        private static readonly int HarmonicCount = 22;
         private static readonly int MAX_MONITOR_BUFFER_LEN = 3000;
 
         #endregion
@@ -113,6 +116,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 this.HarmonicInfoView = null;
             })
             { WindowStartupLocation = WindowStartupLocation.CenterScreen };
+            HarmonicInfoView.HandleUpdate(HarmonicItemSettings, HarmonicCount);
             HarmonicInfoView.ShowDialog();
         }
 
@@ -1255,6 +1259,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 return;
             }
             IsProcessing = true;
+            var Items = !IsShowHarmonic ? ItemSettings : HarmonicItemSettings;
             string dumpMsg = "";
             Stopwatch s = new();
             int n;
@@ -1296,7 +1301,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             {
                 ///----------------------#receive values by ASCII#
                 //###ASCII:TmcReceive()###
-                maxLength = 15 * ItemSettings.Count;
+                maxLength = 15 * Items.Count;
                 rtn = connection.Receive(ref data, maxLength, ref realLength);
                 if (rtn != 0)
                 {
@@ -1383,7 +1388,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
             #region 更新数据，并显示
             s.Start();
-            for (n = 0; n < ItemSettings.Count; n++)
+            for (n = 0; n < Items.Count; n++)
             {
                 //set display
                 if (encodeType == EncodeType.ASCII)
@@ -1397,13 +1402,13 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                     {
                         continue;
                     }
-                    ItemSettings[n].Value = Utils.ParseFloat(valueStr);
+                    Items[n].Value = Utils.ParseFloat(valueStr);
                 }
                 else
                 {
                     if (n < values.Count)
                     {
-                        ItemSettings[n].Value = values[n];
+                        Items[n].Value = values[n];
                     }
                 }
             }
@@ -1853,6 +1858,8 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             string msg;
             int rtn;
 
+            var items = !IsShowHarmonic ? ItemSettings : HarmonicItemSettings;
+
             ///----------------------#set ASCII/Float(Binary)#
             if (encodeType == EncodeType.ASCII)
             {
@@ -1871,7 +1878,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             }
 
             ///----------------------#set dataItems number#
-            msg = ":NUMERIC:NORMAL:NUMBER " + ItemSettings.Count;
+            msg = ":NUMERIC:NORMAL:NUMBER " + items.Count;
             SetSendMonitor(msg);
             rtn = connection.Send(msg);
             if (rtn != 0)
@@ -1882,19 +1889,19 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
             ///----------------------#send message detail#
             msg = ":NUMERIC:NORMAL:";
-            for (int n = 0; n < ItemSettings.Count; n++)
+            for (int n = 0; n < items.Count; n++)
             {
                 //set function parameter into message.
-                msg = msg + "ITEM" + (n + 1).ToString() + " " + ItemSettings[n].Function;
+                msg = msg + "ITEM" + (n + 1).ToString() + " " + items[n].Function;
                 //set element parameter into message.
-                if (ItemSettings[n].Element.Length > 0)
+                if (items[n].Element.Length > 0)
                 {
-                    msg = msg + "," + ItemSettings[n].Element;
+                    msg = msg + "," + items[n].Element;
                 }
                 //set order parameter into message, if have.
-                msg = msg + "," + ItemSettings[n].Order;
+                msg = msg + "," + items[n].Order;
                 //set separator into message.
-                if (n != Convert.ToInt32(ItemSettings.Count) - 1)
+                if (n != Convert.ToInt32(items.Count) - 1)
                 {
                     msg = msg + ";";
                 }
@@ -1933,13 +1940,25 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
             //if ((Convert.ToInt64(eesr) & 0X00000001) == 1 || eesr.Length == 0)
             //{
-            GetItemData();
+            lock (obj)
+            {
+                if (!IsHold)
+                {
+                    GetItemData();
+                }
+            }
             //}
         }
 
         private void Timer2_Tick(object sender, System.EventArgs e)
         {
-            GetItemData();
+            lock (obj)
+            {
+                if (!IsHold)
+                {
+                    GetItemData();
+                }
+            }
             return;
         }
         #endregion
@@ -2058,7 +2077,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             Dispatcher.Invoke(() =>
             {
                 btRequestContinue.IsEnabled = true;
-                btRequestContinue.Content = "持续采集";
+                btRequestContinue.Content = "开始";
                 btRequestContinue.Background = new SolidColorBrush(Color.FromRgb(0x45, 0xF5, 0x21)); // FFEF2B2B
             });
         }
@@ -2409,39 +2428,39 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             new FCODefine {Function = "fU", Element = "0", Order = ""},
         };
 
+        private List<FCODefine> HarmonicItemSettings = new List<FCODefine>();
+
         private void InitHarmonicItems()
         {
-            HarmonicOffset = ItemSettings.Count;
             for (int x = 1; x <= 3; x++)
             {
-                ItemSettings.Add(new FCODefine { Function = "UK", Element = $"{x}", Order = "Total" });
-                ItemSettings.Add(new FCODefine { Function = "UK", Element = $"{x}", Order = "DC" });
+                HarmonicItemSettings.Add(new FCODefine { Function = "UK", Element = $"{x}", Order = "Total" });
+                HarmonicItemSettings.Add(new FCODefine { Function = "UK", Element = $"{x}", Order = "DC" });
                 for (int i = 1; i <= HarmonicCount; i++)
                 {
-                    ItemSettings.Add(new FCODefine { Function = "UK", Element = $"{x}", Order = $"{i}" });
+                    HarmonicItemSettings.Add(new FCODefine { Function = "UK", Element = $"{x}", Order = $"{i}" });
                 }
 
-                ItemSettings.Add(new FCODefine { Function = "IK", Element = $"{x}", Order = "Total" });
-                ItemSettings.Add(new FCODefine { Function = "IK", Element = $"{x}", Order = "DC" });
+                HarmonicItemSettings.Add(new FCODefine { Function = "IK", Element = $"{x}", Order = "Total" });
+                HarmonicItemSettings.Add(new FCODefine { Function = "IK", Element = $"{x}", Order = "DC" });
                 for (int i = 1; i <= HarmonicCount; i++)
                 {
-                    ItemSettings.Add(new FCODefine { Function = "IK", Element = $"{x}", Order = $"{i}" });
+                    HarmonicItemSettings.Add(new FCODefine { Function = "IK", Element = $"{x}", Order = $"{i}" });
                 }
 
-                ItemSettings.Add(new FCODefine { Function = "PK", Element = $"{x}", Order = "Total" });
-                ItemSettings.Add(new FCODefine { Function = "PK", Element = $"{x}", Order = "DC" });
+                HarmonicItemSettings.Add(new FCODefine { Function = "PK", Element = $"{x}", Order = "Total" });
+                HarmonicItemSettings.Add(new FCODefine { Function = "PK", Element = $"{x}", Order = "DC" });
                 for (int i = 1; i <= HarmonicCount; i++)
                 {
-                    ItemSettings.Add(new FCODefine { Function = "PK", Element = $"{x}", Order = $"{i}" });
+                    HarmonicItemSettings.Add(new FCODefine { Function = "PK", Element = $"{x}", Order = $"{i}" });
                 }
             }
-            TotalCount = ItemSettings.Count;
 
             if (IsEnableDebug)
             {
-                for (int i = 0; i < ItemSettings.Count; i++)
+                for (int i = 0; i < HarmonicItemSettings.Count; i++)
                 {
-                    Log.Info($"Item{i + 1} is {ItemSettings[i].Function} {ItemSettings[i].Element} {ItemSettings[i].Order}");
+                    Log.Info($"Item{i + 1} is {HarmonicItemSettings[i].Function} {HarmonicItemSettings[i].Element} {HarmonicItemSettings[i].Order}");
                 }
             }
         }
@@ -2483,6 +2502,17 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 return; 
             }
             IsRefreshing = true;
+
+            if (IsShowHarmonic)
+            {
+                if (HarmonicInfoView != null)
+                {
+                    HarmonicInfoView.HandleUpdate(HarmonicItemSettings, HarmonicCount);
+                }
+                IsRefreshing = false;
+                return;
+            }
+
             //DataTableSource.Rows.Add("Σ", 0, 0, 0, 0, "");
             float? irms1 = ItemSettings[0].Value; // GetFCOValue("IRMS", "1");
             float? irms2 = ItemSettings[1].Value; // GetFCOValue("IRMS", "2");
@@ -2535,11 +2565,6 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             }
 
             rowElement1[INDEX_FU] = fu;
-
-            if (HarmonicInfoView != null)
-            {
-                HarmonicInfoView.HandleUpdate(ItemSettings, HarmonicOffset, HarmonicCount);
-            }
             IsRefreshing = false;
         }
 
@@ -2607,19 +2632,30 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             }
         }
 
-        private bool IsHold = false;
-
         private void btHold_Click(object sender, RoutedEventArgs e)
         {
-            if (IsHold)
+            lock (obj)
             {
-                btHold.Background = new SolidColorBrush(Color.FromRgb(0x45, 0xF5, 0x21)); // FFEF2B2B
+                if (IsHold)
+                {
+                    btHold.Background = new SolidColorBrush(Color.FromRgb(0x45, 0xF5, 0x21)); // FFEF2B2B
+                    IsShowHarmonic = false;
+                    SendItemSettings();
+                }
+                else
+                {
+                    btHold.Background = new SolidColorBrush(Color.FromRgb(0xEF, 0x2B, 0x2B)); // FFEF2B2B
+                    IsShowHarmonic = true;
+                    ThreadPool.QueueUserWorkItem((o) =>
+                    {
+                        SendItemSettings();
+                        GetItemData();
+                    });
+                }
+                IsHold = !IsHold;
+                btHarmonic.IsEnabled = IsHold;
+                btRequestContinue.IsEnabled = !IsHold;
             }
-            else
-            {
-                btHold.Background = new SolidColorBrush(Color.FromRgb(0xEF, 0x2B, 0x2B)); // FFEF2B2B
-            }
-            IsHold = !IsHold;
         }
 
         #region UDP广播数据给其他软件使用

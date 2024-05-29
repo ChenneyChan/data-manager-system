@@ -87,7 +87,7 @@
             <Button Content="开始" Background="#FF45F521" BorderBrush="#FF585555" Width="120" Name="btRequestContinue" Margin="0, 0, 20, 0"/>
             <!--<Button Content="持续获取（定时器）" Style="{StaticResource ButtonInfo}" Width="180" Name="btRequestTimer" HorizontalAlignment="Right"/>-->
             <Button Content="测量" Background="#FF45F521" BorderBrush="#FF585555" Width="60" Name="btHold" Margin="0, 0, 20, 0" Click="btHold_Click"/>
-            <Button Content="谐波" Background="#FF45F521" BorderBrush="#FF585555" Width="60" Name="btHarmonic" Margin="0, 0, 20, 0"/>
+            <Button Content="谐波" Background="#FF45F521" BorderBrush="#FF585555" Width="60" Name="btHarmonic" Margin="0, 0, 20, 0" IsEnabled="False"/>
             <TextBlock Name="ErrInfoText" Width="120" TextAlignment="Center" Margin="20, 0,0,0" Text="" Visibility="Collapsed"/>
         </StackPanel>
         <DataGrid Margin="10" Grid.Row="4" Grid.RowSpan="2" Name="dataGrid" ItemsSource="{Binding DataTableSource}" 

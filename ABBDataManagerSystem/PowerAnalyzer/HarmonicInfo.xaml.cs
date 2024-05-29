@@ -12,6 +12,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
     /// </summary>
     public partial class HarmonicInfo : Window
     {
+        private Object obj = new Object();
         private OnClosed? onClosed = null;
 
         private int PhaseHarmonicCount = 0;
@@ -57,36 +58,39 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             if (onClosed != null) onClosed();
         }
 
-        public void HandleUpdate(List<FCODefine> items, int harmonicOffset, int phaseHarmonicCount)
+        public void HandleUpdate(List<FCODefine> items, int phaseHarmonicCount, int harmonicOffset = 0)
         {
-            int singlePhaseCount = 1 + 1 + PhaseHarmonicCount;
-            int phaseTotalCount = 3 * singlePhaseCount; // （Total、DC、1~PhaseHarmonicCount）* 3（UK\IK\PK）
-            for (int i = harmonicOffset; i < items.Count; i++)
+            lock (obj)
             {
-                int index = i - harmonicOffset;
-                int phase = (int)(index / phaseTotalCount) + 1;
-                DataTable? dt = null;
-                switch (phase)
+                int singlePhaseCount = 1 + 1 + PhaseHarmonicCount;
+                int phaseTotalCount = 3 * singlePhaseCount; // （Total、DC、1~PhaseHarmonicCount）* 3（UK\IK\PK）
+                for (int i = harmonicOffset; i < items.Count; i++)
                 {
-                    case 1:
-                        dt = DataTableElementA;
+                    int index = i - harmonicOffset;
+                    int phase = (int)(index / phaseTotalCount) + 1;
+                    DataTable? dt = null;
+                    switch (phase)
+                    {
+                        case 1:
+                            dt = DataTableElementA;
+                            break;
+                        case 2:
+                            dt = DataTableElementB;
+                            break;
+                        case 3:
+                            dt = DataTableElementC;
+                            break;
+                    }
+                    if (dt == null)
+                    {
                         break;
-                    case 2:
-                        dt = DataTableElementB;
-                        break;
-                    case 3:
-                        dt = DataTableElementC;
-                        break;
+                    }
+                    int offset = index % phaseTotalCount;
+                    int ukikpk = (int)(offset / singlePhaseCount);
+                    string secondKey = ukikpk == 0 ? "电压" : (ukikpk == 1 ? "电流" : "功率");
+                    index = offset % singlePhaseCount;
+                    dt.Rows[index][secondKey] = items[i].Value != null ? items[i].Value : -1;
                 }
-                if (dt == null)
-                {
-                    break;
-                }
-                int offset = index % phaseTotalCount;
-                int ukikpk = (int)(offset / singlePhaseCount);
-                string secondKey = ukikpk == 0 ? "电压" : (ukikpk == 1 ? "电流" : "功率");
-                index = offset % singlePhaseCount;
-                dt.Rows[index][secondKey] = items[i].Value != null ? items[i].Value : -1;
             }
         }
     }
