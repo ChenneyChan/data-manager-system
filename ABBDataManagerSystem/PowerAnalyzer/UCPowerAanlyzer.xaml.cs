@@ -32,6 +32,9 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
         private HarmonicInfo? HarmonicInfoView = null;
 
+        // ABB工位一要采集的是线电压，电压要乘上根号三
+        private bool IsLineVoltage = false;
+
         #region Variables
         private readonly string[] errorMsg = new string[14];
         private readonly string[] updateRateList = new string[10];  //update rate combo list(foreach)
@@ -2475,6 +2478,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
         private void RefreshValueDisplay()
         {
+            float ratio = IsLineVoltage ? (float)Math.Sqrt(3) : 1f;
             if (IsRefreshing) {
                 return; 
             }
@@ -2484,13 +2488,13 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             float? irms2 = ItemSettings[1].Value; // GetFCOValue("IRMS", "2");
             float? irms3 = ItemSettings[2].Value; // GetFCOValue("IRMS", "3");
 
-            float? urms1 = ItemSettings[3].Value; // GetFCOValue("URMS", "1");
-            float? urms2 = ItemSettings[4].Value; // GetFCOValue("URMS", "2");
-            float? urms3 = ItemSettings[5].Value; // GetFCOValue("URMS", "3");
+            float? urms1 = ItemSettings[3].Value * ratio; // GetFCOValue("URMS", "1");
+            float? urms2 = ItemSettings[4].Value * ratio; // GetFCOValue("URMS", "2");
+            float? urms3 = ItemSettings[5].Value * ratio; // GetFCOValue("URMS", "3");
 
-            float? umn1 = ItemSettings[6].Value; // GetFCOValue("UMN", "1");
-            float? umn2 = ItemSettings[7].Value; // GetFCOValue("UMN", "2");
-            float? umn3 = ItemSettings[8].Value; // GetFCOValue("UMN", "3");
+            float? umn1 = ItemSettings[6].Value * ratio; // GetFCOValue("UMN", "1");
+            float? umn2 = ItemSettings[7].Value * ratio; // GetFCOValue("UMN", "2");
+            float? umn3 = ItemSettings[8].Value * ratio; // GetFCOValue("UMN", "3");
 
             float? p1 = ItemSettings[9].Value;  // GetFCOValue("P", "1");
             float? p2 = ItemSettings[10].Value; // GetFCOValue("P", "2");
