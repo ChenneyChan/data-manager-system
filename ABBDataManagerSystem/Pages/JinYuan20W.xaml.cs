@@ -30,11 +30,13 @@ namespace ABBDataManagerSystem.Pages
         private Dictionary<string, ToggleButton> lowVoltageToggleButtons = new Dictionary<string, ToggleButton>();
         private Dictionary<string, ToggleButton> tappingToggleButtons = new Dictionary<string, ToggleButton>();
         private Dictionary<TestType20W, ToggleButton> testTypeToggleButtons = new Dictionary<TestType20W, ToggleButton>();
+        private Dictionary<string, TextBox> tempRiseCoolTbs = new Dictionary<string, TextBox>();
 
         private string SelectedHighVoltageTapping = "";
         private string SelectedLowVoltageTapping = "";
         private string SelectedTapping = "";
         private TestType20W? SelectedTesting = TestType20W.CommonTest;
+        private bool IsTempRiseCool = false;
         private int TempRiseRecordInterval = 10;
         private int TempRiseCountDown = 0;
         private int CurrentIndex = 0;
@@ -44,6 +46,7 @@ namespace ABBDataManagerSystem.Pages
         private bool IsCommonTesting = false;
         private bool IsTempRiseTesting = false;
         private int SelectedLowVoltageLevel = 0;
+        private string SelectedTempRiseCoolItem = "";
 
         private JinYuan20WPacketInfo? lastPacket = null;
 
@@ -54,6 +57,7 @@ namespace ABBDataManagerSystem.Pages
             InitTimer();
             InitToggleButtons();
             InitTappings();
+            InitTempRiseCoolTbs();
             btStartTiming.Visibility = Visibility.Collapsed;
             panelTappingChoice.Visibility = Visibility.Collapsed;
 
@@ -121,6 +125,17 @@ namespace ABBDataManagerSystem.Pages
 
             tappingResistanceFields.Add("21", trTap21);
             tappingResistanceFields.Add("22", trTap22);
+        }
+
+        private void InitTempRiseCoolTbs()
+        {
+            tempRiseCoolTbs.Add("HV1", tbTempCoolHV1);
+            tempRiseCoolTbs.Add("LV11", tbTempCoolLV11);
+            tempRiseCoolTbs.Add("LV12", tbTempCoolLV12);
+
+            tempRiseCoolTbs.Add("HV2", tbTempCoolHV2);
+            tempRiseCoolTbs.Add("LV21", tbTempCoolLV21);
+            tempRiseCoolTbs.Add("LV22", tbTempCoolLV22);
         }
 
         #region 计数器的Timer
@@ -228,7 +243,7 @@ namespace ABBDataManagerSystem.Pages
                     CH2Enabled = cbCH2.IsChecked == true,
                     CH1CurrentConfig = JinYuan20WCollector.GetCH1CurrentConfig(cbHVCurrents.SelectedItem.ToString()),
                     CH2CurrentConfig = JinYuan20WCollector.GetCH2CurrentConfig(cbLVCurrents.SelectedItem.ToString()),
-                    TestType = SelectedTesting?? TestType20W.CommonTest,
+                    TestType = SelectedTesting ?? TestType20W.CommonTest,
                 };
                 new Thread(() =>
                 {
@@ -449,25 +464,32 @@ namespace ABBDataManagerSystem.Pages
             TimerSecond.Stop();
             IsCommonTesting = false;
             btCommonTest.IsEnabled = true;
-            if (tappingResistanceFields.Keys.Contains(SelectedTapping))
+
+            float value = 0;
+            if (lastPacket != null)
             {
-                float value = 0;
-                if (lastPacket != null)
+                if (lastPacket.ch1Enabled)
                 {
-                    if (lastPacket.ch1Enabled)
-                    {
-                        value = lastPacket.ch1RealTimeResistance;
-                    }
-                    else if (lastPacket.ch2Enabled)
-                    {
-                        value = lastPacket.ch2RealTimeResistance;
-                    }
+                    value = lastPacket.ch1RealTimeResistance;
                 }
-                if (value == 0 && IsSimulate)
+                else if (lastPacket.ch2Enabled)
                 {
-                    value = (float)random.Next() % 1000 + (float)random.NextDouble();
+                    value = lastPacket.ch2RealTimeResistance;
                 }
+            }
+            if (value == 0 && IsSimulate)
+            {
+                value = (float)random.Next() % 1000 + (float)random.NextDouble();
+            }
+
+            if (!IsTempRiseCool && tappingResistanceFields.Keys.Contains(SelectedTapping))
+            {
+
                 tappingResistanceFields[SelectedTapping].UpdateValueForActiveItem(value);
+            }
+            else if (IsTempRiseCool && tempRiseCoolTbs.Keys.Contains(SelectedTempRiseCoolItem))
+            {
+                tempRiseCoolTbs[SelectedTempRiseCoolItem].Text = Utils.FloatFormat(value);
             }
         }
         #endregion
@@ -499,7 +521,7 @@ namespace ABBDataManagerSystem.Pages
         #region 开始温升测试
         private void UpdateTempRiseRecordInterval()
         {
-            switch(SelectedTesting)
+            switch (SelectedTesting)
             {
                 case TestType20W.TemperatureRise10Sec:
                     TempRiseRecordInterval = 10;
@@ -544,16 +566,17 @@ namespace ABBDataManagerSystem.Pages
         private void TempRiseTestRecord()
         {
             TempRiseCountDown -= 1;
-            if (TempRiseCountDown != 0) 
+            if (TempRiseCountDown != 0)
             {
                 return;
             }
             TempRiseCountDown = TempRiseRecordInterval;
 
             // 定时记录数据
-            dataItems.Add(new CurrentResistanceInfo() { 
-                SortIndex = CurrentIndex, 
-                CurrentHV = lastPacket != null ? lastPacket.ch1RealTimeCurrent : 0, 
+            dataItems.Add(new CurrentResistanceInfo()
+            {
+                SortIndex = CurrentIndex,
+                CurrentHV = lastPacket != null ? lastPacket.ch1RealTimeCurrent : 0,
                 ResistanceHV = lastPacket != null ? lastPacket.ch1RealTimeResistance : 0,
                 CurrentLV = lastPacket != null ? lastPacket.ch2RealTimeCurrent : 0,
                 ResistanceLV = lastPacket != null ? lastPacket.ch2RealTimeResistance : 0,
@@ -633,6 +656,7 @@ namespace ABBDataManagerSystem.Pages
             {
                 return;
             }
+            IsTempRiseCool = false;
             if (b.IsChecked)
             {
                 foreach (var item in testTypeToggleButtons)
@@ -645,6 +669,15 @@ namespace ABBDataManagerSystem.Pages
                     {
                         item.Value.IsChecked = false;
                     }
+                }
+                if (b == tbTestTypeTempRiseCool)
+                {
+                    SelectedTesting = TestType20W.CommonTest;
+                    IsTempRiseCool = true;
+                }
+                else
+                {
+                    tbTestTypeTempRiseCool.IsChecked = false;
                 }
             }
             else
@@ -674,7 +707,17 @@ namespace ABBDataManagerSystem.Pages
                 btQuitTestTempRise.Visibility = Visibility.Collapsed;
 
                 //panelTappingChoice.Visibility = Visibility.Visible;
-                panelCommonTestResult.Visibility = Visibility.Visible;
+                if (b == tbTestTypeTempRiseCool)
+                {
+                    panelTempRiseCoolTestResult.Visibility = Visibility.Visible;
+                    panelCommonTestResult.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    panelTempRiseCoolTestResult.Visibility = Visibility.Collapsed;
+                    panelCommonTestResult.Visibility = Visibility.Visible;
+                }
+
                 lvUsers.Visibility = Visibility.Collapsed;
             }
             else
@@ -689,12 +732,13 @@ namespace ABBDataManagerSystem.Pages
 
                 //panelTappingChoice.Visibility = Visibility.Collapsed;
                 panelCommonTestResult.Visibility = Visibility.Collapsed;
+                panelTempRiseCoolTestResult.Visibility = Visibility.Collapsed;
                 lvUsers.Visibility = Visibility.Visible;
             }
 
             if (SelectedTesting != null && Collector != null)
             {
-                Collector.TestType = SelectedTesting?? TestType20W.CommonTest;
+                Collector.TestType = SelectedTesting ?? TestType20W.CommonTest;
             }
         }
 
@@ -836,6 +880,22 @@ namespace ABBDataManagerSystem.Pages
             DumpSelectedTapping();
         }
         #endregion
+
+        private void tbTempCool_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            foreach (var item in tempRiseCoolTbs)
+            {
+                if (sender == item.Value)
+                {
+                    SelectedTempRiseCoolItem = item.Key;
+                    item.Value.BorderThickness = new Thickness(2);
+                }
+                else
+                {
+                    item.Value.BorderThickness = new Thickness(0);
+                }
+            }
+        }
     }
 
 }
