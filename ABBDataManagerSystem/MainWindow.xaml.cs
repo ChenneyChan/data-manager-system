@@ -319,8 +319,12 @@ namespace ABBDataManagerSystem
                 return;
             }
 
-            var scrollViewer = new ScrollViewer();
-            scrollViewer.Content = new T();
+            var scrollViewer = new HandyControl.Controls.ScrollViewer()
+            {
+                HorizontalScrollBarVisibility = ScrollBarVisibility.Visible,
+                VerticalScrollBarVisibility = ScrollBarVisibility.Visible,
+                Content = new T()
+            };
             var item = new DockItem()
             {
                 Content = scrollViewer,

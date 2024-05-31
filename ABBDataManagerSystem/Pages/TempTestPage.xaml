@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:ABBDataManagerSystem.Pages"
              xmlns:hc="https://handyorg.github.io/handycontrol" 
              mc:Ignorable="d" 
-             d:DesignHeight="1080" d:DesignWidth="1920" Loaded="UserControl_Loaded" Unloaded="UserControl_Unloaded">
+             d:DesignHeight="1080" d:DesignWidth="1920" Loaded="UserControl_Loaded" Unloaded="UserControl_Unloaded" MinHeight="800" MinWidth="1200">
     <UserControl.Resources>
         <Style TargetType="RadioButton" BasedOn="{StaticResource {x:Type RadioButton}}">
             <Setter Property="FontSize" Value="18"/>

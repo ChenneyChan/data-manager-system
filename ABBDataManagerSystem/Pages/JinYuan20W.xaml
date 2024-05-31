@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:ABBDataManagerSystem.Pages" 
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              xmlns:hc="https://handyorg.github.io/handycontrol"
-             mc:Ignorable="d" Background="#FFDDDDDD" Loaded="UserControl_Loaded" Unloaded="UserControl_Unloaded" d:DesignHeight="895.5" d:DesignWidth="1661.356">
+             mc:Ignorable="d" Background="#FFDDDDDD" Loaded="UserControl_Loaded" Unloaded="UserControl_Unloaded" d:DesignHeight="895.5" d:DesignWidth="1661.356" MinWidth="1560" MinHeight="900">
     <UserControl.Resources>
         <sys:Double x:Key="tableCellFontSize">18</sys:Double>
         <sys:Double x:Key="tableHeaderFontSize">22</sys:Double>

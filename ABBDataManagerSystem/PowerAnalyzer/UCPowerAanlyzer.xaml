@@ -7,7 +7,7 @@
              xmlns:hc="https://handyorg.github.io/handycontrol"
              mc:Ignorable="d" 
              Background="#FFDDDDDD"
-             d:DesignHeight="600" d:DesignWidth="1200" Loaded="UserControl_Loaded" Unloaded="UserControl_Unloaded">
+             d:DesignHeight="600" d:DesignWidth="1200" Loaded="UserControl_Loaded" Unloaded="UserControl_Unloaded" MinHeight="600" MinWidth="1000">
     <UserControl.Resources>
         <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
             <Setter Property="FontSize" Value="16"/>
@@ -33,7 +33,7 @@
     <Grid Margin="20,20">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="60"/>
@@ -92,7 +92,7 @@
         </StackPanel>
         <DataGrid Margin="10" Grid.Row="4" Grid.RowSpan="2" Name="dataGrid" ItemsSource="{Binding DataTableSource}" 
                   FontSize="18" CanUserSortColumns="False" GridLinesVisibility="None" CanUserReorderColumns="False" CanUserResizeColumns="False"
-                  Width="500" HorizontalAlignment="Left" MaxHeight="400" VerticalAlignment="Top" CanUserAddRows="False" CanUserDeleteRows="False" 
+                  Width="Auto" HorizontalAlignment="Left" MaxHeight="600" VerticalAlignment="Top" CanUserAddRows="False" CanUserDeleteRows="False" 
                   CanUserResizeRows="False" AutoGenerateColumns="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="" Binding="{Binding Path=表头}" CellStyle="{StaticResource DataGridCellStyle}" />
