@@ -1043,7 +1043,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             {
                 GetRanges(0);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Log.Error($"Fail To Get Ranges, ${ex.Message}");
             }
@@ -1207,6 +1207,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         {
             if (!IsEnableDebug)
             {
+                Log.Error($"Device Error {errorID}");
                 return;
             }
             Dispatcher.Invoke(() =>
@@ -1322,6 +1323,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 if (maxLength < 1)
                 {
                     IsProcessing = false;
+                    Log.Error($"Get Pacekt Len Error ret = {rtn} maxLength = {maxLength}");
                     return;
                 }
                 maxLength += 2;//see tmctl's help
@@ -1378,14 +1380,6 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             s.Stop();
             dumpMsg += ($"step2 {s.ElapsedMilliseconds}ms ");
 
-            if (IsHold)
-            {
-                if (IsEnableDebug)
-                    Log.Error("Final Test Analyze: " + dumpMsg);
-                IsProcessing = false;
-                return;
-            }
-
             #region 更新数据，并显示
             s.Start();
             for (n = 0; n < Items.Count; n++)
@@ -1416,7 +1410,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             dumpMsg += ($"step3 {s.ElapsedMilliseconds}ms ");
 
             s.Start();
-            Task.Run(() => { RefreshValueDisplay(); });
+            RefreshValueDisplay();
             s.Stop();
             dumpMsg += ($"step4 {s.ElapsedMilliseconds}ms ");
 
@@ -2499,12 +2493,14 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         {
             float ratio = IsLineVoltage ? (float)Math.Sqrt(3) : 1f;
             if (IsRefreshing) {
+                Log.Error("IsRefreshing");
                 return; 
             }
             IsRefreshing = true;
 
             if (IsShowHarmonic)
             {
+                Log.Info($"Start Process Harmonic Data， HarmonicInfoView != null is {HarmonicInfoView != null}");
                 if (HarmonicInfoView != null)
                 {
                     HarmonicInfoView.HandleUpdate(HarmonicItemSettings, HarmonicCount);
@@ -2669,6 +2665,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 panelConfig1.IsEnabled = !IsCollecting;
                 panelConfig2.IsEnabled = !IsCollecting;
                 panelConfig3.IsEnabled = !IsCollecting;
+                btHold.IsEnabled = IsCollecting;
             });
         }
     }

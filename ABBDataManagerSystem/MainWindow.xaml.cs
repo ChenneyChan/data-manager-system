@@ -334,11 +334,12 @@ namespace ABBDataManagerSystem
                 VerticalScrollBarVisibility = ScrollBarVisibility.Visible,
                 Content = new T()
             };
-            var item = new DockItem()
+            var item = new DockItemImpl()
             {
                 Content = scrollViewer,
                 Title = title,
-                TabText = title
+                TabText = title,
+                HideOnPerformClose = false,
             };
             IsFirst = false;
 

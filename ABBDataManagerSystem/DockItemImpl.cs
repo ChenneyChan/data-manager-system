@@ -1,0 +1,24 @@
+﻿using DevZest.Windows.Docking;
+using System.Windows.Controls;
+
+namespace ABBDataManagerSystem
+{
+    internal class DockItemImpl : DockItem
+    {
+        public DockItemImpl() : base()
+        {
+            Closing += DockItemImpl_Closing;
+        }
+
+        private void DockItemImpl_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
+        {
+            // 1 流量 + 4 温度
+            var sc = Content as ScrollViewer;
+            if (sc != null && sc.Content != null)
+            {
+                var closeable = sc.Content as ICloseable;
+                if (closeable != null) { closeable.Close(); }
+            }
+        }
+    }
+}
