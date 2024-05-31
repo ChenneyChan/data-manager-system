@@ -76,6 +76,7 @@ namespace ABBDataManagerSystem.Pages
                 "1min",
                 "5min",
                 "30min",
+                "60min",
             };
             intervals.ForEach(port => { cbInterval.Items.Add(port); });
             cbInterval.SelectedIndex = 0;

@@ -6,6 +6,7 @@ using DevZest.Windows.Docking;
 using System.IO.Ports;
 using System.Windows;
 using System.Windows.Controls;
+using EventManager = ABBDataManagerSystem.Tools.EventManager;
 using TabItem = HandyControl.Controls.TabItem;
 using Window = System.Windows.Window;
 
@@ -116,6 +117,11 @@ namespace ABBDataManagerSystem
                 }
             }
             Configs.Configs.SaveToFile();
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            EventManager.Instance.Stop();
         }
 
         #region 独立测试

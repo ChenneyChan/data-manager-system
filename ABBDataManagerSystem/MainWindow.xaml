@@ -7,7 +7,7 @@
         xmlns:hc="https://handyorg.github.io/handycontrol"
         xmlns:dz="http://schemas.devzest.com/presentation/docking"
         mc:Ignorable="d"
-        Title="信息化试验系统" Height="1000" Width="1200" WindowStartupLocation="CenterScreen" Closing="Window_Closing" WindowState="Maximized">
+        Title="信息化试验系统" Height="1000" Width="1200" WindowStartupLocation="CenterScreen" Closing="Window_Closing" WindowState="Maximized" Closed="Window_Closed">
     <Window.Resources>
         <Style TargetType="MenuItem">
             <Setter Property="FontSize" Value="14"/>
