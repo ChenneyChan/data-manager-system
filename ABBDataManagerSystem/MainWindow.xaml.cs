@@ -129,11 +129,20 @@ namespace ABBDataManagerSystem
                 foreach (var port in ports)
                 {
                     AppendMsg("Port " + port + " Start...");
-                    var collector = new JinYun50ECollector(port, 9600);
+                    var collector = new JinYuan50ECollector(port, 9600)
+                    {
+                        TestType = JinYuan50ECollector.TestType50E.TemperatureRaise,
+                        CurrentSelected = "0.1A",
+                        TestModeValue = JinYuan50ECollector.TestMode.HighVoltagePhaseSelection,
+                        ConnectionMode = "Dy",
+                        TempRiseInterval = 55
+                    };
                     if (collector.Connect())
                     {
                         AppendMsg("Connect Success!");
-                        collector.SetTestType(JinYun50ECollector.TestType50E.CommonTest);
+                        collector.SetParameters();
+                        Thread.Sleep(100);
+                        collector.SetTestType(JinYuan50ECollector.TestType50E.CommonTest);
                         var packet = collector.QueryMsg();
                         if (packet == null)
                         {

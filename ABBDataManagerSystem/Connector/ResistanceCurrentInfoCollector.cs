@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ABBDataManagerSystem.PowerAnalyzer;
+using System;
 using System.Collections.Generic;
 using System.IO.Ports;
 using System.Linq;
@@ -66,22 +67,38 @@ namespace ABBDataManagerSystem.Connector
 
         private byte[] ConstructPacket(byte[] command)
         {
-            if (command.Length > 99)
+            if ((SendLenByteCount == 1 && command.Length > 9) || command.Length > 99)
             {
-                Log.Error("Command Length Error");
+                Log.Error($"Command Length Error, SendLenByteCount is {SendLenByteCount}, CommandLen is {command.Length}");
             }
-            int length = command.Length + 7; // 7 bytes for header, address * 2, length * 2, checksum, and footer
+            int length = command.Length + 5 + SendLenByteCount; // 7 bytes for header, address * 2, length * SendLenByteCount, checksum, and footer
             byte[] packet = new byte[length];
-            string lenStr = command.Length < 10 ? $"0{command.Length}" : command.Length.ToString();
+            string lenStr;
+            if (SendLenByteCount == 1)
+            {
+                lenStr = command.Length.ToString();
+            }
+            else
+            {
+                lenStr = command.Length < 10 ? $"0{command.Length}" : command.Length.ToString();
+            }
             byte[] lenArray = Encoding.UTF8.GetBytes(lenStr);
 
             packet[0] = 0x7E; // 报文头
             packet[1] = DeviceAddress[0]; // 从机地址高字节
             packet[2] = DeviceAddress[1]; // 从机地址低字节
-            packet[3] = (byte)lenArray[0];  // 数据和命令长度高字节
-            packet[4] = (byte)lenArray[1];  // 数据和命令长度低字节
+            if (SendLenByteCount == 1)
+            {
+                packet[3] = (byte)lenArray[0];  // 数据和命令长度
+            } 
+            else
+            {
+                packet[3] = (byte)lenArray[0];  // 数据和命令长度高字节
+                packet[4] = (byte)lenArray[1];  // 数据和命令长度低字节
+            }
 
-            Array.Copy(command, 0, packet, 5, command.Length); // 命令数据
+            int offset = SendLenByteCount == 1 ? 4 : 5;
+            Array.Copy(command, 0, packet, offset, command.Length); // 命令数据
 
             byte xorChecksum = CalculateChecksum(packet, 0, length - 2); // 从地址到数据部分的校验
             packet[length - 2] = xorChecksum; // 异或校验
