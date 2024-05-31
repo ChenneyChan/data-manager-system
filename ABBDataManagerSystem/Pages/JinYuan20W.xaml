@@ -230,6 +230,28 @@
                 <Border Grid.Column="1" Grid.Row="3" BorderThickness="1, 1, 0, 1"/>
                 <Border Grid.Column="2" Grid.Row="3" BorderThickness="1, 1, 0, 1"/>
                 <Border Grid.Column="3" Grid.Row="3" BorderThickness="1, 1, 1, 1"/>
+
+                <StackPanel Orientation="Horizontal" Grid.Row="4" Grid.ColumnSpan="4" Height="40">
+                    <TextBlock Text="通道一" Width="60"/>
+                    <hc:ComboBox Width="120">
+                        <ComboBoxItem Content="无效" IsSelected="True"/>
+                        <ComboBoxItem Content="高压"/>
+                        <ComboBoxItem Content="低压1"/>
+                        <ComboBoxItem Content="低压2"/>
+                    </hc:ComboBox>
+                    <TextBlock Text="通道二" Width="60" Margin="10,0,0,0"/>
+                    <hc:ComboBox Width="120">
+                        <ComboBoxItem Content="无效" IsSelected="True"/>
+                        <ComboBoxItem Content="高压"/>
+                        <ComboBoxItem Content="低压1"/>
+                        <ComboBoxItem Content="低压2"/>
+                    </hc:ComboBox>
+                    <TextBlock Text="次数" Width="60" Margin="10,0,0,0"/>
+                    <hc:ComboBox Width="120">
+                        <ComboBoxItem Content="第一次" IsSelected="True"/>
+                        <ComboBoxItem Content="第二次"/>
+                    </hc:ComboBox>
+                </StackPanel>
             </Grid>
 
             <ScrollViewer Grid.Column="1" Name="panelCommonTestResult">
