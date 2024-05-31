@@ -2,8 +2,10 @@
 using ABBDataManagerSystem.Pages;
 using ABBDataManagerSystem.PowerAnalyzer;
 using ABBDataManagerSystem.Tools;
+using DevZest.Windows.Docking;
 using System.IO.Ports;
 using System.Windows;
+using System.Windows.Controls;
 using TabItem = HandyControl.Controls.TabItem;
 using Window = System.Windows.Window;
 
@@ -14,6 +16,8 @@ namespace ABBDataManagerSystem
     /// </summary>
     public partial class MainWindow : Window
     {
+        private bool UsingDocing = true;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -25,25 +29,17 @@ namespace ABBDataManagerSystem
             new WindowSettings().ShowDialog();
         }
 
-        #region 测试页面加载
+        #region 试验页面加载
         private void PowerAnalyzeTest_Click(object sender, RoutedEventArgs e)
         {
             string title = "功率分析仪";
-            if (GetTabItemAndActive(title) != null)
+            if (GetTabItemAndActive(title) != null || GetDockItemAndActive(title) != null)
             {
                 return;
             }
             var window = new PageDeviceSearch(() =>
             {
-                Log.Info("MainWindow DeviceFound Callback..");
-                string title = "功率分析仪";
-                var item = new TabItem()
-                {
-                    Content = new UCPowerAanlyzer(),
-                    Header = title,
-                    IsSelected = true,
-                };
-                tabControl.Items.Add(item);
+                StartTabItem<UCPowerAanlyzer>("功率分析仪");
             })
             {
                 Title = "功率分析仪",
@@ -57,66 +53,27 @@ namespace ABBDataManagerSystem
 
         private void PowerAnalyze2Test_Click(object sender, RoutedEventArgs e)
         {
-            string title = "功率分析仪2";
-            if (GetTabItemAndActive(title) != null)
-            {
-                return;
-            }
-            var item = new TabItem()
-            {
-                Content = new UCPowerAanlyzer(),
-                Header = title,
-                IsSelected = true,
-            };
-            tabControl.Items.Add(item);
+            StartTabItem<UCPowerAanlyzer>("功率分析仪2");
         }
 
         private void JinYuanJYT_A_Click(object sender, RoutedEventArgs e)
         {
             string title = "金源JYT-A变比测试仪";
-            if (GetTabItemAndActive(title) != null)
-            {
-                return;
-            }
-            var item = new TabItem()
-            {
-                Content = new JinYuanJYT_A(),
-                Header = title,
-                IsSelected = true
-            };
-            tabControl.Items.Add(item);
+            StartTabItem<JinYuanJYT_A>(title);
         }
 
         private void TemperatureTest_Click(object sender, RoutedEventArgs e)
         {
             string title = "盘古温度测试仪";
-            if (GetTabItemAndActive(title) != null)
-            {
-                return;
-            }
-            var item = new TabItem()
-            {
-                Content = new TempTestPage(),
-                Header = title,
-                IsSelected = true,
-            };
-            tabControl.Items.Add(item);
+            StartTabItem<TempTestPage>(title);
         }
 
+        private bool IsFirst = true;
         private void JnYuan20WTest_Click(object sender, RoutedEventArgs e)
         {
-            string title = "金源20W测试仪";
-            if (GetTabItemAndActive(title) != null)
-            {
-                return;
-            }
-            var item = new TabItem()
-            {
-                Content = new JinYuan20W(),
-                Header = title,
-                IsSelected = true,
-            };
-            tabControl.Items.Add(item);
+            string title = IsFirst ? "金源20W测试仪" : "金源50e测试仪";
+            StartTabItem<JinYuan20W>(title);
+            IsFirst = false;
         }
 
         private void btHarmonicTest_Click(object sender, RoutedEventArgs e)
@@ -129,13 +86,13 @@ namespace ABBDataManagerSystem
             }.ShowDialog();
         }
         #endregion
-        
+
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             foreach (var item in tabControl.Items)
             {
                 var tabItem = item as TabItem;
-                if  (tabItem == null)
+                if (tabItem == null)
                 {
                     continue;
                 }
@@ -145,9 +102,23 @@ namespace ABBDataManagerSystem
                     closeable.Close();
                 }
             }
+
+            foreach (var item in dockControl.DockItems)
+            {
+                var scrollViewer = item.Content as ScrollViewer;
+                if (scrollViewer != null)
+                {
+                    var closeable = scrollViewer.Content as ICloseable;
+                    if (closeable != null)
+                    {
+                        closeable.Close();
+                    }
+                }
+            }
             Configs.Configs.SaveToFile();
         }
 
+        #region 独立测试
         private void btStartSerialTest_Click(object sender, RoutedEventArgs e)
         {
             new Thread(() =>
@@ -183,14 +154,6 @@ namespace ABBDataManagerSystem
                 AppendMsg("All Port Test Done!");
 
             }).Start();
-        }
-
-        private void AppendMsg(string msg)
-        {
-            Dispatcher.Invoke(new Action(() =>
-            {
-                tbMsg.Text = tbMsg.Text + "\r\n" + msg;
-            }));
         }
 
         bool IsTemp = false;
@@ -300,10 +263,11 @@ namespace ABBDataManagerSystem
             });
             tbMsg.Text += "\r\nStart Thread UITread Done!";
         }
+        #endregion
 
         private TabItem? GetTabItemAndActive(string title)
         {
-            foreach(var item in tabControl.Items)
+            foreach (var item in tabControl.Items)
             {
                 var tabItem = item as TabItem;
                 if (tabItem == null)
@@ -317,6 +281,63 @@ namespace ABBDataManagerSystem
                 }
             }
             return null;
+        }
+
+        private DockItem? GetDockItemAndActive(string title)
+        {
+            foreach (var item in dockControl.DockItems)
+            {
+                if (item.Title == title)
+                {
+                    item.Activate();
+                    return item;
+                }
+            }
+            return null;
+        }
+
+        private void StartTabItem<T>(string title) where T : UserControl, new()
+        {
+            if (!UsingDocing)
+            {
+                if (GetTabItemAndActive(title) != null)
+                {
+                    return;
+                }
+                var tabItem = new TabItem()
+                {
+                    Content = new T(),
+                    Header = title,
+                    IsSelected = true,
+                };
+                tabControl.Items.Add(tabItem);
+                return;
+            }
+
+            if (GetDockItemAndActive(title) != null)
+            {
+                return;
+            }
+
+            var scrollViewer = new ScrollViewer();
+            scrollViewer.Content = new T();
+            var item = new DockItem()
+            {
+                Content = scrollViewer,
+                Title = title,
+                TabText = title
+            };
+            IsFirst = false;
+
+            item.Show(dockControl, DockPosition.Document);
+        }
+
+        private void AppendMsg(string msg)
+        {
+            Dispatcher.Invoke(new Action(() =>
+            {
+                tbMsg.Text = tbMsg.Text + "\r\n" + msg;
+            }));
         }
     }
 }

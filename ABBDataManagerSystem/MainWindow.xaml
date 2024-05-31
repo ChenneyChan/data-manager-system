@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ABBDataManagerSystem"
         xmlns:hc="https://handyorg.github.io/handycontrol"
+        xmlns:dz="http://schemas.devzest.com/presentation/docking"
         mc:Ignorable="d"
         Title="信息化试验系统" Height="1000" Width="1200" WindowStartupLocation="CenterScreen" Closing="Window_Closing" WindowState="Maximized">
     <Window.Resources>
@@ -16,8 +17,8 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <!--停靠布局，让菜单栏和工具栏位于窗口顶部-->
@@ -50,10 +51,32 @@
             <Separator></Separator>
             <Button Content="金源JYT-A 变比测试仪" Click="JinYuanJYT_A_Click"/>
         </ToolBar>
-        <Grid Grid.Row="2" Height="Auto">
-
+        <Grid Grid.Row="2">
+            <dz:DockControl Name="dockControl">
+                <dz:DockItem TabText="Welcome" Title="Welcome" ShowAction="{dz:ShowAsDockPositionAction DockPosition=Document}">
+                    <FlowDocumentScrollViewer>
+                        <FlowDocumentScrollViewer.Document>
+                            <FlowDocument FontFamily="Calibri" FontSize="14.5" TextAlignment="Left">
+                                <Paragraph FontSize="22" FontWeight="Bold">Welcome to DevZest Docking</Paragraph>
+                            </FlowDocument>
+                        </FlowDocumentScrollViewer.Document>
+                    </FlowDocumentScrollViewer>
+                </dz:DockItem>
+                <dz:DockItem TabText="Saved State" Title="Saved State" ShowAction="{dz:ShowAsDockPositionAction DockPosition=Bottom}">
+                    <TextBox />
+                </dz:DockItem>
+                <dz:DockItem TabText="Output" Title="Output" ShowAction="{dz:ShowAsDockPositionAction DockPosition=Bottom}">
+                    <TextBox />
+                </dz:DockItem>
+                <dz:DockItem TabText="Solution Explorer" Title="Solution Explorer" ShowAction="{dz:ShowAsDockPositionAction DockPosition=Right}">
+                    <TextBox />
+                </dz:DockItem>
+                <dz:DockItem TabText="Properties" Title="Properties" ShowAction="{dz:ShowAsDockPositionAction DockPosition=Right}">
+                    <TextBox />
+                </dz:DockItem>
+            </dz:DockControl>
         </Grid>
-        <hc:TabControl Margin="10"  Grid.Row="3" Name="tabControl" IsAnimationEnabled="True" ShowCloseButton="True" IsDraggable="True" TabItemWidth="140">
+        <hc:TabControl Margin="10" Visibility="Collapsed"  Grid.Row="3" Name="tabControl" IsAnimationEnabled="True" ShowCloseButton="True" IsDraggable="True" TabItemWidth="140">
             <hc:TabItem Header="测试页面" ShowCloseButton="False" ShowContextMenu="False">
                 <Grid>
                     <Grid.RowDefinitions>
