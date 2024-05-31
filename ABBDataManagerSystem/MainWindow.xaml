@@ -50,9 +50,12 @@
             <Button Content="功率分析仪-不搜索" Click="PowerAnalyze2Test_Click" Visibility="Visible"></Button>
             <Separator></Separator>
             <Button Content="金源JYT-A 变比测试仪" Click="JinYuanJYT_A_Click"/>
+            <Separator></Separator>
+            <Button Content="放大" Name="btZoomIn" Click="btZoomIn_Click"/>
+            <Button Content="缩小" Name="btZoomOut" Click="btZoomOut_Click"/>
         </ToolBar>
         <Grid Grid.Row="2">
-            <dz:DockControl Name="dockControl">
+            <dz:DockControl Name="dockControl" ActiveItemChanged="dockControl_ActiveItemChanged">
                 <dz:DockItem TabText="Welcome" Title="Welcome" ShowAction="{dz:ShowAsDockPositionAction DockPosition=Document}">
                     <FlowDocumentScrollViewer>
                         <FlowDocumentScrollViewer.Document>
