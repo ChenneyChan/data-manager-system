@@ -982,7 +982,7 @@ namespace ABBDataManagerSystem.Pages
             tbTempCoolLV12.BorderThickness = ((ch1 == "低压2" || ch2 == "低压2") && selectedLevel == "第一次") ? thicknessSelected : thicknessNone;
             tbTempCoolLV21.BorderThickness = ((ch1 == "低压1" || ch2 == "低压1") && selectedLevel == "第二次") ? thicknessSelected : thicknessNone;
             tbTempCoolLV22.BorderThickness = ((ch1 == "低压2" || ch2 == "低压2") && selectedLevel == "第二次") ? thicknessSelected : thicknessNone;
-            if (ch1 == ch2)
+            if (ch1 == ch2 && ch1 != "空")
             {
                 HandyControl.Controls.Growl.Error("通道一、通道二选择相同冲突");
             }

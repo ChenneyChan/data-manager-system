@@ -148,17 +148,5 @@
                 </StackPanel>
             </StatusBarItem>
         </StatusBar>
-
-        <Grid Grid.Row="4" Height="40" VerticalAlignment="Bottom" Visibility="Collapsed">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="1*"/>
-            </Grid.ColumnDefinitions>
-            <TextBlock Text="statusBar" Name="tbStatus" Grid.Column="0"></TextBlock>
-            <DockPanel Grid.Column="1">
-                <Button Content="ZoomIn" DockPanel.Dock="Right"/>
-                <ProgressBar x:Name="ProgressBar" Value="0" Minimum="0" Maximum="100" Height="20" Margin="10" />
-            </DockPanel>
-        </Grid>
     </Grid>
 </Window>

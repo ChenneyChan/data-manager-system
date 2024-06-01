@@ -33,7 +33,7 @@
     <Grid>
         <TabControl>
             <TabItem Header ="数据库设置">
-                <Grid Margin="20, 40, 20, 40">
+                <Grid Margin="20, 20, 20, 40">
                     <Grid.ColumnDefinitions>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
@@ -42,7 +42,7 @@
                         <RowDefinition Height="1*"/>
                         <RowDefinition Height="1*"/>
                         <RowDefinition Height="1*"/>
-                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="1.2*"/>
                     </Grid.RowDefinitions>
                     <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                         <TextBlock Text="数据库IP：" Width="120" Style="{StaticResource Label}" Margin="0,0,10,0"/>
@@ -68,14 +68,6 @@
                         <Button Name="btComfirm" Style="{StaticResource ButtonPrimary}" FontSize="16" FontWeight="Bold" Content="确认" Height="40" Width="170" Margin="0,0,10,0" Click="btComfirm_Click"/>
                         <Button Name="btCancel" Style="{StaticResource ButtonDanger}" FontSize="16" FontWeight="Bold" Content="取消" Height="40" Width="170" Margin="0,0,0,0" Click="btCancel_Click"/>
                     </StackPanel>
-                    <!--<Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="0.5*"/>
-                            <ColumnDefinition Width="1*"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="服务器IP" Width="auto" Style="{StaticResource Label}"/>
-                        <TextBox Grid.Column="1" Name="tbDatabaseIp" Width="auto" Height="40"/>
-                    </Grid>-->
                 </Grid>
             </TabItem>
         </TabControl>

@@ -35,7 +35,11 @@ namespace ABBDataManagerSystem
             var sc = Content as ScrollViewer;
             if (sc != null)
             {
-                sc.RenderTransform = new ScaleTransform(_Scale, _Scale);
+                var uc = sc.Content as UserControl;
+                if (uc != null)
+                {
+                    uc.RenderTransform = new ScaleTransform(_Scale, _Scale);
+                }
             }
         }
     }
