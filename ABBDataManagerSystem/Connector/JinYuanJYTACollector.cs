@@ -191,7 +191,7 @@ namespace ABBDataManagerSystem.Connector
         private static int SinglePhaseCmdLen = 1 + 8 + 8 + 2 + 1 + 2 + 6 + 14 + 1 + 1;
         private byte[] SinglePhaseCmdPacket = new byte[SinglePhaseCmdLen];
 
-        private static int ThreePhaseCmdLen = 1 + 8 + 8 + 2 + 1 + 2 + 6 + 14 + 1 + 1 + 1 + 2 + 1;
+        private static int ThreePhaseCmdLen = 1 + 8 + 8 + 2 + 1 + 2 + 6 + 14 + 1 + 1 + 2 + 1;
         private byte[] ThreePhaseCmdPacket = new byte[ThreePhaseCmdLen];
 
         #region 仪器参数设置命令
@@ -216,19 +216,19 @@ namespace ABBDataManagerSystem.Connector
 
             SinglePhaseCmdPacket[0] = 0x61;
             int offset = 1;
-            Array.Copy(SinglePhaseCmdPacket, offset, bRatedHV, 0, bRatedHV.Length);
+            Array.Copy(bRatedHV, 0, SinglePhaseCmdPacket, offset, bRatedHV.Length);
             offset += bRatedHV.Length;
-            Array.Copy(SinglePhaseCmdPacket, offset, bRatedLV, 0, bRatedLV.Length);
+            Array.Copy(bRatedLV, 0, SinglePhaseCmdPacket, offset, bRatedLV.Length);
             offset += bRatedLV.Length;
-            Array.Copy(SinglePhaseCmdPacket, offset, bRatedTapping, 0, bRatedTapping.Length);
+            Array.Copy(bRatedTapping, 0, SinglePhaseCmdPacket, offset, bRatedTapping.Length);
             offset += bRatedTapping.Length;
             SinglePhaseCmdPacket[offset] = TappingPointTypeCmdMap[TappingPoint];
             offset += 1;
-            Array.Copy(SinglePhaseCmdPacket, offset, bPositiveTappingCount, 0, bPositiveTappingCount.Length);
+            Array.Copy(bPositiveTappingCount, 0, SinglePhaseCmdPacket, offset, bPositiveTappingCount.Length);
             offset += bPositiveTappingCount.Length;
-            Array.Copy(SinglePhaseCmdPacket, offset, bTappingSpacing, 0, bTappingSpacing.Length);
+            Array.Copy(bTappingSpacing, 0, SinglePhaseCmdPacket, offset, bTappingSpacing.Length);
             offset += bTappingSpacing.Length;
-            Array.Copy(SinglePhaseCmdPacket, offset, bProductSequence, 0, bProductSequence.Length);
+            Array.Copy(bProductSequence, 0, SinglePhaseCmdPacket, offset, bProductSequence.Length);
             offset += bProductSequence.Length;
             SinglePhaseCmdPacket[offset] = HomopolarityDisplayTypeCmdMap[HomopolarityDisplay];
             offset += 1;
@@ -264,25 +264,25 @@ namespace ABBDataManagerSystem.Connector
 
             ThreePhaseCmdPacket[0] = 0x62;
             int offset = 1;
-            Array.Copy(ThreePhaseCmdPacket, offset, bRatedHV, 0, bRatedHV.Length);
+            Array.Copy(bRatedHV, 0, ThreePhaseCmdPacket, offset, bRatedHV.Length);
             offset += bRatedHV.Length;
-            Array.Copy(ThreePhaseCmdPacket, offset, bRatedLV, 0, bRatedLV.Length);
+            Array.Copy(bRatedLV, 0, ThreePhaseCmdPacket, offset, bRatedLV.Length);
             offset += bRatedLV.Length;
-            Array.Copy(ThreePhaseCmdPacket, offset, bRatedTapping, 0, bRatedTapping.Length);
+            Array.Copy(bRatedTapping, 0, ThreePhaseCmdPacket, offset, bRatedTapping.Length);
             offset += bRatedTapping.Length;
             ThreePhaseCmdPacket[offset] = TappingPointTypeCmdMap[TappingPoint];
             offset += 1;
-            Array.Copy(ThreePhaseCmdPacket, offset, bPositiveTappingCount, 0, bPositiveTappingCount.Length);
+            Array.Copy(bPositiveTappingCount, 0, ThreePhaseCmdPacket, offset, bPositiveTappingCount.Length);
             offset += bPositiveTappingCount.Length;
-            Array.Copy(ThreePhaseCmdPacket, offset, bTappingSpacing, 0, bTappingSpacing.Length);
+            Array.Copy(bTappingSpacing, 0, ThreePhaseCmdPacket, offset, bTappingSpacing.Length);
             offset += bTappingSpacing.Length;
-            Array.Copy(ThreePhaseCmdPacket, offset, bProductSequence, 0, bProductSequence.Length);
+            Array.Copy(bProductSequence, 0, ThreePhaseCmdPacket, offset, bProductSequence.Length);
             offset += bProductSequence.Length;
             ThreePhaseCmdPacket[offset] = HighVoltageConnectionTypeCmdMap[HighVoltageConnection];
             offset += 1;
             ThreePhaseCmdPacket[offset] = LowVoltageConnectionTypeCmdMap[LowVoltageConnection];
             offset += 1;
-            Array.Copy(ThreePhaseCmdPacket, offset, bGroup, 0, bGroup.Length);
+            Array.Copy(bGroup, 0, ThreePhaseCmdPacket, offset, bGroup.Length);
             offset += bGroup.Length;
             ThreePhaseCmdPacket[offset] = TestVoltageTypeCmdMap[TestVoltage];
             offset += 1;
