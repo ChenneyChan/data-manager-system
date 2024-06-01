@@ -6,6 +6,8 @@ using DevZest.Windows.Docking;
 using System.IO.Ports;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
+using EventManager = ABBDataManagerSystem.Tools.EventManager;
 using TabItem = HandyControl.Controls.TabItem;
 using Window = System.Windows.Window;
 
@@ -105,7 +107,7 @@ namespace ABBDataManagerSystem
 
             foreach (var item in dockControl.DockItems)
             {
-                var scrollViewer = item.Content as ScrollViewer;
+                var scrollViewer = item.Content as HandyControl.Controls.ScrollViewer;
                 if (scrollViewer != null)
                 {
                     var closeable = scrollViewer.Content as ICloseable;
@@ -116,6 +118,11 @@ namespace ABBDataManagerSystem
                 }
             }
             Configs.Configs.SaveToFile();
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            EventManager.Instance.Stop();
         }
 
         #region 独立测试
@@ -352,6 +359,39 @@ namespace ABBDataManagerSystem
             {
                 tbMsg.Text = tbMsg.Text + "\r\n" + msg;
             }));
+        }
+
+        private void btZoomIn_Click(object sender, RoutedEventArgs e)
+        {
+            var dockItem = dockControl.ActiveItem;
+            var sc = dockItem.Content as HandyControl.Controls.ScrollViewer;
+            if (sc != null)
+            {
+                var uc = sc.Content as UserControl;
+                if (uc != null)
+                {
+                    uc.RenderTransform = new ScaleTransform(1, 1);
+                }
+            }
+        }
+
+        private void btZoomOut_Click(object sender, RoutedEventArgs e)
+        {
+            var dockItem = dockControl.ActiveItem;
+            var sc = dockItem.Content as HandyControl.Controls.ScrollViewer;
+            if (sc != null)
+            {
+                var uc = sc.Content as UserControl;
+                if (uc != null)
+                {
+                    uc.RenderTransform = new ScaleTransform(0.8, 0.8);
+                }
+            }
+        }
+
+        private void dockControl_ActiveItemChanged(object sender, EventArgs e)
+        {
+            // todo 这里从uc里拿到缩放系数
         }
     }
 }
