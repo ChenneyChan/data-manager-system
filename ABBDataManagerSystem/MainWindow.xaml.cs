@@ -361,37 +361,29 @@ namespace ABBDataManagerSystem
             }));
         }
 
-        private void btZoomIn_Click(object sender, RoutedEventArgs e)
-        {
-            var dockItem = dockControl.ActiveItem;
-            var sc = dockItem.Content as HandyControl.Controls.ScrollViewer;
-            if (sc != null)
-            {
-                var uc = sc.Content as UserControl;
-                if (uc != null)
-                {
-                    uc.RenderTransform = new ScaleTransform(1, 1);
-                }
-            }
-        }
-
-        private void btZoomOut_Click(object sender, RoutedEventArgs e)
-        {
-            var dockItem = dockControl.ActiveItem;
-            var sc = dockItem.Content as HandyControl.Controls.ScrollViewer;
-            if (sc != null)
-            {
-                var uc = sc.Content as UserControl;
-                if (uc != null)
-                {
-                    uc.RenderTransform = new ScaleTransform(0.8, 0.8);
-                }
-            }
-        }
-
+        #region DockItem缩放处理
         private void dockControl_ActiveItemChanged(object sender, EventArgs e)
         {
-            // todo 这里从uc里拿到缩放系数
+            var dockItem = dockControl.ActiveItem as DockItemImpl;
+            if (dockItem != null)
+            {
+                PreviewSliderHorizontal.Value = dockItem.Scale * 100;
+            }
         }
+
+        private void PreviewSliderHorizontal_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            var dockItem = dockControl.ActiveItem as DockItemImpl;
+            if (dockItem != null)
+            {
+                dockItem.Scale = (float)(PreviewSliderHorizontal.Value / 100);
+            }
+        }
+
+        private void btResumeScale_Click(object sender, RoutedEventArgs e)
+        {
+            PreviewSliderHorizontal.Value = 100;
+        }
+        #endregion    
     }
 }

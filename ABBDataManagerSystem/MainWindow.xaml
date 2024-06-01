@@ -50,9 +50,6 @@
             <Button Content="功率分析仪-不搜索" Click="PowerAnalyze2Test_Click" Visibility="Visible"></Button>
             <Separator></Separator>
             <Button Content="金源JYT-A 变比测试仪" Click="JinYuanJYT_A_Click"/>
-            <Separator></Separator>
-            <Button Content="放大" Name="btZoomIn" Click="btZoomIn_Click"/>
-            <Button Content="缩小" Name="btZoomOut" Click="btZoomOut_Click"/>
         </ToolBar>
         <Grid Grid.Row="2">
             <dz:DockControl Name="dockControl" ActiveItemChanged="dockControl_ActiveItemChanged">
@@ -138,8 +135,30 @@
                 
             </hc:TabItem>
         </hc:TabControl>
-        <StatusBar Grid.Row="4" Height="40" VerticalAlignment="Bottom">
-            <TextBlock Text="statusBar"></TextBlock>
+        <StatusBar Grid.Row="4" Height="40" VerticalAlignment="Bottom" HorizontalAlignment="Stretch">
+            <StatusBarItem>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="缩放" VerticalAlignment="Center"/>
+                    <hc:PreviewSlider Name="PreviewSliderHorizontal" Width="300" Value="100" Maximum="200" Minimum="50" ValueChanged="PreviewSliderHorizontal_ValueChanged">
+                        <hc:PreviewSlider.PreviewContent>
+                            <Label Style="{StaticResource LabelPrimary}" Content="{Binding Path=(hc:PreviewSlider.PreviewPosition),RelativeSource={RelativeSource Self}}" ContentStringFormat="#0.00"/>
+                        </hc:PreviewSlider.PreviewContent>
+                    </hc:PreviewSlider>
+                    <Button Content="还原" Name="btResumeScale" Click="btResumeScale_Click"/>
+                </StackPanel>
+            </StatusBarItem>
         </StatusBar>
+
+        <Grid Grid.Row="4" Height="40" VerticalAlignment="Bottom" Visibility="Collapsed">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="statusBar" Name="tbStatus" Grid.Column="0"></TextBlock>
+            <DockPanel Grid.Column="1">
+                <Button Content="ZoomIn" DockPanel.Dock="Right"/>
+                <ProgressBar x:Name="ProgressBar" Value="0" Minimum="0" Maximum="100" Height="20" Margin="10" />
+            </DockPanel>
+        </Grid>
     </Grid>
 </Window>

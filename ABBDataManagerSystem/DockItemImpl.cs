@@ -1,10 +1,19 @@
 ﻿using DevZest.Windows.Docking;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace ABBDataManagerSystem
 {
     internal class DockItemImpl : DockItem
     {
+        private float _Scale = 1.0f;
+
+        public float Scale
+        {
+            get { return _Scale; }
+            set { _Scale = value; UpdateTransform(); }
+        }
+
         public DockItemImpl() : base()
         {
             Closing += DockItemImpl_Closing;
@@ -18,6 +27,15 @@ namespace ABBDataManagerSystem
             {
                 var closeable = sc.Content as ICloseable;
                 if (closeable != null) { closeable.Close(); }
+            }
+        }
+
+        private void UpdateTransform()
+        {
+            var sc = Content as ScrollViewer;
+            if (sc != null)
+            {
+                sc.RenderTransform = new ScaleTransform(_Scale, _Scale);
             }
         }
     }
