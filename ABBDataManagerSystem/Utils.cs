@@ -219,6 +219,24 @@ namespace ABBDataManagerSystem
             return formattedNumber;
         }
 
+        public static string ZeroIsNull(string value)
+        {
+            if (value == "0")
+            {
+                return "";
+            }
+            return value;
+        }
+
+        public static string? FloatFormatZeroIsNull(float? value)
+        {
+            if (value == null)
+            {
+                return null;
+            }
+            return ZeroIsNull(FloatFormat((float)value));
+        }
+
         internal static int ParseInt(object selectedItem)
         {
             throw new NotImplementedException();

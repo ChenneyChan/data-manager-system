@@ -233,28 +233,28 @@
 
                 <StackPanel Orientation="Horizontal" Grid.Row="4" Grid.ColumnSpan="4" Height="40">
                     <TextBlock Text="通道一" Width="60"/>
-                    <hc:ComboBox Width="120">
-                        <ComboBoxItem Content="无效" IsSelected="True"/>
+                    <hc:ComboBox Width="120" Height="36" Name="cbTempRiseCoolCH1" SelectionChanged="TempRiseCoolComboBox_SelectionChanged">
+                        <ComboBoxItem Content="空" IsSelected="True"/>
                         <ComboBoxItem Content="高压"/>
                         <ComboBoxItem Content="低压1"/>
                         <ComboBoxItem Content="低压2"/>
                     </hc:ComboBox>
                     <TextBlock Text="通道二" Width="60" Margin="10,0,0,0"/>
-                    <hc:ComboBox Width="120">
-                        <ComboBoxItem Content="无效" IsSelected="True"/>
+                    <hc:ComboBox Width="120" Height="36" Name="cbTempRiseCoolCH2" SelectionChanged="TempRiseCoolComboBox_SelectionChanged">
+                        <ComboBoxItem Content="空" IsSelected="True"/>
                         <ComboBoxItem Content="高压"/>
                         <ComboBoxItem Content="低压1"/>
                         <ComboBoxItem Content="低压2"/>
                     </hc:ComboBox>
                     <TextBlock Text="次数" Width="60" Margin="10,0,0,0"/>
-                    <hc:ComboBox Width="120">
+                    <hc:ComboBox Width="120" Height="36" Name="cbTempRiseCoolLevel" SelectionChanged="TempRiseCoolComboBox_SelectionChanged">
                         <ComboBoxItem Content="第一次" IsSelected="True"/>
                         <ComboBoxItem Content="第二次"/>
                     </hc:ComboBox>
                 </StackPanel>
             </Grid>
 
-            <ScrollViewer Grid.Column="1" Name="panelCommonTestResult">
+            <ScrollViewer Grid.Column="1" Name="panelCommonTestResult" Visibility="Visible">
                 <Grid Width="580" MinHeight="660">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>

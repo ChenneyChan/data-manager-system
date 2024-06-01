@@ -47,6 +47,9 @@ namespace ABBDataManagerSystem.Pages
         private bool IsTempRiseTesting = false;
         private int SelectedLowVoltageLevel = 0;
         private string SelectedTempRiseCoolItem = "";
+        private string? TempRiseCoolSelectedCh1 = string.Empty;
+        private string? TempRiseCoolSelectedCh2 = string.Empty;
+        private string? TempRiseCoolSelectedLevel = string.Empty;
 
         private JinYuan20WPacketInfo? lastPacket = null;
 
@@ -484,12 +487,71 @@ namespace ABBDataManagerSystem.Pages
 
             if (!IsTempRiseCool && tappingResistanceFields.Keys.Contains(SelectedTapping))
             {
-
                 tappingResistanceFields[SelectedTapping].UpdateValueForActiveItem(value);
             }
-            else if (IsTempRiseCool && tempRiseCoolTbs.Keys.Contains(SelectedTempRiseCoolItem))
+            else if (IsTempRiseCool && (TempRiseCoolSelectedCh1 != "空" || TempRiseCoolSelectedCh2 != "空"))
             {
-                tempRiseCoolTbs[SelectedTempRiseCoolItem].Text = Utils.FloatFormat(value);
+                UpdateTempRiseCoolValue();
+            }
+        }
+
+        private void UpdateTempRiseCoolValue()
+        {
+            float? valueCh1 = null;
+            float? valueCh2 = null;
+            if (lastPacket != null)
+            {
+                if (lastPacket.ch1Enabled)
+                {
+                    valueCh1 = lastPacket.ch1RealTimeResistance;
+                }
+                if (lastPacket.ch2Enabled)
+                {
+                    valueCh2 = lastPacket.ch2RealTimeResistance;
+                }
+            } 
+            else if (IsSimulate)
+            {
+                valueCh1 = (float)random.Next() % 1000 + (float)random.NextDouble();
+                valueCh2 = (float)random.Next() % 1000 + (float)random.NextDouble();
+            }
+            string? ch1 = Utils.FloatFormatZeroIsNull(valueCh1); 
+            string? ch2 = Utils.FloatFormatZeroIsNull(valueCh2); 
+
+            TextBox hv = TempRiseCoolSelectedLevel == "第一次" ? tbTempCoolHV1 : tbTempCoolHV2;
+            TextBox lv1 = TempRiseCoolSelectedLevel == "第一次" ? tbTempCoolLV11 : tbTempCoolLV21;
+            TextBox lv2 = TempRiseCoolSelectedLevel == "第一次" ? tbTempCoolLV12 : tbTempCoolLV22;
+
+            if (ch1 != null)
+            {
+                switch (TempRiseCoolSelectedCh1)
+                {
+                    case "高压":
+                        hv.Text = ch1;
+                        break;
+                    case "低压1":
+                        lv1.Text = ch1;
+                        break;
+                    case "低压2":
+                        lv2.Text = ch1;
+                        break;
+                }
+            }
+
+            if (ch2 != null)
+            {
+                switch (TempRiseCoolSelectedCh2)
+                {
+                    case "高压":
+                        hv.Text = ch2;
+                        break;
+                    case "低压1":
+                        lv1.Text = ch2;
+                        break;
+                    case "低压2":
+                        lv2.Text = ch2;
+                        break;
+                }
             }
         }
         #endregion
@@ -881,8 +943,14 @@ namespace ABBDataManagerSystem.Pages
         }
         #endregion
 
+        #region 温升冷电阻选相
+        private bool IsEnableTempRiseCoolSingleSelect = false;
         private void tbTempCool_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            if (!IsEnableTempRiseCoolSingleSelect)
+            {
+                return;
+            }
             foreach (var item in tempRiseCoolTbs)
             {
                 if (sender == item.Value)
@@ -896,6 +964,33 @@ namespace ABBDataManagerSystem.Pages
                 }
             }
         }
+
+        private void TempRiseCoolComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (cbTempRiseCoolCH1 == null || cbTempRiseCoolCH2 == null || cbTempRiseCoolLevel == null)
+            {
+                return;
+            }
+            var ch1 = (cbTempRiseCoolCH1.SelectedItem as ComboBoxItem).Content as string;
+            var ch2 = (cbTempRiseCoolCH2.SelectedItem as ComboBoxItem).Content as string;
+            var selectedLevel = (cbTempRiseCoolLevel.SelectedItem as ComboBoxItem).Content as string;
+            var thicknessSelected = new Thickness(2);
+            var thicknessNone = new Thickness(0);
+            tbTempCoolHV1.BorderThickness = ((ch1 == "高压" || ch2 == "高压") && selectedLevel == "第一次") ? thicknessSelected : thicknessNone;
+            tbTempCoolHV2.BorderThickness = ((ch1 == "高压" || ch2 == "高压") && selectedLevel == "第二次") ? thicknessSelected : thicknessNone;
+            tbTempCoolLV11.BorderThickness = ((ch1 == "低压1" || ch2 == "低压1") && selectedLevel == "第一次") ? thicknessSelected : thicknessNone;
+            tbTempCoolLV12.BorderThickness = ((ch1 == "低压2" || ch2 == "低压2") && selectedLevel == "第一次") ? thicknessSelected : thicknessNone;
+            tbTempCoolLV21.BorderThickness = ((ch1 == "低压1" || ch2 == "低压1") && selectedLevel == "第二次") ? thicknessSelected : thicknessNone;
+            tbTempCoolLV22.BorderThickness = ((ch1 == "低压2" || ch2 == "低压2") && selectedLevel == "第二次") ? thicknessSelected : thicknessNone;
+            if (ch1 == ch2)
+            {
+                HandyControl.Controls.Growl.Error("通道一、通道二选择相同冲突");
+            }
+            TempRiseCoolSelectedCh1 = ch1;
+            TempRiseCoolSelectedCh2 = ch2;
+            TempRiseCoolSelectedLevel = selectedLevel;
+        }
+        #endregion
     }
 
 }

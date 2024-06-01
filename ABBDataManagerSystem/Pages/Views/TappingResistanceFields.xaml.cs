@@ -96,9 +96,9 @@ namespace ABBDataManagerSystem.Pages.Views
 
         private void UpdateDisplay()
         {
-            tbResistanceAB.Text = ZeroIsNull(Utils.FloatFormat(ValueAB));
-            tbResistanceBC.Text = ZeroIsNull(Utils.FloatFormat(ValueBC));
-            tbResistanceCA.Text = ZeroIsNull(Utils.FloatFormat(ValueCA));
+            tbResistanceAB.Text = Utils.ZeroIsNull(Utils.FloatFormat(ValueAB));
+            tbResistanceBC.Text = Utils.ZeroIsNull(Utils.FloatFormat(ValueBC));
+            tbResistanceCA.Text = Utils.ZeroIsNull(Utils.FloatFormat(ValueCA));
 
             //tbResistanceAB.Background = SelectedIndex == 1 ? ActiveBackGroud : OriginBackGroud;
             //tbResistanceBC.Background = SelectedIndex == 2 ? ActiveBackGroud : OriginBackGroud;
@@ -107,15 +107,6 @@ namespace ABBDataManagerSystem.Pages.Views
             tbResistanceAB.BorderThickness = SelectedIndex == 1 ? ActiveThickness : NoneThickness;
             tbResistanceBC.BorderThickness = SelectedIndex == 2 ? ActiveThickness : NoneThickness;
             tbResistanceCA.BorderThickness = SelectedIndex == 3 ? ActiveThickness : NoneThickness;
-        }
-
-        private string ZeroIsNull(string value)
-        {
-            if (value == "0")
-            {
-                return "";
-            }
-            return value;
         }
 
         private void tbResistance_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
