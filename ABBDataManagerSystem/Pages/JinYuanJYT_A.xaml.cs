@@ -1,4 +1,5 @@
-﻿using ABBDataManagerSystem.Connector;
+﻿using ABBDataManagerSystem.Bean.Base;
+using ABBDataManagerSystem.Connector;
 using ABBDataManagerSystem.Pages.Views;
 using System.IO.Ports;
 using System.Windows;
@@ -382,6 +383,11 @@ namespace ABBDataManagerSystem.Pages
 
         private void btApply_Click(object sender, RoutedEventArgs e)
         {
+            var workflows =  WorkflowInfo.ReadFromDB(tbProductSequence.Text);
+            if (workflows != null && workflows.Count > 0)
+            {
+                Log.Info($"Workflow {workflows[0].TappingVoltages}");
+            }
             string tapping = tbTapping.Text.Trim();
             int? hv = Utils.ParseIntNull(tbRatedHighVoltage.Text);
             int? lv = Utils.ParseIntNull(tbRatedLowVoltage.Text);

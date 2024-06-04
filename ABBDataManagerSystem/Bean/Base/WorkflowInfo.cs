@@ -32,7 +32,6 @@ namespace ABBDataManagerSystem.Bean.Base
          */
         public string ID = String.Empty;
         public string WorkflowType = String.Empty;
-        public string TappingPosition = String.Empty;
 
         public int RatedPower;
         public int RatedPower1;
@@ -48,7 +47,7 @@ namespace ABBDataManagerSystem.Bean.Base
         public string No   = String.Empty;
         public string CAL  = String.Empty;
         public string Type = String.Empty;
-        public string Phase   = String.Empty;
+        public int Phase;
         public string CONNSymbol = String.Empty;
         public string TappingVoltages = String.Empty;
         public string RatedVoltageInterval = String.Empty;
@@ -85,15 +84,14 @@ namespace ABBDataManagerSystem.Bean.Base
                 // 打开数据库连接
                 connection.Open();
 
-                using (SQLCommond command = new SQLCommond($"INSERT INTO {TABLE_NAME} (ID, WorkflowType, TappingPosition, RatedPower, RatedPower1, RatedPower2, " +
+                using (SQLCommond command = new SQLCommond($"INSERT INTO {TABLE_NAME} (ID, WorkflowType, RatedPower, RatedPower1, RatedPower2, " +
                     $"RatedVoltageHv, RatedVoltageLv, RatedVoltageYv, RatedCurrentHv, RatedCurrentLv, RatedCurrentYv, " +
-                    $"No, CAL, Type, Phase, CONNSymbol, TappingVoltages, RatedVoltageInterval) VALUES (@ID, @WorkflowType, @TappingPosition, @RatedPower, @RatedPower1, @RatedPower2, " +
+                    $"No, CAL, Type, Phase, CONNSymbol, TappingVoltages, RatedVoltageInterval) VALUES (@ID, @WorkflowType, @RatedPower, @RatedPower1, @RatedPower2, " +
                     $"@RatedVoltageHv, @RatedVoltageLv, @RatedVoltageYv, @RatedCurrentHv, @RatedCurrentLv, @RatedCurrentYv, @No, @CAL, @Type, @Phase, " +
                     $"@CONNSymbol, @TappingVoltages, @RatedVoltageInterval)", connection))
                 {
                     command.Parameters.AddWithValue("@ID", ID);
                     command.Parameters.AddWithValue("@WorkflowType", WorkflowType);
-                    command.Parameters.AddWithValue("@TappingPosition", TappingPosition);
                     command.Parameters.AddWithValue("@RatedPower", RatedPower);
                     command.Parameters.AddWithValue("@RatedPower1", RatedPower1);
                     command.Parameters.AddWithValue("@RatedPower2", RatedPower2);
@@ -118,10 +116,10 @@ namespace ABBDataManagerSystem.Bean.Base
 
         public bool UpdateData()
         {
-            string updateSql = $"UPDATE {TABLE_NAME} SET RatedPower = @RatedPower, RatedPower1 = @RatedPower1, " +
+            string updateSql = $"UPDATE {TABLE_NAME} SET WorkflowType = @WorkflowType, RatedPower = @RatedPower, RatedPower1 = @RatedPower1, " +
                 $"RatedPower2 = @RatedPower2, RatedVoltageHv = @RatedVoltageHv, RatedVoltageLv = @RatedVoltageLv, RatedVoltageYv = @RatedVoltageYv, RatedCurrentHv = @RatedCurrentHv, " +
                 $"RatedCurrentLv = @RatedCurrentLv, RatedCurrentYv = @RatedCurrentYv, No = @No, CAL = @CAL, Type = @Type, Phase = @Phase, CONNSymbol = @CONNSymbol, " +
-                $"TappingVoltages = @TappingVoltages, RatedVoltageInterval = @RatedVoltageInterval WHERE ID = @ID, WorkflowType = @WorkflowType, TappingPosition = @TappingPosition";
+                $"TappingVoltages = @TappingVoltages, RatedVoltageInterval = @RatedVoltageInterval WHERE ID = @ID";
 
             // 创建 SQLite 连接对象
             using (SQLConnection connection = new SQLConnection(DBConnector.GetConnectionString()))
@@ -131,7 +129,6 @@ namespace ABBDataManagerSystem.Bean.Base
                 {
                     command.Parameters.AddWithValue("@ID", ID);
                     command.Parameters.AddWithValue("@WorkflowType", WorkflowType);
-                    command.Parameters.AddWithValue("@TappingPosition", TappingPosition);
                     command.Parameters.AddWithValue("@RatedPower", RatedPower);
                     command.Parameters.AddWithValue("@RatedPower1", RatedPower1);
                     command.Parameters.AddWithValue("@RatedPower2", RatedPower2);
@@ -154,11 +151,11 @@ namespace ABBDataManagerSystem.Bean.Base
             }
         }
 
-        public static List<WorkflowInfo> ReadFromDB(bool withKey = false, string ID = "")
+        public static List<WorkflowInfo> ReadFromDB(string ID = "")
         {
             // 查询数据
             string queryDataSql = $"SELECT * FROM {TABLE_NAME}";
-            if (withKey && ID != "")
+            if (ID != "")
             {
                 queryDataSql += $" WHERE ID = '{ID}'";
             }
@@ -172,23 +169,22 @@ namespace ABBDataManagerSystem.Bean.Base
                 {
                     ID = reader.GetString("ID"),
                     WorkflowType = reader.GetString("WorkflowType"),
-                    TappingPosition = reader.GetString("TappingPosition"),
-                    RatedPower = reader.GetInt32("RatedPower"),
-                    RatedPower1 = reader.GetInt32("RatedPower1"),
-                    RatedPower2 = reader.GetInt32("RatedPower2"),
-                    RatedVoltageHv = reader.GetFloat("RatedVoltageHv"),
-                    RatedVoltageLv = reader.GetFloat("RatedVoltageLv"),
-                    RatedVoltageYv = reader.GetFloat("RatedVoltageYv"),
-                    RatedCurrentHv = reader.GetFloat("RatedCurrentHv"),
-                    RatedCurrentLv = reader.GetFloat("RatedCurrentLv"),
-                    RatedCurrentYv = reader.GetFloat("RatedCurrentYv"),
-                    No = reader.GetString("No"),
-                    CAL = reader.GetString("CAL"),
-                    Type = reader.GetString("Type"),
-                    Phase = reader.GetString("Phase"),
-                    CONNSymbol = reader.GetString("CONNSymbol"),
-                    TappingVoltages = reader.GetString("TappingVoltages"),
-                    RatedVoltageInterval = reader.GetString("RatedVoltageInterval"),
+                    RatedPower = !reader.IsDBNull("RatedPower") ? reader.GetInt32("RatedPower") : 0,
+                    RatedPower1 = !reader.IsDBNull("RatedPower1") ? reader.GetInt32("RatedPower1") : 0,
+                    RatedPower2 = !reader.IsDBNull("RatedPower2") ? reader.GetInt32("RatedPower2") : 0,
+                    RatedVoltageHv = !reader.IsDBNull("RatedVoltageHv") ? reader.GetFloat("RatedVoltageHv") : 0,
+                    RatedVoltageLv = !reader.IsDBNull("RatedVoltageLv") ? reader.GetFloat("RatedVoltageLv") : 0,
+                    RatedVoltageYv = !reader.IsDBNull("RatedVoltageYv") ? reader.GetFloat("RatedVoltageYv") : 0,
+                    RatedCurrentHv = !reader.IsDBNull("RatedCurrentHv") ? reader.GetFloat("RatedCurrentHv") : 0,
+                    RatedCurrentLv = !reader.IsDBNull("RatedCurrentLv") ? reader.GetFloat("RatedCurrentLv") : 0,
+                    RatedCurrentYv = !reader.IsDBNull("RatedCurrentYv") ? reader.GetFloat("RatedCurrentYv") : 0,
+                    No = !reader.IsDBNull("No") ? reader.GetString("No") : "",
+                    CAL = !reader.IsDBNull("CAL") ? reader.GetString("CAL") : "",
+                    Type = !reader.IsDBNull("Type") ? reader.GetString("Type") : "",
+                    Phase = !reader.IsDBNull("Phase") ? reader.GetInt32("Phase") : 0,
+                    CONNSymbol = !reader.IsDBNull("CONNSymbol") ? reader.GetString("CONNSymbol") : "",
+                    TappingVoltages = !reader.IsDBNull("TappingVoltages") ? reader.GetString("TappingVoltages") : "",
+                    RatedVoltageInterval = !reader.IsDBNull("RatedVoltageInterval") ? reader.GetString("RatedVoltageInterval") : "",
                 };
             });
             if (records == null)
@@ -264,7 +260,6 @@ namespace ABBDataManagerSystem.Bean.Base
         {
             dst.ID = src.ID;
             dst.WorkflowType = src.WorkflowType;
-            dst.TappingPosition = src.TappingPosition;
             dst.RatedPower = src.RatedPower;
             dst.RatedPower1 = src.RatedPower1;
             dst.RatedPower2 = src.RatedPower2;
