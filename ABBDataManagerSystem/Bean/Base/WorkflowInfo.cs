@@ -34,17 +34,45 @@ namespace ABBDataManagerSystem.Bean.Base
         public string WorkflowType = String.Empty;
         public string TappingPosition = String.Empty;
 
-        public float RatedPower = 0;
-        public float i3 = 0;
+        public int RatedPower;
+        public int RatedPower1;
+        public int RatedPower2;
 
-        public string TappingVoltages = string.Empty;
+        public float RatedVoltageHv;
+        public float RatedVoltageLv;
+        public float RatedVoltageYv;
+        public float RatedCurrentHv;
+        public float RatedCurrentLv;
+        public float RatedCurrentYv;
 
+        public string No   = String.Empty;
+        public string CAL  = String.Empty;
+        public string Type = String.Empty;
+        public string Phase   = String.Empty;
+        public string CONNSymbol = String.Empty;
+        public string TappingVoltages = String.Empty;
+        public string RatedVoltageInterval = String.Empty;
 
         public static Dictionary<string, string> FieldComments = new Dictionary<string, string>
         {
-            {"ProductSequence", "出厂序号"},
-            {"LoadType", "空载负载"},
-            {"Temperature", "温度"},
+            {"ID", "工作令编号 "},
+            {"WorkflowType", "工作令类型"},
+            {"RatedPower", "额定容量"},
+            {"RatedPower1", "额定容量1"},
+            {"RatedPower2", "额定容量2"},
+            {"RatedVoltageHv", "高压侧额定电压"},
+            {"RatedVoltageLv", "低压侧额定电压"},
+            {"RatedVoltageYv", "低压侧额定电压2"},
+            {"RatedCurrentHv", "高压侧额定电流"},
+            {"RatedCurrentLv", "低压侧额定电流"},
+            {"RatedCurrentYv", "低压侧额定电流2"},
+            {"No", "图号" },
+            {"CAL", "计算单号" },
+            {"Type", "型号" },
+            {"Phase", "相数" },
+            {"CONNSymbol", "联结组别" },
+            {"TappingVoltages", "分接电压"},
+            {"RatedVoltageInterval", "分接"},
         };
 
         public static string KeyField = "ProductSequence";
@@ -57,38 +85,31 @@ namespace ABBDataManagerSystem.Bean.Base
                 // 打开数据库连接
                 connection.Open();
 
-                CreateSqliteTable(connection);
-
-                using (SQLCommond command = new SQLCommond($"INSERT INTO {TABLE_NAME} (workflow_id, load_type, tapping_position, " +
-                    $"uab, ubc, uca, uabc, " +
-                    $"ia, ib, ic, iabc, " +
-                    $"pa, pb, pc, p, temperature) VALUES (@ProductSequence, @LoadType, @TappingPosition, " +
-                    $"@ua, @ub, @uc, @u3, " +
-                    $"@ia, @ib, @ic, @i3, " +
-                    $"@pa, @pb, @pc, @p3, @Temperature)", connection))
+                using (SQLCommond command = new SQLCommond($"INSERT INTO {TABLE_NAME} (ID, WorkflowType, TappingPosition, RatedPower, RatedPower1, RatedPower2, " +
+                    $"RatedVoltageHv, RatedVoltageLv, RatedVoltageYv, RatedCurrentHv, RatedCurrentLv, RatedCurrentYv, " +
+                    $"No, CAL, Type, Phase, CONNSymbol, TappingVoltages, RatedVoltageInterval) VALUES (@ID, @WorkflowType, @TappingPosition, @RatedPower, @RatedPower1, @RatedPower2, " +
+                    $"@RatedVoltageHv, @RatedVoltageLv, @RatedVoltageYv, @RatedCurrentHv, @RatedCurrentLv, @RatedCurrentYv, @No, @CAL, @Type, @Phase, " +
+                    $"@CONNSymbol, @TappingVoltages, @RatedVoltageInterval)", connection))
                 {
-                    command.Parameters.AddWithValue("@ProductSequence", ProductSequence);
-                    command.Parameters.AddWithValue("@LoadType", LoadType);
+                    command.Parameters.AddWithValue("@ID", ID);
+                    command.Parameters.AddWithValue("@WorkflowType", WorkflowType);
                     command.Parameters.AddWithValue("@TappingPosition", TappingPosition);
-                    command.Parameters.AddWithValue("@ia", ia);
-                    command.Parameters.AddWithValue("@ib", ib);
-                    command.Parameters.AddWithValue("@ic", ic);
-                    command.Parameters.AddWithValue("@i3", i3);
-                    command.Parameters.AddWithValue("@ua", ua);
-                    command.Parameters.AddWithValue("@ub", ub);
-                    command.Parameters.AddWithValue("@uc", uc);
-                    command.Parameters.AddWithValue("@u3", u3);
-                    //command.Parameters.AddWithValue("@pua", ua);
-                    //command.Parameters.AddWithValue("@pub", ub);
-                    //command.Parameters.AddWithValue("@puc", uc);
-                    //command.Parameters.AddWithValue("@pu3", u3);
-                    command.Parameters.AddWithValue("@pa", pa);
-                    command.Parameters.AddWithValue("@pb", pb);
-                    command.Parameters.AddWithValue("@pc", pc);
-                    command.Parameters.AddWithValue("@p3", p3);
-                    //command.Parameters.AddWithValue("@fU", fU);
-                    command.Parameters.AddWithValue("@Temperature", Temperature);
-                    //command.Parameters.AddWithValue("@DateTime", DateTime.Now);
+                    command.Parameters.AddWithValue("@RatedPower", RatedPower);
+                    command.Parameters.AddWithValue("@RatedPower1", RatedPower1);
+                    command.Parameters.AddWithValue("@RatedPower2", RatedPower2);
+                    command.Parameters.AddWithValue("@RatedVoltageHv", RatedVoltageHv);
+                    command.Parameters.AddWithValue("@RatedVoltageLv", RatedVoltageLv);
+                    command.Parameters.AddWithValue("@RatedVoltageYv", RatedVoltageYv);
+                    command.Parameters.AddWithValue("@RatedCurrentHv", RatedCurrentHv);
+                    command.Parameters.AddWithValue("@RatedCurrentLv", RatedCurrentLv);
+                    command.Parameters.AddWithValue("@RatedCurrentYv", RatedCurrentYv);
+                    command.Parameters.AddWithValue("@No", No);
+                    command.Parameters.AddWithValue("@CAL", CAL);
+                    command.Parameters.AddWithValue("@Type", Type);
+                    command.Parameters.AddWithValue("@Phase", Phase);
+                    command.Parameters.AddWithValue("@CONNSymbol", CONNSymbol);
+                    command.Parameters.AddWithValue("@TappingVoltages", TappingVoltages);
+                    command.Parameters.AddWithValue("@RatedVoltageInterval", RatedVoltageInterval);
                     int count = command.ExecuteNonQuery();
                     return count > 0;
                 }
@@ -97,10 +118,10 @@ namespace ABBDataManagerSystem.Bean.Base
 
         public bool UpdateData()
         {
-            string updateSql = $"UPDATE {TABLE_NAME} SET ia = @ia, ib = @ib, ic = @ic, iabc = @i3, " +
-                $"uab = @ua, ubc = @ub, uca = @uc, uabc = @u3, " +
-                $"pa = @pa, pb = @pb, pc = @pc, p = @p3, temperature = @Temperature WHERE workflow_id = @ProductSequence AND load_type = @LoadType " +
-                "AND tapping_position = @TappingPosition";
+            string updateSql = $"UPDATE {TABLE_NAME} SET RatedPower = @RatedPower, RatedPower1 = @RatedPower1, " +
+                $"RatedPower2 = @RatedPower2, RatedVoltageHv = @RatedVoltageHv, RatedVoltageLv = @RatedVoltageLv, RatedVoltageYv = @RatedVoltageYv, RatedCurrentHv = @RatedCurrentHv, " +
+                $"RatedCurrentLv = @RatedCurrentLv, RatedCurrentYv = @RatedCurrentYv, No = @No, CAL = @CAL, Type = @Type, Phase = @Phase, CONNSymbol = @CONNSymbol, " +
+                $"TappingVoltages = @TappingVoltages, RatedVoltageInterval = @RatedVoltageInterval WHERE ID = @ID, WorkflowType = @WorkflowType, TappingPosition = @TappingPosition";
 
             // 创建 SQLite 连接对象
             using (SQLConnection connection = new SQLConnection(DBConnector.GetConnectionString()))
@@ -108,105 +129,91 @@ namespace ABBDataManagerSystem.Bean.Base
                 // 打开数据库连接
                 connection.Open(); using (SQLCommond command = new SQLCommond(updateSql, connection))
                 {
-                    command.Parameters.AddWithValue("@ProductSequence", ProductSequence);
-                    command.Parameters.AddWithValue("@LoadType", LoadType);
+                    command.Parameters.AddWithValue("@ID", ID);
+                    command.Parameters.AddWithValue("@WorkflowType", WorkflowType);
                     command.Parameters.AddWithValue("@TappingPosition", TappingPosition);
-                    command.Parameters.AddWithValue("@ia", ia);
-                    command.Parameters.AddWithValue("@ib", ib);
-                    command.Parameters.AddWithValue("@ic", ic);
-                    command.Parameters.AddWithValue("@i3", i3);
-                    command.Parameters.AddWithValue("@ua", ua);
-                    command.Parameters.AddWithValue("@ub", ub);
-                    command.Parameters.AddWithValue("@uc", uc);
-                    command.Parameters.AddWithValue("@u3", u3);
-                    command.Parameters.AddWithValue("@pa", pa);
-                    command.Parameters.AddWithValue("@pb", pb);
-                    command.Parameters.AddWithValue("@pc", pc);
-                    command.Parameters.AddWithValue("@p3", p3);
-                    //command.Parameters.AddWithValue("@pua", pua);
-                    //command.Parameters.AddWithValue("@pub", pub);
-                    //command.Parameters.AddWithValue("@puc", puc);
-                    //command.Parameters.AddWithValue("@pu3", pu3);
-                    //command.Parameters.AddWithValue("@fU", fU);
-                    command.Parameters.AddWithValue("@Temperature", Temperature);
-                    //command.Parameters.AddWithValue("@DateTime", DateTime.Now);
+                    command.Parameters.AddWithValue("@RatedPower", RatedPower);
+                    command.Parameters.AddWithValue("@RatedPower1", RatedPower1);
+                    command.Parameters.AddWithValue("@RatedPower2", RatedPower2);
+                    command.Parameters.AddWithValue("@RatedVoltageHv", RatedVoltageHv);
+                    command.Parameters.AddWithValue("@RatedVoltageLv", RatedVoltageLv);
+                    command.Parameters.AddWithValue("@RatedVoltageYv", RatedVoltageYv);
+                    command.Parameters.AddWithValue("@RatedCurrentHv", RatedCurrentHv);
+                    command.Parameters.AddWithValue("@RatedCurrentLv", RatedCurrentLv);
+                    command.Parameters.AddWithValue("@RatedCurrentYv", RatedCurrentYv);
+                    command.Parameters.AddWithValue("@No", No);
+                    command.Parameters.AddWithValue("@CAL", CAL);
+                    command.Parameters.AddWithValue("@Type", Type);
+                    command.Parameters.AddWithValue("@Phase", Phase);
+                    command.Parameters.AddWithValue("@CONNSymbol", CONNSymbol);
+                    command.Parameters.AddWithValue("@TappingVoltages", TappingVoltages);
+                    command.Parameters.AddWithValue("@RatedVoltageInterval", RatedVoltageInterval);
 
                     return command.ExecuteNonQuery() > 0;
                 }
             }
         }
 
-        public static List<VoltageCurrentLossDataInfo> ReadFromDB(bool withKey = false, string sequence = "", string lossType = "", string tappingPosition = "")
+        public static List<WorkflowInfo> ReadFromDB(bool withKey = false, string ID = "")
         {
             // 查询数据
             string queryDataSql = $"SELECT * FROM {TABLE_NAME}";
-            if (withKey && sequence != "")
+            if (withKey && ID != "")
             {
-                queryDataSql += $" WHERE ProductSequence = '{sequence}'";
-                if (lossType != "")
-                {
-                    queryDataSql += $" AND LoadType = '{lossType}'";
-                }
-                if (tappingPosition != "")
-                {
-                    queryDataSql += $" AND TappingPosition = '{tappingPosition}'";
-                }
+                queryDataSql += $" WHERE ID = '{ID}'";
             }
-            List<VoltageCurrentLossDataInfo>? records = DBConnector.QueryFromDB<VoltageCurrentLossDataInfo>(queryDataSql, (reader) =>
+            List<WorkflowInfo>? records = DBConnector.QueryFromDB<WorkflowInfo>(queryDataSql, (reader) =>
             {
                 if (reader == null)
                 {
                     return null;
                 }
-                return new VoltageCurrentLossDataInfo
+                return new WorkflowInfo
                 {
-                    ProductSequence = reader.GetString("workflow_id"),
-                    LoadType = reader.GetString("load_type"),
-                    TappingPosition = reader.GetString("tapping_position"),
-                    ia = !reader.IsDBNull("ia") ? (float)reader.GetDouble("ia") : 0,
-                    ib = !reader.IsDBNull("ib") ? (float)reader.GetDouble("ib") : 0,
-                    ic = !reader.IsDBNull("ic") ? (float)reader.GetDouble("ic") : 0,
-                    i3 = !reader.IsDBNull("iabc") ? (float)reader.GetDouble("iabc") : 0,
-                    ua = !reader.IsDBNull("uab") ? (float)reader.GetDouble("uab") : 0,
-                    ub = !reader.IsDBNull("ubc") ? (float)reader.GetDouble("ubc") : 0,
-                    uc = !reader.IsDBNull("uca") ? (float)reader.GetDouble("uca") : 0,
-                    u3 = !reader.IsDBNull("uabc") ? (float)reader.GetDouble("uabc") : 0,
-                    //pua = !reader.IsDBNull("pua") ? (float)reader.GetDouble("pua") : 0,
-                    //pub = !reader.IsDBNull("pub") ? (float)reader.GetDouble("pub") : 0,
-                    //puc = !reader.IsDBNull("puc") ? (float)reader.GetDouble("puc") : 0,
-                    //pu3 = !reader.IsDBNull("pu3") ? (float)reader.GetDouble("pu3") : 0,
-                    pa = !reader.IsDBNull("pa") ? (float)reader.GetDouble("pa") : 0,
-                    pb = !reader.IsDBNull("pb") ? (float)reader.GetDouble("pb") : 0,
-                    pc = !reader.IsDBNull("pc") ? (float)reader.GetDouble("pc") : 0,
-                    p3 = !reader.IsDBNull("p") ? (float)reader.GetDouble("p") : 0,
-                    //fU = !reader.IsDBNull("fU") ? (float)reader.GetFloat("fU") : 0,
-                    Temperature = !reader.IsDBNull("temperature") ? (float)reader.GetFloat("temperature") : 0,
-                    //DateTime = !reader.IsDBNull("DateTime") ? reader.GetDateTime("DateTime") : DateTime.Now,
+                    ID = reader.GetString("ID"),
+                    WorkflowType = reader.GetString("WorkflowType"),
+                    TappingPosition = reader.GetString("TappingPosition"),
+                    RatedPower = reader.GetInt32("RatedPower"),
+                    RatedPower1 = reader.GetInt32("RatedPower1"),
+                    RatedPower2 = reader.GetInt32("RatedPower2"),
+                    RatedVoltageHv = reader.GetFloat("RatedVoltageHv"),
+                    RatedVoltageLv = reader.GetFloat("RatedVoltageLv"),
+                    RatedVoltageYv = reader.GetFloat("RatedVoltageYv"),
+                    RatedCurrentHv = reader.GetFloat("RatedCurrentHv"),
+                    RatedCurrentLv = reader.GetFloat("RatedCurrentLv"),
+                    RatedCurrentYv = reader.GetFloat("RatedCurrentYv"),
+                    No = reader.GetString("No"),
+                    CAL = reader.GetString("CAL"),
+                    Type = reader.GetString("Type"),
+                    Phase = reader.GetString("Phase"),
+                    CONNSymbol = reader.GetString("CONNSymbol"),
+                    TappingVoltages = reader.GetString("TappingVoltages"),
+                    RatedVoltageInterval = reader.GetString("RatedVoltageInterval"),
                 };
             });
             if (records == null)
             {
-                return new List<VoltageCurrentLossDataInfo>();
+                return new List<WorkflowInfo>();
             }
-            Log.Info("VoltageCurrentLossDataInfo COUNT = " + records.Count);
+            Log.Info("WorkflowInfo COUNT = " + records.Count);
             return records;
         }
 
-        public static void FillDataTable(DataTable dt, int pageSize, int page, string? filterSequence = null)
+        public static void FillDataTable(DataTable dt, int pageSize, int page, string? filterId= null)
         {
             if (page < 0)
             {
                 return;
             }
             string where = "";
-            if (filterSequence != null && filterSequence.Length > 0)
+            if (filterId != null && filterId.Length > 0)
             {
-                where = $" WHERE workflow_id = '{filterSequence}'";
+                where = $" WHERE ID = '{filterId}'";
             }
             using (SQLConnection connection = new SQLConnection(DBConnector.GetConnectionString()))
             {
                 connection.Open();
-                string query = $"SELECT * FROM {TABLE_NAME} {where} ORDER BY workflow_id" +
+                string query = $"SELECT * FROM {TABLE_NAME} {where} ORDER BY ID" +
                     $" LIMIT {pageSize} OFFSET {pageSize * page}";
                 using (SQLCommond queryDataCmd = new SQLCommond(query, connection))
                 {
@@ -221,7 +228,7 @@ namespace ABBDataManagerSystem.Bean.Base
             string where = "";
             if (filterSequence != null && filterSequence.Length > 0)
             {
-                where = $" WHERE workflow_id = '{filterSequence}'";
+                where = $" WHERE ID = '{filterSequence}'";
             }
             using (SQLConnection connection = new SQLConnection(DBConnector.GetConnectionString()))
             {
@@ -241,88 +248,46 @@ namespace ABBDataManagerSystem.Bean.Base
             return 0;
         }
 
-        public static bool DeleteData(string sequence, string loadType, string tappingPosition = "")
+        public static bool DeleteData(string id)
         {
             using (SQLConnection connection = new SQLConnection(DBConnector.GetConnectionString()))
             {
                 connection.Open();
-                SQLCommond command = new SQLCommond($"DELETE FROM {TABLE_NAME} WHERE workflow_id = @ProductSequence  AND load_type = @LoadType AND tapping_position = @TappingPosition", connection);
-                command.Parameters.AddWithValue("@ProductSequence", sequence);
-                command.Parameters.AddWithValue("@LoadType", loadType);
-                command.Parameters.AddWithValue("@TappingPosition", tappingPosition);
+                SQLCommond command = new SQLCommond($"DELETE FROM {TABLE_NAME} WHERE ID = @ID", connection);
+                command.Parameters.AddWithValue("@ID", id);
                 int count = command.ExecuteNonQuery();
                 return count > 0;
             }
         }
 
-        private void CreateSqliteTable(SQLConnection connection)
+        public static void Clone(WorkflowInfo src, WorkflowInfo dst)
         {
-            if (!DBConnector.USING_SQLITE)
-            {
-                return;
-            }
-            // 创建数据库表
-            string createTableSql = $"CREATE TABLE IF NOT EXISTS {TABLE_NAME} (  " +
-                $"    ProductSequence TEXT," +
-                $"    LoadType TEXT," +
-                $"    ia REAL," +
-                $"    ib REAL," +
-                $"    ic REAL," +
-                $"    i3 REAL," +
-                $"    ua REAL," +
-                $"    ub REAL," +
-                $"    uc REAL," +
-                $"    u3 REAL," +
-                $"    pua REAL," +
-                $"    pub REAL," +
-                $"    puc REAL," +
-                $"    pu3 REAL," +
-                $"    pa REAL," +
-                $"    pb REAL," +
-                $"    pc REAL," +
-                $"    p3 REAL, " +
-                $"    Temperature REAL, " +
-                $"    PRIMARY KEY(ProductSequence, LoadType));";
-            using (SQLCommond createTableCmd = new SQLCommond(createTableSql, connection))
-            {
-                createTableCmd.ExecuteNonQuery();
-            }
-        }
-
-        public static void Clone(VoltageCurrentLossDataInfo src, VoltageCurrentLossDataInfo dst)
-        {
-            dst.ProductSequence = src.ProductSequence;
-            dst.LoadType = src.LoadType;
-
-            dst.ia = src.ia;
-            dst.ib = src.ib;
-            dst.ic = src.ic;
-            dst.i3 = src.i3;
-
-            dst.ua = src.ua;
-            dst.ub = src.ub;
-            dst.uc = src.uc;
-            dst.u3 = src.u3;
-
-            dst.pua = src.pua;
-            dst.pub = src.pub;
-            dst.puc = src.puc;
-            dst.pu3 = src.pu3;
-
-            dst.pa = src.pa;
-            dst.pb = src.pb;
-            dst.pc = src.pc;
-            dst.p3 = src.p3;
-            dst.fU = src.fU;
-            dst.Temperature = src.Temperature;
-            dst.DateTime = src.DateTime;
+            dst.ID = src.ID;
+            dst.WorkflowType = src.WorkflowType;
+            dst.TappingPosition = src.TappingPosition;
+            dst.RatedPower = src.RatedPower;
+            dst.RatedPower1 = src.RatedPower1;
+            dst.RatedPower2 = src.RatedPower2;
+            dst.RatedVoltageHv = src.RatedVoltageHv;
+            dst.RatedVoltageLv = src.RatedVoltageLv;
+            dst.RatedVoltageYv = src.RatedVoltageYv;
+            dst.RatedCurrentHv = src.RatedCurrentHv;
+            dst.RatedCurrentLv = src.RatedCurrentLv;
+            dst.RatedCurrentYv = src.RatedCurrentYv;
+            dst.No = src.No;
+            dst.CAL = src.CAL;
+            dst.Type = src.Type;
+            dst.Phase = src.Phase;
+            dst.CONNSymbol = src.CONNSymbol;
+            dst.TappingVoltages = src.TappingVoltages;
+            dst.RatedVoltageInterval = src.RatedVoltageInterval;
         }
 
         public static CheckIsKeyField GetCheckIsKeyFieldDelegate()
         {
             CheckIsKeyField checkIsKeyField = (string filedName) =>
             {
-                return (filedName == "ProductSequence" || filedName == "LoadType");
+                return (filedName == "ID");
             };
             return checkIsKeyField;
         }
