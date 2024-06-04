@@ -1,4 +1,5 @@
-﻿using ABBDataManagerSystem.Connector;
+﻿using ABBDataManagerSystem.Bean.Base;
+using ABBDataManagerSystem.Connector;
 using ABBDataManagerSystem.Pages;
 using ABBDataManagerSystem.PowerAnalyzer;
 using ABBDataManagerSystem.Tools;
@@ -384,6 +385,41 @@ namespace ABBDataManagerSystem
         {
             PreviewSliderHorizontal.Value = 100;
         }
-        #endregion    
+        #endregion
+
+        private void btInsertLoad_Click(object sender, RoutedEventArgs e)
+        {
+            //var data = new VoltageCurrentLossDataInfo()
+            //{
+            //    ProductSequence = "SHUILENG_001",
+            //    LoadType = "空载",
+            //    TappingPosition = "",
+            //    ua = 100,
+            //    ub = 200,
+            //    uc = 300,
+            //    ia = 101,
+            //    ib = 102,
+            //    ic = 103,
+            //    pa = 110,
+            //    pb = 120,
+            //    pc = 130,
+            //};
+            //if (data.WriteToDB())
+            //{
+            //    AppendMsg("Write Success");
+            //}
+            //else
+            //{
+            //    AppendMsg("Write Fail");
+            //}
+            var datas = VoltageCurrentLossDataInfo.ReadFromDB();
+            if (datas != null)
+            {
+                foreach (var item in datas)
+                {
+                    AppendMsg("--" + item.ProductSequence + " " + item.LoadType + " " + item.TappingPosition);
+                }
+            }
+        }
     }
 }

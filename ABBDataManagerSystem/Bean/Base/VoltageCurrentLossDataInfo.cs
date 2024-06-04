@@ -1,11 +1,11 @@
-﻿using ElectricalDataManagerSystem.Database;
+﻿using ABBDataManagerSystem.Database;
 using System.Data;
 
-namespace ElectricalDataManagerSystem.Bean.Base
+namespace ABBDataManagerSystem.Bean.Base
 {
     public class VoltageCurrentLossDataInfo
     {
-        public static string TABLE_NAME = "VoltageCurrentLossDataInfo";
+        public static string TABLE_NAME = "VoltageCurrentRecord";
         /**
          * 
          * CREATE TABLE VoltageCurrentLossDataInfo (  
@@ -39,6 +39,7 @@ namespace ElectricalDataManagerSystem.Bean.Base
 
         public string ProductSequence = String.Empty;
         public string LoadType = LoadTypeNoLoad;
+        public string TappingPosition = String.Empty;
 
         public DateTime DateTime;
 
@@ -103,18 +104,17 @@ namespace ElectricalDataManagerSystem.Bean.Base
 
                 CreateSqliteTable(connection);
 
-                using (SQLCommond command = new SQLCommond($"INSERT INTO {TABLE_NAME} (ProductSequence, LoadType, DateTime, " +
-                    $"ia, ib, ic, i3, " +
-                    $"ua, ub, uc, u3, " +
-                    $"pua, pub, puc, pu3, " +
-                    $"pa, pb, pc, p3, fU, Temperature) VALUES (@ProductSequence, @LoadType, @DateTime, " +
-                    $"@ia, @ib, @ic, @i3, " +
+                using (SQLCommond command = new SQLCommond($"INSERT INTO {TABLE_NAME} (workflow_id, load_type, tapping_position, " +
+                    $"uab, ubc, uca, uabc, " +
+                    $"ia, ib, ic, iabc, " +
+                    $"pa, pb, pc, p, temperature) VALUES (@ProductSequence, @LoadType, @TappingPosition, " +
                     $"@ua, @ub, @uc, @u3, " +
-                    $"@pua, @pub, @puc, @pu3, " +
-                    $"@pa, @pb, @pc, @p3, @fU, @Temperature)", connection))
+                    $"@ia, @ib, @ic, @i3, " +
+                    $"@pa, @pb, @pc, @p3, @Temperature)", connection))
                 {
                     command.Parameters.AddWithValue("@ProductSequence", ProductSequence);
                     command.Parameters.AddWithValue("@LoadType", LoadType);
+                    command.Parameters.AddWithValue("@TappingPosition", TappingPosition);
                     command.Parameters.AddWithValue("@ia", ia);
                     command.Parameters.AddWithValue("@ib", ib);
                     command.Parameters.AddWithValue("@ic", ic);
@@ -123,17 +123,17 @@ namespace ElectricalDataManagerSystem.Bean.Base
                     command.Parameters.AddWithValue("@ub", ub);
                     command.Parameters.AddWithValue("@uc", uc);
                     command.Parameters.AddWithValue("@u3", u3);
-                    command.Parameters.AddWithValue("@pua", ua);
-                    command.Parameters.AddWithValue("@pub", ub);
-                    command.Parameters.AddWithValue("@puc", uc);
-                    command.Parameters.AddWithValue("@pu3", u3);
+                    //command.Parameters.AddWithValue("@pua", ua);
+                    //command.Parameters.AddWithValue("@pub", ub);
+                    //command.Parameters.AddWithValue("@puc", uc);
+                    //command.Parameters.AddWithValue("@pu3", u3);
                     command.Parameters.AddWithValue("@pa", pa);
                     command.Parameters.AddWithValue("@pb", pb);
                     command.Parameters.AddWithValue("@pc", pc);
                     command.Parameters.AddWithValue("@p3", p3);
-                    command.Parameters.AddWithValue("@fU", fU);
+                    //command.Parameters.AddWithValue("@fU", fU);
                     command.Parameters.AddWithValue("@Temperature", Temperature);
-                    command.Parameters.AddWithValue("@DateTime", DateTime.Now);
+                    //command.Parameters.AddWithValue("@DateTime", DateTime.Now);
                     int count = command.ExecuteNonQuery();
                     return count > 0;
                 }
@@ -142,9 +142,10 @@ namespace ElectricalDataManagerSystem.Bean.Base
 
         public bool UpdateData()
         {
-            string updateSql = $"UPDATE {TABLE_NAME} SET ia = @ia, ib = @ib, ic = @ic, i3 = @i3, " +
-                $"ua = @ua, ub = @ub, uc = @uc, u3 = @u3, pua = @pua, pub = @pub, puc = @puc, pu3 = @pu3, " +
-                $"pa = @pa, pb = @pb, pc = @pc, p3 = @p3, fU = @fU, Temperature = @Temperature, DateTime = @DateTime WHERE ProductSequence = @ProductSequence AND LoadType = @LoadType";
+            string updateSql = $"UPDATE {TABLE_NAME} SET ia = @ia, ib = @ib, ic = @ic, iabc = @i3, " +
+                $"uab = @ua, ubc = @ub, uca = @uc, uabc = @u3, " +
+                $"pa = @pa, pb = @pb, pc = @pc, p = @p3, temperature = @Temperature WHERE workflow_id = @ProductSequence AND load_type = @LoadType " +
+                "AND tapping_position = @TappingPosition";
 
             // 创建 SQLite 连接对象
             using (SQLConnection connection = new SQLConnection(DBConnector.GetConnectionString()))
@@ -154,6 +155,7 @@ namespace ElectricalDataManagerSystem.Bean.Base
                 {
                     command.Parameters.AddWithValue("@ProductSequence", ProductSequence);
                     command.Parameters.AddWithValue("@LoadType", LoadType);
+                    command.Parameters.AddWithValue("@TappingPosition", TappingPosition);
                     command.Parameters.AddWithValue("@ia", ia);
                     command.Parameters.AddWithValue("@ib", ib);
                     command.Parameters.AddWithValue("@ic", ic);
@@ -166,20 +168,20 @@ namespace ElectricalDataManagerSystem.Bean.Base
                     command.Parameters.AddWithValue("@pb", pb);
                     command.Parameters.AddWithValue("@pc", pc);
                     command.Parameters.AddWithValue("@p3", p3);
-                    command.Parameters.AddWithValue("@pua", pua);
-                    command.Parameters.AddWithValue("@pub", pub);
-                    command.Parameters.AddWithValue("@puc", puc);
-                    command.Parameters.AddWithValue("@pu3", pu3);
-                    command.Parameters.AddWithValue("@fU", fU);
+                    //command.Parameters.AddWithValue("@pua", pua);
+                    //command.Parameters.AddWithValue("@pub", pub);
+                    //command.Parameters.AddWithValue("@puc", puc);
+                    //command.Parameters.AddWithValue("@pu3", pu3);
+                    //command.Parameters.AddWithValue("@fU", fU);
                     command.Parameters.AddWithValue("@Temperature", Temperature);
-                    command.Parameters.AddWithValue("@DateTime", DateTime.Now);
+                    //command.Parameters.AddWithValue("@DateTime", DateTime.Now);
 
                     return command.ExecuteNonQuery() > 0;
                 }
             }
         }
 
-        public static List<VoltageCurrentLossDataInfo> ReadFromDB(bool withKey = false, string sequence = "", string lossType = "")
+        public static List<VoltageCurrentLossDataInfo> ReadFromDB(bool withKey = false, string sequence = "", string lossType = "", string tappingPosition = "")
         {
             // 查询数据
             string queryDataSql = $"SELECT * FROM {TABLE_NAME}";
@@ -190,6 +192,10 @@ namespace ElectricalDataManagerSystem.Bean.Base
                 {
                     queryDataSql += $" AND LoadType = '{lossType}'";
                 }
+                if (tappingPosition != "")
+                {
+                    queryDataSql += $" AND TappingPosition = '{tappingPosition}'";
+                }
             }
             List<VoltageCurrentLossDataInfo>? records = DBConnector.QueryFromDB<VoltageCurrentLossDataInfo>(queryDataSql, (reader) =>
             {
@@ -199,27 +205,28 @@ namespace ElectricalDataManagerSystem.Bean.Base
                 }
                 return new VoltageCurrentLossDataInfo
                 {
-                    ProductSequence = reader.GetString(0),
-                    LoadType = reader.GetString(1),
+                    ProductSequence = reader.GetString("workflow_id"),
+                    LoadType = reader.GetString("load_type"),
+                    TappingPosition = reader.GetString("tapping_position"),
                     ia = !reader.IsDBNull("ia") ? (float)reader.GetDouble("ia") : 0,
                     ib = !reader.IsDBNull("ib") ? (float)reader.GetDouble("ib") : 0,
                     ic = !reader.IsDBNull("ic") ? (float)reader.GetDouble("ic") : 0,
-                    i3 = !reader.IsDBNull("i3") ? (float)reader.GetDouble("i3") : 0,
-                    ua = !reader.IsDBNull("ua") ? (float)reader.GetDouble("ua") : 0,
-                    ub = !reader.IsDBNull("ub") ? (float)reader.GetDouble("ub") : 0,
-                    uc = !reader.IsDBNull("uc") ? (float)reader.GetDouble("uc") : 0,
-                    u3 = !reader.IsDBNull("u3") ? (float)reader.GetDouble("u3") : 0,
-                    pua = !reader.IsDBNull("pua") ? (float)reader.GetDouble("pua") : 0,
-                    pub = !reader.IsDBNull("pub") ? (float)reader.GetDouble("pub") : 0,
-                    puc = !reader.IsDBNull("puc") ? (float)reader.GetDouble("puc") : 0,
-                    pu3 = !reader.IsDBNull("pu3") ? (float)reader.GetDouble("pu3") : 0,
+                    i3 = !reader.IsDBNull("iabc") ? (float)reader.GetDouble("iabc") : 0,
+                    ua = !reader.IsDBNull("uab") ? (float)reader.GetDouble("uab") : 0,
+                    ub = !reader.IsDBNull("ubc") ? (float)reader.GetDouble("ubc") : 0,
+                    uc = !reader.IsDBNull("uca") ? (float)reader.GetDouble("uca") : 0,
+                    u3 = !reader.IsDBNull("uabc") ? (float)reader.GetDouble("uabc") : 0,
+                    //pua = !reader.IsDBNull("pua") ? (float)reader.GetDouble("pua") : 0,
+                    //pub = !reader.IsDBNull("pub") ? (float)reader.GetDouble("pub") : 0,
+                    //puc = !reader.IsDBNull("puc") ? (float)reader.GetDouble("puc") : 0,
+                    //pu3 = !reader.IsDBNull("pu3") ? (float)reader.GetDouble("pu3") : 0,
                     pa = !reader.IsDBNull("pa") ? (float)reader.GetDouble("pa") : 0,
                     pb = !reader.IsDBNull("pb") ? (float)reader.GetDouble("pb") : 0,
                     pc = !reader.IsDBNull("pc") ? (float)reader.GetDouble("pc") : 0,
-                    p3 = !reader.IsDBNull("p3") ? (float)reader.GetDouble("p3") : 0,
-                    fU = !reader.IsDBNull("fU") ? (float)reader.GetFloat("fU") : 0,
-                    Temperature = !reader.IsDBNull("Temperature") ? (float)reader.GetFloat("Temperature") : 0,
-                    DateTime = !reader.IsDBNull("DateTime") ? reader.GetDateTime("DateTime") : DateTime.Now,
+                    p3 = !reader.IsDBNull("p") ? (float)reader.GetDouble("p") : 0,
+                    //fU = !reader.IsDBNull("fU") ? (float)reader.GetFloat("fU") : 0,
+                    Temperature = !reader.IsDBNull("temperature") ? (float)reader.GetFloat("temperature") : 0,
+                    //DateTime = !reader.IsDBNull("DateTime") ? reader.GetDateTime("DateTime") : DateTime.Now,
                 };
             });
             if (records == null)
@@ -239,12 +246,12 @@ namespace ElectricalDataManagerSystem.Bean.Base
             string where = "";
             if (filterSequence != null && filterSequence.Length > 0)
             {
-                where = $" WHERE ProductSequence = '{filterSequence}'";
+                where = $" WHERE workflow_id = '{filterSequence}'";
             }
             using (SQLConnection connection = new SQLConnection(DBConnector.GetConnectionString()))
             {
                 connection.Open();
-                string query = $"SELECT * FROM {TABLE_NAME} {where} ORDER BY ProductSequence" +
+                string query = $"SELECT * FROM {TABLE_NAME} {where} ORDER BY workflow_id" +
                     $" LIMIT {pageSize} OFFSET {pageSize * page}";
                 using (SQLCommond queryDataCmd = new SQLCommond(query, connection))
                 {
@@ -259,7 +266,7 @@ namespace ElectricalDataManagerSystem.Bean.Base
             string where = "";
             if (filterSequence != null && filterSequence.Length > 0)
             {
-                where = $" WHERE ProductSequence = '{filterSequence}'";
+                where = $" WHERE workflow_id = '{filterSequence}'";
             }
             using (SQLConnection connection = new SQLConnection(DBConnector.GetConnectionString()))
             {
@@ -279,14 +286,15 @@ namespace ElectricalDataManagerSystem.Bean.Base
             return 0;
         }
 
-        public static bool DeleteData(string sequence, string loadType)
+        public static bool DeleteData(string sequence, string loadType, string tappingPosition = "")
         {
             using (SQLConnection connection = new SQLConnection(DBConnector.GetConnectionString()))
             {
                 connection.Open();
-                SQLCommond command = new SQLCommond($"DELETE FROM {TABLE_NAME} WHERE ProductSequence = @ProductSequence  AND LoadType = @LoadType", connection);
+                SQLCommond command = new SQLCommond($"DELETE FROM {TABLE_NAME} WHERE workflow_id = @ProductSequence  AND load_type = @LoadType AND tapping_position = @TappingPosition", connection);
                 command.Parameters.AddWithValue("@ProductSequence", sequence);
                 command.Parameters.AddWithValue("@LoadType", loadType);
+                command.Parameters.AddWithValue("@TappingPosition", tappingPosition);
                 int count = command.ExecuteNonQuery();
                 return count > 0;
             }

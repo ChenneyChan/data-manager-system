@@ -24,6 +24,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="Bean\Base\VoltageCurrentLossDataInfo.cs" />
+    <Compile Include="Bean\BeanUtils.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="app_icon.ico" />
   </ItemGroup>
 
