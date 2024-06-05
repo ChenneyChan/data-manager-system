@@ -9,7 +9,7 @@ namespace ABBDataManagerSystem.Bean.Base
         /**
          * 
          * CREATE TABLE VoltageCurrentLossDataInfo (  
-    ProductSequence VARCHAR(255),  
+    WorkflowId VARCHAR(255),  
     LoadType VARCHAR(24),  
     ia FLOAT NOT NULL,  
     ib FLOAT NOT NULL,  
@@ -27,7 +27,7 @@ namespace ABBDataManagerSystem.Bean.Base
     pb FLOAT NOT NULL,  
     pc FLOAT NOT NULL,  
     p3 FLOAT NOT NULL,
-    PRIMARY KEY(ProductSequence, LoadType)
+    PRIMARY KEY(WorkflowId, LoadType)
 );
          */
         public string ID = String.Empty;
@@ -74,7 +74,7 @@ namespace ABBDataManagerSystem.Bean.Base
             {"RatedVoltageInterval", "分接"},
         };
 
-        public static string KeyField = "ProductSequence";
+        public static string KeyField = "WorkflowId";
 
         public bool WriteToDB()
         {

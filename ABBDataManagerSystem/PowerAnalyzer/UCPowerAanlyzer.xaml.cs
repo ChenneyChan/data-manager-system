@@ -1,4 +1,7 @@
-﻿using HandyControl.Controls;
+﻿using ABBDataManagerSystem.Bean.Base;
+using Google.Protobuf.WellKnownTypes;
+using HandyControl.Controls;
+using System;
 using System.Data;
 using System.Diagnostics;
 using System.Windows;
@@ -34,6 +37,8 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
         // ABB工位一要采集的是线电压，电压要乘上根号三
         private bool IsLineVoltage = false;
+
+        private VoltageCurrentLossDataInfo CurrentData = new();
 
         #region Variables
         private readonly string[] errorMsg = new string[14];
@@ -2561,6 +2566,27 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             }
 
             rowElement1[INDEX_FU] = fu;
+
+            #region 存储数据到本地字段中
+            CurrentData.ua = urms1;
+            CurrentData.ub = urms2;
+            CurrentData.uc = urms3;
+            CurrentData.u3 = (urms1 + urms2 + urms3) / 3;
+            CurrentData.ia = irms1;
+            CurrentData.ib = irms2;
+            CurrentData.ic = irms3;
+            CurrentData.i3 = (irms1 + irms2 + irms3) / 3;
+            CurrentData.pua = umn1;
+            CurrentData.pub = umn2;
+            CurrentData.puc = umn3;
+            CurrentData.pu3 = (umn1 + umn2 + umn3) / 3;
+            CurrentData.pa = p1;
+            CurrentData.pb = p2;
+            CurrentData.pc = p3;
+            CurrentData.p3 = p1 + p2 + p3;
+            CurrentData.fU = fu;
+            #endregion
+
             IsRefreshing = false;
         }
 
@@ -2668,5 +2694,12 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 btHold.IsEnabled = IsCollecting;
             });
         }
+
+        #region 数据转换未数据库格式
+        private void TranslateData()
+        {
+
+        }
+        #endregion
     }
 }

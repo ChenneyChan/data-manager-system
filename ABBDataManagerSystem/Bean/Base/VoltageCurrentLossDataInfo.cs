@@ -9,7 +9,7 @@ namespace ABBDataManagerSystem.Bean.Base
         /**
          * 
          * CREATE TABLE VoltageCurrentLossDataInfo (  
-    ProductSequence VARCHAR(255),  
+    WorkflowId VARCHAR(255),  
     LoadType VARCHAR(24),  
     ia FLOAT NOT NULL,  
     ib FLOAT NOT NULL,  
@@ -27,49 +27,49 @@ namespace ABBDataManagerSystem.Bean.Base
     pb FLOAT NOT NULL,  
     pc FLOAT NOT NULL,  
     p3 FLOAT NOT NULL,
-    PRIMARY KEY(ProductSequence, LoadType)
+    PRIMARY KEY(WorkflowId, LoadType)
 );
          */
-        public static string LoadTypeNoLoad = "空载";
-        public static string LoadTypeLoad = "负载";
-        public static string LoadType10IN = "1.0IN";
-        public static string LoadType18IN = "1.8IN";
+        public static string LoadTypeNoLoad = "空载"; // 电压（有效、平均）、电流（有效、平均）、损耗
+        public static string LoadTypeLoad = "负载"; // 电压、电流、损耗，三档（最大、最小、额定）
+        public static string LoadTypeSense = "感应"; // 电压、电流
+        public static string LoadTypePartial = "局放"; // 1. 8Un\1. 3Un 电压单个、电流三相+平均
         public static string LoadTypeZero = "零序";
         public static string LoadTypeNone = "None";
 
-        public string ProductSequence = String.Empty;
+        public string WorkflowId = String.Empty;
         public string LoadType = LoadTypeNoLoad;
         public string TappingPosition = String.Empty;
 
         public DateTime DateTime;
 
-        public float ia = 0;
-        public float ib = 0;
-        public float ic = 0;
-        public float i3 = 0;
+        public float? ia = 0;
+        public float? ib = 0;
+        public float? ic = 0;
+        public float? i3 = 0;
 
-        public float ua = 0;
-        public float ub = 0;
-        public float uc = 0;
-        public float u3 = 0;
+        public float? ua = 0;
+        public float? ub = 0;
+        public float? uc = 0;
+        public float? u3 = 0;
 
-        public float pua = 0;
-        public float pub = 0;
-        public float puc = 0;
-        public float pu3 = 0;
+        public float? pua = 0;
+        public float? pub = 0;
+        public float? puc = 0;
+        public float? pu3 = 0;
 
-        public float pa = 0;
-        public float pb = 0;
-        public float pc = 0;
-        public float p3 = 0;
+        public float? pa = 0;
+        public float? pb = 0;
+        public float? pc = 0;
+        public float? p3 = 0;
 
-        public float fU = 0;
-        public float Temperature = 0;
+        public float? fU = 0;
+        public float? Temperature = 0;
 
 
         public static Dictionary<string, string> FieldComments = new Dictionary<string, string>
         {
-            {"ProductSequence", "出厂序号"},
+            {"WorkflowId", "出厂序号"},
             {"LoadType", "空载负载"},
             {"DateTime", "试验时间"},
             {"ua", "电压有效值(A相)"},
@@ -92,7 +92,7 @@ namespace ABBDataManagerSystem.Bean.Base
             {"Temperature", "温度"},
         };
 
-        public static string KeyField = "ProductSequence";
+        public static string KeyField = "WorkflowId";
 
         public bool WriteToDB()
         {
@@ -102,17 +102,17 @@ namespace ABBDataManagerSystem.Bean.Base
                 // 打开数据库连接
                 connection.Open();
 
-                CreateSqliteTable(connection);
-
                 using (SQLCommond command = new SQLCommond($"INSERT INTO {TABLE_NAME} (workflow_id, load_type, tapping_position, " +
                     $"uab, ubc, uca, uabc, " +
+                    $"puab, pubc, puca, puabc, " +
                     $"ia, ib, ic, iabc, " +
-                    $"pa, pb, pc, p, temperature) VALUES (@ProductSequence, @LoadType, @TappingPosition, " +
+                    $"pa, pb, pc, p, temperature, fu) VALUES (@WorkflowId, @LoadType, @TappingPosition, " +
                     $"@ua, @ub, @uc, @u3, " +
+                    $"@pua, @pub, @puc, @pu3, " +
                     $"@ia, @ib, @ic, @i3, " +
-                    $"@pa, @pb, @pc, @p3, @Temperature)", connection))
+                    $"@pa, @pb, @pc, @p3, @Temperature, @fU)", connection))
                 {
-                    command.Parameters.AddWithValue("@ProductSequence", ProductSequence);
+                    command.Parameters.AddWithValue("@WorkflowId", WorkflowId);
                     command.Parameters.AddWithValue("@LoadType", LoadType);
                     command.Parameters.AddWithValue("@TappingPosition", TappingPosition);
                     command.Parameters.AddWithValue("@ia", ia);
@@ -123,15 +123,15 @@ namespace ABBDataManagerSystem.Bean.Base
                     command.Parameters.AddWithValue("@ub", ub);
                     command.Parameters.AddWithValue("@uc", uc);
                     command.Parameters.AddWithValue("@u3", u3);
-                    //command.Parameters.AddWithValue("@pua", ua);
-                    //command.Parameters.AddWithValue("@pub", ub);
-                    //command.Parameters.AddWithValue("@puc", uc);
-                    //command.Parameters.AddWithValue("@pu3", u3);
+                    command.Parameters.AddWithValue("@pua", ua);
+                    command.Parameters.AddWithValue("@pub", ub);
+                    command.Parameters.AddWithValue("@puc", uc);
+                    command.Parameters.AddWithValue("@pu3", u3);
                     command.Parameters.AddWithValue("@pa", pa);
                     command.Parameters.AddWithValue("@pb", pb);
                     command.Parameters.AddWithValue("@pc", pc);
                     command.Parameters.AddWithValue("@p3", p3);
-                    //command.Parameters.AddWithValue("@fU", fU);
+                    command.Parameters.AddWithValue("@fU", fU);
                     command.Parameters.AddWithValue("@Temperature", Temperature);
                     //command.Parameters.AddWithValue("@DateTime", DateTime.Now);
                     int count = command.ExecuteNonQuery();
@@ -144,7 +144,8 @@ namespace ABBDataManagerSystem.Bean.Base
         {
             string updateSql = $"UPDATE {TABLE_NAME} SET ia = @ia, ib = @ib, ic = @ic, iabc = @i3, " +
                 $"uab = @ua, ubc = @ub, uca = @uc, uabc = @u3, " +
-                $"pa = @pa, pb = @pb, pc = @pc, p = @p3, temperature = @Temperature WHERE workflow_id = @ProductSequence AND load_type = @LoadType " +
+                $"puab = @pua, pubc = @pub, puca = @puc, puabc = @pu3, " +
+                $"pa = @pa, pb = @pb, pc = @pc, p = @p3, temperature = @Temperature, fu = @fU WHERE workflow_id = @WorkflowId AND load_type = @LoadType " +
                 "AND tapping_position = @TappingPosition";
 
             // 创建 SQLite 连接对象
@@ -153,7 +154,7 @@ namespace ABBDataManagerSystem.Bean.Base
                 // 打开数据库连接
                 connection.Open(); using (SQLCommond command = new SQLCommond(updateSql, connection))
                 {
-                    command.Parameters.AddWithValue("@ProductSequence", ProductSequence);
+                    command.Parameters.AddWithValue("@WorkflowId", WorkflowId);
                     command.Parameters.AddWithValue("@LoadType", LoadType);
                     command.Parameters.AddWithValue("@TappingPosition", TappingPosition);
                     command.Parameters.AddWithValue("@ia", ia);
@@ -168,11 +169,11 @@ namespace ABBDataManagerSystem.Bean.Base
                     command.Parameters.AddWithValue("@pb", pb);
                     command.Parameters.AddWithValue("@pc", pc);
                     command.Parameters.AddWithValue("@p3", p3);
-                    //command.Parameters.AddWithValue("@pua", pua);
-                    //command.Parameters.AddWithValue("@pub", pub);
-                    //command.Parameters.AddWithValue("@puc", puc);
-                    //command.Parameters.AddWithValue("@pu3", pu3);
-                    //command.Parameters.AddWithValue("@fU", fU);
+                    command.Parameters.AddWithValue("@pua", pua);
+                    command.Parameters.AddWithValue("@pub", pub);
+                    command.Parameters.AddWithValue("@puc", puc);
+                    command.Parameters.AddWithValue("@pu3", pu3);
+                    command.Parameters.AddWithValue("@fU", fU);
                     command.Parameters.AddWithValue("@Temperature", Temperature);
                     //command.Parameters.AddWithValue("@DateTime", DateTime.Now);
 
@@ -187,7 +188,7 @@ namespace ABBDataManagerSystem.Bean.Base
             string queryDataSql = $"SELECT * FROM {TABLE_NAME}";
             if (withKey && sequence != "")
             {
-                queryDataSql += $" WHERE ProductSequence = '{sequence}'";
+                queryDataSql += $" WHERE WorkflowId = '{sequence}'";
                 if (lossType != "")
                 {
                     queryDataSql += $" AND LoadType = '{lossType}'";
@@ -205,7 +206,7 @@ namespace ABBDataManagerSystem.Bean.Base
                 }
                 return new VoltageCurrentLossDataInfo
                 {
-                    ProductSequence = reader.GetString("workflow_id"),
+                    WorkflowId = reader.GetString("workflow_id"),
                     LoadType = reader.GetString("load_type"),
                     TappingPosition = reader.GetString("tapping_position"),
                     ia = !reader.IsDBNull("ia") ? (float)reader.GetDouble("ia") : 0,
@@ -216,15 +217,15 @@ namespace ABBDataManagerSystem.Bean.Base
                     ub = !reader.IsDBNull("ubc") ? (float)reader.GetDouble("ubc") : 0,
                     uc = !reader.IsDBNull("uca") ? (float)reader.GetDouble("uca") : 0,
                     u3 = !reader.IsDBNull("uabc") ? (float)reader.GetDouble("uabc") : 0,
-                    //pua = !reader.IsDBNull("pua") ? (float)reader.GetDouble("pua") : 0,
-                    //pub = !reader.IsDBNull("pub") ? (float)reader.GetDouble("pub") : 0,
-                    //puc = !reader.IsDBNull("puc") ? (float)reader.GetDouble("puc") : 0,
-                    //pu3 = !reader.IsDBNull("pu3") ? (float)reader.GetDouble("pu3") : 0,
+                    pua = !reader.IsDBNull("puab") ? (float)reader.GetDouble("puab") : 0,
+                    pub = !reader.IsDBNull("pubc") ? (float)reader.GetDouble("pubc") : 0,
+                    puc = !reader.IsDBNull("puca") ? (float)reader.GetDouble("puca") : 0,
+                    pu3 = !reader.IsDBNull("puabc") ? (float)reader.GetDouble("puabc") : 0,
                     pa = !reader.IsDBNull("pa") ? (float)reader.GetDouble("pa") : 0,
                     pb = !reader.IsDBNull("pb") ? (float)reader.GetDouble("pb") : 0,
                     pc = !reader.IsDBNull("pc") ? (float)reader.GetDouble("pc") : 0,
                     p3 = !reader.IsDBNull("p") ? (float)reader.GetDouble("p") : 0,
-                    //fU = !reader.IsDBNull("fU") ? (float)reader.GetFloat("fU") : 0,
+                    fU = !reader.IsDBNull("fU") ? (float)reader.GetFloat("fU") : 0,
                     Temperature = !reader.IsDBNull("temperature") ? (float)reader.GetFloat("temperature") : 0,
                     //DateTime = !reader.IsDBNull("DateTime") ? reader.GetDateTime("DateTime") : DateTime.Now,
                 };
@@ -291,8 +292,8 @@ namespace ABBDataManagerSystem.Bean.Base
             using (SQLConnection connection = new SQLConnection(DBConnector.GetConnectionString()))
             {
                 connection.Open();
-                SQLCommond command = new SQLCommond($"DELETE FROM {TABLE_NAME} WHERE workflow_id = @ProductSequence  AND load_type = @LoadType AND tapping_position = @TappingPosition", connection);
-                command.Parameters.AddWithValue("@ProductSequence", sequence);
+                SQLCommond command = new SQLCommond($"DELETE FROM {TABLE_NAME} WHERE workflow_id = @WorkflowId  AND load_type = @LoadType AND tapping_position = @TappingPosition", connection);
+                command.Parameters.AddWithValue("@WorkflowId", sequence);
                 command.Parameters.AddWithValue("@LoadType", loadType);
                 command.Parameters.AddWithValue("@TappingPosition", tappingPosition);
                 int count = command.ExecuteNonQuery();
@@ -300,43 +301,9 @@ namespace ABBDataManagerSystem.Bean.Base
             }
         }
 
-        private void CreateSqliteTable(SQLConnection connection)
-        {
-            if (!DBConnector.USING_SQLITE)
-            {
-                return;
-            }
-            // 创建数据库表
-            string createTableSql = $"CREATE TABLE IF NOT EXISTS {TABLE_NAME} (  " +
-                $"    ProductSequence TEXT," +
-                $"    LoadType TEXT," +
-                $"    ia REAL," +
-                $"    ib REAL," +
-                $"    ic REAL," +
-                $"    i3 REAL," +
-                $"    ua REAL," +
-                $"    ub REAL," +
-                $"    uc REAL," +
-                $"    u3 REAL," +
-                $"    pua REAL," +
-                $"    pub REAL," +
-                $"    puc REAL," +
-                $"    pu3 REAL," +
-                $"    pa REAL," +
-                $"    pb REAL," +
-                $"    pc REAL," +
-                $"    p3 REAL, " +
-                $"    Temperature REAL, " +
-                $"    PRIMARY KEY(ProductSequence, LoadType));";
-            using (SQLCommond createTableCmd = new SQLCommond(createTableSql, connection))
-            {
-                createTableCmd.ExecuteNonQuery();
-            }
-        }
-
         public static void Clone(VoltageCurrentLossDataInfo src, VoltageCurrentLossDataInfo dst)
         {
-            dst.ProductSequence = src.ProductSequence;
+            dst.WorkflowId = src.WorkflowId;
             dst.LoadType = src.LoadType;
 
             dst.ia = src.ia;
@@ -367,7 +334,7 @@ namespace ABBDataManagerSystem.Bean.Base
         {
             CheckIsKeyField checkIsKeyField = (string filedName) =>
             {
-                return (filedName == "ProductSequence" || filedName == "LoadType");
+                return (filedName == "WorkflowId" || filedName == "LoadType");
             };
             return checkIsKeyField;
         }
