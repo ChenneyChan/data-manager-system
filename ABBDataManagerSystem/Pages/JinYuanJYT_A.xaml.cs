@@ -383,11 +383,6 @@ namespace ABBDataManagerSystem.Pages
 
         private void btApply_Click(object sender, RoutedEventArgs e)
         {
-            var workflows =  WorkflowInfo.ReadFromDB(tbProductSequence.Text);
-            if (workflows != null && workflows.Count > 0)
-            {
-                Log.Info($"Workflow {workflows[0].TappingVoltages}");
-            }
             string tapping = tbTapping.Text.Trim();
             int? hv = Utils.ParseIntNull(tbRatedHighVoltage.Text);
             int? lv = Utils.ParseIntNull(tbRatedLowVoltage.Text);
@@ -395,7 +390,7 @@ namespace ABBDataManagerSystem.Pages
             {
                 return;
             }
-            int id = 0; 
+            int id = 0;
             if ((id = tapping.IndexOf("+-")) < 0)
             {
                 return;
@@ -408,7 +403,7 @@ namespace ABBDataManagerSystem.Pages
             var count = int.Parse(strs[0].Replace("+-", ""));
             var gap = float.Parse(strs[1].Replace("%", "")) * 0.01f;
 
-            for (int i = count; i >= -count;  i--)
+            for (int i = count; i >= -count; i--)
             {
                 float v = (float)hv * (1.0f + gap * i);
                 if (i + count + 1 > MAX_HV_COUNT)
@@ -422,6 +417,32 @@ namespace ABBDataManagerSystem.Pages
             for (int i = (count * 2 + 1) + 1; i <= MAX_HV_COUNT; i++)
             {
                 RatioValueFields[i.ToString()].TappingVoltage = 0;
+            }
+        }
+
+        private void tbProductSequence_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key != System.Windows.Input.Key.Enter)
+            {
+                return;
+            }
+            if (tbProductSequence.Text.Length == 0)
+            {
+                return;
+            }
+            var workflows = WorkflowInfo.ReadFromDB(tbProductSequence.Text);
+            if (workflows != null && workflows.Count > 0)
+            {
+                Log.Info($"Workflow {workflows[0].TappingVoltages}");
+                tbTapping.Text = workflows[0].RatedVoltageInterval;
+                tbRatedHighVoltage.Text = workflows[0].RatedVoltageHv.ToString();
+                tbRatedLowVoltage.Text = workflows[0].RatedVoltageLv.ToString();
+            }
+            else
+            {
+                tbTapping.Text = "";
+                tbRatedHighVoltage.Text = "";
+                tbRatedLowVoltage.Text = "";
             }
         }
     }
