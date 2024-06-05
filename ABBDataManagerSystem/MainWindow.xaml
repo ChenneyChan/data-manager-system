@@ -80,6 +80,7 @@
                             <Button Content="温度测试" Name="btStartTempTest" Click="btStartTempTest_Click" Height="30" Width="120"/>
                             <Button Content="后台任务调试" Name="btThreadTest" Click="btThreadTest_Click" Height="30" Width="120"/>
                             <Button Content="插入功率空负载数据" Name="btInsertLoad" Click="btInsertLoad_Click" Height="30" Width="120"/>
+                            <Button Content="工作令查看页面" Name="btShowWorkflowView" Click="btShowWorkflowView_Click" Height="30" Width="120"/>
                         </StackPanel>
                         <TextBlock Width="400" Height="Auto" TextWrapping="Wrap" Text="输出：" Name="tbMsg" Grid.Row="1"/>
                         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto" HorizontalAlignment="Left" Visibility="Collapsed">

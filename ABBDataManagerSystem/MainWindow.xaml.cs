@@ -421,5 +421,10 @@ namespace ABBDataManagerSystem
                 }
             }
         }
+
+        private void btShowWorkflowView_Click(object sender, RoutedEventArgs e)
+        {
+            new WorkflowInfoView().ShowDialog();
+        }
     }
 }
