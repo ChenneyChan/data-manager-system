@@ -91,7 +91,7 @@
                 </hc:ComboBox>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="20, 0">
-                <hc:TextBox Width="180"  hc:InfoElement.Title="序号"   hc:InfoElement.TitlePlacement="Left" Text="1LCT11223344" Margin="0,0, 10, 0" Name="tbProductSequence"/>
+                <hc:TextBox Width="180"  hc:InfoElement.Title="序号"   hc:InfoElement.TitlePlacement="Left" Text="1LCT11223344" Margin="0,0, 10, 0" Name="tbProductSequence" KeyDown="tbProductSequence_KeyDown"/>
                 <hc:TextBox Width="180"  hc:InfoElement.Title="分接"   hc:InfoElement.TitlePlacement="Left" Text="+-2*2.5%" Margin="0,0, 10, 0" Name="tbTapping"/>
                 <hc:TextBox Width="160"  hc:InfoElement.Title="高压kV" hc:InfoElement.TitlePlacement="Left" Text="10000" Margin="0,0, 10, 0" Name="tbRatedHighVoltage"/>
                 <hc:TextBox Width="160"  hc:InfoElement.Title="低压kV" hc:InfoElement.TitlePlacement="Left" Text="400" Margin="0,0, 10, 0" Name="tbRatedLowVoltage"/>
