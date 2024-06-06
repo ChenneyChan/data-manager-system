@@ -2824,9 +2824,12 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                             udpClient.Send(data, data.Length, endPoint);
                             IsDataUpdated = false;
 
-                            Log.Info("\r\n\r\n数据已在UDP 8899 端口广播发送");
-                            Log.Info($"数据排序：ua ub uc uabc ia ib ic iabc pa pb pc p3 frequence");
-                            Log.Info($"数据值为：\r\n{msg}");
+                            if (IsEnableDebug)
+                            {
+                                Log.Info("\r\n\r\n数据已在UDP 8899 端口广播发送");
+                                Log.Info($"数据排序：ua ub uc uabc ia ib ic iabc pa pb pc p3 frequence");
+                                Log.Info($"数据值为：\r\n{msg}");
+                            }
                         }
                         else
                         {
