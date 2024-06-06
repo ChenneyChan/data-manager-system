@@ -32,8 +32,8 @@
     </UserControl.Resources>
     <Grid Margin="20,20">
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="600"/>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="60"/>
@@ -110,6 +110,49 @@
                 <DataGridTextColumn Header="电压频率" Binding="{Binding Path=电压频率, StringFormat='F2'}" IsReadOnly="True" CellStyle="{StaticResource DataGridCellStyle}"/>
             </DataGrid.Columns>
         </DataGrid>
+        <TabControl Grid.Row="4" Grid.Column="1" Grid.RowSpan="2" Background="#FFCECECE" FontSize="18">
+            <TabItem Name="tbNoLoad" Header="空载">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+                        <RadioButton Name="rbNoLoad100Percent" Content="100%" IsChecked="True"/>
+                        <RadioButton Name="rbNoLoad110Percent" Content="110%" Margin="0, 10"/>
+                    </StackPanel>
+                    <DataGrid x:Name="dgNoLoad" Grid.Column="1" FontSize="12">
+
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+            <TabItem Name="tbLoad" Header="负载">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+                        <RadioButton Name="rbLoadMax" Content="最大" IsChecked="True"/>
+                        <RadioButton Name="rbLoadMin" Content="最小" Margin="0, 10"/>
+                        <RadioButton Name="rbLoadRated" Content="额定"/>
+                    </StackPanel>
+                    <DataGrid x:Name="dgLoad" Grid.Column="1">
+
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+            <TabItem Name="tbSense" Header="感应">
+                <DataGrid x:Name="dgSense">
+
+                </DataGrid>
+            </TabItem>
+            <TabItem Name="tbPartialDischarge" Header="局放">
+                <DataGrid x:Name="dgPartialDischarge">
+
+                </DataGrid>
+            </TabItem>
+        </TabControl>
         <Grid Grid.Row="4" Grid.Column="1" Grid.RowSpan="2" Visibility="Collapsed">
             <Grid.RowDefinitions>
                 <RowDefinition/>

@@ -7,7 +7,6 @@ using DevZest.Windows.Docking;
 using System.IO.Ports;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 using EventManager = ABBDataManagerSystem.Tools.EventManager;
 using TabItem = HandyControl.Controls.TabItem;
 using Window = System.Windows.Window;

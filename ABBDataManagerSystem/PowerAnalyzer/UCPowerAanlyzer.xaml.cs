@@ -111,6 +111,8 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             DataTableSource.Rows.Add("C", 0, 0, 0, 0, "");
             DataTableSource.Rows.Add("Σ", 0, 0, 0, 0, "");
 
+            InitRsultDataGrid();
+
             this.DataContext = new { DataTableSource };
         }
 
@@ -2694,6 +2696,77 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 btHold.IsEnabled = IsCollecting;
             });
         }
+
+        #region 结果数据展示
+        private DataTable dtNoLoad = new();
+        private DataTable dtLoad = new();
+        private DataTable dtSense = new();
+        private DataTable dtPartialDischarge = new();
+        private DataTable InitDatatable()
+        {
+            DataTable dt = new();
+
+            dt.Columns.Add(new DataColumn() { ColumnName = "次数", DataType = typeof(string) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "U（A）", DataType = typeof(float) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "U（B）", DataType = typeof(float) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "U（C）", DataType = typeof(float) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "U（平均）", DataType = typeof(float) });
+
+            dt.Columns.Add(new DataColumn() { ColumnName = "PU（A）", DataType = typeof(float) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "PU（B）", DataType = typeof(float) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "PU（C）", DataType = typeof(float) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "PU（平均）", DataType = typeof(float) });
+
+            dt.Columns.Add(new DataColumn() { ColumnName = "I（A）", DataType = typeof(float) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "I（B）", DataType = typeof(float) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "I（C）", DataType = typeof(float) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "I（平均）", DataType = typeof(float) });
+
+            dt.Columns.Add(new DataColumn() { ColumnName = "P（A）", DataType = typeof(float) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "P（B）", DataType = typeof(float) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "P（C）", DataType = typeof(float) });
+            dt.Columns.Add(new DataColumn() { ColumnName = "P（总和）", DataType = typeof(float) });
+
+            //dt.Columns.Add(new DataColumn() { ColumnName = "次数" , DataType = typeof(string)});
+            //dt.Columns.Add(new DataColumn() { ColumnName = "U有效值（A）" , DataType = typeof(float)});
+            //dt.Columns.Add(new DataColumn() { ColumnName = "U有效值（B）" , DataType = typeof(float)});
+            //dt.Columns.Add(new DataColumn() { ColumnName = "U有效值（C）" , DataType = typeof(float)});
+            //dt.Columns.Add(new DataColumn() { ColumnName = "U有效值（平均）" , DataType = typeof(float)});
+
+            //dt.Columns.Add(new DataColumn() { ColumnName = "U平均值（A）", DataType = typeof(float) });
+            //dt.Columns.Add(new DataColumn() { ColumnName = "U平均值（B）", DataType = typeof(float) });
+            //dt.Columns.Add(new DataColumn() { ColumnName = "U平均值（C）", DataType = typeof(float) });
+            //dt.Columns.Add(new DataColumn() { ColumnName = "U平均值（平均）", DataType = typeof(float) });
+
+            //dt.Columns.Add(new DataColumn() { ColumnName = "I有效值（A）", DataType = typeof(float) });
+            //dt.Columns.Add(new DataColumn() { ColumnName = "I有效值（B）", DataType = typeof(float) });
+            //dt.Columns.Add(new DataColumn() { ColumnName = "I有效值（C）", DataType = typeof(float) });
+            //dt.Columns.Add(new DataColumn() { ColumnName = "I有效值（平均）", DataType = typeof(float) });
+
+            //dt.Columns.Add(new DataColumn() { ColumnName = "损耗（A）", DataType = typeof(float) });
+            //dt.Columns.Add(new DataColumn() { ColumnName = "损耗（B）", DataType = typeof(float) });
+            //dt.Columns.Add(new DataColumn() { ColumnName = "损耗（C）", DataType = typeof(float) });
+            //dt.Columns.Add(new DataColumn() { ColumnName = "损耗（总和）", DataType = typeof(float) });
+
+            dt.Columns.Add(new DataColumn() { ColumnName = "频率", DataType = typeof(float) });
+            return dt;
+        }
+
+        private void InitRsultDataGrid()
+        {
+            dtNoLoad = InitDatatable();
+            dgNoLoad.ItemsSource = dtNoLoad.AsDataView();
+
+            dtLoad = InitDatatable();
+            dgLoad.ItemsSource = dtLoad.AsDataView();
+
+            dtSense = InitDatatable();
+            dgSense.ItemsSource = dtSense.AsDataView();
+
+            dtPartialDischarge = InitDatatable();
+            dgPartialDischarge.ItemsSource = dtPartialDischarge.AsDataView();
+        }
+        #endregion
 
         #region 数据转换未数据库格式
         private void TranslateData()
