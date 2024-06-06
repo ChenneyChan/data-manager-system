@@ -28,6 +28,10 @@
             <ColumnDefinition/>
             <ColumnDefinition/>
             <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition/>
@@ -40,7 +44,8 @@
         <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="4" Text="电压有效值" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         <TextBlock Grid.Row="0" Grid.Column="5" Grid.ColumnSpan="4" Text="电压平均值" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         <TextBlock Grid.Row="0" Grid.Column="9" Grid.ColumnSpan="4" Text="电流有效值" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="0" Grid.Column="13" Grid.RowSpan="2" Text="频率" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="0" Grid.Column="13" Grid.ColumnSpan="4" Text="损耗" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="0" Grid.Column="17" Grid.RowSpan="2" Text="频率" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         <TextBlock Grid.Row="1" Grid.Column="1" Text="A相" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         <TextBlock Grid.Row="1" Grid.Column="2" Text="B相" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         <TextBlock Grid.Row="1" Grid.Column="3" Text="C相" VerticalAlignment="Center" HorizontalAlignment="Center"/>
@@ -52,12 +57,18 @@
         <TextBlock Grid.Row="1" Grid.Column="9" Text="A相" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         <TextBlock Grid.Row="1" Grid.Column="10" Text="B相" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         <TextBlock Grid.Row="1" Grid.Column="11" Text="C相" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="1" Grid.Column="12" Text="总和" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="1" Grid.Column="12" Text="平均" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="1" Grid.Column="13" Text="A相" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="1" Grid.Column="14" Text="B相" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="1" Grid.Column="15" Text="C相" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="1" Grid.Column="16" Text="平均" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        
         <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" BorderThickness="1, 1 ,0, 0" />
         <Border Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="4" BorderThickness="1, 1, 0, 0" />
         <Border Grid.Row="0" Grid.Column="5" Grid.ColumnSpan="4" BorderThickness="1, 1, 0, 0" />
         <Border Grid.Row="0" Grid.Column="9" Grid.ColumnSpan="4" BorderThickness="1, 1, 0, 0" />
-        <Border Grid.Row="0" Grid.Column="13" Grid.RowSpan="2" BorderThickness="1, 1, 1, 0" />
+        <Border Grid.Row="0" Grid.Column="13" Grid.ColumnSpan="4" BorderThickness="1, 1, 0, 0" />
+        <Border Grid.Row="0" Grid.Column="17" BorderThickness="1, 1, 1, 0" />
         <Border Grid.Row="1" Grid.Column="1" BorderThickness="1, 1, 0, 0" />
         <Border Grid.Row="1" Grid.Column="2" BorderThickness="1, 1, 0, 0" />
         <Border Grid.Row="1" Grid.Column="3" BorderThickness="1, 1, 0, 0" />
@@ -70,6 +81,11 @@
         <Border Grid.Row="1" Grid.Column="10" BorderThickness="1, 1, 0, 0" />
         <Border Grid.Row="1" Grid.Column="11" BorderThickness="1, 1, 0, 0" />
         <Border Grid.Row="1" Grid.Column="12" BorderThickness="1, 1, 0, 0" />
+        <Border Grid.Row="1" Grid.Column="13" BorderThickness="1, 1, 0, 0" />
+        <Border Grid.Row="1" Grid.Column="14" BorderThickness="1, 1, 0, 0" />
+        <Border Grid.Row="1" Grid.Column="15" BorderThickness="1, 1, 0, 0" />
+        <Border Grid.Row="1" Grid.Column="16" BorderThickness="1, 1, 0, 0" />
+        <Border Grid.Row="1" Grid.Column="17" BorderThickness="1, 0, 1, 0" />
 
         <Border Grid.Row="2" Grid.Column="0" BorderThickness="1, 1, 0, 0" />
         <Border Grid.Row="2" Grid.Column="1" BorderThickness="1, 1, 0, 0" />
@@ -84,8 +100,12 @@
         <Border Grid.Row="2" Grid.Column="10" BorderThickness="1, 1, 0, 0" />
         <Border Grid.Row="2" Grid.Column="11" BorderThickness="1, 1, 0, 0" />
         <Border Grid.Row="2" Grid.Column="12" BorderThickness="1, 1, 0, 0" />
-        <Border Grid.Row="2" Grid.Column="13" BorderThickness="1, 1, 1, 0" />
-
+        <Border Grid.Row="2" Grid.Column="13" BorderThickness="1, 1, 0, 0" />
+        <Border Grid.Row="2" Grid.Column="14" BorderThickness="1, 1, 0, 0" />
+        <Border Grid.Row="2" Grid.Column="15" BorderThickness="1, 1, 0, 0" />
+        <Border Grid.Row="2" Grid.Column="16" BorderThickness="1, 1, 0, 0" />
+        <Border Grid.Row="2" Grid.Column="17" BorderThickness="1, 1, 1, 0" />
+        
         <Border Grid.Row="3" Grid.Column="0" BorderThickness="1, 1, 0, 0" />
         <Border Grid.Row="3" Grid.Column="1" BorderThickness="1, 1, 0, 0" />
         <Border Grid.Row="3" Grid.Column="2" BorderThickness="1, 1, 0, 0" />
@@ -99,8 +119,12 @@
         <Border Grid.Row="3" Grid.Column="10" BorderThickness="1, 1, 0, 0" />
         <Border Grid.Row="3" Grid.Column="11" BorderThickness="1, 1, 0, 0" />
         <Border Grid.Row="3" Grid.Column="12" BorderThickness="1, 1, 0, 0" />
-        <Border Grid.Row="3" Grid.Column="13" BorderThickness="1, 1, 1, 0" />
-
+        <Border Grid.Row="3" Grid.Column="13" BorderThickness="1, 1, 0, 0" />
+        <Border Grid.Row="3" Grid.Column="14" BorderThickness="1, 1, 0, 0" />
+        <Border Grid.Row="3" Grid.Column="15" BorderThickness="1, 1, 0, 0" />
+        <Border Grid.Row="3" Grid.Column="16" BorderThickness="1, 1, 0, 0" />
+        <Border Grid.Row="3" Grid.Column="17" BorderThickness="1, 1, 1, 0" />
+        
         <Border Grid.Row="4" Grid.Column="0" BorderThickness="1, 1, 0, 1" />
         <Border Grid.Row="4" Grid.Column="1" BorderThickness="1, 1, 0, 1" />
         <Border Grid.Row="4" Grid.Column="2" BorderThickness="1, 1, 0, 1" />
@@ -114,6 +138,10 @@
         <Border Grid.Row="4" Grid.Column="10" BorderThickness="1, 1, 0, 1" />
         <Border Grid.Row="4" Grid.Column="11" BorderThickness="1, 1, 0, 1" />
         <Border Grid.Row="4" Grid.Column="12" BorderThickness="1, 1, 0, 1" />
-        <Border Grid.Row="4" Grid.Column="13" BorderThickness="1, 1, 1, 1" />
+        <Border Grid.Row="4" Grid.Column="13" BorderThickness="1, 1, 0, 1" />
+        <Border Grid.Row="4" Grid.Column="14" BorderThickness="1, 1, 0, 1" />
+        <Border Grid.Row="4" Grid.Column="15" BorderThickness="1, 1, 0, 1" />
+        <Border Grid.Row="4" Grid.Column="16" BorderThickness="1, 1, 0, 1" />
+        <Border Grid.Row="4" Grid.Column="17" BorderThickness="1, 1, 1, 1" />
     </Grid>
 </UserControl>

@@ -116,6 +116,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             DataTableSource.Rows.Add("Σ", 0, 0, 0, 0, "");
 
             InitRsultDataGrid();
+            InitDataShow();
 
             this.DataContext = new { DataTableSource };
         }
@@ -2771,6 +2772,11 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
             dtPartialDischarge = InitDatatable();
             dgPartialDischarge.ItemsSource = dtPartialDischarge.AsDataView();
+        }
+
+        private void InitDataShow()
+        {
+            NoLoadView.Headers = new string[] { "100%", "110%" };
         }
         #endregion
 
