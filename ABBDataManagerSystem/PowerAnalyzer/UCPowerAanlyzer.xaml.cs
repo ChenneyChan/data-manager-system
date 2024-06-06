@@ -43,6 +43,13 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
         private bool IsDataUpdated = false;
 
+        private VoltageCurrentLossDataInfo LoadInfoMax = new();
+        private VoltageCurrentLossDataInfo LoadInfoMin = new();
+        private VoltageCurrentLossDataInfo LoadInfoRated = new();
+        private VoltageCurrentLossDataInfo NoLoadInfo100 = new();
+        private VoltageCurrentLossDataInfo NoLoadInfo110 = new();
+        private VoltageCurrentLossDataInfo SenseInfo = new();
+
         #region Variables
         private readonly string[] errorMsg = new string[14];
         private readonly string[] updateRateList = new string[10];  //update rate combo list(foreach)
@@ -115,8 +122,8 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             DataTableSource.Rows.Add("C", 0, 0, 0, 0, "");
             DataTableSource.Rows.Add("Σ", 0, 0, 0, 0, "");
 
-            InitRsultDataGrid();
             InitDataShow();
+            UpdateDateShow();
 
             this.DataContext = new { DataTableSource };
         }
@@ -2505,9 +2512,10 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         private void RefreshValueDisplay()
         {
             float ratio = IsLineVoltage ? (float)Math.Sqrt(3) : 1f;
-            if (IsRefreshing) {
+            if (IsRefreshing)
+            {
                 Log.Error("IsRefreshing");
-                return; 
+                return;
             }
             IsRefreshing = true;
 
@@ -2567,7 +2575,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             if (SelectedWiringSystem == "3V3A")
             {
                 rowMean[INDEX_P] = (p1 + p2);
-            } 
+            }
             else
             {
                 rowMean[INDEX_P] = (p1 + p2 + p3);
@@ -2682,6 +2690,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                         SendItemSettings();
                         GetItemData();
                     });
+                    TranslateData();
                 }
                 IsHold = !IsHold;
                 btHarmonic.IsEnabled = IsHold;
@@ -2705,90 +2714,69 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         }
 
         #region 结果数据展示
-        private DataTable dtNoLoad = new();
-        private DataTable dtLoad = new();
-        private DataTable dtSense = new();
-        private DataTable dtPartialDischarge = new();
-        private DataTable InitDatatable()
-        {
-            DataTable dt = new();
-
-            dt.Columns.Add(new DataColumn() { ColumnName = "次数", DataType = typeof(string) });
-            dt.Columns.Add(new DataColumn() { ColumnName = "U（A）", DataType = typeof(float) });
-            dt.Columns.Add(new DataColumn() { ColumnName = "U（B）", DataType = typeof(float) });
-            dt.Columns.Add(new DataColumn() { ColumnName = "U（C）", DataType = typeof(float) });
-            dt.Columns.Add(new DataColumn() { ColumnName = "U（平均）", DataType = typeof(float) });
-
-            dt.Columns.Add(new DataColumn() { ColumnName = "PU（A）", DataType = typeof(float) });
-            dt.Columns.Add(new DataColumn() { ColumnName = "PU（B）", DataType = typeof(float) });
-            dt.Columns.Add(new DataColumn() { ColumnName = "PU（C）", DataType = typeof(float) });
-            dt.Columns.Add(new DataColumn() { ColumnName = "PU（平均）", DataType = typeof(float) });
-
-            dt.Columns.Add(new DataColumn() { ColumnName = "I（A）", DataType = typeof(float) });
-            dt.Columns.Add(new DataColumn() { ColumnName = "I（B）", DataType = typeof(float) });
-            dt.Columns.Add(new DataColumn() { ColumnName = "I（C）", DataType = typeof(float) });
-            dt.Columns.Add(new DataColumn() { ColumnName = "I（平均）", DataType = typeof(float) });
-
-            dt.Columns.Add(new DataColumn() { ColumnName = "P（A）", DataType = typeof(float) });
-            dt.Columns.Add(new DataColumn() { ColumnName = "P（B）", DataType = typeof(float) });
-            dt.Columns.Add(new DataColumn() { ColumnName = "P（C）", DataType = typeof(float) });
-            dt.Columns.Add(new DataColumn() { ColumnName = "P（总和）", DataType = typeof(float) });
-
-            //dt.Columns.Add(new DataColumn() { ColumnName = "次数" , DataType = typeof(string)});
-            //dt.Columns.Add(new DataColumn() { ColumnName = "U有效值（A）" , DataType = typeof(float)});
-            //dt.Columns.Add(new DataColumn() { ColumnName = "U有效值（B）" , DataType = typeof(float)});
-            //dt.Columns.Add(new DataColumn() { ColumnName = "U有效值（C）" , DataType = typeof(float)});
-            //dt.Columns.Add(new DataColumn() { ColumnName = "U有效值（平均）" , DataType = typeof(float)});
-
-            //dt.Columns.Add(new DataColumn() { ColumnName = "U平均值（A）", DataType = typeof(float) });
-            //dt.Columns.Add(new DataColumn() { ColumnName = "U平均值（B）", DataType = typeof(float) });
-            //dt.Columns.Add(new DataColumn() { ColumnName = "U平均值（C）", DataType = typeof(float) });
-            //dt.Columns.Add(new DataColumn() { ColumnName = "U平均值（平均）", DataType = typeof(float) });
-
-            //dt.Columns.Add(new DataColumn() { ColumnName = "I有效值（A）", DataType = typeof(float) });
-            //dt.Columns.Add(new DataColumn() { ColumnName = "I有效值（B）", DataType = typeof(float) });
-            //dt.Columns.Add(new DataColumn() { ColumnName = "I有效值（C）", DataType = typeof(float) });
-            //dt.Columns.Add(new DataColumn() { ColumnName = "I有效值（平均）", DataType = typeof(float) });
-
-            //dt.Columns.Add(new DataColumn() { ColumnName = "损耗（A）", DataType = typeof(float) });
-            //dt.Columns.Add(new DataColumn() { ColumnName = "损耗（B）", DataType = typeof(float) });
-            //dt.Columns.Add(new DataColumn() { ColumnName = "损耗（C）", DataType = typeof(float) });
-            //dt.Columns.Add(new DataColumn() { ColumnName = "损耗（总和）", DataType = typeof(float) });
-
-            dt.Columns.Add(new DataColumn() { ColumnName = "频率", DataType = typeof(float) });
-            return dt;
-        }
-
-        private void InitRsultDataGrid()
-        {
-            dtNoLoad = InitDatatable();
-            dgNoLoad.ItemsSource = dtNoLoad.AsDataView();
-
-            dtLoad = InitDatatable();
-            dgLoad.ItemsSource = dtLoad.AsDataView();
-
-            dtSense = InitDatatable();
-            dgSense.ItemsSource = dtSense.AsDataView();
-
-            dtPartialDischarge = InitDatatable();
-            dgPartialDischarge.ItemsSource = dtPartialDischarge.AsDataView();
-        }
-
         private void InitDataShow()
         {
             NoLoadView.Headers = new string[] { "100%", "110%" };
+            LoadView.Headers = new string[] { "最大", "最小", "额定" };
         }
         #endregion
 
-        #region 数据转换未数据库格式
+        #region 数据转换未数据库格式并显示
         private void TranslateData()
         {
+            if (tbNoLoad.IsSelected)
+            {
+                if (rbNoLoad100Percent.IsChecked == true)
+                {
+                    VoltageCurrentLossDataInfo.Clone(CurrentData, NoLoadInfo100);
+                    NoLoadInfo100.LoadType = "空载";
+                    NoLoadInfo100.TappingPosition = "100%";
+                }
+                else
+                {
+                    VoltageCurrentLossDataInfo.Clone(CurrentData, NoLoadInfo110);
+                    NoLoadInfo110.LoadType = "空载";
+                    NoLoadInfo110.TappingPosition = "110%";
+                }
+            }
+            else if (tbLoad.IsSelected)
+            {
+                if (rbLoadMax.IsChecked == true)
+                {
+                    VoltageCurrentLossDataInfo.Clone(CurrentData, LoadInfoMax);
+                    LoadInfoMax.LoadType = "负载";
+                    LoadInfoMax.TappingPosition = "最大";
+                }
+                else if (rbLoadMin.IsChecked == true)
+                {
+                    VoltageCurrentLossDataInfo.Clone(CurrentData, LoadInfoMin);
+                    LoadInfoMin.LoadType = "负载";
+                    LoadInfoMin.TappingPosition = "最小";
+                }
+                else
+                {
+                    VoltageCurrentLossDataInfo.Clone(CurrentData, LoadInfoRated);
+                    LoadInfoRated.LoadType = "负载";
+                    LoadInfoRated.TappingPosition = "额定";
+                }
+            }
+            else if (tbSense.IsSelected)
+            {
+                VoltageCurrentLossDataInfo.Clone(CurrentData, SenseInfo);
+                SenseInfo.LoadType = "感应";
+                SenseInfo.TappingPosition = "";
+            }
+            UpdateDateShow();
+        }
 
+        private void UpdateDateShow()
+        {
+            NoLoadView.LossDataInfoList = new List<VoltageCurrentLossDataInfo>() { NoLoadInfo100, NoLoadInfo110 };
+            LoadView.LossDataInfoList = new List<VoltageCurrentLossDataInfo>() { LoadInfoMax, LoadInfoMin, LoadInfoRated };
         }
         #endregion
 
         #region 数据广播
-
         private void StartBroadCast()
         {
             new Thread(() =>
@@ -2810,7 +2798,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                         if (IsDataUpdated)
                         {
                             //ua ub uc uabc ia ib ic iabc pa pb pc p3 frequence
-                            float?[] floatsToSend = new float?[] { 
+                            float?[] floatsToSend = new float?[] {
                                 CurrentData.ua, CurrentData.ub, CurrentData.uc, CurrentData.u3,
                                 CurrentData.ia, CurrentData.ib, CurrentData.ic, CurrentData.i3,
                                 CurrentData.pa, CurrentData.pb, CurrentData.pc, CurrentData.p3,

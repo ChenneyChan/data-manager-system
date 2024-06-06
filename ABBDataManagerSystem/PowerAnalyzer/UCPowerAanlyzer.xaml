@@ -23,6 +23,8 @@
         </Style>
         <Style TargetType="RadioButton" BasedOn="{StaticResource {x:Type RadioButton}}">
             <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#FF1623ED"/>
         </Style>
         <Style TargetType="hc:TextBox" BasedOn="{StaticResource GlobalTextBoxStyle}">
             <Setter Property="FontSize" Value="16"/>
@@ -114,9 +116,9 @@
                 <DataGridTextColumn Header="电压频率" Binding="{Binding Path=电压频率, StringFormat='F2'}" IsReadOnly="True" CellStyle="{StaticResource DataGridCellStyle}"/>
             </DataGrid.Columns>
         </DataGrid>
-        <TabControl Grid.Row="4" Grid.Column="1" Grid.RowSpan="2" Background="#FFCECECE" FontSize="18" Visibility="Visible">
+        <TabControl Grid.Row="4" Grid.Column="1" Grid.RowSpan="2" Background="#FFFBFBFB" FontSize="18" Visibility="Visible">
             <TabItem Name="tbNoLoad" Header="空载">
-                <Grid Width="1200" Height="400" VerticalAlignment="Top" HorizontalAlignment="Left">
+                <Grid Width="1200" Height="400" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="20">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="100"/>
                         <ColumnDefinition Width="*"/>
@@ -126,13 +128,10 @@
                         <RadioButton Name="rbNoLoad110Percent" Content="110%" Margin="0, 10"/>
                     </StackPanel>
                     <Views:LoadNoloadInfo Grid.Column="1" x:Name="NoLoadView"/>
-                    <DataGrid x:Name="dgNoLoad" Grid.Column="1" FontSize="12" Visibility="Collapsed">
-
-                    </DataGrid>
                 </Grid>
             </TabItem>
             <TabItem Name="tbLoad" Header="负载">
-                <Grid>
+                <Grid Width="1200" Height="400" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="20">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="100"/>
                         <ColumnDefinition Width="*"/>
@@ -142,18 +141,14 @@
                         <RadioButton Name="rbLoadMin" Content="最小" Margin="0, 10"/>
                         <RadioButton Name="rbLoadRated" Content="额定"/>
                     </StackPanel>
-                    <DataGrid x:Name="dgLoad" Grid.Column="1">
-
-                    </DataGrid>
+                    <Views:LoadNoloadInfo Grid.Column="1" x:Name="LoadView"/>
                 </Grid>
             </TabItem>
             <TabItem Name="tbSense" Header="感应">
-                <DataGrid x:Name="dgSense">
-
-                </DataGrid>
+                <Views:LoadNoloadInfo Grid.Column="1" x:Name="SenseView" Width="1200" Height="400" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="20"/>
             </TabItem>
             <TabItem Name="tbPartialDischarge" Header="局放">
-                <DataGrid x:Name="dgPartialDischarge">
+                <DataGrid x:Name="dgPartialDischarge" Margin="20">
 
                 </DataGrid>
             </TabItem>

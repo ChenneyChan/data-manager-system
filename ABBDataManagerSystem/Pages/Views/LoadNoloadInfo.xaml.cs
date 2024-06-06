@@ -11,12 +11,12 @@ namespace ABBDataManagerSystem.Pages.Views
     {
         private Dictionary<string, TextBlock> _fields = new Dictionary<string, TextBlock>();
 
-        private VoltageCurrentLossDataInfo? _currentLossDataInfo = null;
+        private List<VoltageCurrentLossDataInfo>? _currentLossDataInfoList = null;
 
-        public VoltageCurrentLossDataInfo? LossDataInfo
+        public List<VoltageCurrentLossDataInfo>? LossDataInfoList
         {
-            set { _currentLossDataInfo = value; UpdateValue(); }
-            get { return _currentLossDataInfo; }
+            set { _currentLossDataInfoList = value; UpdateValue(); }
+            get { return _currentLossDataInfoList; }
         }
 
         private string[] _headers = new string[] { };
@@ -82,7 +82,39 @@ namespace ABBDataManagerSystem.Pages.Views
 
         private void UpdateValue()
         {
+            if (_currentLossDataInfoList == null)
+            {
+                return;
+            }
+            for (int i = 0; i < _currentLossDataInfoList.Count; i++)
+            {
+                var item = _currentLossDataInfoList[i];
+                if (item == null)
+                {
+                    continue; 
+                }
+                _fields[$"ua_{i + 1}"].Text = Utils.FloatFormat(item.ua ?? 0);
+                _fields[$"ub_{i + 1}"].Text = Utils.FloatFormat(item.ub ?? 0);
+                _fields[$"uc_{i + 1}"].Text = Utils.FloatFormat(item.uc ?? 0);
+                _fields[$"u3_{i + 1}"].Text = Utils.FloatFormat(item.u3 ?? 0);
 
+                _fields[$"pua_{i + 1}"].Text = Utils.FloatFormat(item.pua ?? 0);
+                _fields[$"pub_{i + 1}"].Text = Utils.FloatFormat(item.pub ?? 0);
+                _fields[$"puc_{i + 1}"].Text = Utils.FloatFormat(item.puc ?? 0);
+                _fields[$"pu3_{i + 1}"].Text = Utils.FloatFormat(item.pu3 ?? 0);
+
+                _fields[$"ia_{i + 1}"].Text = Utils.FloatFormat(item.ia ?? 0);
+                _fields[$"ib_{i + 1}"].Text = Utils.FloatFormat(item.ib ?? 0);
+                _fields[$"ic_{i + 1}"].Text = Utils.FloatFormat(item.ic ?? 0);
+                _fields[$"i3_{i + 1}"].Text = Utils.FloatFormat(item.i3 ?? 0);
+
+                _fields[$"pa_{i + 1}"].Text = Utils.FloatFormat(item.pa ?? 0);
+                _fields[$"pb_{i + 1}"].Text = Utils.FloatFormat(item.pb ?? 0);
+                _fields[$"pc_{i + 1}"].Text = Utils.FloatFormat(item.pc ?? 0);
+                _fields[$"p3_{i + 1}"].Text = Utils.FloatFormat(item.p3 ?? 0);
+
+                _fields[$"fu_{i + 1}"].Text = Utils.FloatFormat(item.fU ?? 0);
+            }
         }
 
         private void UpdateHeader()
