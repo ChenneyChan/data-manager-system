@@ -31,9 +31,13 @@
         </Style>
     </Window.Resources>
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="80"/>
+        </Grid.RowDefinitions>
         <TabControl>
             <TabItem Header ="数据库设置">
-                <Grid Margin="20, 20, 20, 40">
+                <Grid Margin="20, 20, 20, 0">
                     <Grid.ColumnDefinitions>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
@@ -42,7 +46,6 @@
                         <RowDefinition Height="1*"/>
                         <RowDefinition Height="1*"/>
                         <RowDefinition Height="1*"/>
-                        <RowDefinition Height="1.2*"/>
                     </Grid.RowDefinitions>
                     <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                         <TextBlock Text="数据库IP：" Width="120" Style="{StaticResource Label}" Margin="0,0,10,0"/>
@@ -64,12 +67,23 @@
                         <TextBlock Text="数据库名称：" Width="120" Style="{StaticResource Label}" Margin="0,0,10,0"/>
                         <TextBox Name="tbDatabaseName" Width="220"/>
                     </StackPanel>
-                    <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <Button Name="btComfirm" Style="{StaticResource ButtonPrimary}" FontSize="16" FontWeight="Bold" Content="确认" Height="40" Width="170" Margin="0,0,10,0" Click="btComfirm_Click"/>
-                        <Button Name="btCancel" Style="{StaticResource ButtonDanger}" FontSize="16" FontWeight="Bold" Content="取消" Height="40" Width="170" Margin="0,0,0,0" Click="btCancel_Click"/>
+                </Grid>
+            </TabItem>
+            <TabItem Header="常规设置">
+                <Grid>
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock Text="工位选择：" Width="120" Style="{StaticResource Label}" Margin="0,0,10,0"/>
+                        <ComboBox Name="cbWorkStation" Width="220">
+                            <ComboBoxItem Content="工位一" IsSelected="True"/>
+                            <ComboBoxItem Content="工位二"/>
+                        </ComboBox>
                     </StackPanel>
                 </Grid>
             </TabItem>
         </TabControl>
+        <StackPanel Grid.Row="1" Height="80" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Button Name="btComfirm" Style="{StaticResource ButtonPrimary}" FontSize="16" FontWeight="Bold" Content="确认" Height="40" Width="170" Margin="0,0,10,0" Click="btComfirm_Click"/>
+            <Button Name="btCancel" Style="{StaticResource ButtonDanger}" FontSize="16" FontWeight="Bold" Content="取消" Height="40" Width="170" Margin="0,0,0,0" Click="btCancel_Click"/>
+        </StackPanel>
     </Grid>
 </Window>

@@ -52,12 +52,17 @@ namespace ABBDataManagerSystem.Configs
         public static string TPInterval { set; get; } = string.Empty;
         #endregion
 
+        #region 常规设置
+        public static int WorkStationNo = 1;
+        #endregion
+
         #region 读写配置
         static string INIPATH = Utils.GetUserPath() + "\\ABBReportSystemConfig.ini";
         static string INIPDSerial = "PartialDischargeSerial";
         static string INIDatabase = "Database";
         static string INITemperature = "Temperature";
         static string INIPowerAnalyzer = "PowerAnalyzer";
+        static string INICommon = "Common";
 
         [DllImport("kernel32.dll", EntryPoint = "GetPrivateProfileString")]
         private static extern uint GetPrivateProfileString(
@@ -116,6 +121,9 @@ namespace ABBDataManagerSystem.Configs
             VT = Utils.ParseFloatNull(buff.ToString());
             GetPrivateProfileString(INIPowerAnalyzer, "CT", "", buff, 32, INIPATH);
             CT = Utils.ParseFloatNull(buff.ToString());
+
+            GetPrivateProfileString(INICommon, "WorkStationNo", "", buff, 32, INIPATH);
+            WorkStationNo = Utils.ParseIntNull(buff.ToString()) ?? 1;
         }
 
         public static void SaveToFile()
@@ -141,6 +149,8 @@ namespace ABBDataManagerSystem.Configs
             // 功率分析仪
             WritePrivateProfileString(INIPowerAnalyzer, "VT", VT != null ? Utils.FloatFormat((float)VT, 4) : "" , INIPATH);
             WritePrivateProfileString(INIPowerAnalyzer, "CT", CT != null ? Utils.FloatFormat((float)CT, 4) : "" , INIPATH);
+
+            WritePrivateProfileString(INICommon, "WorkStationNo", WorkStationNo.ToString(), INIPATH);
         }
 
         #endregion

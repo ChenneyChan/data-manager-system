@@ -90,7 +90,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         public UCPowerAanlyzer()
         {
             InitializeComponent();
-            //this.IsWorkstationOne = IsWorkstationOne;
+            this.IsWorkstationOne = Configs.Configs.WorkStationNo == 1;
             btRequestContinue.Click += BtRequestContinue_Click;
             btRequestSingle.Click += BtRequestSingle_Click;
             btSetUpdateRate.Click += BtSetUpdateRate_Click;

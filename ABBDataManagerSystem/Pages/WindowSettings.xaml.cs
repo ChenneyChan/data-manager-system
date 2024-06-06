@@ -32,6 +32,8 @@ namespace ABBDataManagerSystem.Pages
             tbDatabaseUserName.Text = Configs.Configs.Username;
             tbDatabasePassword.Password = Configs.Configs.Password;
             tbDatabaseIp.Text = Configs.Configs.Host;
+
+            cbWorkStation.SelectedIndex = Configs.Configs.WorkStationNo - 1;
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -46,6 +48,7 @@ namespace ABBDataManagerSystem.Pages
             Configs.Configs.Username = tbDatabaseUserName.Text;
             Configs.Configs.Password = tbDatabasePassword.Password;
             Configs.Configs.Host = tbDatabaseIp.Text;
+            Configs.Configs.WorkStationNo = cbWorkStation.SelectedIndex + 1;
             DialogResult = true;
             Close();
         }
