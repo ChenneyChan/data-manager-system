@@ -7,7 +7,7 @@
              xmlns:hc="https://handyorg.github.io/handycontrol"
              mc:Ignorable="d" 
              Background="#FFDDDDDD"
-             d:DesignHeight="600" d:DesignWidth="1920" Loaded="UserControl_Loaded" Unloaded="UserControl_Unloaded" MinHeight="600" MinWidth="1000">
+             d:DesignHeight="1080" d:DesignWidth="1920" Loaded="UserControl_Loaded" Unloaded="UserControl_Unloaded" MinHeight="600" MinWidth="1000">
     <UserControl.Resources>
         <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
             <Setter Property="FontSize" Value="16"/>
@@ -28,6 +28,10 @@
             <Setter Property="FontSize" Value="16"/>
         </Style>
         <Style TargetType="hc:NumericUpDown" BasedOn="{StaticResource GlobalNumericUpDownStyle}">
+        </Style>
+        <Style TargetType="Border">
+            <Setter Property="BorderThickness" Value="1.5"/>
+            <Setter Property="BorderBrush" Value="Black"/>
         </Style>
     </UserControl.Resources>
     <Grid Margin="20,20">
@@ -110,9 +114,9 @@
                 <DataGridTextColumn Header="电压频率" Binding="{Binding Path=电压频率, StringFormat='F2'}" IsReadOnly="True" CellStyle="{StaticResource DataGridCellStyle}"/>
             </DataGrid.Columns>
         </DataGrid>
-        <TabControl Grid.Row="4" Grid.Column="1" Grid.RowSpan="2" Background="#FFCECECE" FontSize="18" Visibility="Collapsed">
+        <TabControl Grid.Row="4" Grid.Column="1" Grid.RowSpan="2" Background="#FFCECECE" FontSize="18" Visibility="Visible">
             <TabItem Name="tbNoLoad" Header="空载">
-                <Grid Width="800">
+                <Grid Width="800" Height="400" VerticalAlignment="Top" HorizontalAlignment="Left">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="100"/>
                         <ColumnDefinition Width="*"/>
@@ -134,6 +138,9 @@
                             <ColumnDefinition/>
                             <ColumnDefinition/>
                             <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition/>
@@ -141,7 +148,70 @@
                             <RowDefinition/>
                             <RowDefinition/>
                         </Grid.RowDefinitions>
-                        <TextBlock Grid.ColumnSpan="4" Text="电压有效值" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <TextBlock Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Text="采集" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="4" Text="电压有效值" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <TextBlock Grid.Row="0" Grid.Column="5" Grid.ColumnSpan="4" Text="电压平均值" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <TextBlock Grid.Row="0" Grid.Column="9" Grid.ColumnSpan="4" Text="电流有效值" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <TextBlock Grid.Row="0" Grid.Column="13" Grid.RowSpan="2" Text="频率" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="A相" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <TextBlock Grid.Row="1" Grid.Column="2" Text="B相" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <TextBlock Grid.Row="1" Grid.Column="3" Text="C相" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <TextBlock Grid.Row="1" Grid.Column="4" Text="平均" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <TextBlock Grid.Row="1" Grid.Column="5" Text="A相" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <TextBlock Grid.Row="1" Grid.Column="6" Text="B相" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <TextBlock Grid.Row="1" Grid.Column="7" Text="C相" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <TextBlock Grid.Row="1" Grid.Column="8" Text="平均" VerticalAlignment="Center" HorizontalAlignment="Center"/> 
+                        <TextBlock Grid.Row="1" Grid.Column="9" Text="A相" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <TextBlock Grid.Row="1" Grid.Column="10" Text="B相" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <TextBlock Grid.Row="1" Grid.Column="11" Text="C相" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <TextBlock Grid.Row="1" Grid.Column="12" Text="总和" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" BorderThickness="1, 1 ,0, 0" />
+                        <Border Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="4" BorderThickness="1, 1, 0, 0" />
+                        <Border Grid.Row="0" Grid.Column="5" Grid.ColumnSpan="4" BorderThickness="1, 1, 0, 0" />
+                        <Border Grid.Row="0" Grid.Column="9" Grid.ColumnSpan="4" BorderThickness="1, 1, 0, 0" />
+                        <Border Grid.Row="0" Grid.Column="13" Grid.RowSpan="2" BorderThickness="1, 1, 1, 0" />
+                        <Border Grid.Row="1" Grid.Column="1" BorderThickness="1, 1, 0, 0" />
+                        <Border Grid.Row="1" Grid.Column="2" BorderThickness="1, 1, 0, 0" />
+                        <Border Grid.Row="1" Grid.Column="3" BorderThickness="1, 1, 0, 0" />
+                        <Border Grid.Row="1" Grid.Column="4" BorderThickness="1, 1, 0, 0" />
+                        <Border Grid.Row="1" Grid.Column="5" BorderThickness="1, 1, 0, 0" />
+                        <Border Grid.Row="1" Grid.Column="6" BorderThickness="1, 1, 0, 0" />
+                        <Border Grid.Row="1" Grid.Column="7" BorderThickness="1, 1, 0, 0" />
+                        <Border Grid.Row="1" Grid.Column="8" BorderThickness="1, 1, 0, 0" />
+                        <Border Grid.Row="1" Grid.Column="9" BorderThickness="1, 1, 0, 0" />
+                        <Border Grid.Row="1" Grid.Column="10" BorderThickness="1, 1, 0, 0" />
+                        <Border Grid.Row="1" Grid.Column="11" BorderThickness="1, 1, 0, 0" />
+                        <Border Grid.Row="1" Grid.Column="12" BorderThickness="1, 1, 0, 0" />
+
+                        <Border Grid.Row="2" Grid.Column="0" BorderThickness="1, 1, 0, 0" />
+                        <Border Grid.Row="2" Grid.Column="1" BorderThickness="1, 1, 0, 0" />
+                        <Border Grid.Row="2" Grid.Column="2" BorderThickness="1, 1, 0, 0" />
+                        <Border Grid.Row="2" Grid.Column="3" BorderThickness="1, 1, 0, 0" />
+                        <Border Grid.Row="2" Grid.Column="4" BorderThickness="1, 1, 0, 0" />
+                        <Border Grid.Row="2" Grid.Column="5" BorderThickness="1, 1, 0, 0" />
+                        <Border Grid.Row="2" Grid.Column="6" BorderThickness="1, 1, 0, 0" />
+                        <Border Grid.Row="2" Grid.Column="7" BorderThickness="1, 1, 0, 0" />
+                        <Border Grid.Row="2" Grid.Column="8" BorderThickness="1, 1, 0, 0" />
+                        <Border Grid.Row="2" Grid.Column="9" BorderThickness="1, 1, 0, 0" />
+                        <Border Grid.Row="2" Grid.Column="10" BorderThickness="1, 1, 0, 0" />
+                        <Border Grid.Row="2" Grid.Column="11" BorderThickness="1, 1, 0, 0" />
+                        <Border Grid.Row="2" Grid.Column="12" BorderThickness="1, 1, 0, 0" />
+                        <Border Grid.Row="2" Grid.Column="13" BorderThickness="1, 1, 1, 0" />
+
+                        <Border Grid.Row="3" Grid.Column="0" BorderThickness="1, 1, 0, 1" />
+                        <Border Grid.Row="3" Grid.Column="1" BorderThickness="1, 1, 0, 1" />
+                        <Border Grid.Row="3" Grid.Column="2" BorderThickness="1, 1, 0, 1" />
+                        <Border Grid.Row="3" Grid.Column="3" BorderThickness="1, 1, 0, 1" />
+                        <Border Grid.Row="3" Grid.Column="4" BorderThickness="1, 1, 0, 1" />
+                        <Border Grid.Row="3" Grid.Column="5" BorderThickness="1, 1, 0, 1" />
+                        <Border Grid.Row="3" Grid.Column="6" BorderThickness="1, 1, 0, 1" />
+                        <Border Grid.Row="3" Grid.Column="7" BorderThickness="1, 1, 0, 1" />
+                        <Border Grid.Row="3" Grid.Column="8" BorderThickness="1, 1, 0, 1" />
+                        <Border Grid.Row="3" Grid.Column="9" BorderThickness="1, 1, 0, 1" />
+                        <Border Grid.Row="3" Grid.Column="10" BorderThickness="1, 1, 0, 1" />
+                        <Border Grid.Row="3" Grid.Column="11" BorderThickness="1, 1, 0, 1" />
+                        <Border Grid.Row="3" Grid.Column="12" BorderThickness="1, 1, 0, 1" />
+                        <Border Grid.Row="3" Grid.Column="13" BorderThickness="1, 1, 1, 1" />
                     </Grid>
                     <DataGrid x:Name="dgNoLoad" Grid.Column="1" FontSize="12" Visibility="Collapsed">
 
