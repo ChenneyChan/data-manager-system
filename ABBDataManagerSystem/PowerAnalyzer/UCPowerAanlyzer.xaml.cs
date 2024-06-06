@@ -1,9 +1,9 @@
 ﻿using ABBDataManagerSystem.Bean.Base;
-using Google.Protobuf.WellKnownTypes;
 using HandyControl.Controls;
-using System;
 using System.Data;
 using System.Diagnostics;
+using System.Net.Sockets;
+using System.Net;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -37,8 +37,11 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
         // ABB工位一要采集的是线电压，电压要乘上根号三
         private bool IsLineVoltage = false;
+        private bool IsWorkstationOne = true;
 
         private VoltageCurrentLossDataInfo CurrentData = new();
+
+        private bool IsDataUpdated = false;
 
         #region Variables
         private readonly string[] errorMsg = new string[14];
@@ -87,6 +90,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         public UCPowerAanlyzer()
         {
             InitializeComponent();
+            //this.IsWorkstationOne = IsWorkstationOne;
             btRequestContinue.Click += BtRequestContinue_Click;
             btRequestSingle.Click += BtRequestSingle_Click;
             btSetUpdateRate.Click += BtSetUpdateRate_Click;
@@ -2027,6 +2031,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 IsCollecting = true;
                 ToggleConfigButton();
                 SetBaseConfig();
+                StartBroadCast();
                 ThreadPool.QueueUserWorkItem((o) =>
                 {
                     SendItemSettings();
@@ -2587,6 +2592,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             CurrentData.pc = p3;
             CurrentData.p3 = p1 + p2 + p3;
             CurrentData.fU = fu;
+            IsDataUpdated = true;
             #endregion
 
             IsRefreshing = false;
@@ -2772,6 +2778,69 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         private void TranslateData()
         {
 
+        }
+        #endregion
+
+        #region 数据广播
+
+        private void StartBroadCast()
+        {
+            new Thread(() =>
+            {
+                Log.Info("Start BroadCast");
+                // 创建UdpClient实例  
+                using (UdpClient udpClient = new UdpClient())
+                {
+                    // 设置广播模式（如果需要）  
+                    // 注意：在某些系统上，可能需要管理员权限来启用广播  
+                    udpClient.EnableBroadcast = true;
+
+                    // 构造目标EndPoint（广播地址和端口）  
+                    IPEndPoint endPoint = new IPEndPoint(IPAddress.Broadcast, IsWorkstationOne ? 8811 : 8822);
+
+                    // 发送数据  
+                    while (IsCollecting)
+                    {
+                        if (IsDataUpdated)
+                        {
+                            //ua ub uc uabc ia ib ic iabc pa pb pc p3 frequence
+                            float?[] floatsToSend = new float?[] { 
+                                CurrentData.ua, CurrentData.ub, CurrentData.uc, CurrentData.u3,
+                                CurrentData.ia, CurrentData.ib, CurrentData.ic, CurrentData.i3,
+                                CurrentData.pa, CurrentData.pb, CurrentData.pc, CurrentData.p3,
+                                CurrentData.fU
+                            };
+
+                            string msg = "";
+                            // 将float数组转换为byte数组  
+                            byte[] data = new byte[floatsToSend.Length * 4];
+                            for (int i = 0; i < floatsToSend.Length; i++)
+                            {
+                                msg += floatsToSend[i].ToString() + "\t";
+                                byte[] bs = Utils.FloatToBigEndianBytes(floatsToSend[i] ?? 0);
+                                Buffer.BlockCopy(bs, 0, data, i * 4, 4);
+                            }
+
+                            udpClient.Send(data, data.Length, endPoint);
+                            IsDataUpdated = false;
+
+                            Log.Info("\r\n\r\n数据已在UDP 8899 端口广播发送");
+                            Log.Info($"数据排序：ua ub uc uabc ia ib ic iabc pa pb pc p3 frequence");
+                            Log.Info($"数据值为：\r\n{msg}");
+                        }
+                        else
+                        {
+                            Thread.Sleep(10);
+                        }
+                    }
+
+                    // （可选）接收响应（如果你需要的话）  
+                    // byte[] receivedBytes = udpClient.Receive(ref endPoint);  
+                    // ...处理接收到的数据...  
+
+                    // 关闭UdpClient（如果使用using语句，则不需要显式调用Close方法）  
+                }
+            }).Start();
         }
         #endregion
     }

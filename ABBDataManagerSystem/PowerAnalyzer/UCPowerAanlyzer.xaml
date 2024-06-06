@@ -7,7 +7,7 @@
              xmlns:hc="https://handyorg.github.io/handycontrol"
              mc:Ignorable="d" 
              Background="#FFDDDDDD"
-             d:DesignHeight="600" d:DesignWidth="1200" Loaded="UserControl_Loaded" Unloaded="UserControl_Unloaded" MinHeight="600" MinWidth="1000">
+             d:DesignHeight="600" d:DesignWidth="1920" Loaded="UserControl_Loaded" Unloaded="UserControl_Unloaded" MinHeight="600" MinWidth="1000">
     <UserControl.Resources>
         <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
             <Setter Property="FontSize" Value="16"/>
@@ -110,9 +110,9 @@
                 <DataGridTextColumn Header="电压频率" Binding="{Binding Path=电压频率, StringFormat='F2'}" IsReadOnly="True" CellStyle="{StaticResource DataGridCellStyle}"/>
             </DataGrid.Columns>
         </DataGrid>
-        <TabControl Grid.Row="4" Grid.Column="1" Grid.RowSpan="2" Background="#FFCECECE" FontSize="18">
+        <TabControl Grid.Row="4" Grid.Column="1" Grid.RowSpan="2" Background="#FFCECECE" FontSize="18" Visibility="Collapsed">
             <TabItem Name="tbNoLoad" Header="空载">
-                <Grid>
+                <Grid Width="800">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="100"/>
                         <ColumnDefinition Width="*"/>
@@ -121,7 +121,29 @@
                         <RadioButton Name="rbNoLoad100Percent" Content="100%" IsChecked="True"/>
                         <RadioButton Name="rbNoLoad110Percent" Content="110%" Margin="0, 10"/>
                     </StackPanel>
-                    <DataGrid x:Name="dgNoLoad" Grid.Column="1" FontSize="12">
+                    <Grid Grid.Column="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.ColumnSpan="4" Text="电压有效值" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    </Grid>
+                    <DataGrid x:Name="dgNoLoad" Grid.Column="1" FontSize="12" Visibility="Collapsed">
 
                     </DataGrid>
                 </Grid>

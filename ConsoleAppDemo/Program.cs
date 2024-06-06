@@ -1,6 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using System.Net.Sockets;
 using System.Net;
+using System.Text;
 
 class Program
 {
@@ -53,6 +54,50 @@ class Program
         Console.WriteLine("Converted Float Value: " + convertedValue);
     }
 
+    static void UdpListen()
+    {
+        int port = 8899;
+        UdpClient udpClient = new UdpClient(port);
+
+        try
+        {
+            Console.WriteLine("Waiting for a message on port " + port + "...");
+
+            // 创建一个IPEndPoint来接收任何IP地址发送的数据  
+            IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Loopback, 0);
+
+            while (true)
+            {
+                // 开始异步接收数据  
+                // 注意：为了简单起见，这里使用同步的Receive方法  
+                byte[] receivedBytes = udpClient.Receive(ref remoteEndPoint);
+
+                // 将字节转换为字符串  
+                string receivedData = Encoding.UTF8.GetString(receivedBytes);
+
+                Console.WriteLine($"Received message({receivedBytes.Length}): " + receivedData + " from " + remoteEndPoint.ToString());
+
+                byte[] buf = new byte[4];
+                // 如果需要，可以持续监听，只需将上面的接收代码放在一个循环中  
+                for (int i = 0; i < receivedBytes.Length / 4; i++)
+                {
+                    Array.Copy(receivedBytes, i * 4, buf, 0, 4);
+                    // 将大端字节序的byte数组转换回float  
+                    float convertedValue = BigEndianBytesToFloat(buf);
+                    Console.Write(convertedValue.ToString() + "\t");
+                }
+                Console.WriteLine();
+            }
+
+            // 当你完成后，关闭UDP客户端  
+            udpClient.Close();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.ToString());
+        }
+    }
+
     static void Main()
     {
 
@@ -66,9 +111,18 @@ class Program
         for (int  i = 0;  i < floatsToSend.Length;  i++)
         {
             msg += floatsToSend[i].ToString() + "\t";
-            byte[] bs = FloatToBigEndianBytes(floatsToSend[0]);
+            byte[] bs = FloatToBigEndianBytes(floatsToSend[i]);
             Buffer.BlockCopy(bs, 0, data, i * 4, 4);
         }
+        // 打印转换后的byte数组（仅用于验证）  
+        Console.WriteLine("Buffer Bytes: ");
+        foreach (byte b in data)
+        {
+            Console.Write("{0:X2} ", b);
+        }
+        Console.WriteLine();
+
+        new Thread(()=>{ UdpListen(); }).Start();
 
         // 创建UdpClient实例  
         using (UdpClient udpClient = new UdpClient())

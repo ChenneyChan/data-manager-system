@@ -278,5 +278,36 @@ namespace ABBDataManagerSystem
             var bytes = Encoding.UTF8.GetBytes(str);
             ByteCopy(bytes, buf, placeholder);
         }
+
+        // 将float转换为大端字节序的byte数组  
+        public static byte[] FloatToBigEndianBytes(float value)
+        {
+            byte[] bytes = BitConverter.GetBytes(value);
+
+            // 如果当前系统是小端字节序，则反转字节顺序  
+            if (BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(bytes);
+            }
+
+            return bytes;
+        }
+
+        // 将大端字节序的byte数组转换回float
+        public static float BigEndianBytesToFloat(byte[] bigEndianBytes)
+        {
+            // 如果当前系统是小端字节序，则先反转字节顺序  
+            if (BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(bigEndianBytes);
+            }
+
+            return BitConverter.ToSingle(bigEndianBytes, 0);
+        }
+
+        internal static byte[] FloatToBigEndianBytes(float? v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
