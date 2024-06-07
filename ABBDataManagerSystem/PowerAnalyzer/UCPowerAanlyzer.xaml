@@ -127,7 +127,7 @@
                         <RadioButton Name="rbNoLoad100Percent" Content="100%" IsChecked="True"/>
                         <RadioButton Name="rbNoLoad110Percent" Content="110%" Margin="0, 10"/>
                     </StackPanel>
-                    <Views:LoadNoloadInfo Grid.Column="1" x:Name="NoLoadView"/>
+                    <Views:NoloadInfo Grid.Column="1" x:Name="NoLoadView"/>
                 </Grid>
             </TabItem>
             <TabItem Name="tbLoad" Header="负载">
@@ -141,7 +141,7 @@
                         <RadioButton Name="rbLoadMin" Content="最小" Margin="0, 10"/>
                         <RadioButton Name="rbLoadRated" Content="额定"/>
                     </StackPanel>
-                    <Views:LoadNoloadInfo Grid.Column="1" x:Name="LoadView"/>
+                    <Views:LoadInfo Grid.Column="1" x:Name="LoadView"/>
                 </Grid>
             </TabItem>
             <TabItem Name="tbSense" Header="感应">
