@@ -2599,7 +2599,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             CurrentData.pa = p1;
             CurrentData.pb = p2;
             CurrentData.pc = p3;
-            CurrentData.p3 = p1 + p2 + p3;
+            CurrentData.p3 = (SelectedWiringSystem == "3V3A") ? (p1 + p2) : (p1 + p2 + p3);
             CurrentData.fU = fu;
             IsDataUpdated = true;
             #endregion
