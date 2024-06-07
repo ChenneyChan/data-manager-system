@@ -145,7 +145,7 @@
                 </Grid>
             </TabItem>
             <TabItem Name="tbSense" Header="感应">
-                <Views:LoadNoloadInfo Grid.Column="1" x:Name="SenseView" Width="1200" Height="400" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="20"/>
+                <Views:SenseInfo Grid.Column="1" x:Name="SenseView" Width="1200" Height="400" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="20"/>
             </TabItem>
             <TabItem Name="tbPartialDischarge" Header="局放">
                 <DataGrid x:Name="dgPartialDischarge" Margin="20">

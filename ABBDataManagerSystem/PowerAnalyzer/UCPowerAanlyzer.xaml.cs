@@ -2718,6 +2718,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         {
             NoLoadView.Headers = new string[] { "100%", "110%" };
             LoadView.Headers = new string[] { "最大", "最小", "额定" };
+            SenseView.Headers = new string[] { "感应" };
         }
         #endregion
 
