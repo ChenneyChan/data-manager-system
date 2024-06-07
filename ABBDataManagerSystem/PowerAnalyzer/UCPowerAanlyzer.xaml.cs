@@ -2774,6 +2774,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         {
             NoLoadView.LossDataInfoList = new List<VoltageCurrentLossDataInfo>() { NoLoadInfo100, NoLoadInfo110 };
             LoadView.LossDataInfoList = new List<VoltageCurrentLossDataInfo>() { LoadInfoMax, LoadInfoMin, LoadInfoRated };
+            SenseView.LossDataInfoList = new List<VoltageCurrentLossDataInfo>() { SenseInfo };
         }
         #endregion
 
