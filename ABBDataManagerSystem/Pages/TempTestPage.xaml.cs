@@ -218,6 +218,11 @@ namespace ABBDataManagerSystem.Pages
             {
                 return;
             }
+            if (SelectedSlots.Count == 0)
+            {
+                MessageBox.Show("请至少选择一个通道", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
             SaveConfig();
             bool needSaveCsv = false;
             if (tbSaveFilePath.Text.Length == 0)
