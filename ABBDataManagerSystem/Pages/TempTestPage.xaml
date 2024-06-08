@@ -117,11 +117,14 @@
                     <Button Style="{StaticResource plotButton}" Content="恢复所有线条" Name="btResumeAllLine" Click="btResumeLines_Click"/>
                 </WrapPanel>
             </Grid>
-            <hc:ScrollViewer Grid.Column="1" Margin="5, 0, 0, 0"  VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" MaxHeight="900" VerticalAlignment="Top">
-                <DataGrid Name="dgTempRecord" AutoGenerateColumns="True">
-                    <!--<DataGridTextColumn Header="时间" Binding="{Binding 时间, StringFormat='HH:mm:ss'}"/>-->
-                </DataGrid>
-            </hc:ScrollViewer>
+            <DataGrid Name="dgTempRecord" Grid.Column="1" Margin="5, 0, 0, 0" AutoGenerateColumns="True" Width="Auto" MaxHeight="900" VerticalAlignment="Top">
+                <DataGrid.Style>
+                    <Style TargetType="{x:Type DataGrid}">
+                        <!-- 在这里定义你想要的默认样式属性 -->
+                    </Style>
+                </DataGrid.Style>
+                <!--<DataGridTextColumn Header="时间" Binding="{Binding 时间, StringFormat='HH:mm:ss'}"/>-->
+            </DataGrid>
         </Grid>
     </Grid>
 </UserControl>
