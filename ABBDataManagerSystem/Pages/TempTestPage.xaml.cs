@@ -37,7 +37,7 @@ namespace ABBDataManagerSystem.Pages
     /// </summary>
     public partial class TempTestPage : UserControl, ICloseable
     {
-        private static bool Simulate = true;
+        private static bool Simulate = false;
         private bool IsFirstLoad = true;
 
         private bool UsingSerial = true;
@@ -144,6 +144,7 @@ namespace ABBDataManagerSystem.Pages
             mcbSelectedSlots.IsEnabled = !IsCollecting;
             cbTestType.IsEnabled = !IsCollecting;
             cbTestStatus.IsEnabled = !IsCollecting;
+            btSelectSlots.IsEnabled = !IsCollecting;
 
             if (IsCollecting)
             {
@@ -800,6 +801,7 @@ namespace ABBDataManagerSystem.Pages
 
         #endregion
 
+        #region 温度槽位选择
         private void mcbSelectedSlots_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             InitSlot();
@@ -825,5 +827,11 @@ namespace ABBDataManagerSystem.Pages
             SelectedSlots.Sort();
             return SelectedSlots.Count;
         }
+
+        private void btSelectSlots_Click(object sender, RoutedEventArgs e)
+        {
+            new TempSlotSelectView() { WindowStartupLocation = WindowStartupLocation.CenterScreen }.ShowDialog();
+        }
+        #endregion
     }
 }
