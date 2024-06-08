@@ -44,7 +44,7 @@
             <Setter Property="BorderThickness" Value="1"/>
         </Style>
         <Style TargetType="hc:TextBox" BasedOn="{StaticResource GlobalTextBoxStyle}">
-            
+
         </Style>
     </UserControl.Resources>
     <Grid Margin="30,20,30,20">
@@ -110,20 +110,27 @@
                 <oxy:PlotView Grid.Row="0" Grid.Column="0" Name="plotView" Margin="5,5"/>
                 <WrapPanel Margin="0, 4" Grid.Row="1" HorizontalAlignment="Center">
                     <Button Style="{StaticResource plotButton}" Content="清空" Name="btClearChart" Click="btClear_Click"/>
-                    <Button Style="{StaticResource plotButton}" Content="恢复" Name="btResetChartAxias" Click="btResteAxis_Click"/>
+                    <Button Style="{StaticResource plotButton}" Content="恢复坐标" Name="btResetChartAxias" Click="btResteAxis_Click"/>
                     <Button Style="{StaticResource plotButton}" Content="导出为图片" Name="btExportChartPng" Click="btSaveToPng_Click"/>
                     <Button Style="{StaticResource plotButton}" Content="显隐题注" Name="btResumeChart" Click="btToogleLegends_Click"/>
                     <Button Style="{StaticResource plotButton}" Content="隐藏所有线条" Name="btHideAllLine" Click="tbHideAllLine_Click"/>
                     <Button Style="{StaticResource plotButton}" Content="恢复所有线条" Name="btResumeAllLine" Click="btResumeLines_Click"/>
                 </WrapPanel>
             </Grid>
-            <DataGrid Name="dgTempRecord" Grid.Column="1" Margin="5, 0, 0, 0" AutoGenerateColumns="True" Width="Auto" MaxHeight="900" VerticalAlignment="Top">
+            <DataGrid Name="dgTempRecord" Grid.Column="1" Margin="5, 0, 0, 0"  HorizontalAlignment="Stretch" VerticalAlignment="Top" MaxHeight="600"
+                  ScrollViewer.VerticalScrollBarVisibility="Auto"
+                  ScrollViewer.HorizontalScrollBarVisibility="Auto" IsReadOnly="True" RowHeight="30" ColumnHeaderHeight="30" CanUserAddRows="False" CanUserDeleteRows="False" CanUserResizeRows="False" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserSortColumns="False" >
                 <DataGrid.Style>
                     <Style TargetType="{x:Type DataGrid}">
                         <!-- 在这里定义你想要的默认样式属性 -->
                     </Style>
                 </DataGrid.Style>
-                <!--<DataGridTextColumn Header="时间" Binding="{Binding 时间, StringFormat='HH:mm:ss'}"/>-->
+                <DataGrid.RowStyle>
+                    <Style TargetType="DataGridRow">
+                        <Setter Property="VerticalContentAlignment" Value="Center" />
+                        <Setter Property="HorizontalContentAlignment" Value="Center" />
+                    </Style>
+                </DataGrid.RowStyle>
             </DataGrid>
         </Grid>
     </Grid>

@@ -4,12 +4,14 @@ using ABBDataManagerSystem.Pages.Views;
 using HandyControl.Controls;
 using HandyControl.Properties;
 using Microsoft.Win32;
+using NPOI.SS.Formula.Functions;
 using System.Data;
 using System.IO;
 using System.IO.Ports;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Media;
 using MessageBox = HandyControl.Controls.MessageBox;
 
@@ -401,15 +403,36 @@ namespace ABBDataManagerSystem.Pages
         #region 记录表格相关操作
         private void InitDataGrid()
         {
+            dgTempRecord.ItemsSource = null;
+            dgTempRecord.Columns.Clear();
             Table.Rows.Clear();
             Table.Columns.Clear();
+
+            DataGridTextColumn dateColumn = new DataGridTextColumn
+            {
+                Header = "时间",
+                Binding = new Binding("时间")
+                {
+                    StringFormat = "yyyy-MM-dd HH:mm:ss"
+                }
+            };
+            dgTempRecord.Columns.Add(dateColumn);
             Table.Columns.Add("时间", typeof(DateTime));
+
             for (int i = 0; i < SelectedSlots.Count; i++)
             {
                 var slot = SelectedSlots[i];
                 Table.Columns.Add($"槽位-{slot}", typeof(float));
+
+                dgTempRecord.Columns.Add(new DataGridTextColumn()
+                {
+                    Header = $"槽位-{slot}",
+                    Binding = new Binding($"槽位-{slot}")
+                });
             }
-            dgTempRecord.ItemsSource = Table.AsDataView();
+
+            dgTempRecord.AutoGenerateColumns = false;
+            dgTempRecord.ItemsSource = Table.DefaultView;
         }
 
         private void UpdateDataGrid(float[] values)
@@ -421,10 +444,8 @@ namespace ABBDataManagerSystem.Pages
                 var slot = SelectedSlots[i];
                 newRow[$"槽位-{slot}"] = values[i];
             }
-            Table.Rows.Add(newRow);
             Dispatcher.Invoke(() => {
-                dgTempRecord.ItemsSource = null;
-                dgTempRecord.ItemsSource = Table.AsDataView();
+                Table.Rows.Add(newRow);
             });
         }
         #endregion
