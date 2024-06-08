@@ -59,7 +59,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <StackPanel Orientation="Vertical" >
-                <StackPanel Orientation="Horizontal" Margin="0, 10, 0, 20">
+                <StackPanel Orientation="Horizontal" Margin="0, 10, 0, 10">
                     <RadioButton Content="串口" VerticalAlignment="Center" Name="rbSerialPort" IsChecked="True" Visibility="Collapsed"/>
                     <TextBlock Text="串口" Width="40" Margin="0, 0, 20,0" VerticalAlignment="Center"/>
                     <hc:ComboBox Width="120" VerticalAlignment="Center" Name="cbSerialPort"/>
@@ -76,6 +76,18 @@
                     <hc:TextBox Width="100" VerticalAlignment="Center" Name="tbEthernetPort"/>
                     <!--<TextBlock Text="通道数" Width="60" Margin="20,0" VerticalAlignment="Center"/>
                     <hc:ComboBox Width="100" VerticalAlignment="Center" Name="cbSlotNums"/>-->
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0, 10">
+                    <TextBlock Text="试验阶段" Width="80" Margin="0, 0, 20,0" VerticalAlignment="Center"/>
+                    <hc:ComboBox Width="120" VerticalAlignment="Center" Name="cbTestType">
+                        <ComboBoxItem Content="空载" IsSelected="True"/>
+                        <ComboBoxItem Content="负载"/>
+                    </hc:ComboBox>
+                    <TextBlock Text="试验状态" Width="80" Margin="20,0" VerticalAlignment="Center"/>
+                    <hc:ComboBox Width="120" VerticalAlignment="Center" Name="cbTestStatus">
+                        <ComboBoxItem Content="本体" IsSelected="True"/>
+                        <ComboBoxItem Content="罩壳"/>
+                    </hc:ComboBox>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0, 0, 0, 20">
                     <Button Name="btStart" Content="开始采集" Grid.Column="0" Grid.Row="0" Click="btStart_Click" Style="{StaticResource startbutton}" Background="DodgerBlue"/>

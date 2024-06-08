@@ -1,10 +1,9 @@
-﻿using ABBDataManagerSystem.Charts;
+﻿using ABBDataManagerSystem.Bean.Base;
+using ABBDataManagerSystem.Charts;
 using ABBDataManagerSystem.Connector;
 using ABBDataManagerSystem.Pages.Views;
-using HandyControl.Controls;
-using HandyControl.Properties;
+using ABBDataManagerSystem.Tools;
 using Microsoft.Win32;
-using NPOI.SS.Formula.Functions;
 using System.Data;
 using System.IO;
 using System.IO.Ports;
@@ -17,6 +16,22 @@ using MessageBox = HandyControl.Controls.MessageBox;
 
 namespace ABBDataManagerSystem.Pages
 {
+    class VoltageInfo
+    {
+        public float ua;
+        public float ub;
+        public float uc;
+        public float u3;
+
+        public float ia;
+        public float ib;
+        public float ic;
+        public float i3;
+
+        public float p3;
+
+        public bool IsUpdated = false;
+    }
     /// <summary>
     /// TempTestPage.xaml 的交互逻辑
     /// </summary>
@@ -45,6 +60,8 @@ namespace ABBDataManagerSystem.Pages
         private int Interval = 200;
         private int SlotCount = 20;
         private DataTable Table = new DataTable();
+        private VoltageInfo CurrentVoltageInfo = new();
+        private Object objLock = new object();
 
         public TempTestPage()
         {
@@ -125,6 +142,8 @@ namespace ABBDataManagerSystem.Pages
             rbSerialPort.IsEnabled = !IsCollecting;
             cbInterval.IsEnabled = !IsCollecting;
             mcbSelectedSlots.IsEnabled = !IsCollecting;
+            cbTestType.IsEnabled = !IsCollecting;
+            cbTestStatus.IsEnabled = !IsCollecting;
 
             if (IsCollecting)
             {
@@ -297,6 +316,7 @@ namespace ABBDataManagerSystem.Pages
             {
                 ResetEvent.Set();
             }
+            Tools.EventManager.Instance.Unsubscribe<TestEventArgs>("PowerAnalyzer", EventHandler);
         }
 
         #region 图表相关操作
@@ -413,16 +433,82 @@ namespace ABBDataManagerSystem.Pages
             Table.Rows.Clear();
             Table.Columns.Clear();
 
-            DataGridTextColumn dateColumn = new DataGridTextColumn
+            dgTempRecord.Columns.Add(new DataGridTextColumn
             {
                 Header = "时间",
                 Binding = new Binding("时间")
                 {
                     StringFormat = "yyyy-MM-dd HH:mm:ss"
                 }
-            };
-            dgTempRecord.Columns.Add(dateColumn);
+            });
+
+            dgTempRecord.Columns.Add(new DataGridTextColumn()
+            {
+                Header = "Ua",
+                Binding = new Binding("Ua"),
+                MinWidth = 40
+            });
+            dgTempRecord.Columns.Add(new DataGridTextColumn()
+            {
+                Header = "Ub",
+                Binding = new Binding("Ub"),
+                MinWidth = 40
+            });
+            dgTempRecord.Columns.Add(new DataGridTextColumn()
+            {
+                Header = "Uc",
+                Binding = new Binding("Uc"),
+                MinWidth = 40
+            });
+            dgTempRecord.Columns.Add(new DataGridTextColumn()
+            {
+                Header = "U3",
+                Binding = new Binding("U3"),
+                MinWidth = 40
+            });
+
+            dgTempRecord.Columns.Add(new DataGridTextColumn()
+            {
+                Header = "Ia",
+                Binding = new Binding("Ia"),
+                MinWidth = 40
+            });
+            dgTempRecord.Columns.Add(new DataGridTextColumn()
+            {
+                Header = "Ib",
+                Binding = new Binding("Ib"),
+                MinWidth = 40
+            });
+            dgTempRecord.Columns.Add(new DataGridTextColumn()
+            {
+                Header = "Ic",
+                Binding = new Binding("Ic"),
+                MinWidth = 40
+            });
+            dgTempRecord.Columns.Add(new DataGridTextColumn()
+            {
+                Header = "I3",
+                Binding = new Binding("I3"),
+                MinWidth = 40
+            });
+
+            dgTempRecord.Columns.Add(new DataGridTextColumn()
+            {
+                Header = "P3",
+                Binding = new Binding("P3"),
+                MinWidth = 40
+            });
+
             Table.Columns.Add("时间", typeof(DateTime));
+            Table.Columns.Add("Ua", typeof(float));
+            Table.Columns.Add("Ub", typeof(float));
+            Table.Columns.Add("Uc", typeof(float));
+            Table.Columns.Add("U3", typeof(float));
+            Table.Columns.Add("Ia", typeof(float));
+            Table.Columns.Add("Ib", typeof(float));
+            Table.Columns.Add("Ic", typeof(float));
+            Table.Columns.Add("I3", typeof(float));
+            Table.Columns.Add("P3", typeof(float));
 
             for (int i = 0; i < SelectedSlots.Count; i++)
             {
@@ -438,6 +524,8 @@ namespace ABBDataManagerSystem.Pages
 
             dgTempRecord.AutoGenerateColumns = false;
             dgTempRecord.ItemsSource = Table.DefaultView;
+
+            Tools.EventManager.Instance.Subscribe<TestEventArgs>("PowerAnalyzer", EventHandler);
         }
 
         private void UpdateDataGrid(float[] values)
@@ -449,9 +537,50 @@ namespace ABBDataManagerSystem.Pages
                 var slot = SelectedSlots[i];
                 newRow[$"槽位-{slot}"] = values[i];
             }
-            Dispatcher.Invoke(() => {
+            lock (objLock)
+            {
+                if (CurrentVoltageInfo.IsUpdated)
+                {
+                    CurrentVoltageInfo.IsUpdated = false;
+                    newRow["ua"] = CurrentVoltageInfo.ua;
+                    newRow["ub"] = CurrentVoltageInfo.ub;
+                    newRow["uc"] = CurrentVoltageInfo.uc;
+                    newRow["u3"] = CurrentVoltageInfo.u3;
+                    newRow["ia"] = CurrentVoltageInfo.ua;
+                    newRow["ib"] = CurrentVoltageInfo.ub;
+                    newRow["ic"] = CurrentVoltageInfo.uc;
+                    newRow["i3"] = CurrentVoltageInfo.u3;
+                    newRow["p3"] = CurrentVoltageInfo.p3;
+                }
+            }
+            Dispatcher.Invoke(() =>
+            {
                 Table.Rows.Add(newRow);
             });
+        }
+
+        private void EventHandler(object sender, TestEventArgs e)
+        {
+            if (e.obj == null) { return; }
+            var info = e.obj as VoltageCurrentLossDataInfo;
+            if (info != null)
+            {
+                lock (objLock)
+                {
+                    CurrentVoltageInfo.ua = info.ua ?? 0;
+                    CurrentVoltageInfo.ub = info.ub ?? 0;
+                    CurrentVoltageInfo.uc = info.uc ?? 0;
+                    CurrentVoltageInfo.u3 = info.u3 ?? 0;
+
+                    CurrentVoltageInfo.ia = info.ia ?? 0;
+                    CurrentVoltageInfo.ib = info.ib ?? 0;
+                    CurrentVoltageInfo.ic = info.ic ?? 0;
+                    CurrentVoltageInfo.i3 = info.i3 ?? 0;
+
+                    CurrentVoltageInfo.p3 = info.p3 ?? 0;
+                    CurrentVoltageInfo.IsUpdated = true;
+                }
+            }
         }
         #endregion
 
