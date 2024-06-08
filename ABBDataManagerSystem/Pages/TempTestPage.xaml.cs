@@ -4,6 +4,7 @@ using ABBDataManagerSystem.Pages.Views;
 using HandyControl.Controls;
 using HandyControl.Properties;
 using Microsoft.Win32;
+using System.Data;
 using System.IO;
 using System.IO.Ports;
 using System.Text;
@@ -19,7 +20,7 @@ namespace ABBDataManagerSystem.Pages
     /// </summary>
     public partial class TempTestPage : UserControl, ICloseable
     {
-        private static bool Simulate = false;
+        private static bool Simulate = true;
         private bool IsFirstLoad = true;
 
         private bool UsingSerial = true;
@@ -41,6 +42,7 @@ namespace ABBDataManagerSystem.Pages
         private ManualResetEvent? ResetEvent = null;
         private int Interval = 200;
         private int SlotCount = 20;
+        private DataTable Table = new DataTable();
 
         public TempTestPage()
         {
@@ -51,7 +53,7 @@ namespace ABBDataManagerSystem.Pages
             {
                 SlotChoices.Add("通道-" + i.ToString());
             }
-            this.DataContext = new { DataList = SlotChoices };
+            this.DataContext = new { DataList = SlotChoices, Table };
         }
 
         private void InitView()
@@ -152,6 +154,11 @@ namespace ABBDataManagerSystem.Pages
             tempCharts.InitChart();
         }
 
+        private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+        {
+            //Close();
+        }
+
         private void InitSlot()
         {
             SlotWrapPanel.Children.Clear();
@@ -183,7 +190,6 @@ namespace ABBDataManagerSystem.Pages
                 var uc = Slots[i];
                 uc.Slot = SelectedSlots[i];
             }
-            ResizeChartView();
         }
 
         private void btStart_Click(object sender, RoutedEventArgs e)
@@ -216,6 +222,7 @@ namespace ABBDataManagerSystem.Pages
             {
                 needSaveCsv = SelectOpenFile();
             }
+            InitDataGrid();
             if (!Simulate)
             {
                 if (rbEthernet.IsChecked == true)
@@ -285,42 +292,7 @@ namespace ABBDataManagerSystem.Pages
             }
         }
 
-        private bool SelectOpenFile()
-        {
-            // 获取当前时间  
-            DateTime now = DateTime.Now;
-            // 格式化时间，您可以选择任何喜欢的格式  
-            string fileName = $"temperature_records_{now:yyyydMMddHHmmss}.csv";
-            var saveFileDialog = new SaveFileDialog()
-            {
-                FileName = fileName,
-                Title = "选择文件存储路径",
-                Filter = "CSV files (*.csv)|*.csv"
-            };
-            if (saveFileDialog.ShowDialog() == true)
-            {
-                tbSaveFilePath.Text = saveFileDialog.FileName;
-                return true;
-            }
-            return false;
-        }
-
-        private void tableLayoutPanel1_SizeChanged(object sender, EventArgs e)
-        {
-            ResizeChartView();
-        }
-
-        private void ResizeChartView()
-        {
-            // 假设你的TableLayoutPanel的名字是tableLayoutPanel1  
-            //int lastRowIndex = tableLayoutPanel1.RowCount - 1;
-            //var lastRowStyle = tableLayoutPanel1.RowStyles[lastRowIndex];
-            ////var lastRowHeight = lastRowStyle.Height;
-            //panelFormChart.Height = tableLayoutPanel1.Height - panelFormChart.Location.Y - panelFormChart.Margin.Bottom;
-            //Log.Info($"plotView1 location {panelFormChart.Location.ToString()} size {panelFormChart.Size}");
-            //Log.Info($"tableLayout location {tableLayoutPanel1.Location.ToString()} size {tableLayoutPanel1.Size}");
-        }
-
+        #region 图表相关操作
         private void btClear_Click(object sender, RoutedEventArgs e)
         {
             var ret = MessageBox.Show("确定清空数据？", "提示", MessageBoxButton.YesNo, MessageBoxImage.Warning);
@@ -349,6 +321,113 @@ namespace ABBDataManagerSystem.Pages
                 }
             }));
         }
+
+        private void tbHideAllLine_Click(object sender, RoutedEventArgs e)
+        {
+            tempCharts.HideAllLines();
+        }
+
+        private void btResumeLines_Click(object sender, RoutedEventArgs e)
+        {
+            tempCharts.ResuneAllLines();
+        }
+
+        private void btSaveToPng_Click(object sender, RoutedEventArgs e)
+        {
+
+            // 获取当前时间  
+            DateTime now = DateTime.Now;
+            // 格式化时间，您可以选择任何喜欢的格式  
+            string fileName = $"temperature_charts_{now:yyyydMMddHHmmss}.png";
+            var saveFileDialog = new SaveFileDialog()
+            {
+                FileName = fileName,
+                Filter = "PNG files (*.png)|*.png",
+                Title = "导出当前图表",
+            };
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                tempCharts.ExportToPng(saveFileDialog.FileName);
+            }
+        }
+
+        private void btResteAxis_Click(object sender, RoutedEventArgs e)
+        {
+            plotView.Model.ResetAllAxes();
+            plotView.Model.InvalidatePlot(false);
+        }
+
+        private void btToogleLegends_Click(object sender, RoutedEventArgs e)
+        {
+            tempCharts.ToogleLegends();
+        }
+
+        #region 表格X轴时间范围设置
+        private void InitChartRange()
+        {
+            //cbChartRange.Items.Clear();
+            //cbChartRange.Items.AddRange(new string[]
+            //{
+            //    "显示全部",
+            //    "显示最近一小时",
+            //    "显示最近30分钟",
+            //    "显示最近5分钟",
+            //});
+            //cbChartRange.SelectedIndex = 0;
+            //cbChartRange.SelectedIndexChanged += CbChartRange_SelectedIndexChanged;
+        }
+
+        private void CbChartRange_SelectedIndexChanged(object? sender, RoutedEventArgs e)
+        {
+            //switch (cbChartRange.SelectedIndex)
+            //{
+            //    case 0:
+            //        tempCharts.SetDateTimeAxisRange(-1);
+            //        break;
+            //    case 1:
+            //        tempCharts.SetDateTimeAxisRange(60);
+            //        break;
+            //    case 2:
+            //        tempCharts.SetDateTimeAxisRange(30);
+            //        break;
+            //    case 3:
+            //        tempCharts.SetDateTimeAxisRange(5);
+            //        break;
+            //}
+        }
+        #endregion
+        #endregion
+
+        #region 记录表格相关操作
+        private void InitDataGrid()
+        {
+            Table.Rows.Clear();
+            Table.Columns.Clear();
+            Table.Columns.Add("时间", typeof(DateTime));
+            for (int i = 0; i < SelectedSlots.Count; i++)
+            {
+                var slot = SelectedSlots[i];
+                Table.Columns.Add($"槽位-{slot}", typeof(float));
+            }
+            dgTempRecord.ItemsSource = Table.AsDataView();
+        }
+
+        private void UpdateDataGrid(float[] values)
+        {
+            DataRow newRow = Table.NewRow();
+            newRow["时间"] = DateTime.Now;
+            for (int i = 0; i < SelectedSlots.Count && i < values.Length; i++)
+            {
+                var slot = SelectedSlots[i];
+                newRow[$"槽位-{slot}"] = values[i];
+            }
+            Table.Rows.Add(newRow);
+            Dispatcher.Invoke(() => {
+                dgTempRecord.ItemsSource = null;
+                dgTempRecord.ItemsSource = Table.AsDataView();
+            });
+        }
+        #endregion
 
         private void UpdateInterval()
         {
@@ -409,6 +488,7 @@ namespace ABBDataManagerSystem.Pages
             }
             HandleRecords(values);
             WriteCSVFile(values);
+            UpdateDataGrid(values);
         }
 
         private void CbInterval_SelectedIndexChanged(object? sender, RoutedEventArgs e)
@@ -416,43 +496,34 @@ namespace ABBDataManagerSystem.Pages
             UpdateInterval();
         }
 
-        private void btSaveToPng_Click(object sender, RoutedEventArgs e)
+        #region 数据写入CSV
+        private bool SelectOpenFile()
         {
-
             // 获取当前时间  
             DateTime now = DateTime.Now;
             // 格式化时间，您可以选择任何喜欢的格式  
-            string fileName = $"temperature_charts_{now:yyyydMMddHHmmss}.png";
+            string fileName = $"temperature_records_{now:yyyydMMddHHmmss}.csv";
             var saveFileDialog = new SaveFileDialog()
             {
                 FileName = fileName,
-                Filter = "PNG files (*.png)|*.png",
-                Title = "导出当前图表",
+                Title = "选择文件存储路径",
+                Filter = "CSV files (*.csv)|*.csv"
             };
             if (saveFileDialog.ShowDialog() == true)
             {
-                tempCharts.ExportToPng(saveFileDialog.FileName);
+                tbSaveFilePath.Text = saveFileDialog.FileName;
+                return true;
             }
-        }
-
-        private void btResteAxis_Click(object sender, RoutedEventArgs e)
-        {
-            plotView.Model.ResetAllAxes();
-            plotView.Model.InvalidatePlot(false);
-        }
-
-        private void btToogleLegends_Click(object sender, RoutedEventArgs e)
-        {
-            tempCharts.ToogleLegends();
+            return false;
         }
 
         private void StartCSVFile()
         {
             // 定义要写入CSV文件的数据  
             string[] titles = new string[SlotCount + 1];
-            for (int i = 0; i < titles.Length; i++)
+            for (int i = 0; i < SelectedSlots.Count; i++)
             {
-                titles[i] = $"Slot{i + 1}";
+                titles[i] = $"Slot{SelectedSlots[i]}";
             }
             titles[SlotCount] = "Time";
 
@@ -491,52 +562,9 @@ namespace ABBDataManagerSystem.Pages
             csvWriter?.Close();
             csvWriter = null;
         }
-
-        #region 表格X轴时间范围设置
-        private void InitChartRange()
-        {
-            //cbChartRange.Items.Clear();
-            //cbChartRange.Items.AddRange(new string[]
-            //{
-            //    "显示全部",
-            //    "显示最近一小时",
-            //    "显示最近30分钟",
-            //    "显示最近5分钟",
-            //});
-            //cbChartRange.SelectedIndex = 0;
-            //cbChartRange.SelectedIndexChanged += CbChartRange_SelectedIndexChanged;
-        }
-
-        private void CbChartRange_SelectedIndexChanged(object? sender, RoutedEventArgs e)
-        {
-            //switch (cbChartRange.SelectedIndex)
-            //{
-            //    case 0:
-            //        tempCharts.SetDateTimeAxisRange(-1);
-            //        break;
-            //    case 1:
-            //        tempCharts.SetDateTimeAxisRange(60);
-            //        break;
-            //    case 2:
-            //        tempCharts.SetDateTimeAxisRange(30);
-            //        break;
-            //    case 3:
-            //        tempCharts.SetDateTimeAxisRange(5);
-            //        break;
-            //}
-        }
         #endregion
 
-        private void tbHideAllLine_Click(object sender, RoutedEventArgs e)
-        {
-            tempCharts.HideAllLines();
-        }
-
-        private void btResumeLines_Click(object sender, RoutedEventArgs e)
-        {
-            tempCharts.ResuneAllLines();
-        }
-
+        #region 配置读写
         private void UpdateByConfig()
         {
             if (UsingSerial)
@@ -613,14 +641,9 @@ namespace ABBDataManagerSystem.Pages
             Configs.Configs.TPSlots = slots;
             Configs.Configs.TPInterval = cbInterval.Text;
         }
-
-
         #endregion
 
-        private void UserControl_Unloaded(object sender, RoutedEventArgs e)
-        {
-            //Close();
-        }
+        #endregion
 
         private void mcbSelectedSlots_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
