@@ -9,6 +9,8 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Threading;
 using Yokogawa.Tm.WT1800CommSample.cs;
+using ABBDataManagerSystem.Tools;
+using EventManager = ABBDataManagerSystem.Tools.EventManager;
 
 namespace ABBDataManagerSystem.PowerAnalyzer
 {
@@ -2603,6 +2605,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             CurrentData.fU = fu;
             IsDataUpdated = true;
             #endregion
+            EventManager.Instance.TriggerEvent("PowerAnalyzer", this, new TestEventArgs() { obj = CurrentData });
 
             IsRefreshing = false;
         }
