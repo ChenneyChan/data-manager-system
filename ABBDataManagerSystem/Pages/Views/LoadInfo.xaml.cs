@@ -64,7 +64,7 @@ namespace ABBDataManagerSystem.Pages.Views
         {
             var tb = new TextBlock()
             {
-                Text = "",
+                Text = "22230.00",
                 VerticalAlignment = System.Windows.VerticalAlignment.Center,
                 HorizontalAlignment = System.Windows.HorizontalAlignment.Center,
             };
