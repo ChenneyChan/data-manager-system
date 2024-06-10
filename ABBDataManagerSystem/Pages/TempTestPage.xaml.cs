@@ -196,8 +196,8 @@ namespace ABBDataManagerSystem.Pages
                         Slot = i + 1,
                         Temperature = -200f,
                         Margin = new Thickness(5),
-                        Width = 120,
-                        Height = 120,
+                        Width = 100,
+                        Height = 100,
                     };
                     SlotWrapPanel.Children.Add(uc);
                     Slots.Add(uc);
@@ -515,42 +515,50 @@ namespace ABBDataManagerSystem.Pages
             dgTempRecord.Columns.Add(new DataGridTextColumn()
             {
                 Header = $"绕组A",
-                Binding = new Binding(Configs.Configs.WindingA)
+                Binding = new Binding(Configs.Configs.WindingA),
+                MinWidth = 40
             });
             dgTempRecord.Columns.Add(new DataGridTextColumn()
             {
                 Header = $"绕组B",
-                Binding = new Binding(Configs.Configs.WindingB)
+                Binding = new Binding(Configs.Configs.WindingB),
+                MinWidth = 40
             });
             dgTempRecord.Columns.Add(new DataGridTextColumn()
             {
                 Header = $"绕组C",
-                Binding = new Binding(Configs.Configs.WindingC)
+                Binding = new Binding(Configs.Configs.WindingC),
+                MinWidth = 40
             });
             dgTempRecord.Columns.Add(new DataGridTextColumn()
             {
                 Header = $"铁心",
-                Binding = new Binding(Configs.Configs.Core)
+                Binding = new Binding(Configs.Configs.Core),
+                MinWidth = 40
             });
             dgTempRecord.Columns.Add(new DataGridTextColumn()
             {
                 Header = $"环境A",
-                Binding = new Binding(Configs.Configs.EnvA)
+                Binding = new Binding(Configs.Configs.EnvA),
+                MinWidth = 40
             });
             dgTempRecord.Columns.Add(new DataGridTextColumn()
             {
                 Header = $"环境B",
-                Binding = new Binding(Configs.Configs.EnvB)
+                Binding = new Binding(Configs.Configs.EnvB),
+                MinWidth = 40
             });
             dgTempRecord.Columns.Add(new DataGridTextColumn()
             {
                 Header = $"环境C",
-                Binding = new Binding(Configs.Configs.EnvC)
+                Binding = new Binding(Configs.Configs.EnvC),
+                MinWidth = 40
             });
             dgTempRecord.Columns.Add(new DataGridTextColumn()
             {
                 Header = $"环境D",
-                Binding = new Binding(Configs.Configs.EnvD)
+                Binding = new Binding(Configs.Configs.EnvD),
+                MinWidth = 40
             });
             for (int i = 0; i < SelectedSlots.Count; i++)
             {
