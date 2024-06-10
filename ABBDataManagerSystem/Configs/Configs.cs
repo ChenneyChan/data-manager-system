@@ -50,6 +50,15 @@ namespace ABBDataManagerSystem.Configs
         public static int TPUsingSerialPort { set; get; } = 0;
         public static string TPSlots { set; get; } = string.Empty;
         public static string TPInterval { set; get; } = string.Empty;
+
+        public static string WindingA {  set; get; } = string.Empty;
+        public static string WindingB {  set; get; } = string.Empty;
+        public static string WindingC {  set; get; } = string.Empty;
+        public static string Core {  set; get; } = string.Empty;
+        public static string EnvA {  set; get; } = string.Empty;
+        public static string EnvB {  set; get; } = string.Empty;
+        public static string EnvC {  set; get; } = string.Empty;
+        public static string EnvD {  set; get; } = string.Empty;
         #endregion
 
         #region 常规设置
@@ -101,6 +110,7 @@ namespace ABBDataManagerSystem.Configs
             GetPrivateProfileString(INIDatabase, "DatabaseName", "", buff, 16, INIPATH);
             DatabaseName = buff.ToString();
 
+            #region 温度测试仪
             GetPrivateProfileString(INITemperature, "SerialPort", "", buff, 16, INIPATH);
             TPSerialPort = buff.ToString();
             GetPrivateProfileString(INITemperature, "SerialBoudRate", "", buff, 16, INIPATH);
@@ -115,6 +125,23 @@ namespace ABBDataManagerSystem.Configs
             TPUsingSerialPort = Utils.ParseInt(buff.ToString());
             GetPrivateProfileString(INITemperature, "Interval", "", buff, 32, INIPATH);
             TPInterval = buff.ToString();
+            GetPrivateProfileString(INITemperature, "WindingA", "", buff, 32, INIPATH);
+            WindingA = buff.ToString();
+            GetPrivateProfileString(INITemperature, "WindingB", "", buff, 32, INIPATH);
+            WindingB = buff.ToString();
+            GetPrivateProfileString(INITemperature, "WindingC", "", buff, 32, INIPATH);
+            WindingC = buff.ToString();
+            GetPrivateProfileString(INITemperature, "Core", "", buff, 32, INIPATH);
+            Core = buff.ToString();
+            GetPrivateProfileString(INITemperature, "EnvA", "", buff, 32, INIPATH);
+            EnvA = buff.ToString();
+            GetPrivateProfileString(INITemperature, "EnvB", "", buff, 32, INIPATH);
+            EnvB = buff.ToString();
+            GetPrivateProfileString(INITemperature, "EnvC", "", buff, 32, INIPATH);
+            EnvC = buff.ToString();
+            GetPrivateProfileString(INITemperature, "EnvD", "", buff, 32, INIPATH);
+            EnvD = buff.ToString();
+            #endregion
 
             // 功率分析仪
             GetPrivateProfileString(INIPowerAnalyzer, "VT", "", buff, 32, INIPATH);
@@ -145,6 +172,14 @@ namespace ABBDataManagerSystem.Configs
             WritePrivateProfileString(INITemperature, "SelectedSlots", TPSlots, INIPATH);
             WritePrivateProfileString(INITemperature, "UsingSerialPort", TPUsingSerialPort.ToString(), INIPATH);
             WritePrivateProfileString(INITemperature, "Interval", TPInterval, INIPATH);
+            WritePrivateProfileString(INITemperature, "WindingA", WindingA, INIPATH);
+            WritePrivateProfileString(INITemperature, "WindingB", WindingB, INIPATH);
+            WritePrivateProfileString(INITemperature, "WindingC", WindingC, INIPATH);
+            WritePrivateProfileString(INITemperature, "Core", Core, INIPATH);
+            WritePrivateProfileString(INITemperature, "EnvA", EnvA, INIPATH);
+            WritePrivateProfileString(INITemperature, "EnvB", EnvB, INIPATH);
+            WritePrivateProfileString(INITemperature, "EnvC", EnvC, INIPATH);
+            WritePrivateProfileString(INITemperature, "EnvD", EnvD, INIPATH);
 
             // 功率分析仪
             WritePrivateProfileString(INIPowerAnalyzer, "VT", VT != null ? Utils.FloatFormat((float)VT, 4) : "" , INIPATH);

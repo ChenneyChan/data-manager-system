@@ -1,16 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace ABBDataManagerSystem.Pages
 {
@@ -19,10 +8,11 @@ namespace ABBDataManagerSystem.Pages
     /// </summary>
     public partial class TempSlotSelectView : Window
     {
-        private static readonly int MaxSlot = 36;
-        public TempSlotSelectView()
+        private int MaxSlot = 36;
+        public TempSlotSelectView(int maxSlot = 36)
         {
             InitializeComponent();
+            this.MaxSlot = maxSlot;
             InitView();
         }
 
@@ -36,24 +26,43 @@ namespace ABBDataManagerSystem.Pages
 
         private void InitView()
         {
-            InitComboBox(cbRaoZuA);
-            InitComboBox(cbRaoZuB);
-            InitComboBox(cbRaoZuC);
+            InitComboBox(cbWindingA);
+            InitComboBox(cbWindingB);
+            InitComboBox(cbWindingC);
             InitComboBox(cbCore);
             InitComboBox(cbEnvA);
             InitComboBox(cbEnvB);
             InitComboBox(cbEnvC);
             InitComboBox(cbEnvD);
+            cbWindingA.Text = Configs.Configs.WindingA;
+            cbWindingB.Text = Configs.Configs.WindingB;
+            cbWindingC.Text = Configs.Configs.WindingC;
+            cbCore.Text = Configs.Configs.Core;
+            cbEnvA.Text = Configs.Configs.EnvA;
+            cbEnvB.Text = Configs.Configs.EnvB;
+            cbEnvC.Text = Configs.Configs.EnvC;
+            cbEnvD.Text = Configs.Configs.EnvD;
         }
 
         private void btCancel_Click(object sender, RoutedEventArgs e)
         {
+            DialogResult = false;
             Close();
         }
 
         private void btConfirm_Click(object sender, RoutedEventArgs e)
         {
-            
+            Configs.Configs.WindingA = cbWindingA.Text;
+            Configs.Configs.WindingB = cbWindingB.Text;
+            Configs.Configs.WindingC = cbWindingC.Text;
+            Configs.Configs.Core = cbCore.Text;
+            Configs.Configs.EnvA = cbEnvA.Text;
+            Configs.Configs.EnvB = cbEnvB.Text;
+            Configs.Configs.EnvC = cbEnvC.Text;
+            Configs.Configs.EnvD = cbEnvD.Text;
+
+            DialogResult = true;
+            Close();
         }
     }
 }

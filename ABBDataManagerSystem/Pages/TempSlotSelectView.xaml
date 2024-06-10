@@ -71,9 +71,9 @@
         <TextBlock Grid.Row="1" Grid.Column="6"  Text="c" VerticalAlignment="Center" FontSize="16" HorizontalAlignment="Center"/>
         <TextBlock Grid.Row="1" Grid.Column="7"  Text="d" VerticalAlignment="Center" FontSize="16" HorizontalAlignment="Center"/>
 
-        <hc:ComboBox Grid.Row="2" Grid.Column="0"  Name="cbRaoZuA" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-        <hc:ComboBox Grid.Row="2" Grid.Column="1"  Name="cbRaoZuB" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-        <hc:ComboBox Grid.Row="2" Grid.Column="2"  Name="cbRaoZuC" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+        <hc:ComboBox Grid.Row="2" Grid.Column="0"  Name="cbWindingA" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+        <hc:ComboBox Grid.Row="2" Grid.Column="1"  Name="cbWindingB" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+        <hc:ComboBox Grid.Row="2" Grid.Column="2"  Name="cbWindingC" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
         <hc:ComboBox Grid.Row="2" Grid.Column="3"  Name="cbCore" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
         <hc:ComboBox Grid.Row="2" Grid.Column="4"  Name="cbEnvA" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
         <hc:ComboBox Grid.Row="2" Grid.Column="5"  Name="cbEnvB" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>

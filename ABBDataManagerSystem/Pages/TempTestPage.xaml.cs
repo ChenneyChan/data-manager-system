@@ -59,6 +59,7 @@ namespace ABBDataManagerSystem.Pages
         private ManualResetEvent? ResetEvent = null;
         private int Interval = 200;
         private int SlotCount = 20;
+        private static readonly int MaxSlotCount = 36;
         private DataTable Table = new DataTable();
         private VoltageInfo CurrentVoltageInfo = new();
         private Object objLock = new object();
@@ -68,7 +69,7 @@ namespace ABBDataManagerSystem.Pages
             InitializeComponent();
             InitView();
             List<string> SlotChoices = new List<string>();
-            for (int i = 1; i <= 36; i++)
+            for (int i = 1; i <= MaxSlotCount; i++)
             {
                 SlotChoices.Add("通道-" + i.ToString());
             }
@@ -830,7 +831,11 @@ namespace ABBDataManagerSystem.Pages
 
         private void btSelectSlots_Click(object sender, RoutedEventArgs e)
         {
-            new TempSlotSelectView() { WindowStartupLocation = WindowStartupLocation.CenterScreen }.ShowDialog();
+            var selectDialog = new TempSlotSelectView(MaxSlotCount) { WindowStartupLocation = WindowStartupLocation.CenterScreen };
+            if (selectDialog.ShowDialog() == true)
+            {
+
+            }
         }
         #endregion
     }

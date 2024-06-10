@@ -100,7 +100,11 @@
 
             <!--<TextBlock Text="通道选择" Width="80" Grid.Column="0" Margin="0, 0, 20,0"/>-->
             <StackPanel Grid.Column="1" >
-                <hc:CheckComboBox MaxHeight="200" hc:InfoElement.ShowClearButton="True" FontSize="18"
+                <WrapPanel>
+                    <TextBlock Text="通道选择："/>
+                    <TextBlock Text="" Name="tbSlotMappingShow"/>
+                </WrapPanel>
+                <hc:CheckComboBox Visibility="Collapsed" MaxHeight="200" hc:InfoElement.ShowClearButton="True" FontSize="18"
                                         hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Placeholder="选择监视通道" hc:InfoElement.Title="通道选择" 
                                         Name="mcbSelectedSlots" ShowSelectAllButton="True" ItemsSource="{Binding DataList}" Style="{StaticResource CheckComboBoxPlus}" 
                                         HorizontalAlignment="Stretch" SelectionChanged="mcbSelectedSlots_SelectionChanged" VerticalAlignment="Top"/>
