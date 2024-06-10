@@ -142,7 +142,7 @@ namespace ABBDataManagerSystem.Pages
             rbEthernet.IsEnabled = !IsCollecting;
             rbSerialPort.IsEnabled = !IsCollecting;
             cbInterval.IsEnabled = !IsCollecting;
-            cbTestType.IsEnabled = !IsCollecting;
+            cbTestPhase.IsEnabled = !IsCollecting;
             cbTestStatus.IsEnabled = !IsCollecting;
             btSelectSlots.IsEnabled = !IsCollecting;
 
@@ -885,14 +885,14 @@ namespace ABBDataManagerSystem.Pages
         private void UpdateSlotsMappingDisplay()
         {
             string msg = "";
-            msg += $"绕组A - {Configs.Configs.WindingA}, "; 
-            msg += $"绕组B - {Configs.Configs.WindingB}, "; 
-            msg += $"绕组C - {Configs.Configs.WindingC}, "; 
-            msg += $"铁心 - {Configs.Configs.Core}, "; 
-            msg += $"环境1 - {Configs.Configs.EnvA}, "; 
-            msg += $"环境2 - {Configs.Configs.EnvB}, "; 
-            msg += $"环境3 - {Configs.Configs.EnvC}, "; 
-            msg += $"环境4 - {Configs.Configs.EnvD}, "; 
+            msg += $"绕组A - {Configs.Configs.WindingA}, ";
+            msg += $"绕组B - {Configs.Configs.WindingB}, ";
+            msg += $"绕组C - {Configs.Configs.WindingC}, ";
+            msg += $"铁心 - {Configs.Configs.Core}, ";
+            msg += $"环境1 - {Configs.Configs.EnvA}, ";
+            msg += $"环境2 - {Configs.Configs.EnvB}, ";
+            msg += $"环境3 - {Configs.Configs.EnvC}, ";
+            msg += $"环境4 - {Configs.Configs.EnvD}, ";
             tbSlotMappingShow.Text = msg;
             shWindingA.Status = Configs.Configs.WindingA;
             shWindingB.Status = Configs.Configs.WindingB;
@@ -902,6 +902,97 @@ namespace ABBDataManagerSystem.Pages
             shEnvB.Status = Configs.Configs.EnvB;
             shEnvC.Status = Configs.Configs.EnvC;
             shEnvD.Status = Configs.Configs.EnvD;
+        }
+        #endregion
+
+        #region 数据上传
+
+        private void UploadData()
+        {
+            CommonTempRiseTestInfo configItem;
+            var items = CommonTempRiseTestInfo.ReadFromDB(Configs.Configs.WorkfloID, cbTestPhase.Text, cbTestStatus.Text);
+            if (items == null || items.Count == 0)
+            {
+                configItem = new CommonTempRiseTestInfo()
+                {
+                    TestingPhase = cbTestPhase.Text,
+                    TestingStatus = cbTestStatus.Text,
+                    WorkflowId = Configs.Configs.WorkfloID,
+                    DateTime = DateTime.Now,
+                };
+                if (!configItem.WriteToDB())
+                {
+                    MessageBox.Show("数据上传失败!", "上传结果", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+            }
+            else
+            {
+                configItem = items[0];
+            }
+
+            if (Table.Rows.Count == 0)
+            {
+                MessageBox.Show("暂无数据可以上传，请先采集数据!", "上传结果", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            // 删除之前的时间数据
+            CommonTempRiseTestRecordInfo.DeleteData(configItem.ID);
+
+            // 将DataTable中的数据转成试验数据格式并且一条条上传
+            var query = from row in Table.AsEnumerable()
+                        select row;
+            int i = 0;
+            foreach (var item in query)
+            {
+                i++;
+                var record = new CommonTempRiseTestRecordInfo()
+                {
+                    ID = configItem.ID,
+                    Timestamp = item.Field<DateTime>("时间"),
+                    Ua = item.Field<float?>("ua") ?? 0,
+                    Ub = item.Field<float?>("ub") ?? 0,
+                    Uc = item.Field<float?>("uc") ?? 0,
+                    U3 = item.Field<float?>("u3") ?? 0,
+                    Ia = item.Field<float?>("ia") ?? 0,
+                    Ib = item.Field<float?>("ib") ?? 0,
+                    Ic = item.Field<float?>("ic") ?? 0,
+                    I3 = item.Field<float?>("i3") ?? 0,
+                    P3 = item.Field<float?>("p3") ?? 0,
+                    CoreTemp = item.Field<float?>(Configs.Configs.Core) ?? 0,
+                    WindingTempA = item.Field<float?>(Configs.Configs.WindingA) ?? 0,
+                    WindingTempB = item.Field<float?>(Configs.Configs.WindingB) ?? 0,
+                    WindingTempC = item.Field<float?>(Configs.Configs.WindingC) ?? 0,
+                    EnvTempA = item.Field<float?>(Configs.Configs.EnvA) ?? 0,
+                    EnvTempB = item.Field<float?>(Configs.Configs.EnvB) ?? 0,
+                    EnvTempC = item.Field<float?>(Configs.Configs.EnvC) ?? 0,
+                    EnvTempD = item.Field<float?>(Configs.Configs.EnvD) ?? 0,
+                };
+                if (!record.WriteToDB())
+                {
+                    MessageBox.Show($"第{i}条数据上传失败，共{Table.Rows.Count}条数据!", "上传结果", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+            }
+            if (i > 0)
+            {
+                MessageBox.Show($"数据上传成功，共{Table.Rows.Count}条数据!", "上传结果", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                return;
+            }
+            //for (int i = 0; i < Table.Rows.Count; i++)
+            //{
+            //    var record =  new CommonTempRiseTestRecordInfo()
+            //    {
+            //        ID = configItem.ID,
+            //    };
+            //    record.Timestamp = (DateTime)Table.Rows[i]["时间"];
+            //}
+        }
+
+        private void btUpload_Click(object sender, RoutedEventArgs e)
+        {
+            UploadData();
         }
         #endregion
     }

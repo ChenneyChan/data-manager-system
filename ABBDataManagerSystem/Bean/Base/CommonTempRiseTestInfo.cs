@@ -35,7 +35,7 @@ namespace ABBDataManagerSystem.Bean.Base
                 // 打开数据库连接
                 connection.Open();
 
-                using (SQLCommond command = new SQLCommond($"INSERT INTO {TABLE_NAME} (ID, workflow_id, test_phase, test_status, " +
+                using (SQLCommond command = new SQLCommond($"INSERT INTO {TABLE_NAME} (ID, workflow_id, testing_phase, testing_status, " +
                     $"datetime) VALUES (@ID, @WorkflowId, @TestingPhase, @TestingStatus, " +
                     $"@DateTime)", connection))
                 {
@@ -59,11 +59,11 @@ namespace ABBDataManagerSystem.Bean.Base
                 queryDataSql += $" WHERE workflow_id = '{sequence}'";
                 if (testPhase != "")
                 {
-                    queryDataSql += $" AND test_phase = '{testPhase}'";
+                    queryDataSql += $" AND testing_phase = '{testPhase}'";
                 }
                 if (testStatus != "")
                 {
-                    queryDataSql += $" AND test_status = '{testStatus}'";
+                    queryDataSql += $" AND testing_status = '{testStatus}'";
                 }
             }
             List<CommonTempRiseTestInfo>? records = DBConnector.QueryFromDB<CommonTempRiseTestInfo>(queryDataSql, (reader) =>
@@ -95,7 +95,7 @@ namespace ABBDataManagerSystem.Bean.Base
             using (SQLConnection connection = new SQLConnection(DBConnector.GetConnectionString()))
             {
                 connection.Open();
-                SQLCommond command = new SQLCommond($"DELETE FROM {TABLE_NAME} WHERE workflow_id = @WorkflowId  AND test_phase = @TestPhase AND test_status = @TestStatus", connection);
+                SQLCommond command = new SQLCommond($"DELETE FROM {TABLE_NAME} WHERE workflow_id = @WorkflowId  AND testing_phase = @TestPhase AND testing_status = @TestStatus", connection);
                 command.Parameters.AddWithValue("@WorkflowId", workflowID);
                 command.Parameters.AddWithValue("@TestPhase", testPhase);
                 command.Parameters.AddWithValue("@TestStatus", testStatus);

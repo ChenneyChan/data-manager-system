@@ -11,7 +11,7 @@ namespace ABBDataManagerSystem.Configs
 
         public static TestingType TestingType { set; get; } = TestingType.DryTypeTransformerTesting;
 
-        public static string ProductSequence = "";
+        public static string WorkfloID = "SHUILENG_002";
         public static string ProductUserName = "";
         public static string ProductFigureNo = "";
 

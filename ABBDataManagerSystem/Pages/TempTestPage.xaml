@@ -155,7 +155,7 @@
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0, 10">
                     <TextBlock Text="试验阶段" Width="80" Margin="0, 0, 20,0" VerticalAlignment="Center"/>
-                    <hc:ComboBox Width="120" VerticalAlignment="Center" Name="cbTestType">
+                    <hc:ComboBox Width="120" VerticalAlignment="Center" Name="cbTestPhase">
                         <ComboBoxItem Content="空载" IsSelected="True"/>
                         <ComboBoxItem Content="负载"/>
                     </hc:ComboBox>
@@ -167,7 +167,8 @@
                     <Button Content="选择温度槽位" Name="btSelectSlots" Margin="10, 0" Click="btSelectSlots_Click" Height="34" BorderThickness="1" BorderBrush="Gray"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0, 0, 0, 20">
-                    <Button Name="btStart" Content="开始采集" Grid.Column="0" Grid.Row="0" Click="btStart_Click" Style="{StaticResource startbutton}" Background="DodgerBlue"/>
+                    <Button Name="btStart" Content="开始采集" Grid.Column="0" Click="btStart_Click" Style="{StaticResource startbutton}" Background="DodgerBlue"/>
+                    <Button Name="btUpload" Content="上传数据" Grid.Column="0" Click="btUpload_Click" Style="{StaticResource startbutton}" Background="DodgerBlue"/>
                     <!--<DockPanel Grid.Column="1" Grid.Row="0"></DockPanel>-->
                     <TextBlock Text="存储到CVS路径：" VerticalAlignment="Center" Margin="20,0"/>
                     <hc:TextBox Grid.Column="1" Grid.Row="0" HorizontalAlignment="Stretch" MinWidth="360" Name="tbSaveFilePath" IsReadOnly="True" Height="30"/>
