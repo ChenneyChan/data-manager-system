@@ -88,7 +88,7 @@
                         <ComboBoxItem Content="本体" IsSelected="True"/>
                         <ComboBoxItem Content="罩壳"/>
                     </hc:ComboBox>
-                    <Button Content="选择温度槽位" Name="btSelectSlots" Margin="10, 0" Click="btSelectSlots_Click"/>
+                    <Button Content="选择温度槽位" Name="btSelectSlots" Margin="10, 0" Click="btSelectSlots_Click" Height="34" BorderThickness="1" BorderBrush="Gray"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0, 0, 0, 20">
                     <Button Name="btStart" Content="开始采集" Grid.Column="0" Grid.Row="0" Click="btStart_Click" Style="{StaticResource startbutton}" Background="DodgerBlue"/>
@@ -102,13 +102,16 @@
             <StackPanel Grid.Column="1" >
                 <WrapPanel>
                     <TextBlock Text="通道选择："/>
-                    <TextBlock Text="" Name="tbSlotMappingShow"/>
+                    <TextBlock Text="" Name="tbSlotMappingShow" Visibility="Collapsed"/>
+                    <hc:Shield FontSize="18" Height="30" Margin="5, 0" Name="shWindingA" Subject="线圈A" Status="槽位1" Color="#1182c3"/>
+                    <hc:Shield FontSize="18" Height="30" Margin="5, 0" Name="shWindingB" Subject="线圈B" Status="槽位1" Color="#1182c3"/>
+                    <hc:Shield FontSize="18" Height="30" Margin="5, 0" Name="shWindingC" Subject="线圈C" Status="槽位1" Color="#1182c3"/>
+                    <hc:Shield FontSize="18" Height="30" Margin="5, 0" Name="shCore" Subject="铁心"  Status="槽位2" Color="#1182c3"/>
+                    <hc:Shield FontSize="18" Height="30" Margin="5, 0" Name="shEnvA" Subject="环境A" Status="槽位1" Color="#1182c3"/>
+                    <hc:Shield FontSize="18" Height="30" Margin="5, 0" Name="shEnvB" Subject="环境B" Status="槽位1" Color="#1182c3"/>
+                    <hc:Shield FontSize="18" Height="30" Margin="5, 0" Name="shEnvC" Subject="环境C" Status="槽位1" Color="#1182c3"/>
+                    <hc:Shield FontSize="18" Height="30" Margin="5, 0" Name="shEnvD" Subject="环境D" Status="槽位1" Color="#1182c3"/>
                 </WrapPanel>
-                <hc:CheckComboBox Visibility="Collapsed" MaxHeight="200" hc:InfoElement.ShowClearButton="True" FontSize="18"
-                                        hc:InfoElement.TitlePlacement="Top" hc:InfoElement.Placeholder="选择监视通道" hc:InfoElement.Title="通道选择" 
-                                        Name="mcbSelectedSlots" ShowSelectAllButton="True" ItemsSource="{Binding DataList}" Style="{StaticResource CheckComboBoxPlus}" 
-                                        HorizontalAlignment="Stretch" SelectionChanged="mcbSelectedSlots_SelectionChanged" VerticalAlignment="Top"/>
-
             </StackPanel>
         </Grid>
         <WrapPanel Grid.Column="0" Grid.Row="1" Name="SlotWrapPanel" Background="#FFD1D4D6" Grid.ColumnSpan="2" Margin="0,10,0,0">

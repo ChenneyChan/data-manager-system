@@ -142,7 +142,6 @@ namespace ABBDataManagerSystem.Pages
             rbEthernet.IsEnabled = !IsCollecting;
             rbSerialPort.IsEnabled = !IsCollecting;
             cbInterval.IsEnabled = !IsCollecting;
-            mcbSelectedSlots.IsEnabled = !IsCollecting;
             cbTestType.IsEnabled = !IsCollecting;
             cbTestStatus.IsEnabled = !IsCollecting;
             btSelectSlots.IsEnabled = !IsCollecting;
@@ -512,16 +511,50 @@ namespace ABBDataManagerSystem.Pages
             Table.Columns.Add("I3", typeof(float));
             Table.Columns.Add("P3", typeof(float));
 
+            dgTempRecord.Columns.Add(new DataGridTextColumn()
+            {
+                Header = $"绕组A",
+                Binding = new Binding(Configs.Configs.WindingA)
+            });
+            dgTempRecord.Columns.Add(new DataGridTextColumn()
+            {
+                Header = $"绕组B",
+                Binding = new Binding(Configs.Configs.WindingB)
+            });
+            dgTempRecord.Columns.Add(new DataGridTextColumn()
+            {
+                Header = $"绕组C",
+                Binding = new Binding(Configs.Configs.WindingC)
+            });
+            dgTempRecord.Columns.Add(new DataGridTextColumn()
+            {
+                Header = $"铁心",
+                Binding = new Binding(Configs.Configs.Core)
+            });
+            dgTempRecord.Columns.Add(new DataGridTextColumn()
+            {
+                Header = $"环境A",
+                Binding = new Binding(Configs.Configs.EnvA)
+            });
+            dgTempRecord.Columns.Add(new DataGridTextColumn()
+            {
+                Header = $"环境B",
+                Binding = new Binding(Configs.Configs.EnvB)
+            });
+            dgTempRecord.Columns.Add(new DataGridTextColumn()
+            {
+                Header = $"环境C",
+                Binding = new Binding(Configs.Configs.EnvC)
+            });
+            dgTempRecord.Columns.Add(new DataGridTextColumn()
+            {
+                Header = $"环境D",
+                Binding = new Binding(Configs.Configs.EnvD)
+            });
             for (int i = 0; i < SelectedSlots.Count; i++)
             {
                 var slot = SelectedSlots[i];
-                Table.Columns.Add($"槽位-{slot}", typeof(float));
-
-                dgTempRecord.Columns.Add(new DataGridTextColumn()
-                {
-                    Header = $"槽位-{slot}",
-                    Binding = new Binding($"槽位-{slot}")
-                });
+                Table.Columns.Add($"Slot-{slot}", typeof(float));
             }
 
             dgTempRecord.AutoGenerateColumns = false;
@@ -537,7 +570,7 @@ namespace ABBDataManagerSystem.Pages
             for (int i = 0; i < SelectedSlots.Count && i < values.Length; i++)
             {
                 var slot = SelectedSlots[i];
-                newRow[$"槽位-{slot}"] = values[i];
+                newRow[$"Slot-{slot}"] = values[i];
             }
             lock (objLock)
             {
@@ -765,15 +798,7 @@ namespace ABBDataManagerSystem.Pages
             }
             if (Configs.Configs.TPSlots.Length > 0)
             {
-                var slots = Configs.Configs.TPSlots.Split(',');
-                mcbSelectedSlots.SelectedItems.Clear();
-                foreach (var slot in slots)
-                {
-                    if (slot.Length > 0)
-                    {
-                        mcbSelectedSlots.SelectedItems.Add("通道-" + slot);
-                    }
-                }
+                UpdateSlotsMappingDisplay();
             }
         }
 
@@ -803,29 +828,39 @@ namespace ABBDataManagerSystem.Pages
         #endregion
 
         #region 温度槽位选择
-        private void mcbSelectedSlots_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void SelectedSlots_SelectionChanged()
         {
             InitSlot();
             SelectedSlotChange = true;
+            UpdateSlotsMappingDisplay();
         }
 
         private int ProcessSelectedSlots()
         {
-            if (mcbSelectedSlots.SelectedItems.Count == 0)
-            {
-                return 0;
-            }
             SelectedSlots.Clear();
-            foreach (var item in mcbSelectedSlots.SelectedItems)
+            List<string> slots = new List<string>();
+            slots.Add(Configs.Configs.WindingA);
+            slots.Add(Configs.Configs.WindingB);
+            slots.Add(Configs.Configs.WindingC);
+            slots.Add(Configs.Configs.Core);
+            slots.Add(Configs.Configs.EnvA);
+            slots.Add(Configs.Configs.EnvB);
+            slots.Add(Configs.Configs.EnvC);
+            slots.Add(Configs.Configs.EnvD);
+            foreach (var item in slots)
             {
                 try
                 {
-                    var slotIndex = item.ToString().Split("-")[1];
-                    SelectedSlots.Add(Utils.ParseInt(slotIndex));
+                    if (item.Length > 0 && item.IndexOf("-") >= 0)
+                    {
+                        var slotIndex = item.Split("-")[1];
+                        SelectedSlots.Add(Utils.ParseInt(slotIndex));
+                    }
                 }
                 catch { }
             }
             SelectedSlots.Sort();
+            SelectedSlots = SelectedSlots.Distinct().ToList();
             return SelectedSlots.Count;
         }
 
@@ -834,8 +869,30 @@ namespace ABBDataManagerSystem.Pages
             var selectDialog = new TempSlotSelectView(MaxSlotCount) { WindowStartupLocation = WindowStartupLocation.CenterScreen };
             if (selectDialog.ShowDialog() == true)
             {
-
+                SelectedSlots_SelectionChanged();
             }
+        }
+
+        private void UpdateSlotsMappingDisplay()
+        {
+            string msg = "";
+            msg += $"绕组A - {Configs.Configs.WindingA}, "; 
+            msg += $"绕组B - {Configs.Configs.WindingB}, "; 
+            msg += $"绕组C - {Configs.Configs.WindingC}, "; 
+            msg += $"铁心 - {Configs.Configs.Core}, "; 
+            msg += $"环境1 - {Configs.Configs.EnvA}, "; 
+            msg += $"环境2 - {Configs.Configs.EnvB}, "; 
+            msg += $"环境3 - {Configs.Configs.EnvC}, "; 
+            msg += $"环境4 - {Configs.Configs.EnvD}, "; 
+            tbSlotMappingShow.Text = msg;
+            shWindingA.Status = Configs.Configs.WindingA;
+            shWindingB.Status = Configs.Configs.WindingB;
+            shWindingC.Status = Configs.Configs.WindingC;
+            shCore.Status = Configs.Configs.Core;
+            shEnvA.Status = Configs.Configs.EnvA;
+            shEnvB.Status = Configs.Configs.EnvB;
+            shEnvC.Status = Configs.Configs.EnvC;
+            shEnvD.Status = Configs.Configs.EnvD;
         }
         #endregion
     }
