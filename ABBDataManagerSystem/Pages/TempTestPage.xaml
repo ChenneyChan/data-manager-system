@@ -5,9 +5,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ABBDataManagerSystem.Pages"
              xmlns:hc="https://handyorg.github.io/handycontrol" 
+             xmlns:local1="clr-namespace:ABBDataManagerSystem.Pages.Converter"
              mc:Ignorable="d"  Background="#FFDDDDDD" 
              d:DesignHeight="1080" d:DesignWidth="1920" Loaded="UserControl_Loaded" Unloaded="UserControl_Unloaded" MinHeight="800" MinWidth="1200">
     <UserControl.Resources>
+        <local1:AlternationConverter x:Key="AlternationConverter"/>
         <Style TargetType="RadioButton" BasedOn="{StaticResource {x:Type RadioButton}}">
             <Setter Property="FontSize" Value="18"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
@@ -45,6 +47,80 @@
         </Style>
         <Style TargetType="hc:TextBox" BasedOn="{StaticResource GlobalTextBoxStyle}">
 
+        </Style>
+        <Style TargetType="DataGrid">
+            
+        </Style>
+
+        <!--背景色改变必须先设置cellStyle 因为cellStyle会覆盖rowStyle样式-->
+        <Style  TargetType="DataGridRow">
+            <Setter Property="Background" Value="#F2F2F2" />
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <!--<Setter Property="Background" Value="{Binding AlternationIndex, Converter={StaticResource AlternationConverter}}" />-->
+            <Style.Triggers>
+                <!--隔行换色-->
+                <Trigger Property="AlternationIndex" Value="0" >
+                    <Setter Property="Background" Value="#e7e7e7" />
+                </Trigger>
+                <Trigger Property="AlternationIndex" Value="1" >
+                    <Setter Property="Background" Value="#f2f2f2" />
+                </Trigger>
+
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="LightGray"/>
+                    <Setter Property="Foreground" Value="Blue"/>
+                </Trigger>
+
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="LightGray"/>
+                    <Setter Property="Foreground" Value="Black"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        
+        <Style TargetType="DataGridColumnHeader">
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="DarkBlue"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="DataGridColumnHeader">
+                        <Border x:Name="BackgroundBorder" BorderThickness="0,1,0,1" BorderBrush="#e6dbba" Width="Auto">
+                            <Grid >
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <ContentPresenter  Margin="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                <Path x:Name="SortArrow" Visibility="Collapsed" Data="M0,0 L1,0 0.5,1 z" Stretch="Fill"  Grid.Column="2" Width="8" Height="6" Fill="White" Margin="0,0,50,0" 
+                            VerticalAlignment="Center" RenderTransformOrigin="1,1" />
+                                <Rectangle Width="1" Fill="#d6c79b" HorizontalAlignment="Right" Grid.ColumnSpan="1" />
+                            </Grid>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+        <!--单元格样式触发-->
+        <Style TargetType="DataGridCell">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="DataGridCell">
+                        <TextBlock TextAlignment="Center" VerticalAlignment="Center"  >
+                           <ContentPresenter />
+                        </TextBlock>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Foreground" Value="Red"/>
+                </Trigger>
+            </Style.Triggers>
         </Style>
     </UserControl.Resources>
     <Grid Margin="30,20,30,20">
@@ -138,19 +214,9 @@
                 </WrapPanel>
             </Grid>
             <DataGrid Name="dgTempRecord" Grid.Column="1" Margin="5, 0, 0, 0"  HorizontalAlignment="Stretch" VerticalAlignment="Top" MaxHeight="600"
-                  ScrollViewer.VerticalScrollBarVisibility="Auto"
-                  ScrollViewer.HorizontalScrollBarVisibility="Auto" IsReadOnly="True" RowHeight="30" ColumnHeaderHeight="30" CanUserAddRows="False" CanUserDeleteRows="False" CanUserResizeRows="False" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserSortColumns="False" >
-                <DataGrid.Style>
-                    <Style TargetType="{x:Type DataGrid}">
-                        <!-- 在这里定义你想要的默认样式属性 -->
-                    </Style>
-                </DataGrid.Style>
-                <DataGrid.RowStyle>
-                    <Style TargetType="DataGridRow">
-                        <Setter Property="VerticalContentAlignment" Value="Center" />
-                        <Setter Property="HorizontalContentAlignment" Value="Center" />
-                    </Style>
-                </DataGrid.RowStyle>
+                  ScrollViewer.VerticalScrollBarVisibility="Auto" HeadersVisibility="Column" SelectionMode="Single" AlternationCount="2" 
+                  ScrollViewer.HorizontalScrollBarVisibility="Auto" IsReadOnly="True" RowHeight="30" ColumnHeaderHeight="30" CanUserAddRows="False" CanUserDeleteRows="False" 
+                  CanUserResizeRows="False" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserSortColumns="False" >
             </DataGrid>
         </Grid>
     </Grid>

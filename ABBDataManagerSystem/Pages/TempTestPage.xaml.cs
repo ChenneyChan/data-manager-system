@@ -37,7 +37,7 @@ namespace ABBDataManagerSystem.Pages
     /// </summary>
     public partial class TempTestPage : UserControl, ICloseable
     {
-        private static bool Simulate = false;
+        private static bool Simulate = true;
         private bool IsFirstLoad = true;
 
         private bool UsingSerial = true;
@@ -196,8 +196,8 @@ namespace ABBDataManagerSystem.Pages
                         Slot = i + 1,
                         Temperature = -200f,
                         Margin = new Thickness(5),
-                        Width = 80,
-                        Height = 80,
+                        Width = 120,
+                        Height = 120,
                     };
                     SlotWrapPanel.Children.Add(uc);
                     Slots.Add(uc);
@@ -440,7 +440,8 @@ namespace ABBDataManagerSystem.Pages
                 Binding = new Binding("时间")
                 {
                     StringFormat = "yyyy-MM-dd HH:mm:ss"
-                }
+                },
+                MinWidth = 60
             });
 
             dgTempRecord.Columns.Add(new DataGridTextColumn()
