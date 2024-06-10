@@ -944,6 +944,7 @@ namespace ABBDataManagerSystem.Pages
             var query = from row in Table.AsEnumerable()
                         select row;
             int i = 0;
+            List<CommonTempRiseTestRecordInfo> list = new List<CommonTempRiseTestRecordInfo>();
             foreach (var item in query)
             {
                 i++;
@@ -969,25 +970,19 @@ namespace ABBDataManagerSystem.Pages
                     EnvTempC = item.Field<float?>(Configs.Configs.EnvC) ?? 0,
                     EnvTempD = item.Field<float?>(Configs.Configs.EnvD) ?? 0,
                 };
-                if (!record.WriteToDB())
-                {
-                    MessageBox.Show($"第{i}条数据上传失败，共{Table.Rows.Count}条数据!", "上传结果", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
+                list.Add(record);
             }
-            if (i > 0)
+            bool ret = CommonTempRiseTestRecordInfo.BatchInsertData(list);
+            if (ret)
             {
                 MessageBox.Show($"数据上传成功，共{Table.Rows.Count}条数据!", "上传结果", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 return;
+            } 
+            else
+            {
+                MessageBox.Show($"数据上传出错，请检查或者重新尝试!", "上传结果", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
             }
-            //for (int i = 0; i < Table.Rows.Count; i++)
-            //{
-            //    var record =  new CommonTempRiseTestRecordInfo()
-            //    {
-            //        ID = configItem.ID,
-            //    };
-            //    record.Timestamp = (DateTime)Table.Rows[i]["时间"];
-            //}
         }
 
         private void btUpload_Click(object sender, RoutedEventArgs e)

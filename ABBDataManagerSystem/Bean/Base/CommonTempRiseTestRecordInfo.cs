@@ -1,4 +1,5 @@
 ﻿using ABBDataManagerSystem.Database;
+using MySql.Data.MySqlClient;
 using System.Data;
 
 namespace ABBDataManagerSystem.Bean.Base
@@ -135,6 +136,84 @@ namespace ABBDataManagerSystem.Bean.Base
                 return (filedName == "ID");
             };
             return checkIsKeyField;
+        }
+
+        public static bool BatchInsertData(List<CommonTempRiseTestRecordInfo> dataRows)
+        {
+            using (SQLConnection connection = new SQLConnection(DBConnector.GetConnectionString()))
+            {
+                connection.Open();
+
+                using (SQLTransaction transaction = connection.BeginTransaction())
+                {
+                    using (SQLCommond command = new SQLCommond())
+                    {
+                        command.Connection = connection;
+                        command.Transaction = transaction;
+                        command.CommandText = $"INSERT INTO {TABLE_NAME} (ID, Timestamp, ua, ub, uc, u3, ia, ib, ic, i3, p3, " +
+                    $"CoreTemperature, WindingATemperature, WindingBTemperature, WindingCTemperature, AmbientATemperature, AmbientBTemperature, AmbientCTemperature, AmbientDTemperature) VALUES " +
+                    "(@ID, @Timestamp, @ua, @ub, @uc, @u3, @ia, @ib, @ic, @i3, @p3, " +
+                    $"@CoreTemp, @WindingTempA, @WindingTempB, @WindingTempC, @EnvTempA, @EnvTempB, @EnvTempC, @EnvTempD)";
+
+                        command.Parameters.Add("@ID", MySqlDbType.Int64);
+                        command.Parameters.Add("@Timestamp", MySqlDbType.DateTime);
+                        command.Parameters.Add("@ua", MySqlDbType.Float);
+                        command.Parameters.Add("@ub", MySqlDbType.Float);
+                        command.Parameters.Add("@uc", MySqlDbType.Float);
+                        command.Parameters.Add("@u3", MySqlDbType.Float);
+                        command.Parameters.Add("@ia", MySqlDbType.Float);
+                        command.Parameters.Add("@ib", MySqlDbType.Float);
+                        command.Parameters.Add("@ic", MySqlDbType.Float);
+                        command.Parameters.Add("@i3", MySqlDbType.Float);
+                        command.Parameters.Add("@p3", MySqlDbType.Float);
+                        command.Parameters.Add("@CoreTemp", MySqlDbType.Float);
+                        command.Parameters.Add("@WindingTempA", MySqlDbType.Float);
+                        command.Parameters.Add("@WindingTempB", MySqlDbType.Float);
+                        command.Parameters.Add("@WindingTempC", MySqlDbType.Float);
+                        command.Parameters.Add("@EnvTempA", MySqlDbType.Float);
+                        command.Parameters.Add("@EnvTempB", MySqlDbType.Float);
+                        command.Parameters.Add("@EnvTempC", MySqlDbType.Float);
+                        command.Parameters.Add("@EnvTempD", MySqlDbType.Float);
+
+                        try
+                        {
+                            foreach (var row in dataRows)
+                            {
+                                command.Parameters["@ID"].Value = row.ID;
+                                command.Parameters["@Timestamp"].Value = row.Timestamp;
+                                command.Parameters["@ua"].Value = row.Ua;
+                                command.Parameters["@ub"].Value = row.Ub;
+                                command.Parameters["@uc"].Value = row.Uc;
+                                command.Parameters["@u3"].Value = row.U3;
+                                command.Parameters["@ia"].Value = row.Ia;
+                                command.Parameters["@ib"].Value = row.Ib;
+                                command.Parameters["@ic"].Value = row.Ic;
+                                command.Parameters["@i3"].Value = row.I3;
+                                command.Parameters["@p3"].Value = row.P3;
+                                command.Parameters["@CoreTemp"].Value = row.CoreTemp;
+                                command.Parameters["@WindingTempA"].Value = row.WindingTempA;
+                                command.Parameters["@WindingTempB"].Value = row.WindingTempB;
+                                command.Parameters["@WindingTempC"].Value = row.WindingTempC;
+                                command.Parameters["@EnvTempA"].Value = row.EnvTempA;
+                                command.Parameters["@EnvTempB"].Value = row.EnvTempB;
+                                command.Parameters["@EnvTempC"].Value = row.EnvTempC;
+                                command.Parameters["@EnvTempD"].Value = row.EnvTempD;
+                                command.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+                            Log.Info("All records have been inserted.");
+                            return true;
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+                            Log.Error($"An error occurred: {ex.Message}");
+                            return false;
+                        }
+                    }
+                }
+            }
         }
     }
 }
