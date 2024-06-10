@@ -24,6 +24,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="Bean\Base\CommonTempRiseTestRecordInfo.cs" />
+    <Compile Include="Bean\Base\CommonTempRiseTestInfo.cs" />
     <Compile Include="Bean\Base\WorkflowInfo.cs" />
     <Compile Include="Bean\Base\VoltageCurrentLossDataInfo.cs" />
     <Compile Include="Bean\BeanUtils.cs" />
