@@ -59,9 +59,9 @@
         <Border Grid.Column="6" Grid.Row="2" BorderThickness="1, 1, 0, 1" />
         <Border Grid.Column="7" Grid.Row="2" BorderThickness="1, 1, 1, 1" />
 
-        <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Text="绕组温度" FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="0" Grid.Column="3" Grid.ColumnSpan="1" Text="铁心温度" FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="0" Grid.Column="4" Grid.ColumnSpan="4" Text="环境温度" FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Text="绕组温度" FontSize="18" FontWeight="bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="0" Grid.Column="3" Grid.ColumnSpan="1" Text="铁心温度" FontSize="18" FontWeight="bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="0" Grid.Column="4" Grid.ColumnSpan="4" Text="环境温度" FontSize="18" FontWeight="bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         <TextBlock Grid.Row="1" Grid.Column="0"  Text="A" VerticalAlignment="Center" FontSize="16" HorizontalAlignment="Center"/>
         <TextBlock Grid.Row="1" Grid.Column="1"  Text="B" VerticalAlignment="Center" FontSize="16" HorizontalAlignment="Center"/>
         <TextBlock Grid.Row="1" Grid.Column="2"  Text="C" VerticalAlignment="Center" FontSize="16" HorizontalAlignment="Center"/>
@@ -80,8 +80,8 @@
         <hc:ComboBox Grid.Row="2" Grid.Column="6"  Name="cbEnvC" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
         <hc:ComboBox Grid.Row="2" Grid.Column="7"  Name="cbEnvD" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
         <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="8" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <Button Content="确认" Style="{StaticResource ButtonPrimary}" Width="80" Height="30" FontSize="16" Margin="0,20,20,0" Name="btConfirm" Click="btConfirm_Click"/>
-            <Button Content="取消" Style="{StaticResource ButtonPrimary}" Width="80" Height="30" FontSize="16" Margin="0,20,0,0" Name="btCancel" Click="btCancel_Click"/>
+            <Button Content="确认" Style="{StaticResource ButtonPrimary}" Width="80" Height="36" FontSize="16" Margin="0,20,20,0" Name="btConfirm" Click="btConfirm_Click"/>
+            <Button Content="取消" Style="{StaticResource ButtonPrimary}" Width="80" Height="36" FontSize="16" Margin="0,20,0,0" Name="btCancel" Click="btCancel_Click"/>
         </StackPanel>
     </Grid>
 </Window>

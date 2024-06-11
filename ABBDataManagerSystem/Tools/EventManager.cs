@@ -25,7 +25,7 @@ namespace ABBDataManagerSystem.Tools
                     }
                     return _Instance;
                 }
-            } 
+            }
         }
 
         public void Subscribe<TEventArgs>(string eventName, EventHandler<TEventArgs> handler) where TEventArgs : EventArgs

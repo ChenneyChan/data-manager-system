@@ -201,7 +201,7 @@ namespace ABBDataManagerSystem.Pages
                         Temperature = -200f,
                         Margin = new Thickness(5),
                         Width = 120,
-                        Height = 100,
+                        Height = 80,
                     };
                     SlotWrapPanel.Children.Add(uc);
                     Slots.Add(uc);
@@ -433,7 +433,6 @@ namespace ABBDataManagerSystem.Pages
         #region 记录表格相关操作
         private void InitDataGrid()
         {
-            Tools.EventManager.Instance.Subscribe<TestEventArgs>("PowerAnalyzer", EventHandler);
             dgTempRecord.ItemsSource = null;
             dgTempRecord.Columns.Clear();
             Table.Rows.Clear();
