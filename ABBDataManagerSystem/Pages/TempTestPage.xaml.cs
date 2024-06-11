@@ -37,7 +37,7 @@ namespace ABBDataManagerSystem.Pages
     /// </summary>
     public partial class TempTestPage : UserControl, ICloseable
     {
-        private static bool Simulate = true;
+        private static bool Simulate = false;
         private bool IsFirstLoad = true;
 
         private bool UsingSerial = true;
@@ -671,14 +671,15 @@ namespace ABBDataManagerSystem.Pages
             {
                 string msg;
                 int maxSelectedSlotIndex = SelectedSlots[SelectedSlots.Count - 1];
-                var listValues = tempModbusCollector.ReadData(maxSelectedSlotIndex + 1, out msg);
+                var listValues = tempModbusCollector.ReadData(maxSelectedSlotIndex, out msg);
                 for (int i = 0; i < SlotCount; i++)
                 {
-                    if (SelectedSlots[i] >= listValues.Count)
+                    if (SelectedSlots[i] - 1 >= listValues.Count)
                     {
                         break;
                     }
-                    values[i] = listValues[SelectedSlots[i]];
+                    values[i] = listValues[SelectedSlots[i] - 1];
+                    Log.Info($"TempValue {i},Slot {SelectedSlots[i]},value {values[i]}");
                 }
             }
             if (values.Length == 0)
