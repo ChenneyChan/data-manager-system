@@ -171,14 +171,14 @@
                     <Button Name="btUpload" Content="上传数据" Grid.Column="0" Click="btUpload_Click" Style="{StaticResource startbutton}" Background="DodgerBlue"/>
                     <!--<DockPanel Grid.Column="1" Grid.Row="0"></DockPanel>-->
                     <TextBlock Text="存储到CVS路径：" VerticalAlignment="Center" Margin="20,0"/>
-                    <hc:TextBox Grid.Column="1" Grid.Row="0" HorizontalAlignment="Stretch" MinWidth="360" Name="tbSaveFilePath" IsReadOnly="True" Height="30"/>
+                    <hc:TextBox Grid.Column="1" Grid.Row="0" HorizontalAlignment="Stretch" MinWidth="220" Name="tbSaveFilePath" IsReadOnly="True" Height="30"/>
                 </StackPanel>
             </StackPanel>
 
             <!--<TextBlock Text="通道选择" Width="80" Grid.Column="0" Margin="0, 0, 20,0"/>-->
             <StackPanel Grid.Column="1" >
                 <WrapPanel>
-                    <TextBlock Text="通道选择："/>
+                    <TextBlock Text="通道选择：" FontWeight="Bold"/>
                     <TextBlock Text="" Name="tbSlotMappingShow" Visibility="Collapsed"/>
                     <hc:Shield FontSize="18" Height="30" Margin="5, 0" Name="shWindingA" Subject="线圈A" Status="槽位1" Color="#1182c3"/>
                     <hc:Shield FontSize="18" Height="30" Margin="5, 0" Name="shWindingB" Subject="线圈B" Status="槽位1" Color="#1182c3"/>
@@ -189,6 +189,8 @@
                     <hc:Shield FontSize="18" Height="30" Margin="5, 0" Name="shEnvC" Subject="环境C" Status="槽位1" Color="#1182c3"/>
                     <hc:Shield FontSize="18" Height="30" Margin="5, 0" Name="shEnvD" Subject="环境D" Status="槽位1" Color="#1182c3"/>
                 </WrapPanel>
+                <TextBlock Text="功率分析仪数据：" Margin="0, 5, 5, 5" FontWeight="Bold"/>
+                <TextBlock Text="" Name="tbPorwerAnalyzerInfo" Margin="0, 5, 5, 5"  TextWrapping="Wrap"/>
             </StackPanel>
         </Grid>
         <WrapPanel Grid.Column="0" Grid.Row="1" Name="SlotWrapPanel" Background="#FFD1D4D6" Grid.ColumnSpan="2" Margin="0,10,0,0">

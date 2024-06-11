@@ -29,6 +29,7 @@ namespace ABBDataManagerSystem.Pages
         public float i3;
 
         public float p3;
+        public float fu;
 
         public bool IsUpdated = false;
     }
@@ -57,8 +58,10 @@ namespace ABBDataManagerSystem.Pages
 
         private TempModbusCollector? tempModbusCollector;
         private ManualResetEvent? ResetEvent = null;
-        private int Interval = 200;
+        private int Interval = 500;
         private int SlotCount = 20;
+        private int RecordInterval = 1;
+        private DateTime LastRecordTime = DateTime.Now;
         private static readonly int MaxSlotCount = 36;
         private DataTable Table = new DataTable();
         private VoltageInfo CurrentVoltageInfo = new();
@@ -174,6 +177,7 @@ namespace ABBDataManagerSystem.Pages
             InitChartRange();
             tempCharts = new TempChartsNew(plotView, SelectedSlots);
             tempCharts.InitChart();
+            Tools.EventManager.Instance.Subscribe<TestEventArgs>("PowerAnalyzer", EventHandler);
         }
 
         private void UserControl_Unloaded(object sender, RoutedEventArgs e)
@@ -243,6 +247,7 @@ namespace ABBDataManagerSystem.Pages
                 MessageBox.Show("请至少选择一个通道", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
+            LastRecordTime = DateTime.Parse("1990-10-10");
             SaveConfig();
             bool needSaveCsv = false;
             if (tbSaveFilePath.Text.Length == 0)
@@ -333,9 +338,8 @@ namespace ABBDataManagerSystem.Pages
 
         private void HandleRecords(float[] values)
         {
-            plotView.Dispatcher.InvokeAsync(new Action(() =>
+            Dispatcher.InvokeAsync(new Action(() =>
             {
-                tempCharts.AddRecords(values);
                 for (int i = 0; i < Slots.Count; i++)
                 {
                     if (i < values.Length)
@@ -429,6 +433,7 @@ namespace ABBDataManagerSystem.Pages
         #region 记录表格相关操作
         private void InitDataGrid()
         {
+            Tools.EventManager.Instance.Subscribe<TestEventArgs>("PowerAnalyzer", EventHandler);
             dgTempRecord.ItemsSource = null;
             dgTempRecord.Columns.Clear();
             Table.Rows.Clear();
@@ -577,8 +582,6 @@ namespace ABBDataManagerSystem.Pages
 
             dgTempRecord.AutoGenerateColumns = false;
             dgTempRecord.ItemsSource = Table.DefaultView;
-
-            Tools.EventManager.Instance.Subscribe<TestEventArgs>("PowerAnalyzer", EventHandler);
         }
 
         private void UpdateDataGrid(float[] values)
@@ -631,9 +634,30 @@ namespace ABBDataManagerSystem.Pages
                     CurrentVoltageInfo.i3 = info.i3 ?? 0;
 
                     CurrentVoltageInfo.p3 = info.p3 ?? 0;
+                    CurrentVoltageInfo.fu = info.fU ?? 0;
                     CurrentVoltageInfo.IsUpdated = true;
                 }
+                UpdatePowerAnalyzerInfo();
             }
+        }
+
+        private void UpdatePowerAnalyzerInfo()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                string msg = "";
+                msg += $"Ua: {Utils.FloatFormat(CurrentVoltageInfo.ua)},  ";
+                msg += $"Ub: {Utils.FloatFormat(CurrentVoltageInfo.ub)},  ";
+                msg += $"Uc: {Utils.FloatFormat(CurrentVoltageInfo.uc)},  ";
+                msg += $"U3: {Utils.FloatFormat(CurrentVoltageInfo.u3)},  ";
+                msg += $"Ia: {Utils.FloatFormat(CurrentVoltageInfo.ia)},  ";
+                msg += $"Ib: {Utils.FloatFormat(CurrentVoltageInfo.ib)},  ";
+                msg += $"Ic: {Utils.FloatFormat(CurrentVoltageInfo.ic)},  ";
+                msg += $"I3: {Utils.FloatFormat(CurrentVoltageInfo.i3)},  ";
+                msg += $"P3: {Utils.FloatFormat(CurrentVoltageInfo.p3)},  ";
+                msg += $"Fu: {Utils.FloatFormat(CurrentVoltageInfo.fu)},  ";
+                tbPorwerAnalyzerInfo.Text = msg;
+            });
         }
         #endregion
 
@@ -648,21 +672,30 @@ namespace ABBDataManagerSystem.Pages
             {
                 return;
             }
-            if (value.IndexOf("ms") >= 0)
+            if (value.IndexOf("s") >= 0)
             {
-                int interval = int.Parse(value.Split("ms")[0]);
-                Interval = interval;
-            }
-            else if (value.IndexOf("s") >= 0)
-            {
-                int interval = int.Parse(value.Split("s")[0]) * 1000;
-                Interval = interval;
+                int interval = int.Parse(value.Split("s")[0]);
+                RecordInterval = interval;
             }
             else if (value.IndexOf("min") >= 0)
             {
-                int interval = int.Parse(value.Split("min")[0]) * 1000 * 60;
-                Interval = interval;
+                int interval = int.Parse(value.Split("min")[0]) * 60;
+                RecordInterval = interval;
             }
+        }
+
+        private bool NeedRecord()
+        {
+            DateTime endTime = DateTime.Now;
+
+            TimeSpan elapsedTime = endTime - LastRecordTime;
+            double seconds = elapsedTime.TotalSeconds;
+            if (seconds > RecordInterval)
+            {
+                LastRecordTime = endTime;
+                return true;
+            }
+            return false;
         }
 
         private void CollectDataOnce() // todo: 改成子线程读取，避免UI线程阻塞
@@ -696,8 +729,15 @@ namespace ABBDataManagerSystem.Pages
                 return;
             }
             HandleRecords(values);
-            WriteCSVFile(values);
-            UpdateDataGrid(values);
+            if (NeedRecord())
+            {
+                WriteCSVFile(values);
+                UpdateDataGrid(values);
+                Dispatcher.Invoke(() =>
+                {
+                    tempCharts.AddRecords(values);
+                });
+            }
         }
 
         private void CbInterval_SelectedIndexChanged(object? sender, RoutedEventArgs e)
