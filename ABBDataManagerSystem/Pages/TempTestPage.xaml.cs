@@ -106,11 +106,6 @@ namespace ABBDataManagerSystem.Pages
             intervals.ForEach(port => { cbInterval.Items.Add(port); });
             cbInterval.SelectedIndex = 0;
 
-            rbEthernet.IsChecked = false;
-            rbSerialPort.IsChecked = true;
-            rbEthernet.Checked += RbEthernet_Checked;
-            rbSerialPort.Checked += RbSerialPort_Checked;
-
             cbInterval.SelectedIndex = 1;
             cbInterval.SelectionChanged += CbInterval_SelectedIndexChanged;
             UpdateByConfig();
@@ -131,19 +126,12 @@ namespace ABBDataManagerSystem.Pages
 
         private void HandleConectionTypeChange()
         {
-            rbEthernet.IsChecked = !UsingSerial;
-            rbSerialPort.IsChecked = UsingSerial;
-
             cbSerialPort.IsEnabled = UsingSerial;
             cbSerialBoudRate.IsEnabled = UsingSerial;
-            tbEthernetIP.IsEnabled = !UsingSerial;
-            tbEthernetPort.IsEnabled = !UsingSerial;
         }
 
         private void ToogleAllStatus()
         {
-            rbEthernet.IsEnabled = !IsCollecting;
-            rbSerialPort.IsEnabled = !IsCollecting;
             cbInterval.IsEnabled = !IsCollecting;
             cbTestPhase.IsEnabled = !IsCollecting;
             cbTestStatus.IsEnabled = !IsCollecting;
@@ -153,8 +141,6 @@ namespace ABBDataManagerSystem.Pages
             {
                 cbSerialPort.IsEnabled = false;
                 cbSerialBoudRate.IsEnabled = false;
-                tbEthernetIP.IsEnabled = false;
-                tbEthernetPort.IsEnabled = false;
             }
             else
             {
@@ -257,11 +243,6 @@ namespace ABBDataManagerSystem.Pages
             InitDataGrid();
             if (!Simulate)
             {
-                if (rbEthernet.IsChecked == true)
-                {
-                    //tempModbusCollector = new TempModbusCollector(tbEthernetIP.Text, Utils.ParseInt(tbEthernetPort.Text), true);
-                }
-                else
                 {
                     tempModbusCollector = new TempModbusCollector(cbSerialPort.Text, Utils.ParseInt(cbSerialBoudRate.Text));
                 }
@@ -451,28 +432,19 @@ namespace ABBDataManagerSystem.Pages
             dgTempRecord.Columns.Add(new DataGridTextColumn()
             {
                 Header = "Ua",
-                Binding = new Binding("Ua")
-                {
-                    StringFormat = "{0:N2}"
-                },
+                Binding = new Binding("Ua") { StringFormat = "{0:N2}" },
                 MinWidth = 40
-            });;
+            });
             dgTempRecord.Columns.Add(new DataGridTextColumn()
             {
                 Header = "Ub",
-                Binding = new Binding("Ub")
-                {
-                    StringFormat = "{0:N2}"
-                },
+                Binding = new Binding("Ub") { StringFormat = "{0:N2}" },
                 MinWidth = 40
             });
             dgTempRecord.Columns.Add(new DataGridTextColumn()
             {
                 Header = "Uc",
-                Binding = new Binding("Uc")
-                {
-                    StringFormat = "{0:N2}"
-                },
+                Binding = new Binding("Uc") { StringFormat = "{0:N2}" },
                 MinWidth = 40
             });
             dgTempRecord.Columns.Add(new DataGridTextColumn()
@@ -485,13 +457,13 @@ namespace ABBDataManagerSystem.Pages
             dgTempRecord.Columns.Add(new DataGridTextColumn()
             {
                 Header = "Ia",
-                Binding = new Binding("Ia") { StringFormat = "{0:N2}" } ,
+                Binding = new Binding("Ia") { StringFormat = "{0:N2}" },
                 MinWidth = 40
             });
             dgTempRecord.Columns.Add(new DataGridTextColumn()
             {
                 Header = "Ib",
-                Binding = new Binding("Ib") { StringFormat = "{0:N2}" } ,
+                Binding = new Binding("Ib") { StringFormat = "{0:N2}" },
                 MinWidth = 40
             });
             dgTempRecord.Columns.Add(new DataGridTextColumn()
@@ -836,14 +808,6 @@ namespace ABBDataManagerSystem.Pages
             }
             else
             {
-                if (Configs.Configs.TPIPAddress.Length > 0)
-                {
-                    tbEthernetIP.Text = Configs.Configs.TPIPAddress;
-                }
-                if (Configs.Configs.TPPort != 0)
-                {
-                    tbEthernetPort.Text = Configs.Configs.TPPort.ToString();
-                }
             }
 
             if (Configs.Configs.TPInterval.Length > 0)
@@ -867,11 +831,6 @@ namespace ABBDataManagerSystem.Pages
             {
                 Configs.Configs.TPSerialPort = cbSerialPort.Text;
                 Configs.Configs.TPSerialBoundRate = cbSerialBoudRate.Text;
-            }
-            else
-            {
-                Configs.Configs.TPIPAddress = tbEthernetIP.Text;
-                Configs.Configs.TPPort = Utils.ParseInt(tbEthernetPort.Text);
             }
             string slots = "";
             foreach (var slot in SelectedSlots)
@@ -1026,7 +985,7 @@ namespace ABBDataManagerSystem.Pages
             {
                 MessageBox.Show($"数据上传成功，共{Table.Rows.Count}条数据!", "上传结果", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 return;
-            } 
+            }
             else
             {
                 MessageBox.Show($"数据上传出错，请检查或者重新尝试!", "上传结果", MessageBoxButton.OK, MessageBoxImage.Warning);
