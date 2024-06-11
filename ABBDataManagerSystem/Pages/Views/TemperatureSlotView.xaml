@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ABBDataManagerSystem.Pages.Views"
              mc:Ignorable="d" 
-             d:DesignHeight="100" d:DesignWidth="100" Width="80" Height="80">
+             d:DesignHeight="100" d:DesignWidth="120" Width="100" Height="80">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>

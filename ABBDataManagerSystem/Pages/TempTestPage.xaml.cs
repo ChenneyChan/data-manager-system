@@ -196,7 +196,7 @@ namespace ABBDataManagerSystem.Pages
                         Slot = i + 1,
                         Temperature = -200f,
                         Margin = new Thickness(5),
-                        Width = 100,
+                        Width = 120,
                         Height = 100,
                     };
                     SlotWrapPanel.Children.Add(uc);
@@ -447,57 +447,66 @@ namespace ABBDataManagerSystem.Pages
             dgTempRecord.Columns.Add(new DataGridTextColumn()
             {
                 Header = "Ua",
-                Binding = new Binding("Ua"),
+                Binding = new Binding("Ua")
+                {
+                    StringFormat = "{0:N2}"
+                },
                 MinWidth = 40
-            });
+            });;
             dgTempRecord.Columns.Add(new DataGridTextColumn()
             {
                 Header = "Ub",
-                Binding = new Binding("Ub"),
+                Binding = new Binding("Ub")
+                {
+                    StringFormat = "{0:N2}"
+                },
                 MinWidth = 40
             });
             dgTempRecord.Columns.Add(new DataGridTextColumn()
             {
                 Header = "Uc",
-                Binding = new Binding("Uc"),
+                Binding = new Binding("Uc")
+                {
+                    StringFormat = "{0:N2}"
+                },
                 MinWidth = 40
             });
             dgTempRecord.Columns.Add(new DataGridTextColumn()
             {
                 Header = "U3",
-                Binding = new Binding("U3"),
+                Binding = new Binding("U3") { StringFormat = "{0:N2}" },
                 MinWidth = 40
             });
 
             dgTempRecord.Columns.Add(new DataGridTextColumn()
             {
                 Header = "Ia",
-                Binding = new Binding("Ia"),
+                Binding = new Binding("Ia") { StringFormat = "{0:N2}" } ,
                 MinWidth = 40
             });
             dgTempRecord.Columns.Add(new DataGridTextColumn()
             {
                 Header = "Ib",
-                Binding = new Binding("Ib"),
+                Binding = new Binding("Ib") { StringFormat = "{0:N2}" } ,
                 MinWidth = 40
             });
             dgTempRecord.Columns.Add(new DataGridTextColumn()
             {
                 Header = "Ic",
-                Binding = new Binding("Ic"),
+                Binding = new Binding("Ic") { StringFormat = "{0:N2}" },
                 MinWidth = 40
             });
             dgTempRecord.Columns.Add(new DataGridTextColumn()
             {
                 Header = "I3",
-                Binding = new Binding("I3"),
+                Binding = new Binding("I3") { StringFormat = "{0:N2}" },
                 MinWidth = 40
             });
 
             dgTempRecord.Columns.Add(new DataGridTextColumn()
             {
                 Header = "P3",
-                Binding = new Binding("P3"),
+                Binding = new Binding("P3") { StringFormat = "{0:N2}" },
                 MinWidth = 40
             });
 
@@ -590,10 +599,10 @@ namespace ABBDataManagerSystem.Pages
                     newRow["ub"] = CurrentVoltageInfo.ub;
                     newRow["uc"] = CurrentVoltageInfo.uc;
                     newRow["u3"] = CurrentVoltageInfo.u3;
-                    newRow["ia"] = CurrentVoltageInfo.ua;
-                    newRow["ib"] = CurrentVoltageInfo.ub;
-                    newRow["ic"] = CurrentVoltageInfo.uc;
-                    newRow["i3"] = CurrentVoltageInfo.u3;
+                    newRow["ia"] = CurrentVoltageInfo.ia;
+                    newRow["ib"] = CurrentVoltageInfo.ib;
+                    newRow["ic"] = CurrentVoltageInfo.ic;
+                    newRow["i3"] = CurrentVoltageInfo.i3;
                     newRow["p3"] = CurrentVoltageInfo.p3;
                 }
             }
