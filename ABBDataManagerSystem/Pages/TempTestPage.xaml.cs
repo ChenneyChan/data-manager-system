@@ -910,14 +910,14 @@ namespace ABBDataManagerSystem.Pages
         private void UploadData()
         {
             CommonTempRiseTestInfo configItem;
-            var items = CommonTempRiseTestInfo.ReadFromDB(Configs.Configs.WorkfloID, cbTestPhase.Text, cbTestStatus.Text);
+            var items = CommonTempRiseTestInfo.ReadFromDB(Configs.Configs.WorkflowID, cbTestPhase.Text, cbTestStatus.Text);
             if (items == null || items.Count == 0)
             {
                 configItem = new CommonTempRiseTestInfo()
                 {
                     TestingPhase = cbTestPhase.Text,
                     TestingStatus = cbTestStatus.Text,
-                    WorkflowId = Configs.Configs.WorkfloID,
+                    WorkflowId = Configs.Configs.WorkflowID,
                     DateTime = DateTime.Now,
                 };
                 if (!configItem.WriteToDB())

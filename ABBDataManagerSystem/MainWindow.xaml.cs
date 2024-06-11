@@ -24,6 +24,7 @@ namespace ABBDataManagerSystem
         {
             InitializeComponent();
             Configs.Configs.LoadFromFile();
+            EventManager.Instance.Subscribe<TestEventArgs>("WorkflowSelected", EventHandler);
         }
 
         private void MenuItemSetting_Click(object sender, RoutedEventArgs e)
@@ -424,6 +425,14 @@ namespace ABBDataManagerSystem
         private void btShowWorkflowView_Click(object sender, RoutedEventArgs e)
         {
             new WorkflowInfoView().ShowDialog();
+        }
+
+        private void EventHandler(object sender, TestEventArgs e) 
+        {
+            Dispatcher.Invoke(() =>
+            {
+                tbCurrentWorkflow.Text = Configs.Configs.WorkflowID;
+            });
         }
     }
 }
