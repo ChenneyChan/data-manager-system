@@ -2,11 +2,11 @@
 
 namespace ABBDataManagerSystem.Tools
 {
-    public delegate void EventHandler<TEventArgs>(object sender, TEventArgs e) where TEventArgs : EventArgs;
+    public delegate void EventHandler(object sender, TestEventArgs e);
 
     public class EventManager
     {
-        private ConcurrentDictionary<string, List<EventHandler<EventArgs>>> _eventHandlers = new ConcurrentDictionary<string, List<EventHandler<EventArgs>>>();
+        private ConcurrentDictionary<string, List<EventHandler>> _eventHandlers = new ConcurrentDictionary<string, List<EventHandler>>();
         private ConcurrentQueue<QueuedEvent> _eventQueue = new ConcurrentQueue<QueuedEvent>();
         private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
         private Task? _eventDispatchTask;
@@ -28,24 +28,22 @@ namespace ABBDataManagerSystem.Tools
             }
         }
 
-        public void Subscribe<TEventArgs>(string eventName, EventHandler<TEventArgs> handler) where TEventArgs : EventArgs
+        public void Subscribe(string eventName, EventHandler handler)
         {
             if (!_eventHandlers.ContainsKey(eventName))
             {
-                _eventHandlers[eventName] = new List<EventHandler<EventArgs>>();
+                _eventHandlers[eventName] = new List<EventHandler>();
             }
-
-            // 使用非泛型委托来存储，因为ConcurrentDictionary不支持泛型委托作为键  
-            EventHandler<EventArgs> wrapper = (sender, e) => handler(sender, (TEventArgs)e);
-            _eventHandlers[eventName].Add(wrapper);
+            bool Exist = _eventHandlers[eventName].Exists((item) => { return item == handler; });
+            if (!Exist)
+                _eventHandlers[eventName].Add(handler);
         }
 
-        public void Unsubscribe<TEventArgs>(string eventName, EventHandler<TEventArgs> handler) where TEventArgs : EventArgs
+        public void Unsubscribe(string eventName, EventHandler handler)
         {
-            if (_eventHandlers.TryGetValue(eventName, out List<EventHandler<EventArgs>>? handlers))
+            if (_eventHandlers.TryGetValue(eventName, out List<EventHandler>? handlers))
             {
-                EventHandler<EventArgs> wrapper = (sender, e) => handler(sender, (TEventArgs)e);
-                handlers.Remove(wrapper);
+                handlers.RemoveAll((item) => { return item == handler; });
 
                 // 如果没有订阅者了，可以考虑从字典中移除事件名  
                 if (handlers.Count == 0)
@@ -55,13 +53,13 @@ namespace ABBDataManagerSystem.Tools
             }
         }
 
-        public void TriggerEvent(string eventName, object sender, EventArgs e)
+        public void TriggerEvent(string eventName, object sender, TestEventArgs e)
         {
             // 直接分发事件（同步）或者将事件加入队列（异步）  
             EnqueueEvent(eventName, sender, e);
         }
 
-        private void EnqueueEvent(string eventName, object sender, EventArgs e)
+        private void EnqueueEvent(string eventName, object sender, TestEventArgs e)
         {
             _eventQueue.Enqueue(new QueuedEvent { EventName = eventName, Sender = sender, EventArgs = e });
 
@@ -78,7 +76,7 @@ namespace ABBDataManagerSystem.Tools
             {
                 if (_eventQueue.TryDequeue(out QueuedEvent? queuedEvent))
                 {
-                    if (_eventHandlers.TryGetValue(queuedEvent.EventName, out List<EventHandler<EventArgs>>? handlers))
+                    if (_eventHandlers.TryGetValue(queuedEvent.EventName, out List<EventHandler>? handlers))
                     {
                         foreach (var handler in handlers)
                         {
@@ -106,7 +104,7 @@ namespace ABBDataManagerSystem.Tools
         {
             public string EventName { get; set; }
             public object Sender { get; set; }
-            public EventArgs EventArgs { get; set; }
+            public TestEventArgs EventArgs { get; set; }
         }
     }
 }
