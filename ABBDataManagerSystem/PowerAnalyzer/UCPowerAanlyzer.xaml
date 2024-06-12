@@ -133,19 +133,30 @@
             <TabItem Name="tbLoad" Header="负载">
                 <Grid Width="1200" Height="400" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="20">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="130"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <StackPanel Orientation="Vertical" VerticalAlignment="Center">
-                        <RadioButton Name="rbLoadMax" Content="最大" IsChecked="True"/>
-                        <RadioButton Name="rbLoadMin" Content="最小" Margin="0, 10"/>
-                        <RadioButton Name="rbLoadRated" Content="额定"/>
+                        <RadioButton Name="rbLoadMax" Content="最大(高-低)" IsChecked="True" HorizontalAlignment="Left"/>
+                        <RadioButton Name="rbLoadMin" Content="最小(高-低1)" Margin="0, 10" HorizontalAlignment="Left"/>
+                        <RadioButton Name="rbLoadRated" Content="额定(高-低2)" HorizontalAlignment="Left"/>
                     </StackPanel>
                     <Views:LoadInfo Grid.Column="1" x:Name="LoadView" FontSize="15"/>
                 </Grid>
             </TabItem>
             <TabItem Name="tbSense" Header="感应">
-                <Views:SenseInfo Grid.Column="1" x:Name="SenseView" Width="1200" Height="400" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="20"/>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Views:SenseInfo x:Name="SenseView" Width="1200" Height="400" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="20"/>
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="20">
+                        <TextBlock Text="到计时：" FontSize="24"/>
+                        <TextBox Text="00:00" FontSize="20" IsReadOnly="True"/>
+                        <Button Content="停止" Style="{StaticResource ButtonWarning}" Margin="4, 0"/>
+                    </StackPanel>
+                </Grid>
             </TabItem>
             <TabItem Name="tbPartialDischarge" Header="局放">
                 <DataGrid x:Name="dgPartialDischarge" Margin="20">
