@@ -25,6 +25,7 @@ namespace ABBDataManagerSystem
             InitializeComponent();
             Configs.Configs.LoadFromFile();
             EventManager.Instance.Subscribe<TestEventArgs>("WorkflowSelected", EventHandler);
+            tbCurrentWorkflow.Text = "当前工作令：" + Configs.Configs.WorkflowID;
         }
 
         private void MenuItemSetting_Click(object sender, RoutedEventArgs e)
@@ -431,7 +432,7 @@ namespace ABBDataManagerSystem
         {
             Dispatcher.Invoke(() =>
             {
-                tbCurrentWorkflow.Text = Configs.Configs.WorkflowID;
+                tbCurrentWorkflow.Text = "当前工作令：" + Configs.Configs.WorkflowID;
             });
         }
     }

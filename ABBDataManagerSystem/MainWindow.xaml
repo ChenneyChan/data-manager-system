@@ -51,7 +51,8 @@
             <Separator></Separator>
             <Button Content="金源JYT-A 变比测试仪" Click="JinYuanJYT_A_Click"/>
             <Separator></Separator>
-            <TextBlock Name="tbCurrentWorkflow" Text="XXX001" VerticalAlignment="Center"/>
+            <Button Content="选择工作令" Click="btShowWorkflowView_Click"/>
+            <TextBlock Name="tbCurrentWorkflow" Text="当前工作令：XXX001" VerticalAlignment="Center" Foreground="Blue" Margin="5, 0"/>
         </ToolBar>
         <Grid Grid.Row="2">
             <dz:DockControl Name="dockControl" ActiveItemChanged="dockControl_ActiveItemChanged">

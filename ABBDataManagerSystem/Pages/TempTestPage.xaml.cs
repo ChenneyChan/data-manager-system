@@ -38,7 +38,7 @@ namespace ABBDataManagerSystem.Pages
     /// </summary>
     public partial class TempTestPage : UserControl, ICloseable
     {
-        private static bool Simulate = false;
+        private static bool Simulate = true;
         private bool IsFirstLoad = true;
 
         private bool UsingSerial = true;
@@ -66,6 +66,7 @@ namespace ABBDataManagerSystem.Pages
         private DataTable Table = new DataTable();
         private VoltageInfo CurrentVoltageInfo = new();
         private Object objLock = new object();
+        private int Index = 0;
 
         public TempTestPage()
         {
@@ -149,7 +150,6 @@ namespace ABBDataManagerSystem.Pages
         }
 
         #region 从Winform拷贝的代码
-
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
@@ -414,11 +414,18 @@ namespace ABBDataManagerSystem.Pages
         #region 记录表格相关操作
         private void InitDataGrid()
         {
+            Index = 0;
             dgTempRecord.ItemsSource = null;
             dgTempRecord.Columns.Clear();
             Table.Rows.Clear();
             Table.Columns.Clear();
 
+            dgTempRecord.Columns.Add(new DataGridTextColumn
+            {
+                Header = "序号",
+                Binding = new Binding("序号"),
+                MinWidth = 60
+            });
             dgTempRecord.Columns.Add(new DataGridTextColumn
             {
                 Header = "时间",
@@ -486,6 +493,7 @@ namespace ABBDataManagerSystem.Pages
                 MinWidth = 40
             });
 
+            Table.Columns.Add("序号", typeof(int));
             Table.Columns.Add("时间", typeof(DateTime));
             Table.Columns.Add("Ua", typeof(float));
             Table.Columns.Add("Ub", typeof(float));
@@ -558,6 +566,7 @@ namespace ABBDataManagerSystem.Pages
         private void UpdateDataGrid(float[] values)
         {
             DataRow newRow = Table.NewRow();
+            newRow["序号"] = ++Index;
             newRow["时间"] = DateTime.Now;
             for (int i = 0; i < SelectedSlots.Count && i < values.Length; i++)
             {
@@ -918,7 +927,8 @@ namespace ABBDataManagerSystem.Pages
         private void UploadData()
         {
             CommonTempRiseTestInfo configItem;
-            var items = CommonTempRiseTestInfo.ReadFromDB(Configs.Configs.WorkflowID, cbTestPhase.Text, cbTestStatus.Text);
+            int testIndex = Utils.ParseInt(cbTestCount.Text);
+            var items = CommonTempRiseTestInfo.ReadFromDB(Configs.Configs.WorkflowID, cbTestPhase.Text, cbTestStatus.Text, testIndex);
             if (items == null || items.Count == 0)
             {
                 configItem = new CommonTempRiseTestInfo()
@@ -926,6 +936,7 @@ namespace ABBDataManagerSystem.Pages
                     TestingPhase = cbTestPhase.Text,
                     TestingStatus = cbTestStatus.Text,
                     WorkflowId = Configs.Configs.WorkflowID,
+                    TestingIndex = testIndex,
                     DateTime = DateTime.Now,
                 };
                 if (!configItem.WriteToDB())

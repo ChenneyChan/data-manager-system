@@ -11,7 +11,7 @@ namespace ABBDataManagerSystem.Configs
 
         public static TestingType TestingType { set; get; } = TestingType.DryTypeTransformerTesting;
 
-        public static string WorkflowID = "SHUILENG_002";
+        public static string WorkflowID = "";
         public static string ProductUserName = "";
         public static string ProductFigureNo = "";
 
@@ -151,6 +151,8 @@ namespace ABBDataManagerSystem.Configs
 
             GetPrivateProfileString(INICommon, "WorkStationNo", "", buff, 32, INIPATH);
             WorkStationNo = Utils.ParseIntNull(buff.ToString()) ?? 1;
+            GetPrivateProfileString(INICommon, "WorkflowID", "", buff, 32, INIPATH);
+            WorkflowID = buff.ToString();
         }
 
         public static void SaveToFile()
@@ -186,6 +188,7 @@ namespace ABBDataManagerSystem.Configs
             WritePrivateProfileString(INIPowerAnalyzer, "CT", CT != null ? Utils.FloatFormat((float)CT, 4) : "" , INIPATH);
 
             WritePrivateProfileString(INICommon, "WorkStationNo", WorkStationNo.ToString(), INIPATH);
+            WritePrivateProfileString(INICommon, "WorkflowID", WorkflowID, INIPATH);
         }
 
         #endregion

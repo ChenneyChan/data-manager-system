@@ -11,6 +11,7 @@ namespace ABBDataManagerSystem.Bean.Base
         public string WorkflowId = String.Empty;
         public string TestingPhase = String.Empty;
         public string TestingStatus = String.Empty;
+        public int TestingIndex = 1;
         public DateTime? DateTime = null;
 
         public static Dictionary<string, string> FieldComments = new Dictionary<string, string>
@@ -19,6 +20,7 @@ namespace ABBDataManagerSystem.Bean.Base
             {"WorkflowId", "出厂序号"},
             {"TestingPhase", "试验阶段"},
             {"TestingStatus", "试验状态"},
+            {"TestingIndex", "试验次数"},
             {"DateTime", "试验时间"},
         };
 
@@ -35,14 +37,15 @@ namespace ABBDataManagerSystem.Bean.Base
                 // 打开数据库连接
                 connection.Open();
 
-                using (SQLCommond command = new SQLCommond($"INSERT INTO {TABLE_NAME} (ID, workflow_id, testing_phase, testing_status, " +
-                    $"datetime) VALUES (@ID, @WorkflowId, @TestingPhase, @TestingStatus, " +
+                using (SQLCommond command = new SQLCommond($"INSERT INTO {TABLE_NAME} (ID, workflow_id, testing_phase, testing_status, testing_index, " +
+                    $"datetime) VALUES (@ID, @WorkflowId, @TestingPhase, @TestingStatus, @TestingIndex, " +
                     $"@DateTime)", connection))
                 {
                     command.Parameters.AddWithValue("@ID", ID);
                     command.Parameters.AddWithValue("@WorkflowId", WorkflowId);
                     command.Parameters.AddWithValue("@TestingPhase", TestingPhase);
                     command.Parameters.AddWithValue("@TestingStatus", TestingStatus);
+                    command.Parameters.AddWithValue("@TestingIndex", TestingIndex);
                     command.Parameters.AddWithValue("@DateTime", DateTime??System.DateTime.Now);
                     int count = command.ExecuteNonQuery();
                     return count > 0;
@@ -50,7 +53,7 @@ namespace ABBDataManagerSystem.Bean.Base
             }
         }
 
-        public static List<CommonTempRiseTestInfo> ReadFromDB(string sequence = "", string testPhase = "", string testStatus = "")
+        public static List<CommonTempRiseTestInfo> ReadFromDB(string sequence = "", string testPhase = "", string testStatus = "", int testIndex = 0)
         {
             // 查询数据
             string queryDataSql = $"SELECT * FROM {TABLE_NAME}";
@@ -65,6 +68,10 @@ namespace ABBDataManagerSystem.Bean.Base
                 {
                     queryDataSql += $" AND testing_status = '{testStatus}'";
                 }
+                if (testIndex != 0)
+                {
+                    queryDataSql += $" AND testing_index = '{testIndex}'";
+                }
             }
             List<CommonTempRiseTestInfo>? records = DBConnector.QueryFromDB<CommonTempRiseTestInfo>(queryDataSql, (reader) =>
             {
@@ -78,6 +85,7 @@ namespace ABBDataManagerSystem.Bean.Base
                     WorkflowId = reader.GetString("workflow_id"),
                     TestingPhase = reader.GetString("testing_phase"),
                     TestingStatus = reader.GetString("testing_status"),
+                    TestingIndex = reader.GetInt32("testing_index"),
                     DateTime = !reader.IsDBNull("datetime") ? reader.GetDateTime("datetime") : System.DateTime.Now,
                 };
             });
@@ -90,15 +98,16 @@ namespace ABBDataManagerSystem.Bean.Base
         }
 
 
-        public static bool DeleteData(string workflowID, string testPhase, string testStatus)
+        public static bool DeleteData(string workflowID, string testPhase, string testStatus, int testIndex)
         {
             using (SQLConnection connection = new SQLConnection(DBConnector.GetConnectionString()))
             {
                 connection.Open();
-                SQLCommond command = new SQLCommond($"DELETE FROM {TABLE_NAME} WHERE workflow_id = @WorkflowId  AND testing_phase = @TestPhase AND testing_status = @TestStatus", connection);
+                SQLCommond command = new SQLCommond($"DELETE FROM {TABLE_NAME} WHERE workflow_id = @WorkflowId  AND testing_phase = @TestPhase AND testing_status = @TestStatus AND testing_index = @TestIndex", connection);
                 command.Parameters.AddWithValue("@WorkflowId", workflowID);
                 command.Parameters.AddWithValue("@TestPhase", testPhase);
                 command.Parameters.AddWithValue("@TestStatus", testStatus);
+                command.Parameters.AddWithValue("@TestIndex", testIndex);
                 int count = command.ExecuteNonQuery();
                 return count > 0;
             }
