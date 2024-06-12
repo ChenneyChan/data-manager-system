@@ -24,7 +24,7 @@ namespace ABBDataManagerSystem
         {
             InitializeComponent();
             Configs.Configs.LoadFromFile();
-            EventManager.Instance.Subscribe<TestEventArgs>("WorkflowSelected", EventHandler);
+            EventManager.Instance.Subscribe("WorkflowSelected", EventHandler);
         }
 
         private void MenuItemSetting_Click(object sender, RoutedEventArgs e)
@@ -119,6 +119,7 @@ namespace ABBDataManagerSystem
                 }
             }
             Configs.Configs.SaveToFile();
+            EventManager.Instance.Unsubscribe("WorkflowSelected", EventHandler);
         }
 
         private void Window_Closed(object sender, EventArgs e)

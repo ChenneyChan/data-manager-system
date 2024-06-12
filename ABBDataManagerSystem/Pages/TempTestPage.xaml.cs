@@ -163,7 +163,7 @@ namespace ABBDataManagerSystem.Pages
             InitChartRange();
             tempCharts = new TempChartsNew(plotView, SelectedSlots);
             tempCharts.InitChart();
-            Tools.EventManager.Instance.Subscribe<TestEventArgs>("PowerAnalyzer", EventHandler);
+            Tools.EventManager.Instance.Subscribe("PowerAnalyzer", EventHandler);
         }
 
         private void UserControl_Unloaded(object sender, RoutedEventArgs e)
@@ -303,7 +303,7 @@ namespace ABBDataManagerSystem.Pages
             {
                 ResetEvent.Set();
             }
-            Tools.EventManager.Instance.Unsubscribe<TestEventArgs>("PowerAnalyzer", EventHandler);
+            Tools.EventManager.Instance.Unsubscribe("PowerAnalyzer", EventHandler);
         }
 
         #region 图表相关操作
