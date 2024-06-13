@@ -11,6 +11,7 @@ namespace ABBDataManagerSystem.Bean.Base
         public string WorkflowId = String.Empty;
         public string TestingPhase = String.Empty;
         public string TestingStatus = String.Empty;
+        public string CoolingMode = String.Empty;
         public int TestingIndex = 1;
         public DateTime? DateTime = null;
 
@@ -21,6 +22,7 @@ namespace ABBDataManagerSystem.Bean.Base
             {"TestingPhase", "试验阶段"},
             {"TestingStatus", "试验状态"},
             {"TestingIndex", "试验次数"},
+            {"CoolingMode", "冷却方式"},
             {"DateTime", "试验时间"},
         };
 
@@ -37,8 +39,8 @@ namespace ABBDataManagerSystem.Bean.Base
                 // 打开数据库连接
                 connection.Open();
 
-                using (SQLCommond command = new SQLCommond($"INSERT INTO {TABLE_NAME} (ID, workflow_id, testing_phase, testing_status, testing_index, " +
-                    $"datetime) VALUES (@ID, @WorkflowId, @TestingPhase, @TestingStatus, @TestingIndex, " +
+                using (SQLCommond command = new SQLCommond($"INSERT INTO {TABLE_NAME} (ID, workflow_id, testing_phase, testing_status, testing_index, cooling_mode, " +
+                    $"datetime) VALUES (@ID, @WorkflowId, @TestingPhase, @TestingStatus, @TestingIndex, @CoolingMode, " +
                     $"@DateTime)", connection))
                 {
                     command.Parameters.AddWithValue("@ID", ID);
@@ -46,6 +48,7 @@ namespace ABBDataManagerSystem.Bean.Base
                     command.Parameters.AddWithValue("@TestingPhase", TestingPhase);
                     command.Parameters.AddWithValue("@TestingStatus", TestingStatus);
                     command.Parameters.AddWithValue("@TestingIndex", TestingIndex);
+                    command.Parameters.AddWithValue("@CoolingMode", CoolingMode);
                     command.Parameters.AddWithValue("@DateTime", DateTime??System.DateTime.Now);
                     int count = command.ExecuteNonQuery();
                     return count > 0;
@@ -53,7 +56,7 @@ namespace ABBDataManagerSystem.Bean.Base
             }
         }
 
-        public static List<CommonTempRiseTestInfo> ReadFromDB(string sequence = "", string testPhase = "", string testStatus = "", int testIndex = 0)
+        public static List<CommonTempRiseTestInfo> ReadFromDB(string sequence = "", string testPhase = "", string testStatus = "", string coolingMode = "", int testIndex = 1)
         {
             // 查询数据
             string queryDataSql = $"SELECT * FROM {TABLE_NAME}";
@@ -67,6 +70,10 @@ namespace ABBDataManagerSystem.Bean.Base
                 if (testStatus != "")
                 {
                     queryDataSql += $" AND testing_status = '{testStatus}'";
+                }
+                if (coolingMode != "")
+                {
+                    queryDataSql += $" AND cooling_mode = '{coolingMode}'";
                 }
                 if (testIndex != 0)
                 {
@@ -86,6 +93,7 @@ namespace ABBDataManagerSystem.Bean.Base
                     TestingPhase = reader.GetString("testing_phase"),
                     TestingStatus = reader.GetString("testing_status"),
                     TestingIndex = reader.GetInt32("testing_index"),
+                    CoolingMode = reader.GetString("cooling_mode"),
                     DateTime = !reader.IsDBNull("datetime") ? reader.GetDateTime("datetime") : System.DateTime.Now,
                 };
             });

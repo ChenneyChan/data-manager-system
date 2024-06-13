@@ -38,7 +38,7 @@ namespace ABBDataManagerSystem.Pages
     /// </summary>
     public partial class TempTestPage : UserControl, ICloseable
     {
-        private static bool Simulate = false;
+        private static bool Simulate = true;
         private bool IsFirstLoad = true;
 
         private bool UsingSerial = true;
@@ -928,7 +928,7 @@ namespace ABBDataManagerSystem.Pages
         {
             CommonTempRiseTestInfo configItem;
             int testIndex = Utils.ParseInt(cbTestCount.Text);
-            var items = CommonTempRiseTestInfo.ReadFromDB(Configs.Configs.WorkflowID, cbTestPhase.Text, cbTestStatus.Text, testIndex);
+            var items = CommonTempRiseTestInfo.ReadFromDB(Configs.Configs.WorkflowID, cbTestPhase.Text, cbTestStatus.Text, cbCoolingMode.Text, testIndex);
             if (items == null || items.Count == 0)
             {
                 configItem = new CommonTempRiseTestInfo()
@@ -937,6 +937,7 @@ namespace ABBDataManagerSystem.Pages
                     TestingStatus = cbTestStatus.Text,
                     WorkflowId = Configs.Configs.WorkflowID,
                     TestingIndex = testIndex,
+                    CoolingMode = cbCoolingMode.Text,
                     DateTime = DateTime.Now,
                 };
                 if (!configItem.WriteToDB())
