@@ -53,7 +53,8 @@ namespace ABBDataManagerSystem.Bean.Base
         public string RatedVoltageInterval = String.Empty;
         public float? TempRiseTestingVoltage = null;
         public float? TempRiseTestingCurrent = null;
-        public string TempRiseCorrectionFactor = String.Empty;
+        public float? TempRiseHVCorrectionFactor = null;
+        public float? TempRiseLVCorrectionFactor = null;
         public string TempRiseRelativeTo = String.Empty;
 
         public static Dictionary<string, string> FieldComments = new Dictionary<string, string>
@@ -78,7 +79,8 @@ namespace ABBDataManagerSystem.Bean.Base
             {"RatedVoltageInterval", "分接"},
             {"TempRiseTestingVoltage", "温升试验电压" },
             {"TempRiseTestingCurrent", "温升试验电流" },
-            {"TempRiseCorrectionFactor", "温升校正系数" },
+            {"TempRiseHVCorrectionFactor", "高压温升校正系数" },
+            {"TempRiseLVCorrectionFactor", "低压温升校正系数" },
             {"TempRiseRelativeTo", "温升相对于" },
         };
 
@@ -94,10 +96,10 @@ namespace ABBDataManagerSystem.Bean.Base
 
                 using (SQLCommond command = new SQLCommond($"INSERT INTO {TABLE_NAME} (ID, WorkflowType, RatedPower, RatedPower1, RatedPower2, " +
                     "RatedVoltageHv, RatedVoltageLv, RatedVoltageYv, RatedCurrentHv, RatedCurrentLv, RatedCurrentYv, No, CAL, Type, Phase, CONNSymbol, " +
-                    "TappingVoltages, RatedVoltageInterval, TempRiseTestingVoltage, TempRiseTestingCurrent, TempRiseCorrectionFactor, TempRiseRelativeTo, ) " + 
+                    "TappingVoltages, RatedVoltageInterval, TempRiseTestingVoltage, TempRiseTestingCurrent, TempRiseHVCorrectionFactor, TempRiseLVCorrectionFactor, TempRiseRelativeTo, ) " + 
                     "VALUES(@ID, @WorkflowType, @RatedPower, @RatedPower1, @RatedPower2, @RatedVoltageHv, @RatedVoltageLv, @RatedVoltageYv, " + 
                     "@RatedCurrentHv, @RatedCurrentLv, @RatedCurrentYv, @No, @CAL, @Type, @Phase, @CONNSymbol, @TappingVoltages, @RatedVoltageInterval, " +
-                    "@TempRiseTestingVoltage, @TempRiseTestingCurrent, @TempRiseCorrectionFactor, @TempRiseRelativeTo)", connection))
+                    "@TempRiseTestingVoltage, @TempRiseTestingCurrent, @TempRiseHVCorrectionFactor, @TempRiseLVCorrectionFactor, @TempRiseRelativeTo)", connection))
                 {
                     command.Parameters.AddWithValue("@ID", ID);
                     command.Parameters.AddWithValue("@WorkflowType", WorkflowType);
@@ -119,7 +121,8 @@ namespace ABBDataManagerSystem.Bean.Base
                     command.Parameters.AddWithValue("@RatedVoltageInterval", RatedVoltageInterval);
                     command.Parameters.AddWithValue("@TempRiseTestingVoltage", TempRiseTestingVoltage);
                     command.Parameters.AddWithValue("@TempRiseTestingCurrent", TempRiseTestingCurrent);
-                    command.Parameters.AddWithValue("@TempRiseCorrectionFactor", TempRiseCorrectionFactor);
+                    command.Parameters.AddWithValue("@TempRiseHVCorrectionFactor", TempRiseHVCorrectionFactor);
+                    command.Parameters.AddWithValue("@TempRiseLVCorrectionFactor", TempRiseLVCorrectionFactor);
                     command.Parameters.AddWithValue("@TempRiseRelativeTo", TempRiseRelativeTo);
                     int count = command.ExecuteNonQuery();
                     return count > 0;
@@ -132,7 +135,7 @@ namespace ABBDataManagerSystem.Bean.Base
             string updateSql = $"UPDATE {TABLE_NAME} SET WorkflowType = @WorkflowType, RatedPower = @RatedPower, RatedPower1 = @RatedPower1, " +
                 $"RatedPower2 = @RatedPower2, RatedVoltageHv = @RatedVoltageHv, RatedVoltageLv = @RatedVoltageLv, RatedVoltageYv = @RatedVoltageYv, RatedCurrentHv = @RatedCurrentHv, " +
                 $"RatedCurrentLv = @RatedCurrentLv, RatedCurrentYv = @RatedCurrentYv, No = @No, CAL = @CAL, Type = @Type, Phase = @Phase, CONNSymbol = @CONNSymbol, " +
-                $"TappingVoltages = @TappingVoltages, RatedVoltageInterval = @RatedVoltageInterval, TempRiseTestingVoltage = @TempRiseTestingVoltage, TempRiseTestingCurrent = @TempRiseTestingCurrent, TempRiseCorrectionFactor = @TempRiseCorrectionFactor, TempRiseRelativeTo = @TempRiseRelativeTo, " +
+                $"TappingVoltages = @TappingVoltages, RatedVoltageInterval = @RatedVoltageInterval, TempRiseTestingVoltage = @TempRiseTestingVoltage, TempRiseTestingCurrent = @TempRiseTestingCurrent, TempRiseHVCorrectionFactor = @TempRiseHVCorrectionFactor, TempRiseLVCorrectionFactor = @TempRiseLVCorrectionFactor, TempRiseRelativeTo = @TempRiseRelativeTo, " +
                 "WHERE ID = @ID";
 
             // 创建 SQLite 连接对象
@@ -161,7 +164,8 @@ namespace ABBDataManagerSystem.Bean.Base
                     command.Parameters.AddWithValue("@RatedVoltageInterval", RatedVoltageInterval);
                     command.Parameters.AddWithValue("@TempRiseTestingVoltage", TempRiseTestingVoltage);
                     command.Parameters.AddWithValue("@TempRiseTestingCurrent", TempRiseTestingCurrent);
-                    command.Parameters.AddWithValue("@TempRiseCorrectionFactor", TempRiseCorrectionFactor);
+                    command.Parameters.AddWithValue("@TempRiseHVCorrectionFactor", TempRiseHVCorrectionFactor);
+                    command.Parameters.AddWithValue("@TempRiseLVCorrectionFactor", TempRiseLVCorrectionFactor);
                     command.Parameters.AddWithValue("@TempRiseRelativeTo", TempRiseRelativeTo);
 
                     return command.ExecuteNonQuery() > 0;
@@ -171,8 +175,8 @@ namespace ABBDataManagerSystem.Bean.Base
 
         public bool UpdateTempRiseFields()
         {
-            string updateSql = $"UPDATE {TABLE_NAME} SET TempRiseTestingVoltage = @TempRiseTestingVoltage, TempRiseTestingCurrent = @TempRiseTestingCurrent, " + 
-                "TempRiseCorrectionFactor = @TempRiseCorrectionFactor, TempRiseRelativeTo = @TempRiseRelativeTo " +
+            string updateSql = $"UPDATE {TABLE_NAME} SET TempRiseTestingVoltage = @TempRiseTestingVoltage, TempRiseTestingCurrent = @TempRiseTestingCurrent, " +
+                "TempRiseHVCorrectionFactor = @TempRiseHVCorrectionFactor, TempRiseLVCorrectionFactor = @TempRiseLVCorrectionFactor, TempRiseRelativeTo = @TempRiseRelativeTo " +
                 "WHERE ID = @ID";
 
             // 创建 SQLite 连接对象
@@ -184,7 +188,8 @@ namespace ABBDataManagerSystem.Bean.Base
                     command.Parameters.AddWithValue("@ID", ID);
                     command.Parameters.AddWithValue("@TempRiseTestingVoltage", TempRiseTestingVoltage);
                     command.Parameters.AddWithValue("@TempRiseTestingCurrent", TempRiseTestingCurrent);
-                    command.Parameters.AddWithValue("@TempRiseCorrectionFactor", TempRiseCorrectionFactor);
+                    command.Parameters.AddWithValue("@TempRiseHVCorrectionFactor", TempRiseHVCorrectionFactor);
+                    command.Parameters.AddWithValue("@TempRiseLVCorrectionFactor", TempRiseLVCorrectionFactor);
                     command.Parameters.AddWithValue("@TempRiseRelativeTo", TempRiseRelativeTo);
 
                     return command.ExecuteNonQuery() > 0;
@@ -228,7 +233,8 @@ namespace ABBDataManagerSystem.Bean.Base
                     RatedVoltageInterval = !reader.IsDBNull("RatedVoltageInterval") ? reader.GetString("RatedVoltageInterval") : "",
                     TempRiseTestingVoltage = !reader.IsDBNull("TempRiseTestingVoltage") ? reader.GetFloat("TempRiseTestingVoltage") : null,
                     TempRiseTestingCurrent = !reader.IsDBNull("TempRiseTestingCurrent") ? reader.GetFloat("TempRiseTestingCurrent") : null,
-                    TempRiseCorrectionFactor = !reader.IsDBNull("TempRiseCorrectionFactor") ? reader.GetString("TempRiseCorrectionFactor") : "",
+                    TempRiseHVCorrectionFactor = !reader.IsDBNull("TempRiseHVCorrectionFactor") ? reader.GetFloat("TempRiseHVCorrectionFactor") : null,
+                    TempRiseLVCorrectionFactor = !reader.IsDBNull("TempRiseLVCorrectionFactor") ? reader.GetFloat("TempRiseLVCorrectionFactor") : null,
                     TempRiseRelativeTo = !reader.IsDBNull("TempRiseRelativeTo") ? reader.GetString("TempRiseRelativeTo") : "",
                 };
             });
@@ -323,7 +329,8 @@ namespace ABBDataManagerSystem.Bean.Base
             dst.RatedVoltageInterval = src.RatedVoltageInterval;
             dst.TempRiseTestingVoltage = src.TempRiseTestingVoltage;
             dst.TempRiseTestingCurrent = src.TempRiseTestingCurrent;
-            dst.TempRiseCorrectionFactor = src.TempRiseCorrectionFactor;
+            dst.TempRiseHVCorrectionFactor = src.TempRiseHVCorrectionFactor;
+            dst.TempRiseLVCorrectionFactor = src.TempRiseLVCorrectionFactor;
             dst.TempRiseRelativeTo = src.TempRiseRelativeTo;
         }
 

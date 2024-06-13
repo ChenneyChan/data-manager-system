@@ -163,6 +163,8 @@ namespace ABBDataManagerSystem.Pages
             InitChartRange();
             tempCharts = new TempChartsNew(plotView, SelectedSlots);
             tempCharts.InitChart();
+            GetWorkflowBaseInfo();
+            Tools.EventManager.Instance.Subscribe("WorkflowSelected", WorkflowUpdateEvent);
             Tools.EventManager.Instance.Subscribe("PowerAnalyzer", EventHandler);
         }
 
@@ -304,6 +306,7 @@ namespace ABBDataManagerSystem.Pages
                 ResetEvent.Set();
             }
             Tools.EventManager.Instance.Unsubscribe("PowerAnalyzer", EventHandler);
+            Tools.EventManager.Instance.Unsubscribe("WorkflowSelected", WorkflowUpdateEvent);
         }
 
         #region 图表相关操作
@@ -1008,6 +1011,75 @@ namespace ABBDataManagerSystem.Pages
         private void btUpload_Click(object sender, RoutedEventArgs e)
         {
             UploadData();
+        }
+
+        private void btSetWorkflow_Click(object sender, RoutedEventArgs e)
+        {
+            var vs = WorkflowInfo.ReadFromDB(Configs.Configs.WorkflowID);
+            if (vs == null || vs.Count == 0)
+            {
+                MessageBox.Show("工作令错误，请检查！", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            float voltage = Utils.ParseFloat(tbTestingVoltage.Text);
+            float current = 0;
+            //容量除以试验电压除以根号三
+            WorkflowInfo workflowInfo = vs[0];
+            if (voltage != 0)
+            {
+                current = (workflowInfo.RatedPower / voltage) / (float)Math.Sqrt(3);
+            }
+            tbTestingCurrent.Text = Utils.FloatFormat(current);
+
+            workflowInfo.TempRiseHVCorrectionFactor = Utils.ParseFloatNull(cbHVCorrectionFact.Text);
+            workflowInfo.TempRiseLVCorrectionFactor = Utils.ParseFloatNull(cbLVCorrectionFact.Text);
+            workflowInfo.TempRiseRelativeTo = cbRelatedTo.Text;
+            workflowInfo.TempRiseTestingVoltage = voltage;
+            workflowInfo.TempRiseTestingCurrent = current;
+
+            bool ret = workflowInfo.UpdateTempRiseFields();
+            if (!ret)
+            {
+                MessageBox.Show("设置失败，请检查工作令和服务器连接！", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            MessageBox.Show("设置成功，数据页写入工作令！", "成功", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+        #endregion
+
+        #region 获取工作令信息
+
+        private void WorkflowUpdateEvent(object sender, TestEventArgs e)
+        {
+            GetWorkflowBaseInfo();
+        }
+
+        private void GetWorkflowBaseInfo()
+        {
+            Task.Run(() =>
+            {
+                var vs = WorkflowInfo.ReadFromDB(Configs.Configs.WorkflowID);
+                WorkflowInfo? workflowInfo = (vs != null & vs.Count != 0) ? vs[0] : null;
+                Dispatcher.Invoke(() =>
+                {
+                    if (workflowInfo == null)
+                    {
+                        cbHVCorrectionFact.SelectedIndex = 0;
+                        cbLVCorrectionFact.SelectedIndex = 0;
+                        cbRelatedTo.SelectedIndex = 0;
+                        tbTestingVoltage.Text = "";
+                        tbTestingCurrent.Text = "";
+                    }
+                    else
+                    {
+                        cbHVCorrectionFact.Text = workflowInfo.TempRiseHVCorrectionFactor.ToString();
+                        cbLVCorrectionFact.Text = workflowInfo.TempRiseLVCorrectionFactor.ToString();
+                        cbRelatedTo.Text = workflowInfo.TempRiseRelativeTo;
+                        tbTestingVoltage.Text = workflowInfo.TempRiseTestingVoltage.ToString();
+                        tbTestingCurrent.Text = workflowInfo.TempRiseTestingCurrent.ToString();
+                    }
+                });
+            });
         }
         #endregion
     }

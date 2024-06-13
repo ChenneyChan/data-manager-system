@@ -131,7 +131,7 @@
         </Grid.RowDefinitions>
         <Grid Grid.Row="0" Grid.Column="0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="720"/>
+                <ColumnDefinition Width="840"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <StackPanel Orientation="Vertical" >
@@ -175,6 +175,29 @@
                     </hc:ComboBox>
                     <Button Content="选择温度通道" Name="btSelectSlots" Width="120" Margin="10, 0" Click="btSelectSlots_Click" Height="30" BorderThickness="1" BorderBrush="Gray"/>
                 </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0, 5, 0, 10">
+                    <TextBlock Text="电压" Width="32" Margin="0, 0, 10,0" VerticalAlignment="Center"/>
+                    <hc:TextBox Name="tbTestingVoltage" Width="80" FontSize="16"/>
+                    <TextBlock Text="电流" Width="32" Margin="10,0" VerticalAlignment="Center"/>
+                    <hc:TextBox Name="tbTestingCurrent" Width="80" IsReadOnly="True" FontSize="16"/>
+                    <TextBlock Text="高压校正" Width="64" Margin="10,0" VerticalAlignment="Center"/>
+                    <hc:ComboBox Width="80" VerticalAlignment="Center" Name="cbHVCorrectionFact">
+                        <ComboBoxItem Content="225" IsSelected="True"/>
+                        <ComboBoxItem Content="235"/>
+                    </hc:ComboBox>
+                    <TextBlock Text="低压校正" Width="64" Margin="10,0" VerticalAlignment="Center"/>
+                    <hc:ComboBox Width="80" VerticalAlignment="Center" Name="cbLVCorrectionFact">
+                        <ComboBoxItem Content="225" IsSelected="True"/>
+                        <ComboBoxItem Content="235"/>
+                    </hc:ComboBox>
+                    <TextBlock Text="相对于" Width="50" Margin="10,0" VerticalAlignment="Center"/>
+                    <hc:ComboBox Width="120" VerticalAlignment="Center" Name="cbRelatedTo">
+                        <ComboBoxItem Content="环境温度" IsSelected="True"/>
+                        <ComboBoxItem Content="进水口温度"/>
+                        <ComboBoxItem Content="进风口温度"/>
+                    </hc:ComboBox>
+                    <Button Content="设置" Width="60" Height="30" BorderThickness="1" BorderBrush="Gray" Margin="5, 0" Click="btSetWorkflow_Click"/>
+                </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0, 0, 0, 10">
                     <Button Name="btStart" Content="开始采集" Grid.Column="0" Click="btStart_Click" Style="{StaticResource startbutton}" Background="DodgerBlue"/>
                     <Button Name="btUpload" Content="上传数据" Grid.Column="0" Click="btUpload_Click" Style="{StaticResource startbutton}" Background="DodgerBlue"/>
@@ -185,7 +208,7 @@
 
             <!--<TextBlock Text="通道选择" Width="80" Grid.Column="0" Margin="0, 0, 20,0"/>-->
             <StackPanel Grid.Column="1" >
-                <WrapPanel>
+                <WrapPanel MaxWidth="940" HorizontalAlignment="Left">
                     <TextBlock Text="通道选择：" FontWeight="Bold"/>
                     <TextBlock Text="" Name="tbSlotMappingShow" Visibility="Collapsed"/>
                     <hc:Shield FontSize="18" Height="30" Margin="5, 0" Name="shWindingA" Subject="线圈A" Status="槽位1" Color="#1182c3"/>
