@@ -184,7 +184,7 @@
                 </DataGrid.Columns>
             </DataGrid>
 
-            <Grid Width="580" Height="340" Grid.Column="0" Name="panelTempRiseCoolTestResult" VerticalAlignment="Top" Visibility="Visible">
+            <Grid Width="580" Height="340" Grid.Column="0" Name="panelTempRiseCoolTestResult" VerticalAlignment="Top" Visibility="Collapsed">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition/>
@@ -224,13 +224,13 @@
                 <TextBlock Text="低压1" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="1" Grid.Column="2"/>
                 <TextBlock Text="低压2" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="1" Grid.Column="3"/>
                 <TextBlock Text="第一次" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="2" Grid.Column="0"/>
-                <hc:TextBox Grid.Column="1" Grid.Row="2" Margin="5,0" Style="{StaticResource RiseCoolTextBox}" Name="tbTempCoolHV1"  PreviewMouseLeftButtonDown="tbTempCool_PreviewMouseLeftButtonDown"/>
-                <hc:TextBox Grid.Column="2" Grid.Row="2" Margin="5,0" Style="{StaticResource RiseCoolTextBox}" Name="tbTempCoolLV11" PreviewMouseLeftButtonDown="tbTempCool_PreviewMouseLeftButtonDown"/>
-                <hc:TextBox Grid.Column="3" Grid.Row="2" Margin="5,0" Style="{StaticResource RiseCoolTextBox}" Name="tbTempCoolLV12" PreviewMouseLeftButtonDown="tbTempCool_PreviewMouseLeftButtonDown"/>
+                <hc:TextBox Grid.Column="1" IsReadOnly="False" Grid.Row="2" Margin="5,0" Style="{StaticResource RiseCoolTextBox}" Name="tbTempCoolHV1"  PreviewMouseLeftButtonDown="tbTempCool_PreviewMouseLeftButtonDown"/>
+                <hc:TextBox Grid.Column="2" IsReadOnly="False" Grid.Row="2" Margin="5,0" Style="{StaticResource RiseCoolTextBox}" Name="tbTempCoolLV11" PreviewMouseLeftButtonDown="tbTempCool_PreviewMouseLeftButtonDown"/>
+                <hc:TextBox Grid.Column="3" IsReadOnly="False" Grid.Row="2" Margin="5,0" Style="{StaticResource RiseCoolTextBox}" Name="tbTempCoolLV12" PreviewMouseLeftButtonDown="tbTempCool_PreviewMouseLeftButtonDown"/>
                 <TextBlock Text="第二次" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="3" Grid.Column="0"/>
-                <hc:TextBox Grid.Column="1" Grid.Row="3" Margin="5,0" Style="{StaticResource RiseCoolTextBox}" Name="tbTempCoolHV2"  PreviewMouseLeftButtonDown="tbTempCool_PreviewMouseLeftButtonDown"/>
-                <hc:TextBox Grid.Column="2" Grid.Row="3" Margin="5,0" Style="{StaticResource RiseCoolTextBox}" Name="tbTempCoolLV21" PreviewMouseLeftButtonDown="tbTempCool_PreviewMouseLeftButtonDown"/>
-                <hc:TextBox Grid.Column="3" Grid.Row="3" Margin="5,0" Style="{StaticResource RiseCoolTextBox}" Name="tbTempCoolLV22" PreviewMouseLeftButtonDown="tbTempCool_PreviewMouseLeftButtonDown"/>
+                <hc:TextBox Grid.Column="1" IsReadOnly="False" Grid.Row="3" Margin="5,0" Style="{StaticResource RiseCoolTextBox}" Name="tbTempCoolHV2"  PreviewMouseLeftButtonDown="tbTempCool_PreviewMouseLeftButtonDown"/>
+                <hc:TextBox Grid.Column="2" IsReadOnly="False" Grid.Row="3" Margin="5,0" Style="{StaticResource RiseCoolTextBox}" Name="tbTempCoolLV21" PreviewMouseLeftButtonDown="tbTempCool_PreviewMouseLeftButtonDown"/>
+                <hc:TextBox Grid.Column="3" IsReadOnly="False" Grid.Row="3" Margin="5,0" Style="{StaticResource RiseCoolTextBox}" Name="tbTempCoolLV22" PreviewMouseLeftButtonDown="tbTempCool_PreviewMouseLeftButtonDown"/>
 
                 <StackPanel Orientation="Horizontal" Grid.Row="4" Grid.ColumnSpan="4" Height="40">
                     <TextBlock Text="通道一" Width="60"/>

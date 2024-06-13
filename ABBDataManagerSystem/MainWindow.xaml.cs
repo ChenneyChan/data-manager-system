@@ -72,12 +72,10 @@ namespace ABBDataManagerSystem
             StartTabItem<TempTestPage>(title);
         }
 
-        private bool IsFirst = true;
         private void JnYuan20WTest_Click(object sender, RoutedEventArgs e)
         {
-            string title = IsFirst ? "金源20W测试仪" : "金源50e测试仪";
+            string title = "金源20W测试仪";
             StartTabItem<JinYuan20W>(title);
-            IsFirst = false;
         }
 
         private void btHarmonicTest_Click(object sender, RoutedEventArgs e)
@@ -351,7 +349,6 @@ namespace ABBDataManagerSystem
                 TabText = title,
                 HideOnPerformClose = false,
             };
-            IsFirst = false;
 
             item.Show(dockControl, DockPosition.Document);
         }

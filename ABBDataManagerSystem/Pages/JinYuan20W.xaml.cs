@@ -993,12 +993,14 @@ namespace ABBDataManagerSystem.Pages
         }
         #endregion
 
+        #region 数据上传
         private void btUpdateCoolingResistance_Click(object sender, RoutedEventArgs e)
         {
             if (!CheckWorkflowBeforeUpload())
             {
                 return;
             }
+            CommonTempRiseCoolResistanceInfo.DeleteData(Configs.Configs.WorkflowID);
             var value = new CommonTempRiseCoolResistanceInfo()
             {
                 WorkflowID = Configs.Configs.WorkflowID,
@@ -1009,6 +1011,8 @@ namespace ABBDataManagerSystem.Pages
                 LowVoltageResistance12 = Utils.ParseFloatNull(tbTempCoolLV12.Text),
                 LowVoltageResistance21 = Utils.ParseFloatNull(tbTempCoolLV21.Text),
                 LowVoltageResistance22 = Utils.ParseFloatNull(tbTempCoolLV22.Text),
+                HighVoltageCurrent = Utils.ParseFloat(cbHVCurrents.Text.Replace("A", "")),
+                LowVoltageCurrent1 = Utils.ParseFloat(cbLVCurrents.Text.Replace("A", "")),
             };
             bool ret = value.WriteToDB();
             ShowUploadTips(ret);
@@ -1034,6 +1038,7 @@ namespace ABBDataManagerSystem.Pages
                 MessageBox.Show("数据上传失败，请检查数据和服务器连接情况后重试！", "上传结果", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+        #endregion
     }
 
 }
