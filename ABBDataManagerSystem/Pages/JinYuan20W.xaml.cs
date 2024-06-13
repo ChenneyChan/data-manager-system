@@ -1,4 +1,5 @@
-﻿using ABBDataManagerSystem.Connector;
+﻿using ABBDataManagerSystem.Bean.Base;
+using ABBDataManagerSystem.Connector;
 using ABBDataManagerSystem.Pages.Views;
 using System.Collections.ObjectModel;
 using System.IO.Ports;
@@ -991,6 +992,48 @@ namespace ABBDataManagerSystem.Pages
             TempRiseCoolSelectedLevel = selectedLevel;
         }
         #endregion
+
+        private void btUpdateCoolingResistance_Click(object sender, RoutedEventArgs e)
+        {
+            if (!CheckWorkflowBeforeUpload())
+            {
+                return;
+            }
+            var value = new CommonTempRiseCoolResistanceInfo()
+            {
+                WorkflowID = Configs.Configs.WorkflowID,
+                Temperature = Utils.ParseFloatNull(tbTemperature2.Text),
+                HighVoltageResistance1 = Utils.ParseFloatNull(tbTempCoolHV1.Text),
+                HighVoltageResistance2 = Utils.ParseFloatNull(tbTempCoolHV2.Text),
+                LowVoltageResistance11 = Utils.ParseFloatNull(tbTempCoolLV11.Text),
+                LowVoltageResistance12 = Utils.ParseFloatNull(tbTempCoolLV12.Text),
+                LowVoltageResistance21 = Utils.ParseFloatNull(tbTempCoolLV21.Text),
+                LowVoltageResistance22 = Utils.ParseFloatNull(tbTempCoolLV22.Text),
+            };
+            bool ret = value.WriteToDB();
+            ShowUploadTips(ret);
+        }
+
+        private bool CheckWorkflowBeforeUpload()
+        {
+            if (Configs.Configs.WorkflowID.Length == 0)
+            {
+                MessageBox.Show("请先选择工作令！", "提示", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+            return true;
+        }
+
+        private void ShowUploadTips(bool uploadRet)
+        {
+            if (uploadRet)
+            {
+                MessageBox.Show("数据上传成功！", "上传结果", MessageBoxButton.OK, MessageBoxImage.Information);
+            } else
+            {
+                MessageBox.Show("数据上传失败，请检查数据和服务器连接情况后重试！", "上传结果", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
     }
 
 }

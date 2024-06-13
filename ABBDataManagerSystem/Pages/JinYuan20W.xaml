@@ -184,7 +184,7 @@
                 </DataGrid.Columns>
             </DataGrid>
 
-            <Grid Width="580" Height="300" Grid.Column="0" Name="panelTempRiseCoolTestResult" VerticalAlignment="Top" Visibility="Collapsed">
+            <Grid Width="580" Height="340" Grid.Column="0" Name="panelTempRiseCoolTestResult" VerticalAlignment="Top" Visibility="Visible">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition/>
@@ -197,7 +197,23 @@
                     <RowDefinition Height="60"/>
                     <RowDefinition Height="60"/>
                     <RowDefinition Height="*"/>
+                    <RowDefinition Height="60"/>
                 </Grid.RowDefinitions>
+
+                <Border Grid.Column="0" Grid.Row="1" BorderThickness="1, 1, 0, 0"/>
+                <Border Grid.Column="1" Grid.Row="1" BorderThickness="1, 1, 0, 0"/>
+                <Border Grid.Column="2" Grid.Row="1" BorderThickness="1, 1, 0, 0"/>
+                <Border Grid.Column="3" Grid.Row="1" BorderThickness="1, 1, 1, 0"/>
+
+                <Border Grid.Column="0" Grid.Row="2" BorderThickness="1, 1, 0, 0"/>
+                <Border Grid.Column="1" Grid.Row="2" BorderThickness="1, 1, 0, 0"/>
+                <Border Grid.Column="2" Grid.Row="2" BorderThickness="1, 1, 0, 0"/>
+                <Border Grid.Column="3" Grid.Row="2" BorderThickness="1, 1, 1, 0"/>
+
+                <Border Grid.Column="0" Grid.Row="3" BorderThickness="1, 1, 0, 1"/>
+                <Border Grid.Column="1" Grid.Row="3" BorderThickness="1, 1, 0, 1"/>
+                <Border Grid.Column="2" Grid.Row="3" BorderThickness="1, 1, 0, 1"/>
+                <Border Grid.Column="3" Grid.Row="3" BorderThickness="1, 1, 1, 1"/>
                 <TextBlock Text="温升冷电阻测量" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.ColumnSpan="4" FontWeight="Bold"/>
                 <StackPanel Orientation="Horizontal" Margin="400, 0, 0, 0" Grid.ColumnSpan="4">
                     <TextBlock Text="温度"/>
@@ -215,21 +231,6 @@
                 <hc:TextBox Grid.Column="1" Grid.Row="3" Margin="5,0" Style="{StaticResource RiseCoolTextBox}" Name="tbTempCoolHV2"  PreviewMouseLeftButtonDown="tbTempCool_PreviewMouseLeftButtonDown"/>
                 <hc:TextBox Grid.Column="2" Grid.Row="3" Margin="5,0" Style="{StaticResource RiseCoolTextBox}" Name="tbTempCoolLV21" PreviewMouseLeftButtonDown="tbTempCool_PreviewMouseLeftButtonDown"/>
                 <hc:TextBox Grid.Column="3" Grid.Row="3" Margin="5,0" Style="{StaticResource RiseCoolTextBox}" Name="tbTempCoolLV22" PreviewMouseLeftButtonDown="tbTempCool_PreviewMouseLeftButtonDown"/>
-
-                <Border Grid.Column="0" Grid.Row="1" BorderThickness="1, 1, 0, 0"/>
-                <Border Grid.Column="1" Grid.Row="1" BorderThickness="1, 1, 0, 0"/>
-                <Border Grid.Column="2" Grid.Row="1" BorderThickness="1, 1, 0, 0"/>
-                <Border Grid.Column="3" Grid.Row="1" BorderThickness="1, 1, 1, 0"/>
-
-                <Border Grid.Column="0" Grid.Row="2" BorderThickness="1, 1, 0, 0"/>
-                <Border Grid.Column="1" Grid.Row="2" BorderThickness="1, 1, 0, 0"/>
-                <Border Grid.Column="2" Grid.Row="2" BorderThickness="1, 1, 0, 0"/>
-                <Border Grid.Column="3" Grid.Row="2" BorderThickness="1, 1, 1, 0"/>
-
-                <Border Grid.Column="0" Grid.Row="3" BorderThickness="1, 1, 0, 1"/>
-                <Border Grid.Column="1" Grid.Row="3" BorderThickness="1, 1, 0, 1"/>
-                <Border Grid.Column="2" Grid.Row="3" BorderThickness="1, 1, 0, 1"/>
-                <Border Grid.Column="3" Grid.Row="3" BorderThickness="1, 1, 1, 1"/>
 
                 <StackPanel Orientation="Horizontal" Grid.Row="4" Grid.ColumnSpan="4" Height="40">
                     <TextBlock Text="通道一" Width="60"/>
@@ -251,6 +252,9 @@
                         <ComboBoxItem Content="第一次" IsSelected="True"/>
                         <ComboBoxItem Content="第二次"/>
                     </hc:ComboBox>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Row="5" Grid.ColumnSpan="4" Height="40">
+                    <Button Name="btUpdateCoolingResistance" Content="上传数据" Click="btUpdateCoolingResistance_Click"/>
                 </StackPanel>
             </Grid>
 
