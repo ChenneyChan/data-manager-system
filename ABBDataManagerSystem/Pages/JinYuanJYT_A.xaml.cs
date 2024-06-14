@@ -445,5 +445,39 @@ namespace ABBDataManagerSystem.Pages
                 tbRatedLowVoltage.Text = "";
             }
         }
+
+        #region 数据上传
+        private void btUpload_Click(object sender, System.EventArgs e)
+        {
+            if (!Utils.CheckWorkflowBeforeUpload())
+            {
+                return;
+            }
+            VoltageRatioInfo.DeleteData(Configs.Configs.WorkflowID);
+            List<VoltageRatioInfo> list = new List<VoltageRatioInfo>();
+            foreach (var key in RatioValueFields.Keys)
+            {
+                var item = RatioValueFields[key];
+                var value = new VoltageRatioInfo()
+                {
+                    WorkflowId = Configs.Configs.WorkflowID,
+                    TappingPosition = Utils.ParseInt(key),
+                    TappingVoltage = item.TappingVoltage,
+                    CalRatio = item.CalculatedRatio,
+                    ErrorAB = item.ValueAB,
+                    ErrorBC = item.ValueBC,
+                    ErrorCA = item.ValueCA,
+                };
+                if (key == "1")
+                {
+                    value.ConnectionGroup1 = tbConnectionGroup1.Text;
+                    value.ConnectionGroup2 = tbConnectionGroup2.Text;
+                }
+                list.Add(value);
+            }
+            var ret = VoltageRatioInfo.BatchInsertData(list);
+            Utils.ShowUploadTips(ret);
+        }
+        #endregion
     }
 }

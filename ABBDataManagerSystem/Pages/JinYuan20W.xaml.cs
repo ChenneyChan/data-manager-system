@@ -984,7 +984,7 @@ namespace ABBDataManagerSystem.Pages
         #region 数据上传
         private void btUpdateCoolingResistance_Click(object sender, RoutedEventArgs e)
         {
-            if (!CheckWorkflowBeforeUpload())
+            if (!Utils.CheckWorkflowBeforeUpload())
             {
                 return;
             }
@@ -1003,30 +1003,9 @@ namespace ABBDataManagerSystem.Pages
                 LowVoltageCurrent1 = Utils.ParseFloat(cbLVCurrents.Text.Replace("A", "")),
             };
             bool ret = value.WriteToDB();
-            ShowUploadTips(ret);
+            Utils.ShowUploadTips(ret);
         }
 
-        private bool CheckWorkflowBeforeUpload()
-        {
-            if (Configs.Configs.WorkflowID.Length == 0)
-            {
-                MessageBox.Show("请先选择工作令！", "提示", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return false;
-            }
-            return true;
-        }
-
-        private void ShowUploadTips(bool uploadRet)
-        {
-            if (uploadRet)
-            {
-                MessageBox.Show("数据上传成功！", "上传结果", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-            else
-            {
-                MessageBox.Show("数据上传失败，请检查数据和服务器连接情况后重试！", "上传结果", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
 
         // 温升电阻持续采集数据上传
         private void btUpdateTempRiseRecords_Click(object sender, RoutedEventArgs e)

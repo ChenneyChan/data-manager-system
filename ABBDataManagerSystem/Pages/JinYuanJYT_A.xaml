@@ -96,6 +96,7 @@
                 <hc:TextBox Width="160"  hc:InfoElement.Title="高压kV" hc:InfoElement.TitlePlacement="Left" Text="10000" Margin="0,0, 10, 0" Name="tbRatedHighVoltage"/>
                 <hc:TextBox Width="160"  hc:InfoElement.Title="低压kV" hc:InfoElement.TitlePlacement="Left" Text="400" Margin="0,0, 10, 0" Name="tbRatedLowVoltage"/>
                 <Button Content="应用" Width="80" Style="{StaticResource ButtonInfo}" Name="btApply" Click="btApply_Click"/>
+                <Button Content="上传数据" Width="80" Margin="10,0"  Style="{StaticResource ButtonInfo}" Name="btUpload" Click="btUpload_Click"/>
             </StackPanel>
         </StackPanel>
 

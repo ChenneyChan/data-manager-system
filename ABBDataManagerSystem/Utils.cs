@@ -2,6 +2,7 @@
 using System.IO;
 using System.Reflection;
 using System.Text;
+using System.Windows;
 
 namespace ABBDataManagerSystem
 {
@@ -308,6 +309,29 @@ namespace ABBDataManagerSystem
         internal static byte[] FloatToBigEndianBytes(float? v)
         {
             throw new NotImplementedException();
+        }
+
+
+        public static bool CheckWorkflowBeforeUpload()
+        {
+            if (Configs.Configs.WorkflowID.Length == 0)
+            {
+                MessageBox.Show("请先选择工作令！", "提示", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+            return true;
+        }
+
+        public static void ShowUploadTips(bool uploadRet)
+        {
+            if (uploadRet)
+            {
+                MessageBox.Show("数据上传成功！", "上传结果", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            else
+            {
+                MessageBox.Show("数据上传失败，请检查数据和服务器连接情况后重试！", "上传结果", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 }
