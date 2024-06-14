@@ -19,7 +19,7 @@ namespace ABBDataManagerSystem.Pages
         private Random random = new Random();
         private bool IsFirstLoaded = true;
         private JinYuan20WCollector? Collector = null;
-        private List<CurrentResistanceInfo> dataItems = new List<CurrentResistanceInfo>();
+        private List<CommonTempRiseTestResistanceInfo> dataItems = new List<CommonTempRiseTestResistanceInfo>();
         private ObservableCollection<MyItem> items2;
         private bool IsConneted = false;
         private bool IsCollecting = false;
@@ -64,6 +64,7 @@ namespace ABBDataManagerSystem.Pages
             InitTempRiseCoolTbs();
             btStartTiming.Visibility = Visibility.Collapsed;
             panelTappingChoice.Visibility = Visibility.Collapsed;
+            dataGridPanel.Visibility = Visibility.Collapsed;
 
             // 数据模型
             items2 = new ObservableCollection<MyItem>
@@ -205,35 +206,10 @@ namespace ABBDataManagerSystem.Pages
             UpdateControlEnableState();
         }
 
-
-        public class CurrentResistanceInfo
-        {
-            public int SortIndex { get; set; }
-            public float CurrentHV { get; set; }
-            public float CurrentLV { get; set; }
-            public float ResistanceHV { get; set; }
-            public float ResistanceLV { get; set; }
-
-            public string CurrentTime { get; set; } = string.Empty;
-        }
-
         public class MyItem
         {
             public string Name { get; set; }
             public string Description { get; set; }
-        }
-
-        private void btDeleteRecord_Click(object sender, RoutedEventArgs e)
-        {
-            if (dataItems.Count > 0)
-            {
-                dataItems.RemoveAt(dataItems.Count - 1);
-                lvUsers.Items.Refresh();
-            }
-            if (items2.Count > 0)
-            {
-                items2.RemoveAt(items2.Count - 1);
-            }
         }
 
         private void swConnect_CheckedChange(object sender, RoutedEventArgs e)
@@ -510,14 +486,14 @@ namespace ABBDataManagerSystem.Pages
                 {
                     valueCh2 = lastPacket.ch2RealTimeResistance;
                 }
-            } 
+            }
             else if (IsSimulate)
             {
                 valueCh1 = (float)random.Next() % 1000 + (float)random.NextDouble();
                 valueCh2 = (float)random.Next() % 1000 + (float)random.NextDouble();
             }
-            string? ch1 = Utils.FloatFormatZeroIsNull(valueCh1); 
-            string? ch2 = Utils.FloatFormatZeroIsNull(valueCh2); 
+            string? ch1 = Utils.FloatFormatZeroIsNull(valueCh1);
+            string? ch2 = Utils.FloatFormatZeroIsNull(valueCh2);
 
             TextBox hv = TempRiseCoolSelectedLevel == "第一次" ? tbTempCoolHV1 : tbTempCoolHV2;
             TextBox lv1 = TempRiseCoolSelectedLevel == "第一次" ? tbTempCoolLV11 : tbTempCoolLV21;
@@ -609,6 +585,13 @@ namespace ABBDataManagerSystem.Pages
             UpdateTempRiseRecordInterval();
             Collector?.SetTemperatureRaiseTest();
             IsTempRiseTesting = true;
+
+            cbTestPhase.IsEnabled = false;
+            cbTestStatus.IsEnabled = false;
+            cbTestCount.IsEnabled = false;
+            cbCoolingMode.IsEnabled = false;
+            dataItems.Clear();
+            lvUsers.Items.Refresh();
         }
         #endregion
 
@@ -622,6 +605,11 @@ namespace ABBDataManagerSystem.Pages
             IsTempRiseTesting = false;
             btStartTiming.IsEnabled = true;
             btTempRiseTest.IsEnabled = false;
+
+            cbTestPhase.IsEnabled = true;
+            cbTestStatus.IsEnabled = true;
+            cbTestCount.IsEnabled = true;
+            cbCoolingMode.IsEnabled = true;
         }
         #endregion
 
@@ -636,7 +624,7 @@ namespace ABBDataManagerSystem.Pages
             TempRiseCountDown = TempRiseRecordInterval;
 
             // 定时记录数据
-            dataItems.Add(new CurrentResistanceInfo()
+            dataItems.Add(new CommonTempRiseTestResistanceInfo()
             {
                 SortIndex = CurrentIndex,
                 CurrentHV = lastPacket != null ? lastPacket.ch1RealTimeCurrent : 0,
@@ -781,7 +769,7 @@ namespace ABBDataManagerSystem.Pages
                     panelCommonTestResult.Visibility = Visibility.Visible;
                 }
 
-                lvUsers.Visibility = Visibility.Collapsed;
+                dataGridPanel.Visibility = Visibility.Collapsed;
             }
             else
             {
@@ -796,7 +784,7 @@ namespace ABBDataManagerSystem.Pages
                 //panelTappingChoice.Visibility = Visibility.Collapsed;
                 panelCommonTestResult.Visibility = Visibility.Collapsed;
                 panelTempRiseCoolTestResult.Visibility = Visibility.Collapsed;
-                lvUsers.Visibility = Visibility.Visible;
+                dataGridPanel.Visibility = Visibility.Visible;
             }
 
             if (SelectedTesting != null && Collector != null)
@@ -1033,9 +1021,66 @@ namespace ABBDataManagerSystem.Pages
             if (uploadRet)
             {
                 MessageBox.Show("数据上传成功！", "上传结果", MessageBoxButton.OK, MessageBoxImage.Information);
-            } else
+            }
+            else
             {
                 MessageBox.Show("数据上传失败，请检查数据和服务器连接情况后重试！", "上传结果", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        // 温升电阻持续采集数据上传
+        private void btUpdateTempRiseRecords_Click(object sender, RoutedEventArgs e)
+        {
+            CommonTempRiseTestInfo configItem;
+            int testIndex = Utils.ParseInt(cbTestCount.Text);
+            var items = CommonTempRiseTestInfo.ReadFromDB(Configs.Configs.WorkflowID, cbTestPhase.Text, cbTestStatus.Text, cbCoolingMode.Text, testIndex, 2);
+            if (items == null || items.Count == 0)
+            {
+                configItem = new CommonTempRiseTestInfo()
+                {
+                    TestingPhase = cbTestPhase.Text,
+                    TestingStatus = cbTestStatus.Text,
+                    WorkflowId = Configs.Configs.WorkflowID,
+                    TestingIndex = testIndex,
+                    CoolingMode = cbCoolingMode.Text,
+                    DateTime = DateTime.Now,
+                    TestingMode = 2,
+                };
+                if (!configItem.WriteToDB())
+                {
+                    MessageBox.Show("数据上传失败!", "上传结果", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+            }
+            else
+            {
+                configItem = items[0];
+            }
+
+            if (dataItems.Count == 0)
+            {
+                MessageBox.Show("暂无数据可以上传，请先采集数据!", "上传结果", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            // 删除之前的时间数据
+            CommonTempRiseTestResistanceInfo.DeleteData(configItem.ID);
+
+            // 将DataTable中的数据转成试验数据格式并且一条条上传
+            foreach (var item in dataItems)
+            {
+                item.ID = configItem.ID;
+            }
+            bool ret = CommonTempRiseTestResistanceInfo.BatchInsertData(dataItems);
+            if (ret)
+            {
+                MessageBox.Show($"数据上传成功，共{dataItems.Count}条数据!", "上传结果", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                return;
+            }
+            else
+            {
+                MessageBox.Show($"数据上传出错，请检查或者重新尝试!", "上传结果", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
             }
         }
         #endregion

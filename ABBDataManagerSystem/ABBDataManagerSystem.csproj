@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <Compile Include="Bean\Base\CommonTempRiseCoolResistanceInfo.cs" />
+    <Compile Include="Bean\Base\CommonTempRiseTestResistanceInfo.cs" />
     <Compile Include="Bean\Base\CommonTempRiseTestRecordInfo.cs" />
     <Compile Include="Bean\Base\CommonTempRiseTestInfo.cs" />
     <Compile Include="Bean\Base\WorkflowInfo.cs" />

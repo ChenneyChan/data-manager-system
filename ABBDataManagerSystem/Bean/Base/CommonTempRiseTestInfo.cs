@@ -12,6 +12,7 @@ namespace ABBDataManagerSystem.Bean.Base
         public string TestingPhase = String.Empty;
         public string TestingStatus = String.Empty;
         public string CoolingMode = String.Empty;
+        public int TestingMode = 1; // 1、电压电流功率；2、电阻
         public int TestingIndex = 1;
         public DateTime? DateTime = null;
 
@@ -22,6 +23,7 @@ namespace ABBDataManagerSystem.Bean.Base
             {"TestingPhase", "试验阶段"},
             {"TestingStatus", "试验状态"},
             {"TestingIndex", "试验次数"},
+            {"TestingMode", "试验类型"},
             {"CoolingMode", "冷却方式"},
             {"DateTime", "试验时间"},
         };
@@ -39,8 +41,8 @@ namespace ABBDataManagerSystem.Bean.Base
                 // 打开数据库连接
                 connection.Open();
 
-                using (SQLCommond command = new SQLCommond($"INSERT INTO {TABLE_NAME} (ID, workflow_id, testing_phase, testing_status, testing_index, cooling_mode, " +
-                    $"datetime) VALUES (@ID, @WorkflowId, @TestingPhase, @TestingStatus, @TestingIndex, @CoolingMode, " +
+                using (SQLCommond command = new SQLCommond($"INSERT INTO {TABLE_NAME} (ID, workflow_id, testing_phase, testing_status, testing_index, cooling_mode, testing_mode, " +
+                    $"datetime) VALUES (@ID, @WorkflowId, @TestingPhase, @TestingStatus, @TestingIndex, @CoolingMode, @TestingMode, " +
                     $"@DateTime)", connection))
                 {
                     command.Parameters.AddWithValue("@ID", ID);
@@ -49,6 +51,7 @@ namespace ABBDataManagerSystem.Bean.Base
                     command.Parameters.AddWithValue("@TestingStatus", TestingStatus);
                     command.Parameters.AddWithValue("@TestingIndex", TestingIndex);
                     command.Parameters.AddWithValue("@CoolingMode", CoolingMode);
+                    command.Parameters.AddWithValue("@TestingMode", TestingMode);
                     command.Parameters.AddWithValue("@DateTime", DateTime??System.DateTime.Now);
                     int count = command.ExecuteNonQuery();
                     return count > 0;
@@ -56,7 +59,7 @@ namespace ABBDataManagerSystem.Bean.Base
             }
         }
 
-        public static List<CommonTempRiseTestInfo> ReadFromDB(string sequence = "", string testPhase = "", string testStatus = "", string coolingMode = "", int testIndex = 1)
+        public static List<CommonTempRiseTestInfo> ReadFromDB(string sequence = "", string testPhase = "", string testStatus = "", string coolingMode = "", int testIndex = 1, int testMode = 1)
         {
             // 查询数据
             string queryDataSql = $"SELECT * FROM {TABLE_NAME}";
@@ -79,6 +82,10 @@ namespace ABBDataManagerSystem.Bean.Base
                 {
                     queryDataSql += $" AND testing_index = '{testIndex}'";
                 }
+                if (testMode != 0)
+                {
+                    queryDataSql += $" AND testing_mode = '{testMode}'";
+                }
             }
             List<CommonTempRiseTestInfo>? records = DBConnector.QueryFromDB<CommonTempRiseTestInfo>(queryDataSql, (reader) =>
             {
@@ -94,6 +101,7 @@ namespace ABBDataManagerSystem.Bean.Base
                     TestingStatus = reader.GetString("testing_status"),
                     TestingIndex = reader.GetInt32("testing_index"),
                     CoolingMode = reader.GetString("cooling_mode"),
+                    TestingMode = reader.GetInt32("testing_mode"),
                     DateTime = !reader.IsDBNull("datetime") ? reader.GetDateTime("datetime") : System.DateTime.Now,
                 };
             });
@@ -106,16 +114,17 @@ namespace ABBDataManagerSystem.Bean.Base
         }
 
 
-        public static bool DeleteData(string workflowID, string testPhase, string testStatus, int testIndex)
+        public static bool DeleteData(string workflowID, string testPhase, string testStatus, int testIndex, int testMode)
         {
             using (SQLConnection connection = new SQLConnection(DBConnector.GetConnectionString()))
             {
                 connection.Open();
-                SQLCommond command = new SQLCommond($"DELETE FROM {TABLE_NAME} WHERE workflow_id = @WorkflowId  AND testing_phase = @TestPhase AND testing_status = @TestStatus AND testing_index = @TestIndex", connection);
+                SQLCommond command = new SQLCommond($"DELETE FROM {TABLE_NAME} WHERE workflow_id = @WorkflowId  AND testing_phase = @TestPhase AND testing_status = @TestStatus AND testing_index = @TestIndex, testing_mode = @TestMode", connection);
                 command.Parameters.AddWithValue("@WorkflowId", workflowID);
                 command.Parameters.AddWithValue("@TestPhase", testPhase);
                 command.Parameters.AddWithValue("@TestStatus", testStatus);
                 command.Parameters.AddWithValue("@TestIndex", testIndex);
+                command.Parameters.AddWithValue("@TestMode", testMode);
                 int count = command.ExecuteNonQuery();
                 return count > 0;
             }

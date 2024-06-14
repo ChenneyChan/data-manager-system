@@ -931,7 +931,7 @@ namespace ABBDataManagerSystem.Pages
         {
             CommonTempRiseTestInfo configItem;
             int testIndex = Utils.ParseInt(cbTestCount.Text);
-            var items = CommonTempRiseTestInfo.ReadFromDB(Configs.Configs.WorkflowID, cbTestPhase.Text, cbTestStatus.Text, cbCoolingMode.Text, testIndex);
+            var items = CommonTempRiseTestInfo.ReadFromDB(Configs.Configs.WorkflowID, cbTestPhase.Text, cbTestStatus.Text, cbCoolingMode.Text, testIndex, 1);
             if (items == null || items.Count == 0)
             {
                 configItem = new CommonTempRiseTestInfo()
@@ -942,6 +942,7 @@ namespace ABBDataManagerSystem.Pages
                     TestingIndex = testIndex,
                     CoolingMode = cbCoolingMode.Text,
                     DateTime = DateTime.Now,
+                    TestingMode = 1,
                 };
                 if (!configItem.WriteToDB())
                 {

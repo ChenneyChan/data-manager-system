@@ -173,16 +173,54 @@
                 </StackPanel>
             </ScrollViewer>
             <!--列表分组-->
-            <DataGrid Visibility="Collapsed" Grid.Row="0" Grid.Column="0" Name="lvUsers" AutoGenerateColumns="False" ItemsSource="{Binding Items}" FontSize="18" CanUserAddRows="False" CanUserDeleteRows="False" CanUserSortColumns="False">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="次数" Width="80"  Binding="{Binding SortIndex}"  IsReadOnly="True"/>
-                    <DataGridTextColumn Header="采集时间" Width="120" Binding="{Binding CurrentTime}"  IsReadOnly="True"/>
-                    <DataGridTextColumn Header="高压电流" Width="120" Binding="{Binding CurrentHV}"    IsReadOnly="True"/>
-                    <DataGridTextColumn Header="高压电阻" Width="120" Binding="{Binding ResistanceHV}" IsReadOnly="True"/>
-                    <DataGridTextColumn Header="低压电流" Width="120" Binding="{Binding CurrentLV}"    IsReadOnly="True"/>
-                    <DataGridTextColumn Header="低压电阻" Width="120" Binding="{Binding ResistanceLV}" IsReadOnly="True"/>
-                </DataGrid.Columns>
-            </DataGrid>
+            <Grid Visibility="Visible" Grid.Row="0" Grid.Column="0" Name="dataGridPanel">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <StackPanel Orientation="Horizontal" Margin="0, 10" Grid.Row="0">
+                    <TextBlock Text="阶段" Width="32" Margin="0, 0, 10,0" VerticalAlignment="Center"/>
+                    <hc:ComboBox Width="80" VerticalAlignment="Center" Name="cbTestPhase">
+                        <ComboBoxItem Content="空载" IsSelected="True"/>
+                        <ComboBoxItem Content="负载"/>
+                    </hc:ComboBox>
+                    <TextBlock Text="状态" Width="32" Margin="10,0" VerticalAlignment="Center"/>
+                    <hc:ComboBox Width="80" VerticalAlignment="Center" Name="cbTestStatus">
+                        <ComboBoxItem Content="本体" IsSelected="True"/>
+                        <ComboBoxItem Content="罩壳"/>
+                    </hc:ComboBox>
+                    <TextBlock Text="次数" Width="32" Margin="10,0" VerticalAlignment="Center"/>
+                    <hc:ComboBox Width="80" VerticalAlignment="Center" Name="cbTestCount">
+                        <ComboBoxItem Content="1" IsSelected="True"/>
+                        <ComboBoxItem Content="2"/>
+                        <ComboBoxItem Content="3"/>
+                        <ComboBoxItem Content="4"/>
+                        <ComboBoxItem Content="5"/>
+                        <ComboBoxItem Content="6"/>
+                        <ComboBoxItem Content="7"/>
+                        <ComboBoxItem Content="8"/>
+                        <ComboBoxItem Content="9"/>
+                        <ComboBoxItem Content="10"/>
+                    </hc:ComboBox>
+                    <TextBlock Text="冷却方式" Width="64" Margin="10,0" VerticalAlignment="Center"/>
+                    <hc:ComboBox Width="80" VerticalAlignment="Center" Name="cbCoolingMode">
+                        <ComboBoxItem Content="AN" IsSelected="True"/>
+                        <ComboBoxItem Content="AF"/>
+                        <ComboBoxItem Content="AFWF"/>
+                    </hc:ComboBox>
+                    <Button Content="上传数据" Name="btUpdateTempRiseRecords" Margin="10, 0" Click="btUpdateTempRiseRecords_Click"/>
+                </StackPanel>
+                <DataGrid Grid.Row="1" Name="lvUsers" AutoGenerateColumns="False" ItemsSource="{Binding Items}" FontSize="18" CanUserAddRows="False" CanUserDeleteRows="False" CanUserSortColumns="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="次数" Width="80"  Binding="{Binding SortIndex}"  IsReadOnly="True"/>
+                        <DataGridTextColumn Header="采集时间" Width="120" Binding="{Binding CurrentTime}"  IsReadOnly="True"/>
+                        <DataGridTextColumn Header="高压电流" Width="120" Binding="{Binding CurrentHV}"    IsReadOnly="True"/>
+                        <DataGridTextColumn Header="高压电阻" Width="120" Binding="{Binding ResistanceHV}" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="低压电流" Width="120" Binding="{Binding CurrentLV}"    IsReadOnly="True"/>
+                        <DataGridTextColumn Header="低压电阻" Width="120" Binding="{Binding ResistanceLV}" IsReadOnly="True"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
 
             <Grid Width="580" Height="340" Grid.Column="0" Name="panelTempRiseCoolTestResult" VerticalAlignment="Top" Visibility="Collapsed">
                 <Grid.ColumnDefinitions>
