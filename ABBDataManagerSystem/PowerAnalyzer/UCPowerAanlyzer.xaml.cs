@@ -74,6 +74,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
         Connection connection = new Connection();
         private System.Timers.Timer Timer1;
+        private System.Timers.Timer OneSecTimer;
         private EncodeType encodeType = EncodeType.ASCII;
 
         private bool IsCollecting = false;
@@ -95,6 +96,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         private int HarmonicOffset = -1;
         private static readonly int HarmonicCount = 22;
         private static readonly int MAX_MONITOR_BUFFER_LEN = 3000;
+        private float RatedCurrent = 0;
 
         #endregion
 
@@ -114,6 +116,10 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             Timer1.Interval = 200;
             Timer1.Enabled = false;
             Timer1.AutoReset = true;
+
+            OneSecTimer = new();
+            OneSecTimer.Elapsed += OneSecTimer_Elapsed; ;
+            OneSecTimer.Enabled = true;
 
             DataTableSource.Columns.Add("表头", typeof(string));
             DataTableSource.Columns.Add("有效电压", typeof(float));
@@ -1102,6 +1108,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             {
                 Timer1.Stop();
             }
+            OneSecTimer.Stop();
 
             Configs.Configs.VT = SelectedVT;
             Configs.Configs.CT = SelectedCT;
@@ -2042,6 +2049,8 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             //----------------------#getting datas#
             else
             {
+                IsSenseCountDowning = false;
+                tbCountDown.Value = 30;
                 UpdateSelectedConfigs();
                 btRequestContinue.IsEnabled = false;
                 IsCollecting = true;
@@ -2612,7 +2621,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             IsDataUpdated = true;
             #endregion
             EventManager.Instance.TriggerEvent("PowerAnalyzer", this, new TestEventArgs() { obj = CurrentData });
-
+            ProcessSenseTimer();
             IsRefreshing = false;
         }
 
@@ -2867,6 +2876,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                     return;
                 }
                 var workflow = workflows[0];
+                RatedCurrent = workflow.RatedCurrentLv;
                 Dispatcher.Invoke(() =>
                 {
                     tbVoltage18.Text = Utils.FloatFormat(workflow.RatedVoltageHv * 1.8f);
@@ -2979,5 +2989,35 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 dgColumnMeanValue.Visibility = Visibility.Collapsed;
             }
         }
+
+        #region 感应倒计时处理
+        // 1s定时器
+        private void OneSecTimer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
+        {
+            if (IsSenseCountDowning && tbCountDown.Value > 0)
+            {
+                tbCountDown.Value -= 1;
+            }
+        }
+        private bool IsSenseCountDowning = false;
+
+        private void ProcessSenseTimer()
+        {
+            if (IsSenseCountDowning || tbSense.IsSelected != true)
+            {
+                return;
+            }
+            if (CurrentData.u3 > RatedCurrent * 2 && RatedCurrent != 0)
+            {
+                IsSenseCountDowning = true;
+            }
+        }
+
+
+        private void btStopCountDown_Click(object sender, RoutedEventArgs e)
+        {
+            IsSenseCountDowning = false;
+        }
+        #endregion
     }
 }
