@@ -119,6 +119,10 @@
         <TabControl Grid.Row="4" Grid.Column="1" Margin="10" Grid.RowSpan="2" Background="#FFFBFBFB" FontSize="20" Visibility="Visible">
             <TabItem Name="tbNoLoad" Header="空载">
                 <Grid Width="1200" Height="400" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="20">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="100"/>
                         <ColumnDefinition Width="*"/>
@@ -128,6 +132,9 @@
                         <RadioButton Name="rbNoLoad110Percent" Content="110%" Margin="0, 10"/>
                     </StackPanel>
                     <Views:NoloadInfo Grid.Column="1" x:Name="NoLoadView" FontSize="14"/>
+                    <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal">
+                        <Button Content="上传空载数据" Margin="0,10,10,10" Background="#FF95E019" BorderBrush="#FF585555" Width="120" Height="40" Click="btUploadNoLoad_Click"/>
+                    </StackPanel>
                 </Grid>
             </TabItem>
             <TabItem Name="tbLoad" Header="负载">
@@ -136,12 +143,19 @@
                         <ColumnDefinition Width="130"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
                     <StackPanel Orientation="Vertical" VerticalAlignment="Center">
                         <RadioButton Name="rbLoadMax" Content="最大(高-低)" IsChecked="True" HorizontalAlignment="Left"/>
                         <RadioButton Name="rbLoadMin" Content="最小(高-低1)" Margin="0, 10" HorizontalAlignment="Left"/>
                         <RadioButton Name="rbLoadRated" Content="额定(高-低2)" HorizontalAlignment="Left"/>
                     </StackPanel>
                     <Views:LoadInfo Grid.Column="1" x:Name="LoadView" FontSize="15"/>
+                    <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal">
+                        <Button Content="上传负载数据" Margin="0,10,10,10" Background="#FF95E019" BorderBrush="#FF585555" Width="120" Height="40" Click="btUploadLoad_Click"/>
+                    </StackPanel>
                 </Grid>
             </TabItem>
             <TabItem Name="tbSense" Header="感应">
@@ -152,16 +166,69 @@
                     </Grid.RowDefinitions>
                     <Views:SenseInfo x:Name="SenseView" Width="1200" Height="400" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="20"/>
                     <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="20">
-                        <TextBlock Text="到计时：" FontSize="24"/>
+                        <TextBlock Text="到计时：" FontSize="24" VerticalAlignment="Center"/>
                         <TextBox Text="00:00" FontSize="20" IsReadOnly="True"/>
                         <Button Content="停止" Style="{StaticResource ButtonWarning}" Margin="4, 0"/>
+                        <Button Content="上传感应数据" Margin="20, 0, 0, 0" Background="#FF95E019" BorderBrush="#FF585555" Width="120" Height="40" Click="btUploadSense_Click"/>
                     </StackPanel>
                 </Grid>
             </TabItem>
             <TabItem Name="tbPartialDischarge" Header="局放">
-                <DataGrid x:Name="dgPartialDischarge" Margin="20">
-
-                </DataGrid>
+                <Grid Width="800" Height="300" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="0.8*"/>
+                        <RowDefinition Height="0.8*"/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" BorderThickness="1, 1, 0, 0"/>
+                    <Border Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" BorderThickness="1, 1, 0, 0"/>
+                    <Border Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" BorderThickness="1, 1, 0, 0"/>
+                    <Border Grid.Row="0" Grid.Column="3" Grid.ColumnSpan="4" BorderThickness="1, 1, 1, 0"/>
+                    <Border Grid.Row="1" Grid.Column="3" BorderThickness="1, 1, 0, 0"/>
+                    <Border Grid.Row="1" Grid.Column="4" BorderThickness="1, 1, 0, 0"/>
+                    <Border Grid.Row="1" Grid.Column="5" BorderThickness="1, 1, 0, 0"/>
+                    <Border Grid.Row="1" Grid.Column="6" BorderThickness="1, 1, 1, 0"/>
+                    <Border Grid.Row="2" Grid.Column="0" BorderThickness="1, 1, 0, 0"/>
+                    <Border Grid.Row="2" Grid.Column="1" BorderThickness="1, 1, 0, 0"/>
+                    <Border Grid.Row="2" Grid.Column="2" BorderThickness="1, 1, 0, 0"/>
+                    <Border Grid.Row="2" Grid.Column="3" BorderThickness="1, 1, 0, 0"/>
+                    <Border Grid.Row="2" Grid.Column="4" BorderThickness="1, 1, 0, 0"/>
+                    <Border Grid.Row="2" Grid.Column="5" BorderThickness="1, 1, 0, 0"/>
+                    <Border Grid.Row="2" Grid.Column="6" BorderThickness="1, 1, 0, 0"/>
+                    <Border Grid.Row="2" Grid.Column="7" BorderThickness="1, 1, 1, 0"/>
+                    <Border Grid.Row="3" Grid.Column="0" BorderThickness="1, 1, 0, 1"/>
+                    <Border Grid.Row="3" Grid.Column="1" BorderThickness="1, 1, 0, 1"/>
+                    <Border Grid.Row="3" Grid.Column="2" BorderThickness="1, 1, 0, 1"/>
+                    <Border Grid.Row="3" Grid.Column="3" BorderThickness="1, 1, 0, 1"/>
+                    <Border Grid.Row="3" Grid.Column="4" BorderThickness="1, 1, 0, 1"/>
+                    <Border Grid.Row="3" Grid.Column="5" BorderThickness="1, 1, 0, 1"/>
+                    <Border Grid.Row="3" Grid.Column="6" BorderThickness="1, 1, 0, 1"/>
+                    <Border Grid.Row="3" Grid.Column="7" BorderThickness="1, 1, 1, 1"/>
+                    <TextBlock Text="接线" FontSize="18" Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Text="电压" FontSize="18" Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Text="时间" FontSize="18" Grid.Column="2" Grid.Row="0" Grid.RowSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Text="电流（A）" FontSize="18" Grid.Column="3" Grid.Row="0" Grid.ColumnSpan="4" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Text="A相" FontSize="18" Grid.Column="3" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Text="B相" FontSize="18" Grid.Column="4" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Text="C相" FontSize="18" Grid.Column="5" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Text="标准值" FontSize="18" Grid.Column="6" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Text="1.8Un" FontSize="18" Grid.Column="0" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Text="1.3Un" FontSize="18" Grid.Column="0" Grid.Row="3" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <StackPanel Grid.Row="4" Grid.Column="0" Orientation="Horizontal">
+                        <Button Content="上传局放数据" Margin="0,10,10,10" Background="#FF95E019" BorderBrush="#FF585555" Width="120" Height="40" Click="btUploadPartialDischange_Click"/>
+                    </StackPanel>
+                </Grid>
             </TabItem>
         </TabControl>
         <Grid Grid.Row="4" Grid.Column="1" Grid.RowSpan="2" Visibility="Collapsed">

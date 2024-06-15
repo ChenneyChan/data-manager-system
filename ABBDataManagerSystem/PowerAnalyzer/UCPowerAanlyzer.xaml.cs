@@ -2845,5 +2845,26 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             }).Start();
         }
         #endregion
+
+        #region 数据上传
+        private void btUploadNoLoad_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btUploadLoad_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btUploadSense_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btUploadPartialDischange_Click(object sender, EventArgs e)
+        {
+        }
+        #endregion
     }
 }
