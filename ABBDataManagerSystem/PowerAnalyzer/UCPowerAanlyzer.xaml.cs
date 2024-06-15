@@ -2967,5 +2967,17 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             Utils.ShowUploadTips(ret);
         }
         #endregion
+
+        private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (tbNoLoad.IsSelected)
+            {
+                dgColumnMeanValue.Visibility = Visibility.Visible;
+            }
+            else if (tbLoad.IsSelected || tbSense.IsSelected)
+            {
+                dgColumnMeanValue.Visibility = Visibility.Collapsed;
+            }
+        }
     }
 }

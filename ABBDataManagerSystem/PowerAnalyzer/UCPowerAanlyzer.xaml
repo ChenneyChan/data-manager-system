@@ -100,15 +100,8 @@
           CanUserResizeRows="False" AutoGenerateColumns="False">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="" Binding="{Binding Path=表头}" CellStyle="{StaticResource DataGridCellStyle}" />
-                    <DataGridTextColumn Header="有效电压(V)" Width="200" Binding="{Binding Path=有效电压 , StringFormat='F2'}" CellStyle="{StaticResource DataGridCellStyle}" >
-                        <!--<DataGridTextColumn.CellStyle>
-                <Style TargetType="{x:Type DataGridCell}" BasedOn="{StaticResource {x:Type DataGridCell}}">
-                    <Setter Property="HorizontalAlignment" Value="Center"/>
-                    <Setter Property="VerticalAlignment" Value="Center"/>
-                </Style>
-            </DataGridTextColumn.CellStyle>-->
-                    </DataGridTextColumn>
-                    <DataGridTextColumn Header="平均电压(V)" Width="200" Binding="{Binding Path=平均电压 , StringFormat='F2'}" IsReadOnly="True" CellStyle="{StaticResource DataGridCellStyle}"/>
+                    <DataGridTextColumn Header="有效电压(V)" Width="200" Binding="{Binding Path=有效电压 , StringFormat='F2'}" CellStyle="{StaticResource DataGridCellStyle}" />
+                    <DataGridTextColumn Header="平均电压(V)" Width="200" Binding="{Binding Path=平均电压 , StringFormat='F2'}" IsReadOnly="True" CellStyle="{StaticResource DataGridCellStyle}" x:Name="dgColumnMeanValue"/>
                     <DataGridTextColumn Header="有效电流(A)" Width="200" Binding="{Binding Path=有效电流 , StringFormat='F2'}" IsReadOnly="True" CellStyle="{StaticResource DataGridCellStyle}"/>
                     <DataGridTextColumn Header="损耗(W)" Width="200" Binding="{Binding Path=损耗 , StringFormat='F2'}" CellStyle="{StaticResource DataGridCellStyle}"/>
                     <DataGridTextColumn Header="电压频率(Hz)" Width="200" Binding="{Binding Path=电压频率, StringFormat='F2'}" IsReadOnly="True" CellStyle="{StaticResource DataGridCellStyle}"/>
@@ -123,7 +116,7 @@
                 <TextBlock Name="ErrInfoText" Width="120" TextAlignment="Center" Margin="20, 0,0,0" Text="" Visibility="Collapsed"/>
             </StackPanel>
         </Grid>
-        <TabControl Grid.Row="5" Margin="10" Background="#FFFBFBFB" FontSize="20" Visibility="Visible">
+        <TabControl Grid.Row="5" Margin="10" Background="#FFFBFBFB" FontSize="20" Visibility="Visible" SelectionChanged="TabControl_SelectionChanged">
             <TabItem Name="tbNoLoad" Header="空载">
                 <Grid Width="1200" Height="400" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="20">
                     <Grid.RowDefinitions>
