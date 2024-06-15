@@ -55,6 +55,10 @@
                         <TextBlock Text="数据库端口：" Width="120" Style="{StaticResource Label}" Margin="0,0,10,0"/>
                         <TextBox Name="tbDatabasePort" Width="220"/>
                     </StackPanel>
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock Text="数据库名称：" Width="120" Style="{StaticResource Label}" Margin="0,0,10,0"/>
+                        <TextBox Name="tbDatabaseName" Width="220"/>
+                    </StackPanel>
                     <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                         <TextBlock Text="数据库账户：" Width="120" Style="{StaticResource Label}" Margin="0,0,10,0"/>
                         <TextBox Name="tbDatabaseUserName" Width="220"/>
@@ -62,10 +66,6 @@
                     <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                         <TextBlock Text="数据库密码：" Width="120" Style="{StaticResource Label}" Margin="0,0,10,0"/>
                         <hc:PasswordBox Name="tbDatabasePassword" Width="220" ShowEyeButton="True" FontSize="16" Height="36"/>
-                    </StackPanel>
-                    <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <TextBlock Text="数据库名称：" Width="120" Style="{StaticResource Label}" Margin="0,0,10,0"/>
-                        <TextBox Name="tbDatabaseName" Width="220"/>
                     </StackPanel>
                 </Grid>
             </TabItem>

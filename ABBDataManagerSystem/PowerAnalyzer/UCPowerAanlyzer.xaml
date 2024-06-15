@@ -225,9 +225,21 @@
                     <TextBlock Text="标准值" FontSize="18" Grid.Column="6" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     <TextBlock Text="1.8Un" FontSize="18" Grid.Column="0" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     <TextBlock Text="1.3Un" FontSize="18" Grid.Column="0" Grid.Row="3" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    <StackPanel Grid.Row="4" Grid.Column="0" Orientation="Horizontal">
+                    <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="4" Orientation="Horizontal">
                         <Button Content="上传局放数据" Margin="0,10,10,10" Background="#FF95E019" BorderBrush="#FF585555" Width="120" Height="40" Click="btUploadPartialDischange_Click"/>
                     </StackPanel>
+                    <TextBlock Text="30"  FontSize="18" Grid.Column="2" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Text="180" FontSize="18" Grid.Column="2" Grid.Row="3" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBox Grid.Row="2" Grid.Column="1" BorderBrush="Gray" Margin="5, 10" FontSize="18" Name="tbVoltage18"/>
+                    <TextBox Grid.Row="3" Grid.Column="1" BorderBrush="Gray" Margin="5, 10" FontSize="18" Name="tbVoltage13"/>
+                    <TextBox Grid.Row="2" Grid.Column="3" BorderBrush="Gray" Margin="5, 10" FontSize="18" Name="tbA18"/>
+                    <TextBox Grid.Row="2" Grid.Column="4" BorderBrush="Gray" Margin="5, 10" FontSize="18" Name="tbB18"/>
+                    <TextBox Grid.Row="2" Grid.Column="5" BorderBrush="Gray" Margin="5, 10" FontSize="18" Name="tbC18"/>
+                    <TextBox Grid.Row="3" Grid.Column="3" BorderBrush="Gray" Margin="5, 10" FontSize="18" Name="tbA13"/>
+                    <TextBox Grid.Row="3" Grid.Column="4" BorderBrush="Gray" Margin="5, 10" FontSize="18" Name="tbB13"/>
+                    <TextBox Grid.Row="3" Grid.Column="5" BorderBrush="Gray" Margin="5, 10" FontSize="18" Name="tbC13"/>
+                    <TextBox Grid.Row="2" Grid.Column="6" BorderBrush="Gray" Margin="5, 10" FontSize="18" Name="tbStandard18"/>
+                    <TextBox Grid.Row="3" Grid.Column="6" BorderBrush="Gray" Margin="5, 10" FontSize="18" Name="tbStandard13"/>
                 </Grid>
             </TabItem>
         </TabControl>

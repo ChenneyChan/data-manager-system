@@ -1,5 +1,5 @@
-﻿using ElectricalDataManagerSystem.Database;
-using System.Data;
+﻿using ABBDataManagerSystem.Bean;
+using ABBDataManagerSystem.Database;
 
 namespace ElectricalDataManagerSystem.Bean.Base
 {
@@ -7,12 +7,12 @@ namespace ElectricalDataManagerSystem.Bean.Base
     {
 
         public string WorkflowID = string.Empty;
-        public float DischargeA18 = 0;
-        public float DischargeB18 = 0;
-        public float DischargeC18 = 0;
-        public float DischargeA13 = 0;
-        public float DischargeB13 = 0;
-        public float DischargeC13 = 0;
+        public float? DischargeA18 = 0;
+        public float? DischargeB18 = 0;
+        public float? DischargeC18 = 0;
+        public float? DischargeA13 = 0;
+        public float? DischargeB13 = 0;
+        public float? DischargeC13 = 0;
 
         public static string TABLE_NAME = "partialDischargeRecord";
 
@@ -36,8 +36,7 @@ namespace ElectricalDataManagerSystem.Bean.Base
             using (SQLConnection connection = new SQLConnection(DBConnector.GetConnectionString()))
             {
                 connection.Open();
-                CreateSqliteTable(connection);
-                SQLCommond command = new SQLCommond($"IINSERT INTO {TABLE_NAME} (workflow_id, pca18, pcb18, pcc18, pca13, pcb13, pcc13) VALUES(@WorkflowID, @DischargeA18, @DischargeB18, @DischargeC18, @DischargeA13, @DischargeB13, @DischargeC13)", connection);
+                SQLCommond command = new SQLCommond($"INSERT INTO {TABLE_NAME} (workflow_id, pca18, pcb18, pcc18, pca13, pcb13, pcc13) VALUES (@WorkflowID, @DischargeA18, @DischargeB18, @DischargeC18, @DischargeA13, @DischargeB13, @DischargeC13)", connection);
                 command.Parameters.AddWithValue("@WorkflowID", WorkflowID);
                 command.Parameters.AddWithValue("@DischargeA18", DischargeA18);
                 command.Parameters.AddWithValue("@DischargeB18", DischargeB18);

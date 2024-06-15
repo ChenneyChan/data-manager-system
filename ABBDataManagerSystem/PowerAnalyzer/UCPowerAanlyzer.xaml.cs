@@ -11,6 +11,8 @@ using System.Windows.Threading;
 using Yokogawa.Tm.WT1800CommSample.cs;
 using ABBDataManagerSystem.Tools;
 using EventManager = ABBDataManagerSystem.Tools.EventManager;
+using ElectricalDataManagerSystem.Bean.Base;
+using MessageBox = System.Windows.MessageBox;
 
 namespace ABBDataManagerSystem.PowerAnalyzer
 {
@@ -128,6 +130,9 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             UpdateDateShow();
 
             this.DataContext = new { DataTableSource };
+
+            EventManager.Instance.Subscribe("WorkflowSelected", WorkflowEventHandler);
+            HandleWorkflowChange();
         }
 
         private void BtHarmonic_Click(object sender, RoutedEventArgs e)
@@ -1100,6 +1105,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
             Configs.Configs.VT = SelectedVT;
             Configs.Configs.CT = SelectedCT;
+            EventManager.Instance.Unsubscribe("WorkflowSelected", WorkflowEventHandler);
         }
         #endregion
 
@@ -2846,7 +2852,31 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         }
         #endregion
 
-        #region 数据上传
+        #region 数据上传和处理工作令刷新
+        private void WorkflowEventHandler(object sender, TestEventArgs e)
+        {
+            HandleWorkflowChange();
+        }
+        private void HandleWorkflowChange()
+        {
+            Task.Run(() =>
+            {
+                var workflows = WorkflowInfo.ReadFromDB(Configs.Configs.WorkflowID);
+                if (workflows == null || workflows.Count == 0)
+                {
+                    return;
+                }
+                var workflow = workflows[0];
+                Dispatcher.Invoke(() =>
+                {
+                    tbVoltage18.Text = Utils.FloatFormat(workflow.RatedVoltageHv * 1.8f);
+                    tbVoltage13.Text = Utils.FloatFormat(workflow.RatedVoltageHv * 1.3f);
+                    tbStandard18.Text = workflow.PartialDischarge;
+                    tbStandard13.Text = workflow.PartialDischarge;
+                });
+            });
+        }
+
         private void btUploadNoLoad_Click(object sender, EventArgs e)
         {
 
@@ -2864,6 +2894,22 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
         private void btUploadPartialDischange_Click(object sender, EventArgs e)
         {
+            if (!Utils.CheckWorkflowBeforeUpload())
+            {
+                return;
+            }
+            var pd = new PartialDischargeInfo()
+            {
+                WorkflowID = Configs.Configs.WorkflowID,
+                DischargeA18 = Utils.ParseFloatNull(tbA18.Text),
+                DischargeB18 = Utils.ParseFloatNull(tbB18.Text),
+                DischargeC18 = Utils.ParseFloatNull(tbC18.Text),
+                DischargeA13 = Utils.ParseFloatNull(tbA13.Text),
+                DischargeB13 = Utils.ParseFloatNull(tbB13.Text),
+                DischargeC13 = Utils.ParseFloatNull(tbC13.Text),
+            };
+            bool ret = pd.InsertData();
+            Utils.ShowUploadTips(ret);
         }
         #endregion
     }

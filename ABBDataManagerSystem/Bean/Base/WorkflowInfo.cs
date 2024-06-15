@@ -51,6 +51,7 @@ namespace ABBDataManagerSystem.Bean.Base
         public string CONNSymbol = String.Empty;
         public string TappingVoltages = String.Empty;
         public string RatedVoltageInterval = String.Empty;
+        public string PartialDischarge = string.Empty;
         public float? TempRiseTestingVoltage = null;
         public float? TempRiseTestingCurrent = null;
         public float? TempRiseHVCorrectionFactor = null;
@@ -77,6 +78,7 @@ namespace ABBDataManagerSystem.Bean.Base
             {"CONNSymbol", "联结组别" },
             {"TappingVoltages", "分接电压"},
             {"RatedVoltageInterval", "分接"},
+            {"PartialDischarge", "局放标准"},
             {"TempRiseTestingVoltage", "温升试验电压" },
             {"TempRiseTestingCurrent", "温升试验电流" },
             {"TempRiseHVCorrectionFactor", "高压温升校正系数" },
@@ -231,6 +233,7 @@ namespace ABBDataManagerSystem.Bean.Base
                     CONNSymbol = !reader.IsDBNull("CONNSymbol") ? reader.GetString("CONNSymbol") : "",
                     TappingVoltages = !reader.IsDBNull("TappingVoltages") ? reader.GetString("TappingVoltages") : "",
                     RatedVoltageInterval = !reader.IsDBNull("RatedVoltageInterval") ? reader.GetString("RatedVoltageInterval") : "",
+                    PartialDischarge = !reader.IsDBNull("PartialDischarge") ? reader.GetString("PartialDischarge") : "",
                     TempRiseTestingVoltage = !reader.IsDBNull("TempRiseTestingVoltage") ? reader.GetFloat("TempRiseTestingVoltage") : null,
                     TempRiseTestingCurrent = !reader.IsDBNull("TempRiseTestingCurrent") ? reader.GetFloat("TempRiseTestingCurrent") : null,
                     TempRiseHVCorrectionFactor = !reader.IsDBNull("TempRiseHVCorrectionFactor") ? reader.GetFloat("TempRiseHVCorrectionFactor") : null,
