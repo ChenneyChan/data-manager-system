@@ -78,11 +78,11 @@
                     <SolidColorBrush Color="{DynamicResource SecondaryTextColor}"/>
                 </ToggleButton.Background>
             </ToggleButton>
-            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" VerticalAlignment="Top">
+            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" VerticalAlignment="Center">
                 <TextBlock TextWrapping="Wrap" Text="串口" VerticalAlignment="Center" Width="40" Margin="0,0,10,0"/>
                 <hc:ComboBox Width="120" Name="cbSerialPort"/>
             </StackPanel>
-            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" VerticalAlignment="Top">
+            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" VerticalAlignment="Center">
                 <TextBlock Width="60" Text="波特率" VerticalAlignment="Center" Margin="20, 0, 10, 0"/>
                 <hc:ComboBox Width="120"  VerticalAlignment="Center" Name="cbBoundRate" SelectedIndex="1">
                     <ComboBoxItem Content="4800"/>
@@ -93,9 +93,11 @@
             <StackPanel Orientation="Horizontal" Margin="20, 0">
                 <hc:TextBox Width="180" IsReadOnly="True" hc:InfoElement.Title="序号"   hc:InfoElement.TitlePlacement="Left" Text="1LCT11223344" Margin="0,0, 10, 0" Name="tbProductSequence" KeyDown="tbProductSequence_KeyDown"/>
                 <hc:TextBox Width="180" IsReadOnly="True" hc:InfoElement.Title="分接"   hc:InfoElement.TitlePlacement="Left" Text="+-2*2.5%" Margin="0,0, 10, 0" Name="tbTapping"/>
-                <hc:TextBox Width="160" IsReadOnly="True" hc:InfoElement.Title="高压kV" hc:InfoElement.TitlePlacement="Left" Text="10000" Margin="0,0, 10, 0" Name="tbRatedHighVoltage"/>
-                <hc:TextBox Width="160" IsReadOnly="True" hc:InfoElement.Title="低压kV" hc:InfoElement.TitlePlacement="Left" Text="400" Margin="0,0, 10, 0" Name="tbRatedLowVoltage"/>
-                <Button Content="上传数据" Width="120" Margin="10,0"  Style="{StaticResource ButtonInfo}" Name="btUpload" Click="btUpload_Click" Height="40" FontSize="18"/>
+                <hc:TextBox Width="160" IsReadOnly="True" hc:InfoElement.Title="高压(V)" hc:InfoElement.TitlePlacement="Left" Text="10000" Margin="0,0, 10, 0" Name="tbRatedHighVoltage"/>
+                <hc:TextBox Width="160" IsReadOnly="True" hc:InfoElement.Title="低压1(V)" hc:InfoElement.TitlePlacement="Left" Text="400" Margin="0,0, 10, 0" Name="tbRatedLowVoltage"/>
+                <hc:TextBox Width="160" IsReadOnly="True" hc:InfoElement.Title="低压2(V)" hc:InfoElement.TitlePlacement="Left" Text="400" Margin="0,0, 10, 0" Name="tbRatedLowVoltage2"/>
+                <hc:TextBox Width="160" IsReadOnly="True" hc:InfoElement.Title="联结组别" hc:InfoElement.TitlePlacement="Left" Text="" Margin="0,0, 10, 0" Name="tbCONNSymbol"/>
+                <Button Content="上传数据" Width="120" Margin="10,0"  Style="{StaticResource ButtonInfo}" Name="btUpload" Click="btUpload_Click" Height="34" FontSize="18"/>
             </StackPanel>
         </StackPanel>
 
@@ -354,7 +356,7 @@
                             </Grid.RowDefinitions>
                             <TextBlock Margin="10, 0, 0, 0" Text="高压（串联）对低压（1）：" Grid.ColumnSpan="6"/>
                             <TextBlock Text="分接位置" Grid.Row="1" Grid.RowSpan="2" HorizontalAlignment="Center"/>
-                            <TextBlock Text="分接电压（kv）" Grid.Row="1" Grid.Column="1" Grid.RowSpan="2" HorizontalAlignment="Center" TextWrapping="Wrap"/>
+                            <TextBlock Text="分接电压（v）" Grid.Row="1" Grid.Column="1" Grid.RowSpan="2" HorizontalAlignment="Center" TextWrapping="Wrap"/>
                             <TextBlock Text="计算比值" Grid.Row="1" Grid.Column="2" Grid.RowSpan="2" HorizontalAlignment="Center" TextWrapping="Wrap"/>
                             <TextBlock Text="实测变比误差（%）" Grid.Row="1" Grid.Column="3" Grid.ColumnSpan="3" HorizontalAlignment="Center" TextWrapping="Wrap"/>
                             <TextBlock Text="AB/ab" Grid.Row="2" Grid.Column="3" HorizontalAlignment="Center"/>
@@ -371,7 +373,7 @@
                             <Views:TappingVoltageRatioFields x:Name="tvrTappingPoint8" Grid.Row="10" TappingIndex="8" Grid.ColumnSpan="6"/>
                             <Views:TappingVoltageRatioFields x:Name="tvrTappingPoint9" Grid.Row="11" TappingIndex="9" Grid.ColumnSpan="6"/>
 
-                            <TextBlock Margin="10, 0, 0, 0" Text="高压（串联）对低压（1）：" Grid.Row="12" Grid.ColumnSpan="6"/>
+                            <TextBlock Margin="10, 0, 0, 0" Text="高压（串联）对低压（2）：" Grid.Row="12" Grid.ColumnSpan="6"/>
                             <Views:TappingVoltageRatioFields x:Name="tvrTappingPoint21" Grid.Row="13" TappingIndex="2-1" Grid.ColumnSpan="6"/>
 
                             <Border Grid.Column="0" Grid.Row="0" BorderThickness="1.5,1.5,1.5,0" BorderBrush="Black" Grid.ColumnSpan="6"></Border>

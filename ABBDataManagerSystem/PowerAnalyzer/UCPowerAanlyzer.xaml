@@ -37,17 +37,18 @@
         </Style>
     </UserControl.Resources>
     <Grid Margin="20,20">
-        <Grid.ColumnDefinitions>
+        <!--<Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
+        </Grid.ColumnDefinitions>-->
         <Grid.RowDefinitions>
             <RowDefinition Height="60"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition/>
-            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0">
@@ -88,35 +89,41 @@
                 <Button Content="发送模拟命令" Background="Aquamarine" Name="btSendCmd" Click="btSendCmd_Click" BorderBrush="DarkGray"/>
             </StackPanel>
         </StackPanel>
-        <StackPanel Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0, 10, 0, 10">
-            <Button Content="采集一次" Background="#FFEF2B2B" BorderBrush="#FF585555" Width="120" Height="40"  Name="btRequestSingle" HorizontalAlignment="Left" Margin="0, 0, 20, 0" Visibility="Collapsed" />
-            <Button Content="开始" Background="#FF45F521" BorderBrush="#FF585555" Width="120" Height="40" Name="btRequestContinue" Margin="0, 0, 20, 0"/>
-            <!--<Button Content="持续获取（定时器）" Style="{StaticResource ButtonInfo}" Width="180" Height="40"  Name="btRequestTimer" HorizontalAlignment="Right"/>-->
-            <Button Content="测量" Background="#FF45F521" BorderBrush="#FF585555" Width="120" Height="40"  Name="btHold" Margin="0, 0, 20, 0" Click="btHold_Click" IsEnabled="False"/>
-            <Button Content="谐波" Background="#FF45F521" BorderBrush="#FF585555" Width="120" Height="40"  Name="btHarmonic" Margin="0, 0, 20, 0" IsEnabled="False"/>
-            <TextBlock Name="ErrInfoText" Width="120" TextAlignment="Center" Margin="20, 0,0,0" Text="" Visibility="Collapsed"/>
-        </StackPanel>
-        <DataGrid Margin="10" Grid.Row="4" Grid.RowSpan="2" Name="dataGrid" ItemsSource="{Binding DataTableSource}" 
-                  FontSize="20" CanUserSortColumns="False" GridLinesVisibility="None" CanUserReorderColumns="False" CanUserResizeColumns="False"
-                  Width="Auto" HorizontalAlignment="Left" MaxHeight="600" VerticalAlignment="Top" CanUserAddRows="False" CanUserDeleteRows="False" 
-                  CanUserResizeRows="False" AutoGenerateColumns="False">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="" Binding="{Binding Path=表头}" CellStyle="{StaticResource DataGridCellStyle}" />
-                <DataGridTextColumn Header="有效电压(V)" Binding="{Binding Path=有效电压 , StringFormat='F2'}" CellStyle="{StaticResource DataGridCellStyle}" >
-                    <!--<DataGridTextColumn.CellStyle>
-                        <Style TargetType="{x:Type DataGridCell}" BasedOn="{StaticResource {x:Type DataGridCell}}">
-                            <Setter Property="HorizontalAlignment" Value="Center"/>
-                            <Setter Property="VerticalAlignment" Value="Center"/>
-                        </Style>
-                    </DataGridTextColumn.CellStyle>-->
-                </DataGridTextColumn>
-                <DataGridTextColumn Header="平均电压(V)" Binding="{Binding Path=平均电压 , StringFormat='F2'}" IsReadOnly="True" CellStyle="{StaticResource DataGridCellStyle}"/>
-                <DataGridTextColumn Header="有效电流(A)" Binding="{Binding Path=有效电流 , StringFormat='F2'}" IsReadOnly="True" CellStyle="{StaticResource DataGridCellStyle}"/>
-                <DataGridTextColumn Header="损耗(W)" Binding="{Binding Path=损耗 , StringFormat='F2'}" CellStyle="{StaticResource DataGridCellStyle}"/>
-                <DataGridTextColumn Header="电压频率(Hz)" Binding="{Binding Path=电压频率, StringFormat='F2'}" IsReadOnly="True" CellStyle="{StaticResource DataGridCellStyle}"/>
-            </DataGrid.Columns>
-        </DataGrid>
-        <TabControl Grid.Row="4" Grid.Column="1" Margin="10" Grid.RowSpan="2" Background="#FFFBFBFB" FontSize="20" Visibility="Visible">
+        <Grid Margin="10" Grid.Row="4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <DataGrid Name="dataGrid" ItemsSource="{Binding DataTableSource}" 
+          FontSize="20" CanUserSortColumns="False" GridLinesVisibility="None" CanUserReorderColumns="False" CanUserResizeColumns="False"
+          Width="Auto" HorizontalAlignment="Left" MaxHeight="600" VerticalAlignment="Top" CanUserAddRows="False" CanUserDeleteRows="False" 
+          CanUserResizeRows="False" AutoGenerateColumns="False">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="" Binding="{Binding Path=表头}" CellStyle="{StaticResource DataGridCellStyle}" />
+                    <DataGridTextColumn Header="有效电压(V)" Width="200" Binding="{Binding Path=有效电压 , StringFormat='F2'}" CellStyle="{StaticResource DataGridCellStyle}" >
+                        <!--<DataGridTextColumn.CellStyle>
+                <Style TargetType="{x:Type DataGridCell}" BasedOn="{StaticResource {x:Type DataGridCell}}">
+                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                    <Setter Property="VerticalAlignment" Value="Center"/>
+                </Style>
+            </DataGridTextColumn.CellStyle>-->
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="平均电压(V)" Width="200" Binding="{Binding Path=平均电压 , StringFormat='F2'}" IsReadOnly="True" CellStyle="{StaticResource DataGridCellStyle}"/>
+                    <DataGridTextColumn Header="有效电流(A)" Width="200" Binding="{Binding Path=有效电流 , StringFormat='F2'}" IsReadOnly="True" CellStyle="{StaticResource DataGridCellStyle}"/>
+                    <DataGridTextColumn Header="损耗(W)" Width="200" Binding="{Binding Path=损耗 , StringFormat='F2'}" CellStyle="{StaticResource DataGridCellStyle}"/>
+                    <DataGridTextColumn Header="电压频率(Hz)" Width="200" Binding="{Binding Path=电压频率, StringFormat='F2'}" IsReadOnly="True" CellStyle="{StaticResource DataGridCellStyle}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="10, 10, 0, 10" VerticalAlignment="Top">
+                <Button Content="采集一次" Background="#FFEF2B2B" BorderBrush="#FF585555" Width="120" Height="40"  Name="btRequestSingle" HorizontalAlignment="Left" Margin="0, 0, 20, 0" Visibility="Collapsed" />
+                <Button Content="开始" Background="#FF45F521" BorderBrush="#FF585555" Width="120" Height="40" Name="btRequestContinue" Margin="0, 0, 20, 0"/>
+                <!--<Button Content="持续获取（定时器）" Style="{StaticResource ButtonInfo}" Width="180" Height="40"  Name="btRequestTimer" HorizontalAlignment="Right"/>-->
+                <Button Content="测量" Background="#FF45F521" BorderBrush="#FF585555" Width="120" Height="40"  Name="btHold" Margin="0, 0, 20, 0" Click="btHold_Click" IsEnabled="False"/>
+                <Button Content="谐波" Background="#FF45F521" BorderBrush="#FF585555" Width="120" Height="40"  Name="btHarmonic" Margin="0, 0, 20, 0" IsEnabled="False"/>
+                <TextBlock Name="ErrInfoText" Width="120" TextAlignment="Center" Margin="20, 0,0,0" Text="" Visibility="Collapsed"/>
+            </StackPanel>
+        </Grid>
+        <TabControl Grid.Row="5" Margin="10" Background="#FFFBFBFB" FontSize="20" Visibility="Visible">
             <TabItem Name="tbNoLoad" Header="空载">
                 <Grid Width="1200" Height="400" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="20">
                     <Grid.RowDefinitions>
@@ -243,7 +250,7 @@
                 </Grid>
             </TabItem>
         </TabControl>
-        <Grid Grid.Row="4" Grid.Column="1" Grid.RowSpan="2" Visibility="Collapsed">
+        <Grid Grid.Row="6" Grid.Column="1" Grid.RowSpan="2" Visibility="Collapsed">
             <Grid.RowDefinitions>
                 <RowDefinition/>
                 <RowDefinition/>

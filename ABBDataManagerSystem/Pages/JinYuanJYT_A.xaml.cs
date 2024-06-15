@@ -2,7 +2,6 @@
 using ABBDataManagerSystem.Connector;
 using ABBDataManagerSystem.Pages.Views;
 using ABBDataManagerSystem.Tools;
-using NPOI.SS.Formula.Functions;
 using System.IO.Ports;
 using System.Windows;
 using System.Windows.Controls;
@@ -386,7 +385,6 @@ namespace ABBDataManagerSystem.Pages
             tvr.ValueAB = CurrentResult.Ratio[0];
             tvr.ValueBC = CurrentResult.Ratio[1];
             tvr.ValueCA = CurrentResult.Ratio[2];
-            tvr.CalculatedRatio = CurrentResult.Ratio[3];
         }
         #endregion
 
@@ -405,10 +403,15 @@ namespace ABBDataManagerSystem.Pages
                 for (int i = 1; i <= MAX_HV_COUNT; i++)
                 {
                     RatioValueFields[i.ToString()].TappingVoltage = 0;
+                    RatioValueFields[i.ToString()].CalculatedRatio = 0;
                 }
+                RatioValueFields["21"].TappingVoltage = 0;
+                RatioValueFields["21"].CalculatedRatio = 0;
                 tbTapping.Text = "";
                 tbRatedHighVoltage.Text = "";
                 tbRatedLowVoltage.Text = "";
+                tbRatedLowVoltage2.Text = "";
+                tbCONNSymbol.Text = "";
             });
             Task.Run(() =>
             {
@@ -433,10 +436,18 @@ namespace ABBDataManagerSystem.Pages
                     for (int i = 1; i <= tappings.Count && i <= MAX_HV_COUNT; i++)
                     {
                         RatioValueFields[i.ToString()].TappingVoltage = tappings[tappings.Count - i];
+                        RatioValueFields[i.ToString()].CalculatedRatio = tappings[tappings.Count - i] / workflow.RatedVoltageLv;
+                    }
+                    if (workflow.WorkflowType == "三绕组")
+                    {
+                        RatioValueFields["21"].TappingVoltage = tappings[tappings.Count - 1];
+                        RatioValueFields["21"].CalculatedRatio = tappings[tappings.Count - 1] / workflow.RatedVoltageYv;
                     }
                     tbTapping.Text = workflow.RatedVoltageInterval;
                     tbRatedHighVoltage.Text = Utils.FloatFormat(workflow.RatedVoltageHv);
                     tbRatedLowVoltage.Text = Utils.FloatFormat(workflow.RatedVoltageLv);
+                    tbRatedLowVoltage2.Text = Utils.FloatFormat(workflow.RatedVoltageYv);
+                    tbCONNSymbol.Text = workflow.CONNSymbol;
                 });
             });
         }
