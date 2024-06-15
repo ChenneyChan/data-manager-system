@@ -1,6 +1,8 @@
 ﻿using ABBDataManagerSystem.Bean.Base;
 using ABBDataManagerSystem.Connector;
 using ABBDataManagerSystem.Pages.Views;
+using ABBDataManagerSystem.Tools;
+using NPOI.SS.Formula.Functions;
 using System.IO.Ports;
 using System.Windows;
 using System.Windows.Controls;
@@ -35,8 +37,11 @@ namespace ABBDataManagerSystem.Pages
             }
             if (ports.Length > 0) { cbSerialPort.SelectedIndex = 0; }
             InitDeviceConfigs();
+            Tools.EventManager.Instance.Subscribe("WorkflowSelected", WorkflowEventHandler);
+            HandleWorkflowChange();
         }
 
+        #region 初始化一些配置和值
         private void InitDeviceConfigs()
         {
             foreach (var item in JinYuanJYTACollector.TestVoltageTypeMap.Keys)
@@ -109,6 +114,7 @@ namespace ABBDataManagerSystem.Pages
             fieldKey = index;
             return RatioValueFields[index];
         }
+        #endregion
 
         private void swConnect_CheckedChange(object sender, RoutedEventArgs e)
         {
@@ -231,6 +237,7 @@ namespace ABBDataManagerSystem.Pages
                 Collector = null;
             }
             IsTesting = false;
+            Tools.EventManager.Instance.Unsubscribe("WorkflowSelected", WorkflowEventHandler);
         }
 
         private void cbTestMode_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -340,6 +347,7 @@ namespace ABBDataManagerSystem.Pages
             }
         }
 
+        #region 测试数据写入右侧表格
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             if (CurrentResult == null)
@@ -380,8 +388,61 @@ namespace ABBDataManagerSystem.Pages
             tvr.ValueCA = CurrentResult.Ratio[2];
             tvr.CalculatedRatio = CurrentResult.Ratio[3];
         }
+        #endregion
 
-        private void btApply_Click(object sender, RoutedEventArgs e)
+        #region 根据工作令计算显示分接
+        private void WorkflowEventHandler(object sender, TestEventArgs e)
+        {
+            HandleWorkflowChange();
+        }
+
+        private void HandleWorkflowChange()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                // 先清空已有的数据
+                tbProductSequence.Text = Configs.Configs.WorkflowID;
+                for (int i = 1; i <= MAX_HV_COUNT; i++)
+                {
+                    RatioValueFields[i.ToString()].TappingVoltage = 0;
+                }
+                tbTapping.Text = "";
+                tbRatedHighVoltage.Text = "";
+                tbRatedLowVoltage.Text = "";
+            });
+            Task.Run(() =>
+            {
+                var workflows = WorkflowInfo.ReadFromDB(Configs.Configs.WorkflowID);
+                if (workflows == null || workflows.Count == 0)
+                {
+                    return;
+                }
+                var workflow = workflows[0];
+                List<float> tappings = new List<float>();
+                var voltages = workflow.TappingVoltages.Split(" ");
+                foreach (var v in voltages)
+                {
+                    if (v == "NULL")
+                    {
+                        break;
+                    }
+                    tappings.Add(Utils.ParseFloat(v));
+                }
+                Dispatcher.Invoke(() =>
+                {
+                    for (int i = 1; i <= tappings.Count && i <= MAX_HV_COUNT; i++)
+                    {
+                        RatioValueFields[i.ToString()].TappingVoltage = tappings[tappings.Count - i];
+                    }
+                    tbTapping.Text = workflow.RatedVoltageInterval;
+                    tbRatedHighVoltage.Text = Utils.FloatFormat(workflow.RatedVoltageHv);
+                    tbRatedLowVoltage.Text = Utils.FloatFormat(workflow.RatedVoltageLv);
+                });
+            });
+        }
+
+        #region 计算分接电压
+        private void CalculateTappingVoltages()
         {
             string tapping = tbTapping.Text.Trim();
             int? hv = Utils.ParseIntNull(tbRatedHighVoltage.Text);
@@ -445,6 +506,9 @@ namespace ABBDataManagerSystem.Pages
                 tbRatedLowVoltage.Text = "";
             }
         }
+        #endregion
+
+        #endregion
 
         #region 数据上传
         private void btUpload_Click(object sender, System.EventArgs e)
