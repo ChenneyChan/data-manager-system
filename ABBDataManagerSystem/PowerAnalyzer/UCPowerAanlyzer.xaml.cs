@@ -2883,6 +2883,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             {
                 return;
             }
+            VoltageCurrentLossDataInfo.DeleteData(Configs.Configs.WorkflowID, "空载");
             NoLoadInfo110.LoadType = "空载";
             NoLoadInfo110.TappingPosition = "110%";
             NoLoadInfo110.WorkflowId = Configs.Configs.WorkflowID;
@@ -2905,6 +2906,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             {
                 return;
             }
+            VoltageCurrentLossDataInfo.DeleteData(Configs.Configs.WorkflowID, "负载");
             LoadInfoMax.LoadType = "负载";
             LoadInfoMax.TappingPosition = "最大";
             LoadInfoMax.WorkflowId = Configs.Configs.WorkflowID;
@@ -2936,6 +2938,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             {
                 return;
             }
+            VoltageCurrentLossDataInfo.DeleteData(Configs.Configs.WorkflowID, "感应");
             SenseInfo.LoadType = "感应";
             SenseInfo.TappingPosition = "";
             SenseInfo.WorkflowId = Configs.Configs.WorkflowID;
@@ -2949,6 +2952,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             {
                 return;
             }
+            PartialDischargeInfo.DeleteData(Configs.Configs.WorkflowID);
             var pd = new PartialDischargeInfo()
             {
                 WorkflowID = Configs.Configs.WorkflowID,

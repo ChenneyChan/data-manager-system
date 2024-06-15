@@ -287,15 +287,23 @@ namespace ABBDataManagerSystem.Bean.Base
             return 0;
         }
 
-        public static bool DeleteData(string sequence, string loadType, string tappingPosition = "")
+        public static bool DeleteData(string sequence, string loadType, string? tappingPosition = null)
         {
             using (SQLConnection connection = new SQLConnection(DBConnector.GetConnectionString()))
             {
                 connection.Open();
-                SQLCommond command = new SQLCommond($"DELETE FROM {TABLE_NAME} WHERE workflow_id = @WorkflowId  AND load_type = @LoadType AND tapping_position = @TappingPosition", connection);
+                string sql = $"DELETE FROM {TABLE_NAME} WHERE workflow_id = @WorkflowId  AND load_type = @LoadType ";
+                if (tappingPosition != null)
+                {
+                    sql += "AND tapping_position = @TappingPosition";
+                }
+                SQLCommond command = new SQLCommond(sql, connection);
                 command.Parameters.AddWithValue("@WorkflowId", sequence);
                 command.Parameters.AddWithValue("@LoadType", loadType);
-                command.Parameters.AddWithValue("@TappingPosition", tappingPosition);
+                if (tappingPosition != null)
+                {
+                    command.Parameters.AddWithValue("@TappingPosition", tappingPosition);
+                }
                 int count = command.ExecuteNonQuery();
                 return count > 0;
             }
