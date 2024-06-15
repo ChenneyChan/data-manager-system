@@ -1,7 +1,6 @@
-﻿using ABBDataManagerSystem.Bean;
-using ABBDataManagerSystem.Database;
+﻿using ABBDataManagerSystem.Database;
 
-namespace ElectricalDataManagerSystem.Bean.Base
+namespace ABBDataManagerSystem.Bean.Base
 {
     public class PartialDischargeInfo
     {

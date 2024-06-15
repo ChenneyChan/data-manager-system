@@ -1006,10 +1006,13 @@ namespace ABBDataManagerSystem.Pages
             Utils.ShowUploadTips(ret);
         }
 
-
         // 温升电阻持续采集数据上传
         private void btUpdateTempRiseRecords_Click(object sender, RoutedEventArgs e)
         {
+            if (!Utils.CheckWorkflowBeforeUpload())
+            {
+                return;
+            }
             CommonTempRiseTestInfo configItem;
             int testIndex = Utils.ParseInt(cbTestCount.Text);
             var items = CommonTempRiseTestInfo.ReadFromDB(Configs.Configs.WorkflowID, cbTestPhase.Text, cbTestStatus.Text, cbCoolingMode.Text, testIndex, 2);
@@ -1061,6 +1064,98 @@ namespace ABBDataManagerSystem.Pages
                 MessageBox.Show($"数据上传出错，请检查或者重新尝试!", "上传结果", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
+        }
+       
+        private void btUpdateResistanceRecords_Click(object sender, RoutedEventArgs e)
+        {
+            if (!Utils.CheckWorkflowBeforeUpload())
+            {
+                return;
+            }
+            DCResistanceInfo.DeleteData(Configs.Configs.WorkflowID);
+            List<DCResistanceInfo> list = new List<DCResistanceInfo>();
+            for (int i = 1; i <= 9; i++)
+            {
+                var tpr = tappingResistanceFields[i.ToString()];
+                var v = new DCResistanceInfo()
+                {
+                    ProductSequence = Configs.Configs.WorkflowID,
+                    Winding = "高压",
+                    Tapping = i.ToString(),
+                    AB = tpr.ValueAB,
+                    BC = tpr.ValueBC,
+                    CA = tpr.ValueCA,
+                };
+                if (i == 1)
+                {
+                    v.Temperature = Utils.ParseFloatNull(tbTemperature.Text);
+                    v.DateTime = DateTime.Now;
+                }
+                list.Add(v);
+            }
+
+            var tpr1 = tappingResistanceFields["10"];
+            var item = new DCResistanceInfo()
+            {
+                ProductSequence = Configs.Configs.WorkflowID,
+                Winding = "高压",
+                Tapping = "额定分接",
+                AB = tpr1.ValueAB,
+                BC = tpr1.ValueBC,
+                CA = tpr1.ValueCA,
+            };
+            list.Add(item);
+
+            tpr1 = tappingResistanceFields["11"];
+            item = new DCResistanceInfo()
+            {
+                ProductSequence = Configs.Configs.WorkflowID,
+                Winding = "低压一",
+                Tapping = "线电压",
+                AB = tpr1.ValueAB,
+                BC = tpr1.ValueBC,
+                CA = tpr1.ValueCA,
+            };
+            list.Add(item);
+
+            tpr1 = tappingResistanceFields["12"];
+            item = new DCResistanceInfo()
+            {
+                ProductSequence = Configs.Configs.WorkflowID,
+                Winding = "低压一",
+                Tapping = "相电压",
+                AB = tpr1.ValueAB,
+                BC = tpr1.ValueBC,
+                CA = tpr1.ValueCA,
+            };
+            list.Add(item);
+
+            tpr1 = tappingResistanceFields["21"];
+            item = new DCResistanceInfo()
+            {
+                ProductSequence = Configs.Configs.WorkflowID,
+                Winding = "低压二",
+                Tapping = "线电压",
+                AB = tpr1.ValueAB,
+                BC = tpr1.ValueBC,
+                CA = tpr1.ValueCA,
+            };
+            list.Add(item);
+
+            tpr1 = tappingResistanceFields["22"];
+            item = new DCResistanceInfo()
+            {
+                ProductSequence = Configs.Configs.WorkflowID,
+                Winding = "低压二",
+                Tapping = "相电压",
+                AB = tpr1.ValueAB,
+                BC = tpr1.ValueBC,
+                CA = tpr1.ValueCA,
+            };
+            list.Add(item);
+
+            var ret = DCResistanceInfo.BatchInsertData(list);
+            Utils.ShowUploadTips(ret);
         }
         #endregion
     }

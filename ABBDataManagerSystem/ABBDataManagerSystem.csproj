@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <Compile Include="Bean\Base\CommonTempRiseCoolResistanceInfo.cs" />
+    <Compile Include="Bean\Base\DCResistanceInfo.cs" />
     <Compile Include="Bean\Base\PartialDischargeInfo.cs" />
     <Compile Include="Bean\Base\VoltageRatioRecord.cs" />
     <Compile Include="Bean\Base\CommonTempRiseTestResistanceInfo.cs" />

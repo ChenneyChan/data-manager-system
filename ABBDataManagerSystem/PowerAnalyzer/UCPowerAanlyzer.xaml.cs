@@ -11,8 +11,6 @@ using System.Windows.Threading;
 using Yokogawa.Tm.WT1800CommSample.cs;
 using ABBDataManagerSystem.Tools;
 using EventManager = ABBDataManagerSystem.Tools.EventManager;
-using ElectricalDataManagerSystem.Bean.Base;
-using MessageBox = System.Windows.MessageBox;
 
 namespace ABBDataManagerSystem.PowerAnalyzer
 {

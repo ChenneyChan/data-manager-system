@@ -335,6 +335,7 @@
                         <hc:TextBox Width="60" Margin="5,0,0,0" Text="21.0" TextAlignment="Center" BorderThickness="0" Name="tbTemperature"/>
                         <TextBlock Text="℃"/>
                     </StackPanel>
+                    <Button Content="上传数据" Grid.Column="0" Grid.ColumnSpan="4" HorizontalAlignment="Left" Name="btUpdateResistanceRecords" Margin="2" Click="btUpdateResistanceRecords_Click"/>
                     <TextBlock Text="高压（串联）" Grid.ColumnSpan="6" HorizontalAlignment="Center" FontWeight="Bold"/>
                     <TextBlock Grid.Row="1" Grid.Column="0" Grid.RowSpan="2" Text="绕组" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     <TextBlock Grid.Row="1" Grid.Column="1" Grid.RowSpan="2" Text="分接位置" VerticalAlignment="Center" HorizontalAlignment="Center"/>

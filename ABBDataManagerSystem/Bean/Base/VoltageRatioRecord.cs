@@ -1,6 +1,5 @@
 ﻿using ABBDataManagerSystem.Database;
 using MySql.Data.MySqlClient;
-using System.Data;
 
 namespace ABBDataManagerSystem.Bean.Base
 {
