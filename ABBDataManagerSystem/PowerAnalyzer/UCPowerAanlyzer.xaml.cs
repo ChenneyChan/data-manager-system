@@ -2879,17 +2879,68 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
         private void btUploadNoLoad_Click(object sender, EventArgs e)
         {
-
+            if (!Utils.CheckWorkflowBeforeUpload())
+            {
+                return;
+            }
+            NoLoadInfo110.LoadType = "空载";
+            NoLoadInfo110.TappingPosition = "110%";
+            NoLoadInfo110.WorkflowId = Configs.Configs.WorkflowID;
+            bool ret = NoLoadInfo110.WriteToDB();
+            if(!ret)
+            {
+                Utils.ShowUploadTips(ret);
+                return;
+            }
+            NoLoadInfo100.LoadType = "空载";
+            NoLoadInfo100.TappingPosition = "100%";
+            NoLoadInfo100.WorkflowId = Configs.Configs.WorkflowID;
+            ret = NoLoadInfo100.WriteToDB();
+            Utils.ShowUploadTips(ret);
         }
 
         private void btUploadLoad_Click(object sender, EventArgs e)
         {
-
+            if (!Utils.CheckWorkflowBeforeUpload())
+            {
+                return;
+            }
+            LoadInfoMax.LoadType = "负载";
+            LoadInfoMax.TappingPosition = "最大";
+            LoadInfoMax.WorkflowId = Configs.Configs.WorkflowID;
+            bool ret = LoadInfoMax.WriteToDB();
+            if (!ret)
+            {
+                Utils.ShowUploadTips(ret);
+                return;
+            }
+            LoadInfoMin.LoadType = "负载";
+            LoadInfoMin.TappingPosition = "最小";
+            LoadInfoMin.WorkflowId = Configs.Configs.WorkflowID;
+            ret = LoadInfoMin.WriteToDB();
+            if (!ret)
+            {
+                Utils.ShowUploadTips(ret);
+                return;
+            }
+            LoadInfoRated.LoadType = "负载";
+            LoadInfoRated.TappingPosition = "额定";
+            LoadInfoRated.WorkflowId = Configs.Configs.WorkflowID;
+            ret = LoadInfoRated.WriteToDB();
+            Utils.ShowUploadTips(ret);
         }
 
         private void btUploadSense_Click(object sender, EventArgs e)
         {
-
+            if (!Utils.CheckWorkflowBeforeUpload())
+            {
+                return;
+            }
+            SenseInfo.LoadType = "感应";
+            SenseInfo.TappingPosition = "";
+            SenseInfo.WorkflowId = Configs.Configs.WorkflowID;
+            bool ret = SenseInfo.WriteToDB();
+            Utils.ShowUploadTips(ret);
         }
 
         private void btUploadPartialDischange_Click(object sender, EventArgs e)
