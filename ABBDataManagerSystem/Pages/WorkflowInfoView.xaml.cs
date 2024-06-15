@@ -1,6 +1,7 @@
 ﻿using ABBDataManagerSystem.Bean.Base;
 using System.Data;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace ABBDataManagerSystem.Pages
 {
@@ -66,7 +67,6 @@ namespace ABBDataManagerSystem.Pages
         {
             // 获取选中行
             var selectedRow = dataGrid.SelectedItem as DataRowView;
-
             if (selectedRow != null)
             {
                 // 通过列名获取值
@@ -77,9 +77,7 @@ namespace ABBDataManagerSystem.Pages
                 {
                     // 根据需要转换为相应的类型
                     string? columnValueString = columnValue.ToString();
-
                     Configs.Configs.WorkflowID = columnValueString ?? "";
-
                     Tools.EventManager.Instance.TriggerEvent("WorkflowSelected", this, new Tools.TestEventArgs());
                 }
                 Close();
@@ -122,6 +120,27 @@ namespace ABBDataManagerSystem.Pages
             CurrentPage += 1;
             UpdateTable();
             UpdatePagenation();
+        }
+
+        private void dataGrid_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            // 获取选中行
+            var selectedRow = dataGrid.SelectedItem as DataRowView;
+            if (selectedRow != null)
+            {
+                // 通过列名获取值
+                var columnValue = selectedRow["ID"];
+
+                // 将值转换为相应的类型
+                if (columnValue != null)
+                {
+                    // 根据需要转换为相应的类型
+                    string? columnValueString = columnValue.ToString();
+                    Configs.Configs.WorkflowID = columnValueString ?? "";
+                    Tools.EventManager.Instance.TriggerEvent("WorkflowSelected", this, new Tools.TestEventArgs());
+                }
+                Close();
+            }
         }
     }
 }

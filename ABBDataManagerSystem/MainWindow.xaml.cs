@@ -26,6 +26,12 @@ namespace ABBDataManagerSystem
             Configs.Configs.LoadFromFile();
             EventManager.Instance.Subscribe("WorkflowSelected", EventHandler);
             tbCurrentWorkflow.Text = "当前工作令：" + Configs.Configs.WorkflowID;
+            Loaded += MainWindow_Loaded;
+        }
+
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            dockBottom.Close();
         }
 
         private void MenuItemSetting_Click(object sender, RoutedEventArgs e)

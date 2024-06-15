@@ -65,13 +65,7 @@
                         </FlowDocumentScrollViewer.Document>
                     </FlowDocumentScrollViewer>
                 </dz:DockItem>
-                <dz:DockItem TabText="Saved State" Title="Saved State" ShowAction="{dz:ShowAsDockPositionAction DockPosition=Bottom}">
-                    <TextBox />
-                </dz:DockItem>
-                <dz:DockItem TabText="Output" Title="Output" ShowAction="{dz:ShowAsDockPositionAction DockPosition=Bottom}">
-                    <TextBox />
-                </dz:DockItem>
-                <dz:DockItem TabText="Test" Title="Test" ShowAction="{dz:ShowAsDockPositionAction DockPosition=Bottom}">
+                <dz:DockItem TabText="Test" Title="Test" ShowAction="{dz:ShowAsDockPositionAction DockPosition=Bottom}" Name="dockBottom">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -127,12 +121,7 @@
                         </ScrollViewer>
                     </Grid>
                 </dz:DockItem>
-                <!--<dz:DockItem TabText="Solution Explorer" Title="Solution Explorer" ShowAction="{dz:ShowAsDockPositionAction DockPosition=Right}">
-                    <TextBox />
-                </dz:DockItem>
-                <dz:DockItem TabText="Properties" Title="Properties" ShowAction="{dz:ShowAsDockPositionAction DockPosition=Right}">
-                    <TextBox />
-                </dz:DockItem>-->
+
             </dz:DockControl>
         </Grid>
         <hc:TabControl Margin="10" Visibility="Collapsed"  Grid.Row="3" Name="tabControl" IsAnimationEnabled="True" ShowCloseButton="True" IsDraggable="True" TabItemWidth="140">
