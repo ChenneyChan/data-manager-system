@@ -465,11 +465,76 @@ namespace ABBDataManagerSystem.Pages
             if (!IsTempRiseCool && tappingResistanceFields.Keys.Contains(SelectedTapping))
             {
                 tappingResistanceFields[SelectedTapping].UpdateValueForActiveItem(value);
+                UpdateMaxUnBalance();
             }
             else if (IsTempRiseCool && (TempRiseCoolSelectedCh1 != "空" || TempRiseCoolSelectedCh2 != "空"))
             {
                 UpdateTempRiseCoolValue();
             }
+        }
+
+        #region 计算最大不平衡差
+        private float[]? GetMaxMin(TappingResistanceFields tpr)
+        {
+            if (tpr.ValueAB == null || tpr.ValueBC == null || tpr.ValueCA == null)
+            {
+                return null;
+            }
+            float max = Math.Max((float)tpr.ValueAB, Math.Max((float)tpr.ValueBC, (float)tpr.ValueCA));
+            float min = Math.Min((float)tpr.ValueAB, Math.Min((float)tpr.ValueBC, (float)tpr.ValueCA));
+
+            return new float[] { max, min };
+        }
+
+        private float? CalculateMaxUnbalanceDiff(TappingResistanceFields tpr)
+        {
+            var maxMin = GetMaxMin(tpr);
+            if (maxMin == null || maxMin.Length != 2)
+            {
+                return null;
+            }
+            float sum = ((float)tpr.ValueAB + (float)tpr.ValueBC + (float)tpr.ValueCA);
+            if (sum == 0)
+            {
+                return null;
+            }
+            return (maxMin[0] - maxMin[1]) / sum;
+        }
+        #endregion
+
+        private void UpdateMaxUnBalance()
+        {
+            // 高压
+            List<float> vs = new List<float>();
+            for (int i = 1; i <= 9; i++)
+            {
+                var tpr = tappingResistanceFields[i.ToString()];
+                if (tpr == null)
+                {
+                    continue;
+                }
+                var v = CalculateMaxUnbalanceDiff(tpr);
+                if (v == null)
+                {
+                    continue;
+                }
+                vs.Add((float)v);
+            }
+            vs.Sort();
+            if (vs.Count > 0)
+            {
+                tbHVMaxUnbalanceDiff.Text = Utils.FloatFormat(vs[vs.Count - 1]);
+            }
+            else
+            {
+                tbHVMaxUnbalanceDiff.Text = "";
+            }
+
+            // 低压
+            tbLVMaxUnbalanceDiff11.Text = Utils.FloatFormat((float)CalculateMaxUnbalanceDiff(tappingResistanceFields["11"])); 
+            tbLVMaxUnbalanceDiff12.Text = Utils.FloatFormat((float)CalculateMaxUnbalanceDiff(tappingResistanceFields["12"]));
+            tbLVMaxUnbalanceDiff21.Text = Utils.FloatFormat((float)CalculateMaxUnbalanceDiff(tappingResistanceFields["21"]));
+            tbLVMaxUnbalanceDiff22.Text = Utils.FloatFormat((float)CalculateMaxUnbalanceDiff(tappingResistanceFields["22"]));
         }
 
         private void UpdateTempRiseCoolValue()
@@ -1065,7 +1130,7 @@ namespace ABBDataManagerSystem.Pages
                 return;
             }
         }
-       
+
         private void btUpdateResistanceRecords_Click(object sender, RoutedEventArgs e)
         {
             if (!Utils.CheckWorkflowBeforeUpload())
@@ -1090,6 +1155,7 @@ namespace ABBDataManagerSystem.Pages
                 {
                     v.Temperature = Utils.ParseFloatNull(tbTemperature.Text);
                     v.DateTime = DateTime.Now;
+                    v.MaxError = Utils.ParseFloatNull(tbHVMaxUnbalanceDiff.Text);
                 }
                 list.Add(v);
             }

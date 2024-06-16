@@ -11,25 +11,25 @@ namespace ABBDataManagerSystem.Pages.Views
     {
         public delegate void ActiveCallback(TappingResistanceFields obj, int activeIndex);
 
-        private float _ValueAB = 0;
+        private float? _ValueAB = null;
 
-        public float ValueAB
+        public float? ValueAB
         {
             get { return _ValueAB; }
             set { _ValueAB = value; UpdateDisplay(); }
         }
 
-        private float _ValueBC = 0;
+        private float? _ValueBC = null;
 
-        public float ValueBC
+        public float? ValueBC
         {
             get { return _ValueBC; }
             set { _ValueBC = value; UpdateDisplay(); }
         }
 
-        private float _ValueCA = 0;
+        private float? _ValueCA = null;
 
-        public float ValueCA
+        public float? ValueCA
         {
             get { return _ValueCA; }
             set { _ValueCA = value; UpdateDisplay(); }
@@ -91,14 +91,14 @@ namespace ABBDataManagerSystem.Pages.Views
 
         public float[] GetValues()
         {
-            return new float[] { _ValueAB, _ValueBC, _ValueCA };
+            return new float[] { _ValueAB ?? 0, _ValueBC ?? 0, _ValueCA ?? 0 };
         }
 
         private void UpdateDisplay()
         {
-            tbResistanceAB.Text = Utils.ZeroIsNull(Utils.FloatFormat(ValueAB));
-            tbResistanceBC.Text = Utils.ZeroIsNull(Utils.FloatFormat(ValueBC));
-            tbResistanceCA.Text = Utils.ZeroIsNull(Utils.FloatFormat(ValueCA));
+            tbResistanceAB.Text = ValueAB == null ? "" : Utils.ZeroIsNull(Utils.FloatFormat((float)ValueAB));
+            tbResistanceBC.Text = ValueBC == null ? "" : Utils.ZeroIsNull(Utils.FloatFormat((float)ValueBC));
+            tbResistanceCA.Text = ValueCA == null ? "" : Utils.ZeroIsNull(Utils.FloatFormat((float)ValueCA));
 
             //tbResistanceAB.Background = SelectedIndex == 1 ? ActiveBackGroud : OriginBackGroud;
             //tbResistanceBC.Background = SelectedIndex == 2 ? ActiveBackGroud : OriginBackGroud;
