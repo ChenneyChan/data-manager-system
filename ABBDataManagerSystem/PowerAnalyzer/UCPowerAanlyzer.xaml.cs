@@ -96,6 +96,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         private static readonly int MAX_MONITOR_BUFFER_LEN = 3000;
         private float RatedCurrent = 0;
         private string WorkflowType = "双绕组";
+        private string SelectedTab = "空载";
 
         #endregion
 
@@ -1293,166 +1294,175 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 return;
             }
             IsProcessing = true;
-            var Items = !IsShowHarmonic ? ItemSettings : HarmonicItemSettings;
-            string dumpMsg = "";
-            Stopwatch s = new();
-            int n;
-            int rtn;
-            string msg;
-
-            ///----------------------#get data#
-            msg = ":NUMERIC:NORMAL:VALUE?";
-
-            s.Start();
-            ///----------------------#send message#
-            SetSendMonitor(msg);
-            //###ASCII:TmcSend(); FLOAT:TmcSendBuLength()###
-            if (encodeType == EncodeType.ASCII)
+            try
             {
-                rtn = connection.Send(msg);
-            }
-            else
-            {
-                rtn = connection.SendByLength(msg, msg.Length);
-            }
-            if (rtn != 0)
-            {
-                DispError(connection.GetLastError());
-                IsProcessing = false;
-                return;
-            }
-            s.Stop();
-            dumpMsg += ($"step1 {s.ElapsedMilliseconds}ms ");
+                var Items = !IsShowHarmonic ? ItemSettings : HarmonicItemSettings;
+                string dumpMsg = "";
+                Stopwatch s = new();
+                int n;
+                int rtn;
+                string msg;
 
-            s.Start();
-            ///----------------------#receive values#
-            int maxLength = 0;
-            int realLength = 0;
-            string data = "";
-            List<float?> values = new List<float?>();
+                ///----------------------#get data#
+                msg = ":NUMERIC:NORMAL:VALUE?";
 
-            if (encodeType == EncodeType.ASCII)
-            {
-                ///----------------------#receive values by ASCII#
-                //###ASCII:TmcReceive()###
-                maxLength = 15 * Items.Count;
-                rtn = connection.Receive(ref data, maxLength, ref realLength);
+                s.Start();
+                ///----------------------#send message#
+                SetSendMonitor(msg);
+                //###ASCII:TmcSend(); FLOAT:TmcSendBuLength()###
+                if (encodeType == EncodeType.ASCII)
+                {
+                    rtn = connection.Send(msg);
+                }
+                else
+                {
+                    rtn = connection.SendByLength(msg, msg.Length);
+                }
                 if (rtn != 0)
                 {
                     DispError(connection.GetLastError());
                     IsProcessing = false;
                     return;
                 }
-                SetReceiveMonitor(data);
-                data = CutLeft("\n", ref data);
-            }
-            else
-            {
-                byte[] byteData;
-                byte[] bytes = new byte[4];
-                ///----------------------#receive values by Float#
-                //###FLOAT:TmcReceiveBlock()###
-                rtn = connection.ReceiveBlockHeader(ref maxLength);
-                if (maxLength < 1)
-                {
-                    IsProcessing = false;
-                    Log.Error($"Get Pacekt Len Error ret = {rtn} maxLength = {maxLength}");
-                    return;
-                }
-                maxLength += 2;//see tmctl's help
-                byteData = new byte[maxLength];
+                s.Stop();
+                dumpMsg += ($"step1 {s.ElapsedMilliseconds}ms ");
 
-                int isEnd = 0;
-                string outputValue = "";
-                float floatBuf;
-                string temstr = "";
-                while (isEnd == 0)
+                s.Start();
+                ///----------------------#receive values#
+                int maxLength = 0;
+                int realLength = 0;
+                string data = "";
+                List<float?> values = new List<float?>();
+
+                if (encodeType == EncodeType.ASCII)
                 {
-                    rtn = connection.ReceiveBlockData(ref byteData, maxLength, ref realLength, ref isEnd);
+                    ///----------------------#receive values by ASCII#
+                    //###ASCII:TmcReceive()###
+                    maxLength = 15 * Items.Count;
+                    rtn = connection.Receive(ref data, maxLength, ref realLength);
                     if (rtn != 0)
                     {
                         DispError(connection.GetLastError());
                         IsProcessing = false;
                         return;
                     }
-                    for (n = 0; n <= realLength - 1 && IsEnableDebug; n++)
-                    {
-                        /****************************************************/
-                        temstr = byteData[n].ToString("X");
-                        if (byteData[n] < 16)
-                        {
-                            temstr = "0" + temstr;
-                        }
-                        outputValue = outputValue + temstr;
-                        //outputValue = outputValue + (byteData[n].ToString("X"));
-                        /*****************************************************/
-                    }
-
-                    // Invalid Is 0x7E951BEE, Data Over Is 0x7E94F56A
-                    for (n = 0; n < realLength / 4; n++)
-                    {
-                        bytes[3] = byteData[n * 4];
-                        bytes[2] = byteData[n * 4 + 1];
-                        bytes[1] = byteData[n * 4 + 2];
-                        bytes[0] = byteData[n * 4 + 3];
-                        if ((bytes[3] == 0x7E && bytes[2] == 0x95 && bytes[1] == 0x1B && bytes[0] == 0xEE)
-                            || (bytes[3] == 0x7E && bytes[2] == 0x94 && bytes[1] == 0xF5 && bytes[0] == 0x6A))
-                        {
-                            values.Add(null);
-                        }
-                        else
-                        {
-                            floatBuf = BitConverter.ToSingle(bytes, 0);
-                            //data += floatBuf.ToString() + ",";
-                            values.Add(floatBuf);
-                        }
-                    }
-                }
-                SetReceiveMonitor(outputValue);
-            }
-            s.Stop();
-            dumpMsg += ($"step2 {s.ElapsedMilliseconds}ms ");
-
-            #region 更新数据，并显示
-            s.Start();
-            for (n = 0; n < Items.Count; n++)
-            {
-                //set display
-                if (encodeType == EncodeType.ASCII)
-                {
-                    string valueStr = CutLeft(",", ref data);
-                    if (valueStr.Trim().Length == 0)
-                    {
-                        break;
-                    }
-                    if (valueStr == "NAN" || valueStr == "INF")
-                    {
-                        continue;
-                    }
-                    Items[n].Value = Utils.ParseFloat(valueStr);
+                    SetReceiveMonitor(data);
+                    data = CutLeft("\n", ref data);
                 }
                 else
                 {
-                    if (n < values.Count)
+                    byte[] byteData;
+                    byte[] bytes = new byte[4];
+                    ///----------------------#receive values by Float#
+                    //###FLOAT:TmcReceiveBlock()###
+                    rtn = connection.ReceiveBlockHeader(ref maxLength);
+                    if (maxLength < 1)
                     {
-                        Items[n].Value = values[n];
+                        IsProcessing = false;
+                        Log.Error($"Get Pacekt Len Error ret = {rtn} maxLength = {maxLength}");
+                        return;
+                    }
+                    maxLength += 2;//see tmctl's help
+                    byteData = new byte[maxLength];
+
+                    int isEnd = 0;
+                    string outputValue = "";
+                    float floatBuf;
+                    string temstr = "";
+                    while (isEnd == 0)
+                    {
+                        rtn = connection.ReceiveBlockData(ref byteData, maxLength, ref realLength, ref isEnd);
+                        if (rtn != 0)
+                        {
+                            DispError(connection.GetLastError());
+                            IsProcessing = false;
+                            return;
+                        }
+                        for (n = 0; n <= realLength - 1 && IsEnableDebug; n++)
+                        {
+                            /****************************************************/
+                            temstr = byteData[n].ToString("X");
+                            if (byteData[n] < 16)
+                            {
+                                temstr = "0" + temstr;
+                            }
+                            outputValue = outputValue + temstr;
+                            //outputValue = outputValue + (byteData[n].ToString("X"));
+                            /*****************************************************/
+                        }
+
+                        // Invalid Is 0x7E951BEE, Data Over Is 0x7E94F56A
+                        for (n = 0; n < realLength / 4; n++)
+                        {
+                            bytes[3] = byteData[n * 4];
+                            bytes[2] = byteData[n * 4 + 1];
+                            bytes[1] = byteData[n * 4 + 2];
+                            bytes[0] = byteData[n * 4 + 3];
+                            if ((bytes[3] == 0x7E && bytes[2] == 0x95 && bytes[1] == 0x1B && bytes[0] == 0xEE)
+                                || (bytes[3] == 0x7E && bytes[2] == 0x94 && bytes[1] == 0xF5 && bytes[0] == 0x6A))
+                            {
+                                values.Add(null);
+                            }
+                            else
+                            {
+                                floatBuf = BitConverter.ToSingle(bytes, 0);
+                                //data += floatBuf.ToString() + ",";
+                                values.Add(floatBuf);
+                            }
+                        }
+                    }
+                    SetReceiveMonitor(outputValue);
+                }
+                s.Stop();
+                dumpMsg += ($"step2 {s.ElapsedMilliseconds}ms ");
+
+                #region 更新数据，并显示
+                s.Start();
+                for (n = 0; n < Items.Count; n++)
+                {
+                    //set display
+                    if (encodeType == EncodeType.ASCII)
+                    {
+                        string valueStr = CutLeft(",", ref data);
+                        if (valueStr.Trim().Length == 0)
+                        {
+                            break;
+                        }
+                        if (valueStr == "NAN" || valueStr == "INF")
+                        {
+                            continue;
+                        }
+                        Items[n].Value = Utils.ParseFloat(valueStr);
+                    }
+                    else
+                    {
+                        if (n < values.Count)
+                        {
+                            Items[n].Value = values[n];
+                        }
                     }
                 }
+                s.Stop();
+                dumpMsg += ($"step3 {s.ElapsedMilliseconds}ms ");
+
+                s.Start();
+                RefreshValueDisplay();
+                s.Stop();
+                dumpMsg += ($"step4 {s.ElapsedMilliseconds}ms ");
+
+                if (IsEnableDebug)
+                {
+                    Log.Error("Final Test Analyze: " + dumpMsg);
+                }
+                #endregion
             }
-            s.Stop();
-            dumpMsg += ($"step3 {s.ElapsedMilliseconds}ms ");
-
-            s.Start();
-            RefreshValueDisplay();
-            s.Stop();
-            dumpMsg += ($"step4 {s.ElapsedMilliseconds}ms ");
-
-            if (IsEnableDebug)
+            catch (Exception e)
             {
-                Log.Error("Final Test Analyze: " + dumpMsg);
+                Log.Error("Fail to process, " + e.Message);
+                Log.Error(e != null ? e.StackTrace ?? "" : "");
             }
+
             IsProcessing = false;
-            #endregion
         }
         #endregion
 
@@ -2988,6 +2998,23 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             {
                 dgColumnMeanValue.Visibility = Visibility.Collapsed;
             }
+
+            if (tbNoLoad.IsSelected)
+            {
+                SelectedTab = "空载";
+            }
+            else if (tbLoad.IsSelected)
+            {
+                SelectedTab = "负载";
+            }
+            else if (tbSense.IsSelected)
+            {
+                SelectedTab = "感应";
+            }
+            else if (tbPartialDischarge.IsSelected)
+            {
+                SelectedTab = "局放";
+            }
         }
 
         #region 感应倒计时处理
@@ -3003,7 +3030,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
         private void ProcessSenseTimer()
         {
-            if (IsSenseCountDowning || tbSense.IsSelected != true)
+            if (IsSenseCountDowning || SelectedTab != "感应")
             {
                 return;
             }
