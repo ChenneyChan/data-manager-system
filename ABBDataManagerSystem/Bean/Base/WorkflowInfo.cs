@@ -1,5 +1,4 @@
 ﻿using ABBDataManagerSystem.Database;
-using NLog.Filters;
 using System.Data;
 
 namespace ABBDataManagerSystem.Bean.Base
@@ -7,30 +6,7 @@ namespace ABBDataManagerSystem.Bean.Base
     public class WorkflowInfo
     {
         public static string TABLE_NAME = "workflow";
-        /**
-         * 
-         * CREATE TABLE VoltageCurrentLossDataInfo (  
-    WorkflowId VARCHAR(255),  
-    LoadType VARCHAR(24),  
-    ia FLOAT NOT NULL,  
-    ib FLOAT NOT NULL,  
-    ic FLOAT NOT NULL,  
-    i3 FLOAT NOT NULL,  
-    ua FLOAT NOT NULL,  
-    ub FLOAT NOT NULL,  
-    uc FLOAT NOT NULL,  
-    u3 FLOAT NOT NULL,  
-    pua FLOAT NOT NULL,  
-    pub FLOAT NOT NULL,  
-    puc FLOAT NOT NULL,  
-    pu3 FLOAT NOT NULL, 
-    pa FLOAT NOT NULL,  
-    pb FLOAT NOT NULL,  
-    pc FLOAT NOT NULL,  
-    p3 FLOAT NOT NULL,
-    PRIMARY KEY(WorkflowId, LoadType)
-);
-         */
+
         public string ID = String.Empty;
         public string WorkflowType = String.Empty;
 
@@ -45,14 +21,68 @@ namespace ABBDataManagerSystem.Bean.Base
         public float RatedCurrentLv;
         public float RatedCurrentYv;
 
-        public string No   = String.Empty;
-        public string CAL  = String.Empty;
+        public string No = String.Empty;
+        public string CAL = String.Empty;
         public string Type = String.Empty;
         public int Phase;
         public string CONNSymbol = String.Empty;
         public string TappingVoltages = String.Empty;
         public string RatedVoltageInterval = String.Empty;
         public string PartialDischarge = string.Empty;
+
+        public float? Frequency;
+        public string CoolingType = string.Empty;
+        public string Location = string.Empty;
+        public string InsulationLevel = string.Empty;
+        public string InsulationClass = string.Empty;
+        public float? CoreTempRise;
+        public float? HWTempRise;
+        public float? LWTempRise;
+        public string SoundLevel = string.Empty;
+        public string TecnicalStandard = string.Empty;
+        public float? ResistanceAO;
+        public float? ResistanceBO;
+        public float? ResistanceCO;
+        public float? ResistanceAO2;
+        public float? ResistanceBO2;
+        public float? ResistanceCO2;
+        public string Operator = string.Empty;
+        public string ProtectionDegree = string.Empty;
+        public string FirstOrderNo = string.Empty;
+        public float? ResistanceHW;
+        public float? ResistanceLW;
+        public float? ResistanceYW;
+        public string LoadLosses75S = string.Empty;
+        public string LoadLosses75D = string.Empty;
+        public string LoadLosses145S = string.Empty;
+        public string LoadLosses145D = string.Empty;
+        public string NoLoadLossesS = string.Empty;
+        public string NoLoadLossesD = string.Empty;
+        public string TotalLosses75S = string.Empty;
+        public string TotalLosses75D = string.Empty;
+        public string TotalLosses145S = string.Empty;
+        public string TotalLosses145D = string.Empty;
+        public string ImpedanceS = string.Empty;
+        public string ImpedanceD = string.Empty;
+        public string ImpedanceYS = string.Empty;
+        public string NoLoadCurrentS = string.Empty;
+        public string NoLoadCurrentD = string.Empty;
+        public string Remark = string.Empty;
+        public string RefTemperature = string.Empty;
+        public string FatalMark = string.Empty;
+        public string HVMaterial = string.Empty;
+        public string LVMaterial = string.Empty;
+        public bool SoundPowerLevel = false;
+        public string Coolant = string.Empty;
+        public string FanMode = string.Empty;
+        public float? Flow;
+        public float? K2;
+        public float? BackpackPower;
+        public string TempRiseReference = string.Empty;
+        public string ExternalCirculation = string.Empty;
+        public string FirstTempRise = string.Empty;
+        public string BackpackPerformance = string.Empty;
+
         public float? TempRiseTestingVoltage = null;
         public float? TempRiseTestingCurrent = null;
         public float? TempRiseHVCorrectionFactor = null;
@@ -80,11 +110,64 @@ namespace ABBDataManagerSystem.Bean.Base
             {"TappingVoltages", "分接电压"},
             {"RatedVoltageInterval", "分接"},
             {"PartialDischarge", "局放标准"},
-            {"TempRiseTestingVoltage", "温升试验电压" },
-            {"TempRiseTestingCurrent", "温升试验电流" },
-            {"TempRiseHVCorrectionFactor", "高压温升校正系数" },
-            {"TempRiseLVCorrectionFactor", "低压温升校正系数" },
-            {"TempRiseRelativeTo", "温升相对于" },
+
+            {"Frequency", "频率"},
+            {"CoolingType", "冷却方式"},
+            {"Location", "使用条件"},
+            {"InsulationLevel", "绝缘水平"},
+            {"InsulationClass", "绝缘等级"},
+            {"CoreTempRise", "铁芯温升(K)"},
+            {"HWTempRise", "高压线圈温升(K)"},
+            {"LWTempRise", "低压线圈温升(K)"},
+            {"SoundLevel", "变压器噪声(dB)"},
+            {"TecnicalStandard", "参考标准"},
+            {"ResistanceAO", "'AO结构电阻'"},
+            {"ResistanceBO", "'BO结构电阻'"},
+            {"ResistanceCO", "'CO结构电阻'"},
+            {"ResistanceAO2" , "'AO结构电阻2'"},
+            {"ResistanceBO2" , "'BO结构电阻2'"},
+            {"ResistanceCO2" , "'CO结构电阻2'"},
+            {"Operator", "'操作员'"},
+            {"ProtectionDegree", "防护等级"},
+            {"FirstOrderNo", "图号的首次工作令"},
+            {"ResistanceHW", "75°时高压线圈电阻" },
+            {"ResistanceLW", "75°时低压线圈电阻" },
+            {"ResistanceYW", "75°时低压线圈电阻" },
+            {"LoadLosses75S" , "负载损耗75°标准值" },
+            {"LoadLosses75D" , "负载损耗75°设计值" },
+            {"LoadLosses145S", "负载损耗145°标准值"},
+            {"LoadLosses145D", "负载损耗145°设计值"},
+            {"NoLoadLossesS" , "空载损耗标准值"},
+            {"NoLoadLossesD" , "空载损耗设计值"},
+            {"TotalLosses75S", "总损耗75°标准值"},
+            {"TotalLosses75D", "总损耗75°设计值"},
+            {"TotalLosses145S", "总损耗145°标准值" },
+            {"TotalLosses145D", "总损耗145°设计值" },
+            {"ImpedanceS", "阻抗标准值"},
+            {"ImpedanceD", "阻抗设计值"},
+            {"ImpedanceYS", "阻抗标准值1" },
+            {"NoLoadCurrentS", "空载电流标准值(%)" },
+            {"NoLoadCurrentD", "空载电流设计值(%)" },
+            {"Remark", "备注" },
+            {"RefTemperature", "参考温度"},
+            {"FatalMark" , "错误标记"},
+            {"HVMaterial", "高压材质"},
+            {"LVMaterial", "低压材质"},
+            {"SoundPowerLevel", "是否Power类型的SoundLevel"},
+            {"Coolant", "水冷冷却剂"},
+            {"FanMode", "水冷风机模式"},
+            {"Flow", "水冷流量，m3/h"},
+            {"K2", "水冷k2"},
+            {"BackpackPower" , "水冷背包功率"},
+            {"TempRiseReference" , "水冷温升参考"},
+            {"ExternalCirculation", "水冷外循环"},
+            {"FirstTempRise" , "水冷首台温升"},
+            {"BackpackPerformance", "水冷背包性能"},
+            //{"TempRiseTestingVoltage", "温升试验电压" },
+            //{"TempRiseTestingCurrent", "温升试验电流" },
+            //{"TempRiseHVCorrectionFactor", "高压温升校正系数" },
+            //{"TempRiseLVCorrectionFactor", "低压温升校正系数" },
+            //{"TempRiseRelativeTo", "温升相对于" },
         };
 
         public static string KeyField = "WorkflowId";
@@ -99,8 +182,8 @@ namespace ABBDataManagerSystem.Bean.Base
 
                 using (SQLCommond command = new SQLCommond($"INSERT INTO {TABLE_NAME} (ID, WorkflowType, RatedPower, RatedPower1, RatedPower2, " +
                     "RatedVoltageHv, RatedVoltageLv, RatedVoltageYv, RatedCurrentHv, RatedCurrentLv, RatedCurrentYv, No, CAL, Type, Phase, CONNSymbol, " +
-                    "TappingVoltages, RatedVoltageInterval, TempRiseTestingVoltage, TempRiseTestingCurrent, TempRiseHVCorrectionFactor, TempRiseLVCorrectionFactor, TempRiseRelativeTo, ) " + 
-                    "VALUES(@ID, @WorkflowType, @RatedPower, @RatedPower1, @RatedPower2, @RatedVoltageHv, @RatedVoltageLv, @RatedVoltageYv, " + 
+                    "TappingVoltages, RatedVoltageInterval, TempRiseTestingVoltage, TempRiseTestingCurrent, TempRiseHVCorrectionFactor, TempRiseLVCorrectionFactor, TempRiseRelativeTo, ) " +
+                    "VALUES(@ID, @WorkflowType, @RatedPower, @RatedPower1, @RatedPower2, @RatedVoltageHv, @RatedVoltageLv, @RatedVoltageYv, " +
                     "@RatedCurrentHv, @RatedCurrentLv, @RatedCurrentYv, @No, @CAL, @Type, @Phase, @CONNSymbol, @TappingVoltages, @RatedVoltageInterval, " +
                     "@TempRiseTestingVoltage, @TempRiseTestingCurrent, @TempRiseHVCorrectionFactor, @TempRiseLVCorrectionFactor, @TempRiseRelativeTo)", connection))
                 {
@@ -240,6 +323,60 @@ namespace ABBDataManagerSystem.Bean.Base
                     TempRiseHVCorrectionFactor = !reader.IsDBNull("TempRiseHVCorrectionFactor") ? reader.GetFloat("TempRiseHVCorrectionFactor") : null,
                     TempRiseLVCorrectionFactor = !reader.IsDBNull("TempRiseLVCorrectionFactor") ? reader.GetFloat("TempRiseLVCorrectionFactor") : null,
                     TempRiseRelativeTo = !reader.IsDBNull("TempRiseRelativeTo") ? reader.GetString("TempRiseRelativeTo") : "",
+
+                    Frequency = !reader.IsDBNull("Frequency") ? reader.GetFloat("Frequency") : null,
+                    CoolingType = !reader.IsDBNull("CoolingType") ? reader.GetString("CoolingType") : "",
+                    Location = !reader.IsDBNull("Location") ? reader.GetString("Location") : "",
+                    InsulationLevel = !reader.IsDBNull("InsulationLevel") ? reader.GetString("InsulationLevel") : "",
+                    InsulationClass = !reader.IsDBNull("InsulationClass") ? reader.GetString("InsulationClass") : "",
+                    CoreTempRise = !reader.IsDBNull("CoreTempRise") ? reader.GetFloat("CoreTempRise") : null,
+                    HWTempRise = !reader.IsDBNull("HWTempRise") ? reader.GetFloat("HWTempRise") : null,
+                    LWTempRise = !reader.IsDBNull("LWTempRise") ? reader.GetFloat("LWTempRise") : null,
+                    SoundLevel = !reader.IsDBNull("SoundLevel") ? reader.GetString("SoundLevel") : "",
+                    TecnicalStandard = !reader.IsDBNull("TecnicalStandard") ? reader.GetString("TecnicalStandard") : "",
+                    ResistanceAO = !reader.IsDBNull("ResistanceAO") ? reader.GetFloat("ResistanceAO") : null,
+                    ResistanceBO = !reader.IsDBNull("ResistanceBO") ? reader.GetFloat("ResistanceBO") : null,
+                    ResistanceCO = !reader.IsDBNull("ResistanceCO") ? reader.GetFloat("ResistanceCO") : null,
+                    ResistanceAO2 = !reader.IsDBNull("ResistanceAO2") ? reader.GetFloat("ResistanceAO2") : null,
+                    ResistanceBO2 = !reader.IsDBNull("ResistanceBO2") ? reader.GetFloat("ResistanceBO2") : null,
+                    ResistanceCO2 = !reader.IsDBNull("ResistanceCO2") ? reader.GetFloat("ResistanceCO2") : null,
+                    Operator = !reader.IsDBNull("Operator") ? reader.GetString("Operator") : "",
+                    ProtectionDegree = !reader.IsDBNull("ProtectionDegree") ? reader.GetString("ProtectionDegree") : "",
+                    FirstOrderNo = !reader.IsDBNull("FirstOrderNo") ? reader.GetString("FirstOrderNo") : "",
+                    ResistanceHW = !reader.IsDBNull("ResistanceHW") ? reader.GetFloat("ResistanceHW") : null,
+                    ResistanceLW = !reader.IsDBNull("ResistanceLW") ? reader.GetFloat("ResistanceLW") : null,
+                    ResistanceYW = !reader.IsDBNull("ResistanceYW") ? reader.GetFloat("ResistanceYW") : null,
+                    LoadLosses75S = !reader.IsDBNull("LoadLosses75S") ? reader.GetString("LoadLosses75S") : "",
+                    LoadLosses75D = !reader.IsDBNull("LoadLosses75D") ? reader.GetString("LoadLosses75D") : "",
+                    LoadLosses145S = !reader.IsDBNull("LoadLosses145S") ? reader.GetString("LoadLosses145S") : "",
+                    LoadLosses145D = !reader.IsDBNull("LoadLosses145D") ? reader.GetString("LoadLosses145D") : "",
+                    NoLoadLossesS = !reader.IsDBNull("NoLoadLossesS") ? reader.GetString("NoLoadLossesS") : "",
+                    NoLoadLossesD = !reader.IsDBNull("NoLoadLossesD") ? reader.GetString("NoLoadLossesD") : "",
+                    TotalLosses75S = !reader.IsDBNull("TotalLosses75S") ? reader.GetString("TotalLosses75S") : "",
+                    TotalLosses75D = !reader.IsDBNull("TotalLosses75D") ? reader.GetString("TotalLosses75D") : "",
+                    TotalLosses145S = !reader.IsDBNull("TotalLosses145S") ? reader.GetString("TotalLosses145S") : "",
+                    TotalLosses145D = !reader.IsDBNull("TotalLosses145D") ? reader.GetString("TotalLosses145D") : "",
+                    ImpedanceS = !reader.IsDBNull("ImpedanceS") ? reader.GetString("ImpedanceS") : "",
+                    ImpedanceD = !reader.IsDBNull("ImpedanceD") ? reader.GetString("ImpedanceD") : "",
+                    ImpedanceYS = !reader.IsDBNull("ImpedanceYS") ? reader.GetString("ImpedanceYS") : "",
+                    NoLoadCurrentS = !reader.IsDBNull("NoLoadCurrentS") ? reader.GetString("NoLoadCurrentS") : "",
+                    NoLoadCurrentD = !reader.IsDBNull("NoLoadCurrentD") ? reader.GetString("NoLoadCurrentD") : "",
+                    Remark = !reader.IsDBNull("Remark") ? reader.GetString("Remark") : "",
+                    RefTemperature = !reader.IsDBNull("RefTemperature") ? reader.GetString("RefTemperature") : "",
+                    FatalMark = !reader.IsDBNull("FatalMark") ? reader.GetString("FatalMark") : "",
+                    HVMaterial = !reader.IsDBNull("HVMaterial") ? reader.GetString("HVMaterial") : "",
+                    LVMaterial = !reader.IsDBNull("LVMaterial") ? reader.GetString("LVMaterial") : "",
+                    SoundPowerLevel = !reader.IsDBNull("SoundPowerLevel") ? reader.GetBoolean("SoundPowerLevel") : false,
+                    Coolant = !reader.IsDBNull("Coolant") ? reader.GetString("Coolant") : "",
+                    FanMode = !reader.IsDBNull("FanMode") ? reader.GetString("FanMode") : "",
+                    Flow = !reader.IsDBNull("Flow") ? reader.GetFloat("Flow") : null,
+                    K2 = !reader.IsDBNull("K2") ? reader.GetFloat("K2") : null,
+                    BackpackPower = !reader.IsDBNull("BackpackPower") ? reader.GetFloat("BackpackPower") : null,
+                    TempRiseReference = !reader.IsDBNull("TempRiseReference") ? reader.GetString("TempRiseReference") : "",
+                    ExternalCirculation = !reader.IsDBNull("ExternalCirculation") ? reader.GetString("ExternalCirculation") : "",
+                    FirstTempRise = !reader.IsDBNull("FirstTempRise") ? reader.GetString("FirstTempRise") : "",
+                    BackpackPerformance = !reader.IsDBNull("BackpackPerformance") ? reader.GetString("BackpackPerformance") : "",
+
                 };
             });
             if (records == null)
@@ -250,7 +387,7 @@ namespace ABBDataManagerSystem.Bean.Base
             return records;
         }
 
-        public static void FillDataTable(DataTable dt, int pageSize, int page, string? filterId= null, bool? blurSearch = false)
+        public static void FillDataTable(DataTable dt, int pageSize, int page, string? filterId = null, bool? blurSearch = false)
         {
             if (page < 0)
             {
@@ -262,7 +399,7 @@ namespace ABBDataManagerSystem.Bean.Base
                 if (blurSearch == true)
                 {
                     where = $" WHERE ID LIKE '%{filterId}%'";
-                } 
+                }
                 else
                 {
                     where = $" WHERE ID = '{filterId}'";
