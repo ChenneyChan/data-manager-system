@@ -134,6 +134,8 @@
                     <Views:NoloadInfo Grid.Column="1" x:Name="NoLoadView" FontSize="14"/>
                     <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal">
                         <Button Content="上传空载数据" Margin="0,10,10,10" Background="#FF95E019" BorderBrush="#FF585555" Width="120" Height="40" Click="btUploadNoLoad_Click"/>
+                        <CheckBox Content="100%" IsChecked="True" FontSize="16" Name="cbNoLoad100"/>
+                        <CheckBox Content="110%" IsChecked="True" FontSize="16" Name="cbNoLoad110" Margin="5"/>
                     </StackPanel>
                 </Grid>
             </TabItem>
@@ -155,6 +157,9 @@
                     <Views:LoadInfo Grid.Column="1" x:Name="LoadView" FontSize="15"/>
                     <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal">
                         <Button Content="上传负载数据" Margin="0,10,10,10" Background="#FF95E019" BorderBrush="#FF585555" Width="120" Height="40" Click="btUploadLoad_Click"/>
+                        <CheckBox Content="最大" IsChecked="True" FontSize="16" Name="cbLoadMax"/>
+                        <CheckBox Content="最小" IsChecked="True" FontSize="16" Name="cbLoadMin" Margin="5"/>
+                        <CheckBox Content="额定" IsChecked="True" FontSize="16" Name="cbLoadRated" Margin="5"/>
                     </StackPanel>
                 </Grid>
             </TabItem>

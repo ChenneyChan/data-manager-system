@@ -2903,21 +2903,35 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             {
                 return;
             }
-            VoltageCurrentLossDataInfo.DeleteData(Configs.Configs.WorkflowID, "空载");
-            NoLoadInfo110.LoadType = "空载";
-            NoLoadInfo110.TappingPosition = "110%";
-            NoLoadInfo110.WorkflowId = Configs.Configs.WorkflowID;
-            bool ret = NoLoadInfo110.WriteToDB();
-            if (!ret)
+            bool ret = false;
+            if (cbNoLoad100.IsChecked == true)
             {
-                Utils.ShowUploadTips(ret);
-                return;
+                VoltageCurrentLossDataInfo.DeleteData(Configs.Configs.WorkflowID, "空载", "110%");
+                NoLoadInfo110.LoadType = "空载";
+                NoLoadInfo110.TappingPosition = "110%";
+                NoLoadInfo110.WorkflowId = Configs.Configs.WorkflowID;
+                ret = NoLoadInfo110.WriteToDB();
+                if (!ret)
+                {
+                    Utils.ShowUploadTips(ret);
+                    return;
+                }
             }
-            NoLoadInfo100.LoadType = "空载";
-            NoLoadInfo100.TappingPosition = "100%";
-            NoLoadInfo100.WorkflowId = Configs.Configs.WorkflowID;
-            ret = NoLoadInfo100.WriteToDB();
-            Utils.ShowUploadTips(ret);
+            if (cbNoLoad110.IsChecked == true)
+            {
+                VoltageCurrentLossDataInfo.DeleteData(Configs.Configs.WorkflowID, "空载", "100%");
+                NoLoadInfo100.LoadType = "空载";
+                NoLoadInfo100.TappingPosition = "100%";
+                NoLoadInfo100.WorkflowId = Configs.Configs.WorkflowID;
+                ret = NoLoadInfo100.WriteToDB();
+                if (!ret)
+                {
+                    Utils.ShowUploadTips(ret);
+                    return;
+                }
+            }
+            if (ret)
+                Utils.ShowUploadTips(ret);
         }
 
         private void btUploadLoad_Click(object sender, EventArgs e)
@@ -2926,30 +2940,48 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             {
                 return;
             }
-            VoltageCurrentLossDataInfo.DeleteData(Configs.Configs.WorkflowID, "负载");
-            LoadInfoMax.LoadType = "负载";
-            LoadInfoMax.TappingPosition = WorkflowType != "三绕组" ? "最大" : "高-低";
-            LoadInfoMax.WorkflowId = Configs.Configs.WorkflowID;
-            bool ret = LoadInfoMax.WriteToDB();
-            if (!ret)
+            bool ret = false;
+            if (cbLoadMax.IsChecked == true)
             {
-                Utils.ShowUploadTips(ret);
-                return;
+                LoadInfoMax.LoadType = "负载";
+                LoadInfoMax.TappingPosition = WorkflowType != "三绕组" ? "最大" : "高-低";
+                LoadInfoMax.WorkflowId = Configs.Configs.WorkflowID;
+                VoltageCurrentLossDataInfo.DeleteData(Configs.Configs.WorkflowID, "负载", LoadInfoMax.TappingPosition);
+                ret = LoadInfoMax.WriteToDB();
+                if (!ret)
+                {
+                    Utils.ShowUploadTips(ret);
+                    return;
+                }
             }
-            LoadInfoMin.LoadType = "负载";
-            LoadInfoMin.TappingPosition = WorkflowType != "三绕组" ? "最小" : "高-低1";
-            LoadInfoMin.WorkflowId = Configs.Configs.WorkflowID;
-            ret = LoadInfoMin.WriteToDB();
-            if (!ret)
+            if (cbLoadMin.IsChecked == true)
             {
-                Utils.ShowUploadTips(ret);
-                return;
+                LoadInfoMin.LoadType = "负载";
+                LoadInfoMin.TappingPosition = WorkflowType != "三绕组" ? "最小" : "高-低1";
+                LoadInfoMin.WorkflowId = Configs.Configs.WorkflowID;
+                VoltageCurrentLossDataInfo.DeleteData(Configs.Configs.WorkflowID, "负载", LoadInfoMin.TappingPosition);
+                ret = LoadInfoMin.WriteToDB();
+                if (!ret)
+                {
+                    Utils.ShowUploadTips(ret);
+                    return;
+                }
             }
-            LoadInfoRated.LoadType = "负载";
-            LoadInfoRated.TappingPosition = WorkflowType != "三绕组" ? "额定" : "高-低2";
-            LoadInfoRated.WorkflowId = Configs.Configs.WorkflowID;
-            ret = LoadInfoRated.WriteToDB();
-            Utils.ShowUploadTips(ret);
+
+            if (cbLoadRated.IsChecked == true)
+            {
+                LoadInfoRated.LoadType = "负载";
+                LoadInfoRated.TappingPosition = WorkflowType != "三绕组" ? "额定" : "高-低2";
+                LoadInfoRated.WorkflowId = Configs.Configs.WorkflowID;
+                VoltageCurrentLossDataInfo.DeleteData(Configs.Configs.WorkflowID, "负载", LoadInfoRated.TappingPosition);
+                ret = LoadInfoRated.WriteToDB(); if (!ret)
+                {
+                    Utils.ShowUploadTips(ret);
+                    return;
+                }
+            }
+            if (ret)
+                Utils.ShowUploadTips(ret);
         }
 
         private void btUploadSense_Click(object sender, EventArgs e)
