@@ -1,7 +1,6 @@
 ﻿using ABBDataManagerSystem.Bean.Base;
 using System.Data;
 using System.Windows;
-using System.Windows.Controls;
 
 namespace ABBDataManagerSystem.Pages
 {
@@ -16,6 +15,7 @@ namespace ABBDataManagerSystem.Pages
         private int CountPerPage = 20;
         private int PageCount = 0;
         private bool IsFirst = true;
+        private string? Filter = null;
 
         public WorkflowInfoView()
         {
@@ -29,12 +29,12 @@ namespace ABBDataManagerSystem.Pages
 
         private void UpdateTable()
         {
-            TotalCount = WorkflowInfo.GetTotalCount();
+            TotalCount = WorkflowInfo.GetTotalCount(Filter, true);
             PageCount = (int)Math.Ceiling((float)TotalCount / CountPerPage);
             if (TotalCount > 0)
             {
                 dt.Rows.Clear();
-                WorkflowInfo.FillDataTable(dt, CountPerPage, CurrentPage);
+                WorkflowInfo.FillDataTable(dt, CountPerPage, CurrentPage, Filter, true);
                 if (IsFirst)
                 {
                     dataGrid.ItemsSource = dt.AsDataView();
@@ -51,6 +51,9 @@ namespace ABBDataManagerSystem.Pages
                         }
                     }
                 }
+            } else
+            {
+                dt.Rows.Clear();
             }
         }
 
@@ -141,6 +144,14 @@ namespace ABBDataManagerSystem.Pages
                 }
                 Close();
             }
+        }
+
+        private void SearchBar_SearchStarted(object sender, HandyControl.Data.FunctionEventArgs<string> e)
+        {
+            Filter = SearchBar.Text.Trim();
+            CurrentPage = 0;
+            UpdateTable();
+            UpdatePagenation();
         }
     }
 }

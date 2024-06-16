@@ -1,4 +1,5 @@
 ﻿using ABBDataManagerSystem.Database;
+using NLog.Filters;
 using System.Data;
 
 namespace ABBDataManagerSystem.Bean.Base
@@ -249,7 +250,7 @@ namespace ABBDataManagerSystem.Bean.Base
             return records;
         }
 
-        public static void FillDataTable(DataTable dt, int pageSize, int page, string? filterId= null)
+        public static void FillDataTable(DataTable dt, int pageSize, int page, string? filterId= null, bool? blurSearch = false)
         {
             if (page < 0)
             {
@@ -258,7 +259,14 @@ namespace ABBDataManagerSystem.Bean.Base
             string where = "";
             if (filterId != null && filterId.Length > 0)
             {
-                where = $" WHERE ID = '{filterId}'";
+                if (blurSearch == true)
+                {
+                    where = $" WHERE ID LIKE '%{filterId}%'";
+                } 
+                else
+                {
+                    where = $" WHERE ID = '{filterId}'";
+                }
             }
             using (SQLConnection connection = new SQLConnection(DBConnector.GetConnectionString()))
             {
@@ -273,12 +281,19 @@ namespace ABBDataManagerSystem.Bean.Base
             }
         }
 
-        public static int GetTotalCount(string? filterSequence = null)
+        public static int GetTotalCount(string? filterId = null, bool? blurSearch = false)
         {
             string where = "";
-            if (filterSequence != null && filterSequence.Length > 0)
+            if (filterId != null && filterId.Length > 0)
             {
-                where = $" WHERE ID = '{filterSequence}'";
+                if (blurSearch == true)
+                {
+                    where = $" WHERE ID LIKE '%{filterId}%'";
+                }
+                else
+                {
+                    where = $" WHERE ID = '{filterId}'";
+                }
             }
             using (SQLConnection connection = new SQLConnection(DBConnector.GetConnectionString()))
             {

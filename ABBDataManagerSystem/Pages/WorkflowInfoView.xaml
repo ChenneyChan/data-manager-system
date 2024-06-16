@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ABBDataManagerSystem.Pages"
+        xmlns:hc="https://handyorg.github.io/handycontrol"
         mc:Ignorable="d"
         Title="工作令列表" MinHeight="800" MinWidth="1200" Loaded="Window_Loaded" WindowStartupLocation="CenterScreen">
     <Grid Margin="20">
@@ -13,6 +14,9 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <TextBlock Text="请选择工作令" FontSize="24" Margin="0, 10"/>
+        <DockPanel Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right">
+            <hc:SearchBar Name="SearchBar" Width="400" hc:InfoElement.Title="工作令搜索" Style="{StaticResource SearchBarPlus}" hc:InfoElement.TitlePlacement="Left" FontSize="18" BorderBrush="Gray" SearchStarted="SearchBar_SearchStarted"/>
+        </DockPanel>
         <DataGrid Name="dataGrid" Grid.Row="1" CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserResizeColumns="False"
                   CanUserResizeRows="False" CanUserSortColumns="False" IsReadOnly="True" SelectionMode="Single" MouseDoubleClick="dataGrid_MouseDoubleClick"/>
         <Grid Grid.Row="2" Margin="0, 20, 0, 0">
