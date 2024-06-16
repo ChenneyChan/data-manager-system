@@ -95,6 +95,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         private static readonly int HarmonicCount = 22;
         private static readonly int MAX_MONITOR_BUFFER_LEN = 3000;
         private float RatedCurrent = 0;
+        private string WorkflowType = "双绕组";
 
         #endregion
 
@@ -2875,6 +2876,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 }
                 var workflow = workflows[0];
                 RatedCurrent = workflow.RatedCurrentLv;
+                WorkflowType = workflow.WorkflowType;
                 Dispatcher.Invoke(() =>
                 {
                     tbVoltage18.Text = Utils.FloatFormat(workflow.RatedVoltageHv * 1.8f);
@@ -2896,7 +2898,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             NoLoadInfo110.TappingPosition = "110%";
             NoLoadInfo110.WorkflowId = Configs.Configs.WorkflowID;
             bool ret = NoLoadInfo110.WriteToDB();
-            if(!ret)
+            if (!ret)
             {
                 Utils.ShowUploadTips(ret);
                 return;
@@ -2916,7 +2918,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             }
             VoltageCurrentLossDataInfo.DeleteData(Configs.Configs.WorkflowID, "负载");
             LoadInfoMax.LoadType = "负载";
-            LoadInfoMax.TappingPosition = "最大";
+            LoadInfoMax.TappingPosition = WorkflowType != "三绕组" ? "最大" : "高-低";
             LoadInfoMax.WorkflowId = Configs.Configs.WorkflowID;
             bool ret = LoadInfoMax.WriteToDB();
             if (!ret)
@@ -2925,7 +2927,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 return;
             }
             LoadInfoMin.LoadType = "负载";
-            LoadInfoMin.TappingPosition = "最小";
+            LoadInfoMin.TappingPosition = WorkflowType != "三绕组" ? "最小" : "高-低1";
             LoadInfoMin.WorkflowId = Configs.Configs.WorkflowID;
             ret = LoadInfoMin.WriteToDB();
             if (!ret)
@@ -2934,7 +2936,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 return;
             }
             LoadInfoRated.LoadType = "负载";
-            LoadInfoRated.TappingPosition = "额定";
+            LoadInfoRated.TappingPosition = WorkflowType != "三绕组" ? "额定" : "高-低2";
             LoadInfoRated.WorkflowId = Configs.Configs.WorkflowID;
             ret = LoadInfoRated.WriteToDB();
             Utils.ShowUploadTips(ret);
@@ -2948,7 +2950,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             }
             VoltageCurrentLossDataInfo.DeleteData(Configs.Configs.WorkflowID, "感应");
             SenseInfo.LoadType = "感应";
-            SenseInfo.TappingPosition = "";
+            SenseInfo.TappingPosition = "感应";
             SenseInfo.WorkflowId = Configs.Configs.WorkflowID;
             bool ret = SenseInfo.WriteToDB();
             Utils.ShowUploadTips(ret);
