@@ -64,6 +64,8 @@ namespace ABBDataManagerSystem.Connector
 
         private bool IsConfigChanged = false;
 
+        private bool NeedDelay = false;
+
 
         public JinYuan20WCollector(string portName, int baudRate = 9600)
         {
@@ -88,26 +90,31 @@ namespace ABBDataManagerSystem.Connector
         public void SetCommonTest()
         {
             Collector.SendCommand(new byte[] { 0x41 });
+            NeedDelay = true;
         }
 
         public void SetTemperatureRaiseTest()
         {
             Collector.SendCommand(new byte[] { 0x42 });
+            NeedDelay = true;
         }
 
         public void SetTemperatureRaiseTimerCommand()
         {
             Collector.SendCommand(new byte[] { 0x43 });
+            NeedDelay = true;
         }
 
         public void SetRestCommand()
         {
             Collector.SendCommand(new byte[] { 0x44 });
+            NeedDelay = true;
         }
 
         public void SetPrintCommand()
         {
             Collector.SendCommand(new byte[] { 0x47 });
+            NeedDelay = true;
         }
 
         public void SendRequest()
@@ -128,6 +135,7 @@ namespace ABBDataManagerSystem.Connector
                 GetChanelOneCurrentSet(CH1CurrentConfig),
                 GetChanelTwoCurrentSet(CH2CurrentConfig),
             });
+            NeedDelay = true;
         }
 
         public static byte GetBoundRateByte(int boundRate)
@@ -315,6 +323,12 @@ namespace ABBDataManagerSystem.Connector
             {
                 IsConfigChanged = false;
                 SetParameters();
+                return null;
+            }
+            if (NeedDelay)
+            {
+                NeedDelay = false;
+                return null;
             }
             SendRequest();
             byte[]? packet = Collector.ReadData();
