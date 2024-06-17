@@ -300,7 +300,7 @@ namespace ABBDataManagerSystem.Connector
         public void SendStartTest()
         {
             byte typeByte = TestTypeCommandMap[TestType];
-            Collector.SendCommand(new byte[] { 0x64, typeByte, 0x31 });
+            Collector.SendCommand(new byte[] { 0x64, typeByte, 0x30 });
         }
 
         // 注：测试一次完成后，需要再次测试时，发送此命令。

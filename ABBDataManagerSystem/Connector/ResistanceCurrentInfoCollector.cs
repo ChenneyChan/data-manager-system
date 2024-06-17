@@ -152,7 +152,7 @@ namespace ABBDataManagerSystem.Connector
                 }
                 else
                 {
-                    Log.Error("ResistanceCurrentInfoCollector: Invalid SinglePhaseCmdPacket format.");
+                    Log.Error("ReadData Fail, No Bytes Readed");
                 }
             }
             return null;

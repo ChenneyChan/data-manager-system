@@ -287,7 +287,7 @@ namespace ABBDataManagerSystem.Pages
             Collector.PositiveTappingCount = (int)tbPositiveTappingCount.Value;
             Collector.TappingSpacing = (float)tbTappingSpacing.Value;
             Collector.TestVoltage = cbVoltageConfig.Text == "160V" ? TestVoltageType.Voltage160V : TestVoltageType.Voltage20V;
-            Collector.ProductSequence = "1234567890ABC";
+            Collector.ProductSequence = Configs.Configs.WorkflowID;
             if (cbTestMode.Text == "三相测试")
             {
                 //  <额定高压:8字节><额定低压:8字节><额定分接:2字节><分接位置:1字节><正分接数:2字节><分接间距:6字节>
@@ -295,6 +295,7 @@ namespace ABBDataManagerSystem.Pages
                 Collector.HighVoltageConnection = GetHighConnectionType(cbHighVoltageConnection.Text) ?? HighVoltageConnectionType.Type_Y;
                 Collector.LowVoltageConnection = GetLowConnectionType(cbLowVoltageConnection.Text) ?? LowVoltageConnectionType.Type_Y;
                 Collector.Group = (int)tbGroup.Value;
+                Collector.TestType = TestTypeJYTA.ThreePhaseTest;
 
                 Collector.SetThreePhaseTest();
             }
@@ -303,6 +304,7 @@ namespace ABBDataManagerSystem.Pages
                 // <额定高压:8字节><额定低压:8字节><额定分接:2字节><分接位置:1字节><正分接数:2字节><分接间距:6字节>
                 // <试品编号:14字节> <同极性显示:1字节> <试验电压:1字节>XOR 0D  
                 Collector.HomopolarityDisplay = GetHomopolarityDisplayType(cbHomopolarityDisplay.Text) ?? HomopolarityDisplayType.Negtive;
+                Collector.TestType = TestTypeJYTA.SinglePhaseTest;
                 Collector.SetSinglePhaseTest();
             }
         }
@@ -448,6 +450,15 @@ namespace ABBDataManagerSystem.Pages
                     tbRatedLowVoltage.Text = Utils.FloatFormat(workflow.RatedVoltageLv);
                     tbRatedLowVoltage2.Text = Utils.FloatFormat(workflow.RatedVoltageYv);
                     tbCONNSymbol.Text = workflow.CONNSymbol;
+
+                    tbTappingSpacing.Value = 2.5;
+                    tbPositiveTappingCount.Value = tappings.Count;
+                    tbRatedTapping.Value = (int)Math.Ceiling(tappings.Count / 2f);
+                    tbHighVoltage.Value = workflow.RatedVoltageHv / 1000f;
+                    tbLowVoltage.Value = workflow.RatedVoltageLv / 1000f;
+                    cbHighVoltageConnection.Text = "D";
+                    cbLowVoltageConnection.Text = "y";
+                    tbGroup.Value = 11;
                 });
             });
         }
