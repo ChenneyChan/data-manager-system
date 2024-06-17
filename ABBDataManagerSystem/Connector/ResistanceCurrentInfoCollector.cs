@@ -134,11 +134,11 @@ namespace ABBDataManagerSystem.Connector
             }
 
             // 处理接收到的数据
-            if (bytesRead > 0)
+            if (bytesRead >= 4)
             {
                 Log.Info("Response is " + Utils.DumpBuffer(buffer,0, bytesRead));
                 // 检查报文头和尾
-                if (buffer[0] == 0x7E && buffer[bytesRead - 1] == 0x0D)
+                if (buffer[0] == 0x7E && buffer[bytesRead - 1] == 0x0D && buffer[1] == DeviceAddress[0] && buffer[2] == DeviceAddress[1])
                 {
                     int startOffset = 1 + 2 + RspLenByteCount;
                     int footerOffset = 2;

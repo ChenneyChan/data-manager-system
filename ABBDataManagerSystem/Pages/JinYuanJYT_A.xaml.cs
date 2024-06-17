@@ -19,9 +19,10 @@ namespace ABBDataManagerSystem.Pages
         private Dictionary<string, JinYunJYTATestResult> SavedResults = new Dictionary<string, JinYunJYTATestResult>();
         private JinYuanJYTACollector? Collector = null;
         private bool IsTesting = false;
-        private int Interval = 200;
+        private int Interval = 400;
         private JinYunJYTATestResult? CurrentResult = null;
         private static readonly int MAX_HV_COUNT = 9;
+        private bool IsFisrtPacket = false;
 
         public JinYuanJYT_A()
         {
@@ -217,7 +218,15 @@ namespace ABBDataManagerSystem.Pages
                 tbFrequence.Text = result.Frequence + "";
                 tbConnectionType.Text = result.ConnectionType;
             }
-            //ConfirmResult();
+            if (Collector.tipInfo == TipInfoType.TestDone && IsFisrtPacket)
+            {
+                IsFisrtPacket = false;
+                ConfirmResult();
+            } 
+            else if (Collector.tipInfo == TipInfoType.Testing)
+            {
+                IsFisrtPacket = true;
+            }
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
@@ -234,6 +243,7 @@ namespace ABBDataManagerSystem.Pages
         {
             if (Collector != null)
             {
+                Collector.SetResetCommand();
                 Collector.Disconnect();
                 Collector = null;
             }
@@ -353,6 +363,11 @@ namespace ABBDataManagerSystem.Pages
         #region 测试数据写入右侧表格
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            ConfirmConnectionGroup();
+        }
+
+        private void ConfirmConnectionGroup()
+        {
             if (CurrentResult == null)
             {
                 return;
@@ -389,6 +404,14 @@ namespace ABBDataManagerSystem.Pages
             tvr.ValueAB = CurrentResult.Error[0];
             tvr.ValueBC = CurrentResult.Error[1];
             tvr.ValueCA = CurrentResult.Error[2];
+            if (tvr != tvrTappingPoint21)
+            {
+                tbConnectionGroup1.Text = CurrentResult.ConnectionType;
+            }
+            else
+            {
+                tbConnectionGroup2.Text = CurrentResult.ConnectionType;
+            }
         }
 
         private void btConfirm_Click(object sender, RoutedEventArgs e)
