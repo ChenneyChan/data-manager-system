@@ -186,37 +186,38 @@ namespace ABBDataManagerSystem.Pages
             CurrentResult = result;
             if (result.IsSinglePhase)
             {
-                tbSingleRatio.Text = Utils.FloatFormat(result.Ratio[0]);
-                tbSingleVoltage.Text = Utils.FloatFormat(result.Voltage[0]);
-                tbSingleCurrent.Text = Utils.FloatFormat(result.Current[0]);
-                tbSingleCalculatedRatio.Text = Utils.FloatFormat(result.CalculatedRatio);
-                tbSingleError.Text = Utils.FloatFormat(result.Error[0]);
+                tbSingleRatio.Text = result.Ratio[0] + "";
+                tbSingleVoltage.Text = result.Voltage[0] + "";
+                tbSingleCurrent.Text = result.Current[0] + "";
+                tbSingleCalculatedRatio.Text = result.CalculatedRatio + "";
+                tbSingleError.Text = result.Error[0] + "";
                 tbSingleTappingPosition.Text = result.TappingPosition;
                 tbPolarity.Text = result.Polarity.ToString();
-                tbSingleFrequence.Text = Utils.FloatFormat(result.Frequence);
+                tbSingleFrequence.Text = result.Frequence + "";
             }
             else
             {
-                tbRatioA.Text = Utils.FloatFormat(result.Ratio[0]);
-                tbRatioB.Text = Utils.FloatFormat(result.Ratio[1]);
-                tbRatioC.Text = Utils.FloatFormat(result.Ratio[2]);
-                tbTurnRatioA.Text = Utils.FloatFormat(result.TurnRatio[0]);
-                tbTurnRatioB.Text = Utils.FloatFormat(result.TurnRatio[1]);
-                tbTurnRatioC.Text = Utils.FloatFormat(result.TurnRatio[2]);
-                tbVoltageA.Text = Utils.FloatFormat(result.Voltage[0]);
-                tbVoltageB.Text = Utils.FloatFormat(result.Voltage[1]);
-                tbVoltageC.Text = Utils.FloatFormat(result.Voltage[2]);
-                tbCurrentA.Text = Utils.FloatFormat(result.Current[0]);
-                tbCurrentB.Text = Utils.FloatFormat(result.Current[1]);
-                tbCurrentC.Text = Utils.FloatFormat(result.Current[2]);
-                tbCalculatedRatio.Text = Utils.FloatFormat(result.CalculatedRatio);
-                tbErrorA.Text = Utils.FloatFormat(result.Error[0]);
-                tbErrorB.Text = Utils.FloatFormat(result.Error[1]);
-                tbErrorC.Text = Utils.FloatFormat(result.Error[2]);
+                tbRatioA.Text = result.Ratio[0] + "";
+                tbRatioB.Text = result.Ratio[1] + "";
+                tbRatioC.Text = result.Ratio[2] + "";
+                tbTurnRatioA.Text = result.TurnRatio[0] + "";
+                tbTurnRatioB.Text = result.TurnRatio[1] + "";
+                tbTurnRatioC.Text = result.TurnRatio[2] + "";
+                tbVoltageA.Text = result.Voltage[0] + "";
+                tbVoltageB.Text = result.Voltage[1] + "";
+                tbVoltageC.Text = result.Voltage[2] + "";
+                tbCurrentA.Text = result.Current[0] + "";
+                tbCurrentB.Text = result.Current[1] + "";
+                tbCurrentC.Text = result.Current[2] + "";
+                tbCalculatedRatio.Text = result.CalculatedRatio + "";
+                tbErrorA.Text = result.Error[0] + "";
+                tbErrorB.Text = result.Error[1] + "";
+                tbErrorC.Text = result.Error[2] + "";
                 tbTappingPosition.Text = result.TappingPosition;
-                tbFrequence.Text = Utils.FloatFormat(result.Frequence);
+                tbFrequence.Text = result.Frequence + "";
                 tbConnectionType.Text = result.ConnectionType;
             }
+            //ConfirmResult();
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
@@ -372,7 +373,7 @@ namespace ABBDataManagerSystem.Pages
             }
         }
 
-        private void btConfirm_Click(object sender, RoutedEventArgs e)
+        private void ConfirmResult()
         {
             if (CurrentResult == null)
             {
@@ -385,9 +386,14 @@ namespace ABBDataManagerSystem.Pages
                 return;
             }
             SavedResults[key] = CurrentResult;
-            tvr.ValueAB = CurrentResult.Ratio[0];
-            tvr.ValueBC = CurrentResult.Ratio[1];
-            tvr.ValueCA = CurrentResult.Ratio[2];
+            tvr.ValueAB = CurrentResult.Error[0];
+            tvr.ValueBC = CurrentResult.Error[1];
+            tvr.ValueCA = CurrentResult.Error[2];
+        }
+
+        private void btConfirm_Click(object sender, RoutedEventArgs e)
+        {
+            ConfirmResult();
         }
         #endregion
 
