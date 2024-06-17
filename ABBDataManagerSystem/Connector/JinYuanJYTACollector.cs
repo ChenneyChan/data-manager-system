@@ -194,6 +194,9 @@ namespace ABBDataManagerSystem.Connector
         private static int ThreePhaseCmdLen = 1 + 8 + 8 + 2 + 1 + 2 + 6 + 14 + 1 + 1 + 2 + 1;
         private byte[] ThreePhaseCmdPacket = new byte[ThreePhaseCmdLen];
 
+        private static readonly int DELAY_COUNT = 1;
+        private int DelayCount = 0;
+
         #region 仪器参数设置命令
 
         public void SetSinglePhaseTest()
@@ -240,6 +243,7 @@ namespace ABBDataManagerSystem.Connector
             }
 
             Collector.SendCommand(SinglePhaseCmdPacket);
+            DelayCount = DELAY_COUNT;
         }
 
         public void SetThreePhaseTest()
@@ -292,6 +296,7 @@ namespace ABBDataManagerSystem.Connector
             }
 
             Collector.SendCommand(ThreePhaseCmdPacket);
+            DelayCount = DELAY_COUNT;
         }
 
 
@@ -301,6 +306,7 @@ namespace ABBDataManagerSystem.Connector
         {
             byte typeByte = TestTypeCommandMap[TestType];
             Collector.SendCommand(new byte[] { 0x64, typeByte, 0x30 });
+            DelayCount = DELAY_COUNT;
         }
 
         // 注：测试一次完成后，需要再次测试时，发送此命令。
@@ -309,6 +315,7 @@ namespace ABBDataManagerSystem.Connector
         public void SendRestartTest()
         {
             Collector.SendCommand(new byte[] { 0x65 });
+            DelayCount = DELAY_COUNT;
         }
 
         // 注：此命令只有在手动换相时，且当前正在测试的为A相或者B相时，才起作用。
@@ -316,6 +323,7 @@ namespace ABBDataManagerSystem.Connector
         public void SendChangePhaseCommand()
         {
             Collector.SendCommand(new byte[] { 0x66 });
+            DelayCount = DELAY_COUNT;
         }
 
         //注：此命令只有在手动换相时，且当前正在测试的为单相或者C相时，才起作用。
@@ -323,16 +331,19 @@ namespace ABBDataManagerSystem.Connector
         public void SendStopRecuesTestCommand()
         {
             Collector.SendCommand(new byte[] { 0x67 });
+            DelayCount = DELAY_COUNT;
         }
 
         public void SendPrintCommand()
         {
             Collector.SendCommand(new byte[] { 0x68 });
+            DelayCount = DELAY_COUNT;
         }
 
         public void SendStoreCommand()
         {
             Collector.SendCommand(new byte[] { 0x69 });
+            DelayCount = DELAY_COUNT;
         }
 
         public void SendRequest()
@@ -583,6 +594,11 @@ namespace ABBDataManagerSystem.Connector
             {
                 return null;
             }
+            if (DelayCount > 0)
+            {
+                DelayCount--;
+                return null;
+            } 
             if (IsConfigChanged)
             {
                 IsConfigChanged = false;
