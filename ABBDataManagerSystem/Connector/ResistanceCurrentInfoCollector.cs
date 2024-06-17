@@ -20,8 +20,8 @@ namespace ABBDataManagerSystem.Connector
         public byte[] DeviceAddress { set; get; } = { 0x3E, 0x3E };
 
         public short SendLenByteCount { set; get; } = 2;
-        
-        public short RspLenByteCount {  set; get; } = 2;
+
+        public short RspLenByteCount { set; get; } = 2;
 
         public ResistanceCurrentInfoCollector(string portName, int baudRate = 9600)
         {
@@ -90,7 +90,7 @@ namespace ABBDataManagerSystem.Connector
             if (SendLenByteCount == 1)
             {
                 packet[3] = (byte)lenArray[0];  // 数据和命令长度
-            } 
+            }
             else
             {
                 packet[3] = (byte)lenArray[0];  // 数据和命令长度高字节
@@ -118,6 +118,17 @@ namespace ABBDataManagerSystem.Connector
             return checksum;
         }
 
+        private int ParsePacketLen(byte[] packet)
+        {
+            int offset = 1 + 1 + 1; // 报文头、两字节设备编码
+            if (packet.Length < offset + RspLenByteCount)
+            {
+                return 0;
+            }
+            string len = Encoding.ASCII.GetString(packet, offset, RspLenByteCount);
+            return Utils.ParseIntNull(len) ?? 0;
+        }
+
         // 主机接收数据
         public byte[]? ReadData()
         {
@@ -136,7 +147,7 @@ namespace ABBDataManagerSystem.Connector
             // 处理接收到的数据
             if (bytesRead >= 4)
             {
-                Log.Info("Response is " + Utils.DumpBuffer(buffer,0, bytesRead));
+                Log.Info("Response is " + Utils.DumpBuffer(buffer, 0, bytesRead));
                 // 检查报文头和尾
                 if (buffer[0] == 0x7E && buffer[bytesRead - 1] == 0x0D && buffer[1] == DeviceAddress[0] && buffer[2] == DeviceAddress[1])
                 {
@@ -145,9 +156,16 @@ namespace ABBDataManagerSystem.Connector
 
                     // 获取数据部分
                     int dataLength = bytesRead - startOffset - footerOffset; // for header, address, length, checksum, and footer
+                    int packetLen = ParsePacketLen(buffer);
+                    if (packetLen > dataLength)
+                    {
+                        Log.Error($"ReadData Fail, Len ERROR, {packetLen} > {dataLength}");
+                        return null;
+                    }
+
                     byte[] data = new byte[dataLength];
                     Array.Copy(buffer, startOffset, data, 0, dataLength); // 从第6个字节开始是数据部分
-                                                                // 返回数据部分，不包括报文头和尾
+                                                                          // 返回数据部分，不包括报文头和尾
                     return data;
                 }
                 else
