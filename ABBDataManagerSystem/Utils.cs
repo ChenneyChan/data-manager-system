@@ -2,6 +2,7 @@
 using System.IO;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows;
 
 namespace ABBDataManagerSystem
@@ -331,6 +332,27 @@ namespace ABBDataManagerSystem
             else
             {
                 MessageBox.Show("数据上传失败，请检查数据和服务器连接情况后重试！", "上传结果", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        public static int? GetInt32(string str)
+        {
+            // 定义匹配数字的正则表达式
+            Regex regex = new Regex(@"\d+");
+
+            // 在字符串中查找匹配的数字
+            Match match = regex.Match(str);
+
+            // 输出匹配到的数字
+            if (match.Success)
+            {
+                string numberStr = match.Value;
+                int number = int.Parse(numberStr); // 将匹配到的数字字符串转换为整数
+                return number;
+            }
+            else
+            {
+                return null;
             }
         }
     }

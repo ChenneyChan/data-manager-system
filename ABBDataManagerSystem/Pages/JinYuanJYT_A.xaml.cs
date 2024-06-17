@@ -452,14 +452,18 @@ namespace ABBDataManagerSystem.Pages
                     tbRatedLowVoltage2.Text = Utils.FloatFormat(workflow.RatedVoltageYv);
                     tbCONNSymbol.Text = workflow.CONNSymbol;
 
-                    tbTappingSpacing.Value = 2.5;
+                    try
+                    {
+                        tbTappingSpacing.Value = Utils.ParseFloat(workflow.RatedVoltageInterval.Split("*")[1].Replace("%", ""));
+                    }
+                    catch { }
                     tbPositiveTappingCount.Value = tappings.Count;
                     tbRatedTapping.Value = (int)Math.Ceiling(tappings.Count / 2f);
                     tbHighVoltage.Value = workflow.RatedVoltageHv / 1000f;
                     tbLowVoltage.Value = workflow.RatedVoltageLv / 1000f;
                     cbHighVoltageConnection.Text = "D";
                     cbLowVoltageConnection.Text = "y";
-                    tbGroup.Value = 11;
+                    tbGroup.Value = Utils.GetInt32(workflow.CONNSymbol) ?? 0;
                 });
             });
         }
