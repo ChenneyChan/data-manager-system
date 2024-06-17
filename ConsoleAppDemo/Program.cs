@@ -2,6 +2,7 @@
 using System.Net.Sockets;
 using System.Net;
 using System.Text;
+using System.Collections;
 
 class Program
 {
@@ -54,6 +55,133 @@ class Program
         Console.WriteLine("Converted Float Value: " + convertedValue);
     }
 
+    public static float ParseFloat(string? valule, float defaultValue = 0)
+    {
+        if (valule == null) { return defaultValue; }
+        try
+        {
+            return float.Parse(valule);
+        }
+        catch
+        {
+            return defaultValue;
+        }
+    }
+
+    public class JinYunJYTATestResult
+    {
+        public bool IsSinglePhase = true;
+        public float[] Ratio;
+        public float[] Error;
+        public float[] Voltage;
+        public float[] Current;
+        public float[] TurnRatio;
+        public float Frequence;
+        public float CalculatedRatio;
+        public byte Polarity;
+        public string TappingPosition = string.Empty;
+        public string ConnectionType = string.Empty;
+    }
+
+    static void PacketByteParse()
+    {
+        // header: 7e 54 55 31 32 36 
+        string packetString = "6b 32 30 32 35 2e 30 30 32 32 35 2e 30 31 31 32 35 2e 30 31 31 34 33 2e 33 30 33 34 33 2e 33 31 39 34 33 2e 33 31 39 20 31 2e 30 32 20 25 20 31 2e 30 35 20 25 20 31 2e 30 35 20 25 31 35 38 2e 38 39 56 31 35 39 2e 32 31 56 31 35 39 2e 34 34 56 20 36 2e 34 30 6d 41 20 34 2e 37 30 6d 41 20 36 2e 34 32 6d 41 44 20 2d 79 20 2d 31 31 20 30 37 35 30 2e 30 30 48 7a 32 34 2e 37 35 30 55 0d ";
+        //var byteSKtrings = packet.Split(" ");
+        var packet = Convert.FromHexString(packetString.Replace(" ", ""));
+        //Console.WriteLine("Byte array:");
+        //foreach (byte b in bytes)
+        //{
+        //    Console.WriteLine(b);
+        //}
+
+        if (packet.Length < 126 || packet[0] != 0x6B)
+        {
+            Console.WriteLine("Packet Invalid");
+            return;
+        }
+        int offset = 3; // 跳过设备状态、提示信息、电量码 三个字节
+        string strRatioA = Encoding.ASCII.GetString(packet, offset, 6);
+        offset += 6;
+        string strRatioB = Encoding.ASCII.GetString(packet, offset, 6);
+        offset += 6;
+        string strRatioC = Encoding.ASCII.GetString(packet, offset, 6);
+        offset += 6;
+
+        string strTurnRatioA = Encoding.ASCII.GetString(packet, offset, 6);
+        offset += 6;
+        string strTurnRatioB = Encoding.ASCII.GetString(packet, offset, 6);
+        offset += 6;
+        string strTurnRatioC = Encoding.ASCII.GetString(packet, offset, 6);
+        offset += 6;
+
+        string strErrorA = Encoding.ASCII.GetString(packet, offset, 7);
+        offset += 7;
+        string strErrorB = Encoding.ASCII.GetString(packet, offset, 7);
+        offset += 7;
+        string strErrorC = Encoding.ASCII.GetString(packet, offset, 7);
+        offset += 7;
+
+        string strVoltageA = Encoding.ASCII.GetString(packet, offset, 7);
+        offset += 7;
+        string strVoltageB = Encoding.ASCII.GetString(packet, offset, 7);
+        offset += 7;
+        string strVoltageC = Encoding.ASCII.GetString(packet, offset, 7);
+        offset += 7;
+
+        string strCurrentA = Encoding.ASCII.GetString(packet, offset, 7);
+        offset += 7;
+        string strCurrentB = Encoding.ASCII.GetString(packet, offset, 7);
+        offset += 7;
+        string strCurrentC = Encoding.ASCII.GetString(packet, offset, 7);
+        offset += 7;
+
+        string strConnectionType = Encoding.ASCII.GetString(packet, offset, 8);
+        offset += 8;
+
+        string tappingPosition = Encoding.ASCII.GetString(packet, offset, 3);
+        offset += 3;
+
+        string strFrequence = Encoding.ASCII.GetString(packet, offset, 7);
+        offset += 7;
+
+        string strCalculatedRatio = Encoding.ASCII.GetString(packet, offset, 6);
+        offset += 6;
+
+        float ratioA = ParseFloat(strRatioA);
+        float ratioB = ParseFloat(strRatioB);
+        float ratioC = ParseFloat(strRatioC);
+        float turnRatioA = ParseFloat(strTurnRatioA);
+        float turnRatioB = ParseFloat(strTurnRatioB);
+        float turnRatioC = ParseFloat(strTurnRatioC);
+        float errorA = ParseFloat(strErrorA);
+        float errorB = ParseFloat(strErrorB);
+        float errorC = ParseFloat(strErrorC);
+        float voltageA = ParseFloat(strVoltageA);
+        float voltageB = ParseFloat(strVoltageB);
+        float voltageC = ParseFloat(strVoltageC);
+        float currentA = ParseFloat(strCurrentA);
+        float currentB = ParseFloat(strCurrentB);
+        float currentC = ParseFloat(strCurrentC);
+        float frequence = ParseFloat(strFrequence);
+        float calculatedRatio = ParseFloat(strCalculatedRatio);
+
+        var result =  new JinYunJYTATestResult()
+        {
+            IsSinglePhase = false,
+            Ratio = new float[] { ratioA, ratioB, ratioC },
+            Error = new float[] { errorA, errorB, errorC },
+            Voltage = new float[] { voltageA, voltageB, voltageC },
+            Current = new float[] { currentA, currentB, currentC },
+            TurnRatio = new float[] { turnRatioA, turnRatioB, turnRatioC },
+            Frequence = frequence,
+            CalculatedRatio = calculatedRatio,
+            TappingPosition = tappingPosition,
+            ConnectionType = strConnectionType,
+        };
+        return;
+    }
+
     static void UdpListen()
     {
         int port = 8899;
@@ -100,7 +228,8 @@ class Program
 
     static void Main()
     {
-
+        PacketByteParse();
+        Console.WriteLine();
         ConvertTestMain();
 
         // 定义你的10个float字段  
