@@ -215,6 +215,7 @@ namespace ABBDataManagerSystem.Pages
                 tbErrorC.Text = Utils.FloatFormat(result.Error[2]);
                 tbTappingPosition.Text = result.TappingPosition;
                 tbFrequence.Text = Utils.FloatFormat(result.Frequence);
+                tbConnectionType.Text = result.ConnectionType;
             }
         }
 

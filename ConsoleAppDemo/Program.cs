@@ -154,16 +154,16 @@ class Program
         float turnRatioA = ParseFloat(strTurnRatioA);
         float turnRatioB = ParseFloat(strTurnRatioB);
         float turnRatioC = ParseFloat(strTurnRatioC);
-        float errorA = ParseFloat(strErrorA);
-        float errorB = ParseFloat(strErrorB);
-        float errorC = ParseFloat(strErrorC);
-        float voltageA = ParseFloat(strVoltageA);
-        float voltageB = ParseFloat(strVoltageB);
-        float voltageC = ParseFloat(strVoltageC);
-        float currentA = ParseFloat(strCurrentA);
-        float currentB = ParseFloat(strCurrentB);
-        float currentC = ParseFloat(strCurrentC);
-        float frequence = ParseFloat(strFrequence);
+        float errorA = ParseFloat(strErrorA.Replace("%", ""));
+        float errorB = ParseFloat(strErrorB.Replace("%", ""));
+        float errorC = ParseFloat(strErrorC.Replace("%", ""));
+        float voltageA = ParseFloat(strVoltageA.Replace("V", ""));
+        float voltageB = ParseFloat(strVoltageB.Replace("V", ""));
+        float voltageC = ParseFloat(strVoltageC.Replace("V", ""));
+        float currentA = ParseFloat(strCurrentA.Replace("mA", ""));
+        float currentB = ParseFloat(strCurrentB.Replace("mA", ""));
+        float currentC = ParseFloat(strCurrentC.Replace("mA", ""));
+        float frequence = ParseFloat(strFrequence.Replace("Hz", ""));
         float calculatedRatio = ParseFloat(strCalculatedRatio);
 
         var result =  new JinYunJYTATestResult()

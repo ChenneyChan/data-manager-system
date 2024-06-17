@@ -709,16 +709,16 @@ namespace ABBDataManagerSystem.Connector
             float turnRatioA = Utils.ParseFloat(strTurnRatioA);
             float turnRatioB = Utils.ParseFloat(strTurnRatioB);
             float turnRatioC = Utils.ParseFloat(strTurnRatioC);
-            float errorA = Utils.ParseFloat(strErrorA);
-            float errorB = Utils.ParseFloat(strErrorB);
-            float errorC = Utils.ParseFloat(strErrorC);
-            float voltageA = Utils.ParseFloat(strVoltageA);
-            float voltageB = Utils.ParseFloat(strVoltageB);
-            float voltageC = Utils.ParseFloat(strVoltageC);
-            float currentA = Utils.ParseFloat(strCurrentA);
-            float currentB = Utils.ParseFloat(strCurrentB);
-            float currentC = Utils.ParseFloat(strCurrentC);
-            float frequence = Utils.ParseFloat(strFrequence);
+            float errorA = Utils.ParseFloat(strErrorA.Replace("%", ""));
+            float errorB = Utils.ParseFloat(strErrorB.Replace("%", ""));
+            float errorC = Utils.ParseFloat(strErrorC.Replace("%", ""));
+            float voltageA = Utils.ParseFloat(strVoltageA.Replace("V", ""));
+            float voltageB = Utils.ParseFloat(strVoltageB.Replace("V", ""));
+            float voltageC = Utils.ParseFloat(strVoltageC.Replace("V", ""));
+            float currentA = Utils.ParseFloat(strCurrentA.Replace("mA", ""));
+            float currentB = Utils.ParseFloat(strCurrentB.Replace("mA", ""));
+            float currentC = Utils.ParseFloat(strCurrentC.Replace("mA", ""));
+            float frequence = Utils.ParseFloat(strFrequence.Replace("Hz", ""));
             float calculatedRatio = Utils.ParseFloat(strCalculatedRatio);
 
             return new JinYunJYTATestResult()
