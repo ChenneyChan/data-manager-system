@@ -3,6 +3,12 @@ using System.Net.Sockets;
 using System.Net;
 using System.Text;
 using System.Collections;
+using NPOI.HSSF.UserModel;
+using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
+using System.IO;
+using Newtonsoft.Json.Linq;
+using Org.BouncyCastle.Bcpg;
 
 class Program
 {
@@ -87,7 +93,7 @@ class Program
     {
         // header: 7e 54 55 31 32 36 
         string packetString = "6b 32 30 32 35 2e 30 30 32 32 35 2e 30 31 31 32 35 2e 30 31 31 34 33 2e 33 30 33 34 33 2e 33 31 39 34 33 2e 33 31 39 20 31 2e 30 32 20 25 20 31 2e 30 35 20 25 20 31 2e 30 35 20 25 31 35 38 2e 38 39 56 31 35 39 2e 32 31 56 31 35 39 2e 34 34 56 20 36 2e 34 30 6d 41 20 34 2e 37 30 6d 41 20 36 2e 34 32 6d 41 44 20 2d 79 20 2d 31 31 20 30 37 35 30 2e 30 30 48 7a 32 34 2e 37 35 30 55 0d ";
-        packetString =        "6b 99 35 2e 30 31 30 32 35 2e 30 31 30 34 33 2e 33 30 32 34 33 2e 33 31 37 34 33 2e 33 31 37 20 31 2e 30 31 20 25 20 31 2e 30 35 20 25 20 31 2e 30 35 20 25 31 36 32 2e 35 37 56 31 36 32 2e 37 34 56 31 36 32 2e 35 33 56 20 36 2e 35 33 6d 41 20 34 2e 38 30 6d 41 20 36 2e 35 32 6d 41 44 20 2d 79 20 2d 31 31 2d 30 31 35 30 2e 30 31 48 7a 32 34 2e 37 35 30 5e 0d";
+        packetString = "6b 99 35 2e 30 31 30 32 35 2e 30 31 30 34 33 2e 33 30 32 34 33 2e 33 31 37 34 33 2e 33 31 37 20 31 2e 30 31 20 25 20 31 2e 30 35 20 25 20 31 2e 30 35 20 25 31 36 32 2e 35 37 56 31 36 32 2e 37 34 56 31 36 32 2e 35 33 56 20 36 2e 35 33 6d 41 20 34 2e 38 30 6d 41 20 36 2e 35 32 6d 41 44 20 2d 79 20 2d 31 31 2d 30 31 35 30 2e 30 31 48 7a 32 34 2e 37 35 30 5e 0d";
         //var byteSKtrings = packet.Split(" ");
         var packet = Convert.FromHexString(packetString.Replace(" ", ""));
         //Console.WriteLine("Byte array:");
@@ -167,7 +173,7 @@ class Program
         float frequence = ParseFloat(strFrequence.Replace("Hz", ""));
         float calculatedRatio = ParseFloat(strCalculatedRatio);
 
-        var result =  new JinYunJYTATestResult()
+        var result = new JinYunJYTATestResult()
         {
             IsSinglePhase = false,
             Ratio = new float[] { ratioA, ratioB, ratioC },
@@ -181,6 +187,83 @@ class Program
             ConnectionType = strConnectionType,
         };
         return;
+    }
+
+    static void PacketParse20W()
+    {
+        // header: 7e 54 55 31 32 36 
+        string packetString = "6b 32 30 32 35 2e 30 30 32 32 35 2e 30 31 31 32 35 2e 30 31 31 34 33 2e 33 30 33 34 33 2e 33 31 39 34 33 2e 33 31 39 20 31 2e 30 32 20 25 20 31 2e 30 35 20 25 20 31 2e 30 35 20 25 31 35 38 2e 38 39 56 31 35 39 2e 32 31 56 31 35 39 2e 34 34 56 20 36 2e 34 30 6d 41 20 34 2e 37 30 6d 41 20 36 2e 34 32 6d 41 44 20 2d 79 20 2d 31 31 20 30 37 35 30 2e 30 30 48 7a 32 34 2e 37 35 30 55 0d ";
+        packetString = "54 54 30 33 31 30 30 30 35 2e 30 34 20 30 2e 32 34 37 38 6d 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 3c 0d ";
+        //var byteSKtrings = packet.Split(" ");
+        var packet = Convert.FromHexString(packetString.Replace(" ", ""));
+        //Console.WriteLine("Byte array:");
+        //foreach (byte b in bytes)
+        //{
+        //    Console.WriteLine(b);
+        //}
+
+        //if (packet.Length < 126 || packet[0] != 0x6B)
+        //{
+        //    Console.WriteLine("Packet Invalid");
+        //    return;
+        //}
+
+        if (packet == null)
+        {
+            return;
+        }
+        if (packet.Length < 50)
+        {
+            //Log.Error("Read Packet Len err" + packet.Length);
+            return;
+        }
+        byte ch1Status = packet[0];
+        byte ch2Status = packet[1];
+        byte boudRate = packet[2];
+        byte testMode = packet[3];
+        byte ch1 = packet[4];
+        byte ch1Current = packet[5];
+        byte ch2 = packet[6];
+        byte ch2Current = packet[7];
+        int startIndex = 7;
+        byte[] ch1CurrentValue = { packet[startIndex + 1], packet[startIndex + 2], packet[startIndex + 3], packet[startIndex + 4], packet[startIndex + 5] };
+        byte[] ch1ResistanceValue = { packet[startIndex + 6], packet[startIndex + 7], packet[startIndex + 8], packet[startIndex + 9], packet[startIndex + 10], packet[startIndex + 11], packet[startIndex + 12] };
+        startIndex = startIndex + 12;
+        byte[] ch2CurrentValue = { packet[startIndex + 1], packet[startIndex + 2], packet[startIndex + 3], packet[startIndex + 4], packet[startIndex + 5] };
+        byte[] ch2ResistanceValue = { packet[startIndex + 6], packet[startIndex + 7], packet[startIndex + 8], packet[startIndex + 9], packet[startIndex + 10], packet[startIndex + 11], packet[startIndex + 12] };
+        startIndex = startIndex + 12;
+        byte[] tempSetTimeInterval = { packet[startIndex + 1], packet[startIndex + 2], packet[startIndex + 3], packet[startIndex + 4] };
+        startIndex = startIndex + 4;
+        byte[] ch1TimedResistanceValue = { packet[startIndex + 1], packet[startIndex + 2], packet[startIndex + 3], packet[startIndex + 4], packet[startIndex + 5], packet[startIndex + 6], packet[startIndex + 7] };
+        startIndex = startIndex + 7;
+        byte[] ch2TimedResistanceValue = { packet[startIndex + 1], packet[startIndex + 2], packet[startIndex + 3], packet[startIndex + 4], packet[startIndex + 5], packet[startIndex + 6], packet[startIndex + 7] };
+        startIndex = startIndex + 7;
+
+        string strCh1Current = Encoding.ASCII.GetString(ch1CurrentValue);
+        string strCh2Current = Encoding.ASCII.GetString(ch2CurrentValue);
+        string strCh1Resistance = Encoding.ASCII.GetString(ch1ResistanceValue);
+        string strCh2Resistance = Encoding.ASCII.GetString(ch2ResistanceValue);
+        string strCh1TimedResistant = Encoding.ASCII.GetString(ch1TimedResistanceValue);
+        string strCh2TimedResistant = Encoding.ASCII.GetString(ch2TimedResistanceValue);
+        string strTempSetTimeInterval = Encoding.ASCII.GetString(tempSetTimeInterval);
+
+        //return new JinYuan20WPacketInfo()
+        //{
+        //    ch1Enabled = ch1 == 0x31,
+        //    ch2Enabled = ch2 == 0x31,
+        //    ch1Status = ch1Status,
+        //    ch2Status = ch2Status,
+        //    type = GetTestTypeByByte(testMode),
+        //    ch1RealTimeCurrent = Utils.ParseFloat(strCh1Current),
+        //    ch2RealTimeCurrent = Utils.ParseFloat(strCh2Current),
+        //    ch1RealTimeResistance = Utils.ParseFloat(strCh1Resistance),
+        //    ch2RealTimeResistance = Utils.ParseFloat(strCh2Resistance),
+        //    ch1SelectedCurrent = ch1Current,
+        //    ch2SelectedCurrent = ch2Current,
+        //    ch1TimedResistance = Utils.ParseFloat(strCh1TimedResistant),
+        //    ch2TimedResistance = Utils.ParseFloat(strCh2TimedResistant),
+        //    tempRaiseTimeInterval = Utils.ParseFloat(strTempSetTimeInterval),
+        //};
     }
 
     static void UdpListen()
@@ -229,7 +312,8 @@ class Program
 
     static void Main()
     {
-        PacketByteParse();
+        PacketParse20W();
+        //PacketByteParse();
         Console.WriteLine();
         ConvertTestMain();
 
@@ -238,7 +322,7 @@ class Program
         string msg = "";
         // 将float数组转换为byte数组  
         byte[] data = new byte[floatsToSend.Length * 4];
-        for (int  i = 0;  i < floatsToSend.Length;  i++)
+        for (int i = 0; i < floatsToSend.Length; i++)
         {
             msg += floatsToSend[i].ToString() + "\t";
             byte[] bs = FloatToBigEndianBytes(floatsToSend[i]);
@@ -252,7 +336,7 @@ class Program
         }
         Console.WriteLine();
 
-        new Thread(()=>{ UdpListen(); }).Start();
+        new Thread(() => { UdpListen(); }).Start();
 
         // 创建UdpClient实例  
         using (UdpClient udpClient = new UdpClient())
@@ -280,6 +364,98 @@ class Program
             // ...处理接收到的数据...  
 
             // 关闭UdpClient（如果使用using语句，则不需要显式调用Close方法）  
+        }
+    }
+}
+
+
+class ProgramB
+{
+    static void MainB()
+    {
+        // 替换为你的 JSON 数据
+        string jsonData = File.ReadAllText("C:\\Users\\cheneychan\\AppData\\Local\\Temp\\__temp__workflow__.json");
+
+        // 替换为你的 Excel 模板文件路径
+        string templatePath = "E:\\01_Code\\vite-electron\\extraResources\\templates\\source_data_template.xlsx";
+
+        // 替换为你的输出 Excel 文件路径
+        string outputPath = "demo_output.xlsx";
+
+        WriteJsonToExcel(jsonData, templatePath, outputPath);
+    }
+
+    static void WriteJsonToExcel(string jsonData, string templatePath, string outputPath)
+    {
+        // 读取 JSON 数据
+        var jsonObject = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(jsonData);
+        if (jsonObject == null)
+        {
+            return;
+        }
+
+        // 加载 Excel 模板文件
+        using (var templateFile = new FileStream(templatePath, FileMode.Open, FileAccess.Read))
+        {
+            var workbook = new XSSFWorkbook(templateFile);
+            var sheet = workbook.GetSheetAt(0);
+
+            IEnumerator rowEnumerator = sheet.GetRowEnumerator();
+            while (rowEnumerator.MoveNext())
+            {
+                XSSFRow row = (XSSFRow)rowEnumerator.Current;
+
+                // 获取单元格迭代器
+                IEnumerator cellEnumerator = row.GetEnumerator();
+
+                while (cellEnumerator.MoveNext())
+                {
+                    XSSFCell cell = (XSSFCell)cellEnumerator.Current;
+
+                    // 获取单元格的内容
+                    string cellValue = cell.ToString().Trim();
+                    //Console.WriteLine("Cell Value: " + cellValue);
+
+                    // 在模板中填写 JSON 数据
+                    if (cellValue.StartsWith("${") && cellValue.EndsWith("}"))
+                    {
+                        Console.WriteLine("Cell Value: " + cellValue);
+
+                        var placeholder = cellValue.Substring(2, cellValue.Length - 3);
+                        Console.WriteLine("JsonDesc " + placeholder);
+
+                        // 获取路径1的值
+                        JToken token1 = jsonObject.SelectToken(placeholder);
+                        if (token1 != null)
+                        {
+                            string value1 = token1.ToString();
+                            Console.WriteLine($"{placeholder} 的值为: {value1}");
+                            cell.SetCellValue(value1);
+                            if (value1.GetType() == typeof(float) || value1.GetType() == typeof(int) || value1.GetType() == typeof(double))
+                            {
+                                cell.SetCellType(CellType.Numeric);
+                                cell.SetCellValue(value1);
+                            }
+                            else
+                            {
+                                cell.SetCellType(CellType.String);
+                            }
+                            cell.SetCellValue(value1);
+                        }
+                        else
+                        {
+                            Console.WriteLine($"{placeholder} 未找到对应的值.");
+                            cell.SetCellValue("");
+                        }
+                    }
+                }
+            }
+
+            // 保存输出 Excel 文件
+            using (var outputFile = new FileStream(outputPath, FileMode.Create, FileAccess.Write))
+            {
+                workbook.Write(outputFile);
+            }
         }
     }
 }

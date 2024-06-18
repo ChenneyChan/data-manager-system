@@ -94,6 +94,7 @@ namespace ABBDataManagerSystem.Connector
         }
 
         public static int Interval = 400; // 每400ms发送一次寻机指令，从机返回数据
+        private static int InnerInterval = 150;
 
         private readonly ResistanceCurrentInfoCollector Collector;
 
@@ -108,6 +109,8 @@ namespace ABBDataManagerSystem.Connector
         public TestTypeJYTA TestType { get { return _TestType; } set { _TestType = value; IsConfigChanged = true; } }
 
         private TappingPointType _TappingPoint;
+
+        private bool IsCmdExecuting = false;
 
         public TappingPointType TappingPoint
         {
@@ -177,7 +180,10 @@ namespace ABBDataManagerSystem.Connector
 
         public void SetResetCommand()
         {
+            IsCmdExecuting = true;
+            Thread.Sleep(InnerInterval);
             Collector.SendCommand(new byte[] { 0x40 });
+            IsCmdExecuting = false;
         }
 
         public float RatedHighVoltage = 0;
@@ -201,6 +207,8 @@ namespace ABBDataManagerSystem.Connector
 
         public void SetSinglePhaseTest()
         {
+            IsCmdExecuting = true;
+            Thread.Sleep(InnerInterval);
             // <额定高压:8字节><额定低压:8字节><额定分接:2字节><分接位置:1字节><正分接数:2字节><分接间距:6字节>
             // <试品编号:14字节> <同极性显示:1字节> <试验电压:1字节>XOR 0D  
 
@@ -244,10 +252,14 @@ namespace ABBDataManagerSystem.Connector
 
             Collector.SendCommand(SinglePhaseCmdPacket);
             DelayCount = DELAY_COUNT;
+            IsCmdExecuting = false;
         }
 
         public void SetThreePhaseTest()
         {
+            IsCmdExecuting = true;
+            Thread.Sleep(InnerInterval);
+
             //  <额定高压:8字节><额定低压:8字节><额定分接:2字节><分接位置:1字节><正分接数:2字节><分接间距:6字节>
             //  <试品编号:14字节><高压联结:1字节><低压联结:1字节><组别:2字节> <试验电压:1字节> XOR 0D  
 
@@ -297,6 +309,7 @@ namespace ABBDataManagerSystem.Connector
 
             Collector.SendCommand(ThreePhaseCmdPacket);
             DelayCount = DELAY_COUNT;
+            IsCmdExecuting = false;
         }
 
 
@@ -304,9 +317,12 @@ namespace ABBDataManagerSystem.Connector
         // 当测试方式为三相自动测试时，测试仪默认<换相方式>为“自动换相”.
         public void SendStartTest()
         {
+            IsCmdExecuting = true;
+            Thread.Sleep(InnerInterval);
             byte typeByte = TestTypeCommandMap[TestType];
             Collector.SendCommand(new byte[] { 0x64, typeByte, 0x30 });
             DelayCount = DELAY_COUNT;
+            IsCmdExecuting = false;
         }
 
         // 注：测试一次完成后，需要再次测试时，发送此命令。
@@ -314,8 +330,11 @@ namespace ABBDataManagerSystem.Connector
         // 并且提示信息为<测试完成(32H)>时可用。
         public void SendRestartTest()
         {
+            IsCmdExecuting = true;
+            Thread.Sleep(InnerInterval);
             Collector.SendCommand(new byte[] { 0x65 });
             DelayCount = DELAY_COUNT;
+            IsCmdExecuting = false;
         }
 
         // 注：此命令只有在手动换相时，且当前正在测试的为A相或者B相时，才起作用。
@@ -590,7 +609,7 @@ namespace ABBDataManagerSystem.Connector
         public JinYunJYTATestResult? ReadPacket(ref bool needReset)
         {
             needReset = false;
-            if (Collector == null)
+            if (Collector == null || IsCmdExecuting)
             {
                 return null;
             }
