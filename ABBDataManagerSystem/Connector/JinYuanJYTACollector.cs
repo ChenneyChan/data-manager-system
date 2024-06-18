@@ -432,11 +432,11 @@ namespace ABBDataManagerSystem.Connector
 
         public static Dictionary<string, HighVoltageConnectionType> HighVoltageConnectionTypeMap = new Dictionary<string, HighVoltageConnectionType>()
         {
-            { "Y",  HighVoltageConnectionType.Type_Y},
             { "YN",  HighVoltageConnectionType.Type_YN},
+            { "Y",  HighVoltageConnectionType.Type_Y},
             { "D",  HighVoltageConnectionType.Type_D},
-            { "Z",  HighVoltageConnectionType.Type_Z},
             { "ZN",  HighVoltageConnectionType.Type_ZN},
+            { "Z",  HighVoltageConnectionType.Type_Z},
             { "V",  HighVoltageConnectionType.Type_V},
             { "Scott",  HighVoltageConnectionType.Type_SCOTT},
             { "In-Scott",  HighVoltageConnectionType.Type_IN_SCOTT},
@@ -456,11 +456,11 @@ namespace ABBDataManagerSystem.Connector
 
         public static Dictionary<string, LowVoltageConnectionType> LowVoltageConnectionTypeMap = new Dictionary<string, LowVoltageConnectionType>()
         {
-            { "y",  LowVoltageConnectionType.Type_Y},
             { "yn",  LowVoltageConnectionType.Type_YN},
+            { "y",  LowVoltageConnectionType.Type_Y},
             { "d",  LowVoltageConnectionType.Type_D},
-            { "z",  LowVoltageConnectionType.Type_Z},
             { "zn",  LowVoltageConnectionType.Type_ZN},
+            { "z",  LowVoltageConnectionType.Type_Z},
             { "v",  LowVoltageConnectionType.Type_V},
             { "Scott",  LowVoltageConnectionType.Type_SCOTT},
             { "In-Scott",  LowVoltageConnectionType.Type_IN_SCOTT},

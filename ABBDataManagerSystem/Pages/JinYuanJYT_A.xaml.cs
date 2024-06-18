@@ -6,6 +6,7 @@ using System.IO.Ports;
 using System.Windows;
 using System.Windows.Controls;
 using static ABBDataManagerSystem.Connector.JinYuanJYTACollector;
+using Growl = HandyControl.Controls.Growl;
 
 namespace ABBDataManagerSystem.Pages
 {
@@ -156,10 +157,11 @@ namespace ABBDataManagerSystem.Pages
                                     var result = Collector.ReadPacket(ref needReset);
                                     if (needReset)
                                     {
-                                    }              
+                                    }
                                     Dispatcher.Invoke(new Action(() => { HandleResult(result); }));
 
-                                } catch (Exception ex)
+                                }
+                                catch (Exception ex)
                                 {
                                     Log.Error(ex.Message);
                                 }
@@ -237,7 +239,7 @@ namespace ABBDataManagerSystem.Pages
             {
                 IsFisrtPacket = false;
                 ConfirmResult();
-            } 
+            }
             else if (Collector.tipInfo == TipInfoType.Testing)
             {
                 IsFisrtPacket = true;
@@ -342,7 +344,22 @@ namespace ABBDataManagerSystem.Pages
             {
                 return;
             }
-            Collector.SendStartTest();
+            if (Collector.tipInfo == TipInfoType.Testing)
+            {
+                Growl.Info("正在测试中，请稍后！");
+            }
+            else if (Collector.tipInfo == TipInfoType.Testing)
+            {
+                Collector.SendRestartTest();
+            }
+            else if (Collector.tipInfo == TipInfoType.TestError)
+            {
+                Growl.Warning("测试仪报错，请尝试重置后再试！");
+            }
+            else
+            {
+                Collector.SendStartTest();
+            }
         }
 
         private void btReTest_Click(object sender, RoutedEventArgs e)
@@ -489,6 +506,11 @@ namespace ABBDataManagerSystem.Pages
                     {
                         RatioValueFields["21"].TappingVoltage = tappings[tappings.Count - 1];
                         RatioValueFields["21"].CalculatedRatio = tappings[tappings.Count - 1] / workflow.RatedVoltageYv;
+                        tbRatedLowVoltage2.Visibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        tbRatedLowVoltage2.Visibility = Visibility.Collapsed;
                     }
                     tbTapping.Text = workflow.RatedVoltageInterval;
                     tbRatedHighVoltage.Text = Utils.FloatFormat(workflow.RatedVoltageHv);
@@ -499,14 +521,46 @@ namespace ABBDataManagerSystem.Pages
                     try
                     {
                         tbTappingSpacing.Value = Utils.ParseFloat(workflow.RatedVoltageInterval.Split("*")[1].Replace("%", ""));
+
+                        // 计算联结方式
+                        #region 计算联结方式
+                        var conn = workflow.CONNSymbol.Trim();
+                        var hcs = JinYuanJYTACollector.HighVoltageConnectionTypeMap.Keys;
+                        var lcs = JinYuanJYTACollector.LowVoltageConnectionTypeMap.Keys;
+                        string hc = "";
+                        string lc = "";
+                        foreach (var it in hcs)
+                        {
+                            if (conn.StartsWith(it))
+                            {
+                                hc = it;
+                                break;
+                            }
+                        }
+                        if (hc.Length > 0)
+                        {
+                            cbHighVoltageConnection.Text = hc;
+                            conn = conn.Substring(hc.Length).Trim();
+                            foreach (var it in hcs)
+                            {
+                                if (conn.StartsWith(it))
+                                {
+                                    lc = it;
+                                    break;
+                                }
+                            }
+                            if (lc.Length > 0)
+                            {
+                                cbLowVoltageConnection.Text = lc;
+                            }
+                        }
+                        #endregion
                     }
                     catch { }
                     tbPositiveTappingCount.Value = tappings.Count;
                     tbRatedTapping.Value = (int)Math.Ceiling(tappings.Count / 2f);
                     tbHighVoltage.Value = workflow.RatedVoltageHv / 1000f;
                     tbLowVoltage.Value = workflow.RatedVoltageLv / 1000f;
-                    cbHighVoltageConnection.Text = "D";
-                    cbLowVoltageConnection.Text = "y";
                     tbGroup.Value = Utils.GetInt32(workflow.CONNSymbol) ?? 0;
                 });
             });

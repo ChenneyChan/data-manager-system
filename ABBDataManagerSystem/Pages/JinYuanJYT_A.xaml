@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ABBDataManagerSystem.Pages"
              xmlns:hc="https://handyorg.github.io/handycontrol" xmlns:sys="clr-namespace:System;assembly=netstandard"
-             mc:Ignorable="d" Loaded="UserControl_Loaded" Unloaded="UserControl_Unloaded"  d:DesignHeight="967.073" d:DesignWidth="1599.875" Background="#FFDDDDDD" MinWidth="1700" MinHeight="960"> 
+             mc:Ignorable="d" Loaded="UserControl_Loaded" Unloaded="UserControl_Unloaded"  d:DesignHeight="967.073" d:DesignWidth="1599.875" Background="#FFDDDDDD" MinWidth="1700" MinHeight="960">
     <UserControl.Resources>
         <sys:Double x:Key="textBoxHeigh">36</sys:Double>
         <Color x:Key="borderColor">#FF2A2A2A</Color>
@@ -33,9 +33,9 @@
             <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
         <Style TargetType="hc:NumericUpDown" BasedOn="{StaticResource GlobalNumericUpDownStyle}">
-            
+
         </Style>
-         <!-- 定义一个新的样式用于 hc:TextBox -->
+        <!-- 定义一个新的样式用于 hc:TextBox -->
         <Style TargetType="{x:Type hc:TextBox}" x:Key="TextBoxWithTitle">
             <Setter Property="Template">
                 <Setter.Value>
@@ -95,7 +95,7 @@
                 <hc:TextBox Width="180" IsReadOnly="True" hc:InfoElement.Title="分接"   hc:InfoElement.TitlePlacement="Left" Text="+-2*2.5%" Margin="0,0, 10, 0" Name="tbTapping"/>
                 <hc:TextBox Width="160" IsReadOnly="True" hc:InfoElement.Title="高压(V)" hc:InfoElement.TitlePlacement="Left" Text="10000" Margin="0,0, 10, 0" Name="tbRatedHighVoltage"/>
                 <hc:TextBox Width="160" IsReadOnly="True" hc:InfoElement.Title="低压1(V)" hc:InfoElement.TitlePlacement="Left" Text="400" Margin="0,0, 10, 0" Name="tbRatedLowVoltage"/>
-                <hc:TextBox Width="160" IsReadOnly="True" hc:InfoElement.Title="低压2(V)" hc:InfoElement.TitlePlacement="Left" Text="400" Margin="0,0, 10, 0" Name="tbRatedLowVoltage2"/>
+                <hc:TextBox Width="160" IsReadOnly="True" hc:InfoElement.Title="低压2(V)" hc:InfoElement.TitlePlacement="Left" Text="400" Margin="0,0, 10, 0" Name="tbRatedLowVoltage2" Visibility="Collapsed"/>
                 <hc:TextBox Width="160" IsReadOnly="True" hc:InfoElement.Title="联结组别" hc:InfoElement.TitlePlacement="Left" Text="" Margin="0,0, 10, 0" Name="tbCONNSymbol"/>
                 <Button Content="上传数据" Width="120" Margin="10,0"  Style="{StaticResource ButtonInfo}" Name="btUpload" Click="btUpload_Click" Height="34" FontSize="18"/>
             </StackPanel>
@@ -316,7 +316,7 @@
                                 <Button Content="复位" Style="{StaticResource ButtonWarning}"  Height="{StaticResource textBoxHeigh}" Width="80" FontSize="18"  Margin="0, 0, 10, 0" Name="btReset" Click="btReset_Click"/>
                                 <Button Content="下发参数" Style="{StaticResource ButtonInfo}"  Height="{StaticResource textBoxHeigh}" Width="120" FontSize="18"  Margin="0, 0, 10, 0" Name="btSetParameters" Click="btSetParameters_Click"/>
                                 <Button Content="测试" Style="{StaticResource ButtonInfo}"  Height="{StaticResource textBoxHeigh}" Width="80" FontSize="18"  Margin="0, 0, 10, 0" Name="btStartTest" Click="btStartTest_Click"/>
-                                <Button Content="重测" Style="{StaticResource ButtonInfo}"  Height="{StaticResource textBoxHeigh}" Width="80" FontSize="18"  Margin="0, 0, 10, 0" Name="btReTest" Click="btReTest_Click"/>
+                                <Button Content="重测" Style="{StaticResource ButtonInfo}"  Height="{StaticResource textBoxHeigh}" Width="80" FontSize="18"  Margin="0, 0, 10, 0" Name="btReTest" Click="btReTest_Click" Visibility="Collapsed"/>
                                 <Button Content="确认" Style="{StaticResource ButtonInfo}"  Height="{StaticResource textBoxHeigh}" Width="80" FontSize="18"  Margin="0, 0, 10, 0" Name="btConfirm" Click="btConfirm_Click" Visibility="Collapsed"/>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" Grid.Row="2" Margin="0, 10">
