@@ -31,11 +31,17 @@ namespace ABBDataManagerSystem.Pages
             InitTestTappingChoice();
             var ports = SerialPort.GetPortNames();
             Array.Sort(ports);
-            foreach (var item in ports)
+            int selectedIndex = ports.Length > 0 ? 0 : -1;
+            for (int i = 0; i < ports.Length; i++)
             {
+                var item = ports[i];
                 cbSerialPort.Items.Add(item);
+                if (item == Configs.Configs.SerialPortJYTA)
+                {
+                    selectedIndex = i;
+                }
             }
-            if (ports.Length > 0) { cbSerialPort.SelectedIndex = 0; }
+            cbSerialPort.SelectedIndex = selectedIndex;
             InitDeviceConfigs();
             Tools.EventManager.Instance.Subscribe("WorkflowSelected", WorkflowEventHandler);
             HandleWorkflowChange();
@@ -128,6 +134,7 @@ namespace ABBDataManagerSystem.Pages
             }
             else if (swConnect.IsChecked == true)
             {
+                Configs.Configs.SerialPortJYTA = cbSerialPort.Text;
                 Collector = new JinYuanJYTACollector(cbSerialPort.Text, Utils.ParseInt(cbBoundRate.Text));
                 new Thread(() =>
                 {

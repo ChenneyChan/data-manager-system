@@ -185,11 +185,17 @@ namespace ABBDataManagerSystem.Pages
             IsFirstLoaded = false;
             var ports = SerialPort.GetPortNames();
             Array.Sort(ports);
-            foreach (var item in ports)
+            int selectedIndex = ports.Length > 0 ? 0 : - 1;
+            for (int i = 0; i < ports.Length; i++)
             {
+                var item = ports[i];
                 cbSerialPort.Items.Add(item);
+                if (item == Configs.Configs.SerialPort20W)
+                {
+                    selectedIndex = i;
+                }
             }
-            cbSerialPort.SelectedIndex = ports.Length > 0 ? 0 : -1;
+            cbSerialPort.SelectedIndex = selectedIndex;
 
             foreach (var item in JinYuan20WCollector.CH1CurrentsMap.Keys)
             {
@@ -217,6 +223,7 @@ namespace ABBDataManagerSystem.Pages
             if (swConnect.IsChecked == true)
             {
                 IsConneted = true;
+                Configs.Configs.SerialPort20W = cbSerialPort.Text;
                 Collector = new JinYuan20WCollector(cbSerialPort.SelectedItem.ToString(), Utils.ParseInt(cbBoundRate.Text))
                 {
                     CH1Enabled = cbCH1.IsChecked == true,

@@ -317,7 +317,7 @@
                                 <Button Content="下发参数" Style="{StaticResource ButtonInfo}"  Height="{StaticResource textBoxHeigh}" Width="120" FontSize="18"  Margin="0, 0, 10, 0" Name="btSetParameters" Click="btSetParameters_Click"/>
                                 <Button Content="测试" Style="{StaticResource ButtonInfo}"  Height="{StaticResource textBoxHeigh}" Width="80" FontSize="18"  Margin="0, 0, 10, 0" Name="btStartTest" Click="btStartTest_Click"/>
                                 <Button Content="重测" Style="{StaticResource ButtonInfo}"  Height="{StaticResource textBoxHeigh}" Width="80" FontSize="18"  Margin="0, 0, 10, 0" Name="btReTest" Click="btReTest_Click"/>
-                                <Button Content="确认" Style="{StaticResource ButtonInfo}"  Height="{StaticResource textBoxHeigh}" Width="80" FontSize="18"  Margin="0, 0, 10, 0" Name="btConfirm" Click="btConfirm_Click"/>
+                                <Button Content="确认" Style="{StaticResource ButtonInfo}"  Height="{StaticResource textBoxHeigh}" Width="80" FontSize="18"  Margin="0, 0, 10, 0" Name="btConfirm" Click="btConfirm_Click" Visibility="Collapsed"/>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" Grid.Row="2" Margin="0, 10">
                                 <TextBlock Text="当前状态："/>
@@ -392,7 +392,7 @@
                                 <hc:TextBox Width="120" Height="36" Margin="0, 0, 20, 0" Name="tbConnectionGroup1"/>
                                 <TextBlock Text="连接组2" Margin="0, 0, 10, 0"/>
                                 <hc:TextBox Width="120" Height="36" Margin="0, 0, 20, 0" Name="tbConnectionGroup2"/>
-                                <Button Width="80" Content="OK" Style="{StaticResource ButtonInfo}" Height="36" FontSize="18" Click="Button_Click"/>
+                                <Button Width="80" Content="OK" Style="{StaticResource ButtonInfo}" Height="36" FontSize="18" Click="Button_Click" Visibility="Collapsed"/>
                             </StackPanel>
                         </Grid>
                     </Grid>

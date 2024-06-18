@@ -61,6 +61,16 @@ namespace ABBDataManagerSystem.Configs
         public static string EnvD {  set; get; } = string.Empty;
         #endregion
 
+        #region 20W设置
+        public static string SerialPort20W { set; get; } = string.Empty;
+        public static string SerialBoundRate20W { set; get; } = string.Empty;
+        #endregion
+
+        #region JYT-A设置
+        public static string SerialPortJYTA { set; get; } = string.Empty;
+        public static string SerialBoundRateJYTA { set; get; } = string.Empty;
+        #endregion
+
         #region 常规设置
         public static int WorkStationNo = 1;
         #endregion
@@ -72,6 +82,8 @@ namespace ABBDataManagerSystem.Configs
         static string INITemperature = "Temperature";
         static string INIPowerAnalyzer = "PowerAnalyzer";
         static string INICommon = "Common";
+        static string INIJinYuan20W = "JinYuan20W";
+        static string INIJinYuanJYTA = "JinYuanJYTA";
 
         [DllImport("kernel32.dll", EntryPoint = "GetPrivateProfileString")]
         private static extern uint GetPrivateProfileString(
@@ -143,7 +155,7 @@ namespace ABBDataManagerSystem.Configs
             EnvD = buff.ToString();
             #endregion
 
-            // 功率分析仪
+            #region 功率分析仪
             GetPrivateProfileString(INIPowerAnalyzer, "VT", "", buff, 32, INIPATH);
             VT = Utils.ParseFloatNull(buff.ToString());
             GetPrivateProfileString(INIPowerAnalyzer, "CT", "", buff, 32, INIPATH);
@@ -153,6 +165,21 @@ namespace ABBDataManagerSystem.Configs
             WorkStationNo = Utils.ParseIntNull(buff.ToString()) ?? 1;
             GetPrivateProfileString(INICommon, "WorkflowID", "", buff, 32, INIPATH);
             WorkflowID = buff.ToString();
+            #endregion
+
+            #region JinYuan20W
+            GetPrivateProfileString(INIJinYuan20W, "SerialPort", "", buff, 32, INIPATH);
+            SerialPort20W = buff.ToString();
+            GetPrivateProfileString(INIJinYuan20W, "BoundRate", "", buff, 32, INIPATH);
+            SerialBoundRate20W = buff.ToString();
+            #endregion
+
+            #region JinYuanJYTA
+            GetPrivateProfileString(INIJinYuanJYTA, "SerialPort", "", buff, 32, INIPATH);
+            SerialPortJYTA = buff.ToString();
+            GetPrivateProfileString(INIJinYuanJYTA, "BoundRate", "", buff, 32, INIPATH);
+            SerialBoundRateJYTA = buff.ToString();
+            #endregion
         }
 
         public static void SaveToFile()
@@ -183,12 +210,23 @@ namespace ABBDataManagerSystem.Configs
             WritePrivateProfileString(INITemperature, "EnvC", EnvC, INIPATH);
             WritePrivateProfileString(INITemperature, "EnvD", EnvD, INIPATH);
 
-            // 功率分析仪
+            #region 功率分析仪
             WritePrivateProfileString(INIPowerAnalyzer, "VT", VT != null ? Utils.FloatFormat((float)VT, 4) : "" , INIPATH);
             WritePrivateProfileString(INIPowerAnalyzer, "CT", CT != null ? Utils.FloatFormat((float)CT, 4) : "" , INIPATH);
 
             WritePrivateProfileString(INICommon, "WorkStationNo", WorkStationNo.ToString(), INIPATH);
             WritePrivateProfileString(INICommon, "WorkflowID", WorkflowID, INIPATH);
+            #endregion
+
+            #region JinaYuan20W
+            WritePrivateProfileString(INIJinYuan20W, "SerialPort", SerialPort20W, INIPATH);
+            WritePrivateProfileString(INIJinYuan20W, "BoundRate", SerialBoundRate20W, INIPATH);
+            #endregion
+
+            #region JinaYUanJYTA
+            WritePrivateProfileString(INIJinYuanJYTA, "SerialPort", SerialPortJYTA, INIPATH);
+            WritePrivateProfileString(INIJinYuanJYTA, "BoundRate", SerialBoundRateJYTA, INIPATH);
+            #endregion
         }
 
         #endregion
