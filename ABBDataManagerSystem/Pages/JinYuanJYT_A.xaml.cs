@@ -348,7 +348,7 @@ namespace ABBDataManagerSystem.Pages
             {
                 Growl.Info("正在测试中，请稍后！");
             }
-            else if (Collector.tipInfo == TipInfoType.Testing)
+            else if (Collector.tipInfo == TipInfoType.TestDone)
             {
                 Collector.SendRestartTest();
             }
