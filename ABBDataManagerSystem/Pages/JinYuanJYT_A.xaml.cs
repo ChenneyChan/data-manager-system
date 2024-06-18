@@ -143,11 +143,19 @@ namespace ABBDataManagerSystem.Pages
                             while (IsTesting && Collector != null)
                             {
                                 bool needReset = false;
-                                var result = Collector.ReadPacket(ref needReset);
-                                if (needReset)
+                                try
                                 {
+
+                                    var result = Collector.ReadPacket(ref needReset);
+                                    if (needReset)
+                                    {
+                                    }              
+                                    Dispatcher.Invoke(new Action(() => { HandleResult(result); }));
+
+                                } catch (Exception ex)
+                                {
+                                    Log.Error(ex.Message);
                                 }
-                                Dispatcher.Invoke(new Action(() => { HandleResult(result); }));
                                 Thread.Sleep(this.Interval);
                             }
                         }).Start();
