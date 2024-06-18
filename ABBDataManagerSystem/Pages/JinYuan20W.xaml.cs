@@ -304,7 +304,7 @@ namespace ABBDataManagerSystem.Pages
                     {
                         Dispatcher.Invoke(() =>
                         {
-                            UpdateDisplayByPacket(packet);
+                            UpdateDisplayByPacket(packet); // todo desperate
                             UpdateRealTimePanelDisplay(packet);
                         });
                     }
@@ -450,11 +450,11 @@ namespace ABBDataManagerSystem.Pages
             {
                 if (lastPacket.ch1Enabled)
                 {
-                    value = lastPacket.ch1RealTimeResistance;
+                    value = lastPacket.ch1RealTimeResistance * (lastPacket.ch1RealTimeResistanceIsMill ? 0.001f : 1f);
                 }
                 else if (lastPacket.ch2Enabled)
                 {
-                    value = lastPacket.ch2RealTimeResistance;
+                    value = lastPacket.ch2RealTimeResistance * (lastPacket.ch2RealTimeResistanceIsMill ? 0.001f : 1f);
                 }
             }
             if (value == 0 && IsSimulate)
@@ -531,10 +531,10 @@ namespace ABBDataManagerSystem.Pages
             }
 
             // 低压
-            tbLVMaxUnbalanceDiff11.Text = Utils.FloatFormat((float)CalculateMaxUnbalanceDiff(tappingResistanceFields["11"])); 
-            tbLVMaxUnbalanceDiff12.Text = Utils.FloatFormat((float)CalculateMaxUnbalanceDiff(tappingResistanceFields["12"]));
-            tbLVMaxUnbalanceDiff21.Text = Utils.FloatFormat((float)CalculateMaxUnbalanceDiff(tappingResistanceFields["21"]));
-            tbLVMaxUnbalanceDiff22.Text = Utils.FloatFormat((float)CalculateMaxUnbalanceDiff(tappingResistanceFields["22"]));
+            tbLVMaxUnbalanceDiff11.Text = Utils.FloatFormatZeroIsNull(CalculateMaxUnbalanceDiff(tappingResistanceFields["11"])); 
+            tbLVMaxUnbalanceDiff12.Text = Utils.FloatFormatZeroIsNull(CalculateMaxUnbalanceDiff(tappingResistanceFields["12"]));
+            tbLVMaxUnbalanceDiff21.Text = Utils.FloatFormatZeroIsNull(CalculateMaxUnbalanceDiff(tappingResistanceFields["21"]));
+            tbLVMaxUnbalanceDiff22.Text = Utils.FloatFormatZeroIsNull(CalculateMaxUnbalanceDiff(tappingResistanceFields["22"]));
         }
 
         private void UpdateTempRiseCoolValue()
@@ -727,10 +727,10 @@ namespace ABBDataManagerSystem.Pages
 
         private void UpdateRealTimePanelDisplay(JinYuan20WCollector.JinYuan20WPacketInfo packet)
         {
-            tbCH1Current.Text = Utils.FloatFormat(packet.ch1RealTimeCurrent, 2) + " A";
-            tbCH2Current.Text = Utils.FloatFormat(packet.ch2RealTimeCurrent, 2) + " A";
-            tbCH1Resistance.Text = Utils.FloatFormat(packet.ch1RealTimeResistance, 3) + " mΩ";
-            tbCH2Resistance.Text = Utils.FloatFormat(packet.ch2RealTimeResistance, 3) + " mΩ";
+            tbCH1Current.Text = Utils.FloatFormat(packet.ch1RealTimeCurrent, 2) + (packet.ch1RealTimeCurrentIsMill ? "mA" : " A");
+            tbCH2Current.Text = Utils.FloatFormat(packet.ch2RealTimeCurrent, 2) + (packet.ch2RealTimeCurrentIsMill ? "mA" : " A");
+            tbCH1Resistance.Text = Utils.FloatFormat(packet.ch1RealTimeResistance, 3) + (packet.ch1RealTimeResistanceIsMill ? " mΩ" : "Ω");
+            tbCH2Resistance.Text = Utils.FloatFormat(packet.ch2RealTimeResistance, 3) + (packet.ch2RealTimeResistanceIsMill ? " mΩ" : "Ω");
             tbCH1State.Text = "【" + JinYuan20WCollector.CHStatusMap[packet.ch1Status] + "】";
             tbCH2State.Text = "【" + JinYuan20WCollector.CHStatusMap[packet.ch2Status] + "】";
             lastPacket = packet;
