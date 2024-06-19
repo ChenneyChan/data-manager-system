@@ -704,7 +704,7 @@ namespace ABBDataManagerSystem.Pages
                         break;
                     }
                     values[i] = listValues[SelectedSlots[i] - 1];
-                    Log.Info($"TempValue {i},Slot {SelectedSlots[i]},value {values[i]}");
+                    //Log.Info($"TempValue {i},Slot {SelectedSlots[i]},value {values[i]}");
                 }
             }
             if (values.Length == 0)

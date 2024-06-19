@@ -1,0 +1,1263 @@
+﻿using ABBDataManagerSystem.Bean.Base;
+using ABBDataManagerSystem.Connector;
+using ABBDataManagerSystem.Pages.Views;
+using System.Collections.ObjectModel;
+using System.IO.Ports;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Threading;
+using static ABBDataManagerSystem.Connector.JinYuan20WCollector;
+
+namespace ABBDataManagerSystem.Pages
+{
+    /// <summary>
+    /// JinYuan20W.xaml 的交互逻辑
+    /// </summary>
+    public partial class JinYuan20E : UserControl, ICloseable
+    {
+        private bool IsSimulate = false;
+        private Random random = new Random();
+        private bool IsFirstLoaded = true;
+        private JinYuan20ECollector? Collector = null;
+        private List<CommonTempRiseTestResistanceInfo> dataItems = new List<CommonTempRiseTestResistanceInfo>();
+        private ObservableCollection<MyItem> items2;
+        private bool IsConneted = false;
+        private bool IsCollecting = false;
+        private ManualResetEvent? ResetEvent = null;
+        private bool CommandChange = false;
+
+        private Dictionary<string, TappingResistanceFields> tappingResistanceFields = new Dictionary<string, TappingResistanceFields>();
+        private Dictionary<string, ToggleButton> highVoltageToggleButtons = new Dictionary<string, ToggleButton>();
+        private Dictionary<string, ToggleButton> lowVoltageToggleButtons = new Dictionary<string, ToggleButton>();
+        private Dictionary<string, ToggleButton> tappingToggleButtons = new Dictionary<string, ToggleButton>();
+        private Dictionary<TestType20W, ToggleButton> testTypeToggleButtons = new Dictionary<TestType20W, ToggleButton>();
+        private Dictionary<string, TextBox> tempRiseCoolTbs = new Dictionary<string, TextBox>();
+
+        private string SelectedHighVoltageTapping = "";
+        private string SelectedLowVoltageTapping = "";
+        private string SelectedTapping = "";
+        private TestType20W? SelectedTesting = TestType20W.CommonTest;
+        private bool IsTempRiseCool = false;
+        private int TempRiseRecordInterval = 10;
+        private int TempRiseCountDown = 0;
+        private int CurrentIndex = 0;
+
+        private DispatcherTimer TimerSecond;
+        private int SecondElapsed = 0;
+        private bool IsCommonTesting = false;
+        private bool IsTempRiseTesting = false;
+        private int SelectedLowVoltageLevel = 0;
+        private string SelectedTempRiseCoolItem = "";
+        private string? TempRiseCoolSelectedCh1 = string.Empty;
+        private string? TempRiseCoolSelectedCh2 = string.Empty;
+        private string? TempRiseCoolSelectedLevel = string.Empty;
+
+        private JinYuan20ECollector.CommonPacket? lastPacket = null;
+
+
+        public JinYuan20E()
+        {
+            InitializeComponent();
+            InitTimer();
+            InitToggleButtons();
+            InitTappings();
+            InitTempRiseCoolTbs();
+            btStartTiming.Visibility = Visibility.Collapsed;
+            panelTappingChoice.Visibility = Visibility.Collapsed;
+            dataGridPanel.Visibility = Visibility.Collapsed;
+
+            var currents = JinYuan20ECollector.EnumHelper.currentMap.Values;
+            foreach (var current in currents)
+            {
+                cb20ECurrents.Items.Add(current);
+            }
+            cb20ECurrents.SelectedIndex = 0;
+
+            var modes = JinYuan20ECollector.EnumHelper.modeMap.Values;
+            foreach (var mode in modes)
+            {
+                cb20EModes.Items.Add(mode);
+            }
+            cb20EModes.SelectedIndex = 0;
+
+            var patterns = JinYuan20ECollector.EnumHelper.patternMap.Values;
+            foreach (var pattern in patterns)
+            {
+                cb20EPatterns.Items.Add(pattern);
+            }
+            cb20EPatterns.SelectedIndex = 0;
+
+            var windings = JinYuan20ECollector.EnumHelper.windingMap.Values;
+            foreach (var winding in windings)
+            {
+                cb20EWindings.Items.Add(winding);
+            }
+            cb20EWindings.SelectedIndex = 0;
+        }
+
+        private void InitToggleButtons()
+        {
+            highVoltageToggleButtons.Add("AB", tbAB);
+            highVoltageToggleButtons.Add("AO", tbAO);
+            highVoltageToggleButtons.Add("BC", tbBC);
+            highVoltageToggleButtons.Add("BO", tbBO);
+            highVoltageToggleButtons.Add("CA", tbCA);
+            highVoltageToggleButtons.Add("CO", tbCO);
+
+            lowVoltageToggleButtons.Add("ab", tbab);
+            lowVoltageToggleButtons.Add("ao", tbao);
+            lowVoltageToggleButtons.Add("bc", tbbc);
+            lowVoltageToggleButtons.Add("bo", tbbo);
+            lowVoltageToggleButtons.Add("ca", tbca);
+            lowVoltageToggleButtons.Add("co", tbco);
+
+            tappingToggleButtons.Add("1", tbTapping1);
+            tappingToggleButtons.Add("2", tbTapping2);
+            tappingToggleButtons.Add("3", tbTapping3);
+            tappingToggleButtons.Add("4", tbTapping4);
+            tappingToggleButtons.Add("5", tbTapping5);
+            tappingToggleButtons.Add("6", tbTapping6);
+            tappingToggleButtons.Add("7", tbTapping7);
+            tappingToggleButtons.Add("8", tbTapping8);
+            tappingToggleButtons.Add("9", tbTapping9);
+            tappingToggleButtons.Add("21", tbTapping21);
+
+            testTypeToggleButtons.Add(TestType20W.CommonTest, tbTestTypeCommon);
+            testTypeToggleButtons.Add(TestType20W.TemperatureRise10Sec, tbTestTypeTempRise10s);
+            testTypeToggleButtons.Add(TestType20W.TemperatureRise30Sec, tbTestTypeTempRise30s);
+            testTypeToggleButtons.Add(TestType20W.TemperatureRise60Sec, tbTestTypeTempRise60s);
+            //testTypeToggleButtons.Add(TestType20W.TemperatureRise10Sec, tbTestTypeTempRiseCool);
+        }
+
+        private void InitTappings()
+        {
+            tappingResistanceFields.Add("1", trTap1);
+            tappingResistanceFields.Add("2", trTap2);
+            tappingResistanceFields.Add("3", trTap3);
+            tappingResistanceFields.Add("4", trTap4);
+            tappingResistanceFields.Add("5", trTap5);
+            tappingResistanceFields.Add("6", trTap6);
+            tappingResistanceFields.Add("7", trTap7);
+            tappingResistanceFields.Add("8", trTap8);
+            tappingResistanceFields.Add("9", trTap9);
+            tappingResistanceFields.Add("10", trTap10);
+
+            tappingResistanceFields.Add("11", trTap11);
+            tappingResistanceFields.Add("12", trTap12);
+
+            tappingResistanceFields.Add("21", trTap21);
+            tappingResistanceFields.Add("22", trTap22);
+        }
+
+        private void InitTempRiseCoolTbs()
+        {
+            tempRiseCoolTbs.Add("HV1", tbTempCoolHV1);
+            tempRiseCoolTbs.Add("LV11", tbTempCoolLV11);
+            tempRiseCoolTbs.Add("LV12", tbTempCoolLV12);
+
+            tempRiseCoolTbs.Add("HV2", tbTempCoolHV2);
+            tempRiseCoolTbs.Add("LV21", tbTempCoolLV21);
+            tempRiseCoolTbs.Add("LV22", tbTempCoolLV22);
+        }
+
+        #region 计数器的Timer
+        private void InitTimer()
+        {
+            TimerSecond = new DispatcherTimer();
+            TimerSecond.Interval = TimeSpan.FromSeconds(1);
+            TimerSecond.Tick += TimerSecond_Tick;
+        }
+
+        private void TimerSecond_Tick(object? sender, EventArgs e)
+        {
+            SecondElapsed += 1;
+            if (SecondElapsed > 60 * 60)
+            {
+                SecondElapsed = 0;
+            }
+            UpdateClockDisplay();
+            if (SelectedTesting != TestType20W.CommonTest && IsTempRiseTesting)
+            {
+                TempRiseTestRecord();
+            }
+        }
+
+        private void UpdateClockDisplay()
+        {
+            int minutes = SecondElapsed / 60;
+            int seconds = SecondElapsed % 60;
+
+            string mm = minutes < 10 ? $"0{minutes}" : minutes.ToString();
+            string ss = seconds < 10 ? $"0{seconds}" : seconds.ToString();
+            TestingTimer.Text = $"{mm}:{ss}";
+        }
+        #endregion
+
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (!IsFirstLoaded)
+            {
+                return;
+            }
+            IsFirstLoaded = false;
+            var ports = SerialPort.GetPortNames();
+            Array.Sort(ports);
+            int selectedIndex = ports.Length > 0 ? 0 : -1;
+            for (int i = 0; i < ports.Length; i++)
+            {
+                var item = ports[i];
+                cbSerialPort.Items.Add(item);
+                if (item == Configs.Configs.SerialPort20E)
+                {
+                    selectedIndex = i;
+                }
+            }
+            cbSerialPort.SelectedIndex = selectedIndex;
+
+            foreach (var item in JinYuan20WCollector.CH1CurrentsMap.Keys)
+            {
+                cbHVCurrents.Items.Add(item);
+            }
+            cbHVCurrents.SelectedIndex = 0;
+
+            foreach (var item in JinYuan20WCollector.CH2CurrentsMap.Keys)
+            {
+                cbLVCurrents.Items.Add(item);
+            }
+            cbLVCurrents.SelectedIndex = 0;
+
+            UpdateControlEnableState();
+        }
+
+        public class MyItem
+        {
+            public string Name { get; set; }
+            public string Description { get; set; }
+        }
+
+        private void swConnect_CheckedChange(object sender, RoutedEventArgs e)
+        {
+            if (swConnect.IsChecked == true)
+            {
+                IsConneted = true;
+                Configs.Configs.SerialPort20E = cbSerialPort.Text;
+                Collector = new JinYuan20ECollector(cbSerialPort.SelectedItem.ToString(), Utils.ParseInt(cbBoundRate.Text))
+                {
+                    CurrentMode = JinYuan20ECollector.EnumHelper.GetCurrentEnum(cb20ECurrents.SelectedItem.ToString()),
+                    Mode = JinYuan20ECollector.EnumHelper.GetModeEnum(cb20EModes.SelectedItem.ToString()),
+                    PatternMode = JinYuan20ECollector.EnumHelper.GetPatternEnum(cb20EPatterns.SelectedItem.ToString()),
+                    WindingMode = JinYuan20ECollector.EnumHelper.GetWindingEnum(cb20EWindings.SelectedItem.ToString()),
+                };
+                Collector.SendParameterSetCommand();
+                new Thread(() =>
+                {
+                    if (!Collector.Connect())
+                    {
+                        Collector = null;
+                        IsConneted = false;
+                        Dispatcher.Invoke(() =>
+                        {
+                            swConnect.IsChecked = false;
+                        });
+                    }
+                    else
+                    {
+                        StartSyncState();
+                    }
+                }).Start();
+            }
+            else
+            {
+                StopSyncState();
+                if (Collector != null)
+                {
+                    Collector.Disconnect();
+                    Collector = null;
+                }
+                IsConneted = false;
+
+            }
+            UpdateControlEnableState();
+        }
+
+        private void UpdateControlEnableState()
+        {
+            cbBoundRate.IsEnabled = !IsConneted;
+            cbSerialPort.IsEnabled = !IsConneted;
+
+            //btStart.IsEnabled = IsConneted && !IsCollecting;
+            //btStop.IsEnabled = IsConneted && IsCollecting;
+
+            cbHVCurrents.IsEnabled = cbCH1.IsChecked == true;
+            cbLVCurrents.IsEnabled = cbCH2.IsChecked == true;
+        }
+
+        private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+        {
+            //Close();
+        }
+
+        public void Close()
+        {
+            IsCollecting = false;
+            if (Collector != null)
+            {
+                Collector.Disconnect();
+                Collector = null;
+            }
+            if (TimerSecond.IsEnabled == true)
+            {
+                TimerSecond.Stop();
+            }
+        }
+
+        #region 采集数据
+        private void CollectDataOnce()
+        {
+            if (Collector != null)
+            {
+                if (CommandChange)
+                {
+                    CommandChange = false;
+
+                }
+                try
+                {
+                    var packet = Collector.ReadPacket();
+                    if (packet != null)
+                    {
+                        Dispatcher.Invoke(() =>
+                        {
+                            UpdateRealTimePanelDisplay(packet);
+                        });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("Process SinglePhaseCmdPacket Error " + ex.Message);
+                }
+            }
+        }
+
+        private void StartSyncState()
+        {
+            if (!IsConneted || IsCollecting)
+            {
+                return;
+            }
+            // 创建一个ManualResetEvent，初始状态为未设置（false）  
+            ResetEvent = new ManualResetEvent(false);
+            IsCollecting = true;
+            Dispatcher.Invoke(new Action(() => { UpdateControlEnableState(); }));
+            Log.Info("Start 20W Collect...");
+
+            // 创建一个新线程并执行任务  
+            new Thread(() =>
+            {
+                while (IsCollecting)
+                {
+                    CollectDataOnce();
+                    if (ResetEvent.WaitOne(JinYuan20WCollector.Interval))
+                    {
+                        // 线程没有超时被唤醒，说明要停止循环了
+                    }
+                }
+                IsCollecting = false;
+                ResetEvent = null;
+                Log.Info("Temp Collector DONE");
+            }).Start();
+        }
+
+        private void StopSyncState()
+        {
+            if (!IsCollecting)
+            {
+                return;
+            }
+            IsCollecting = false;
+            if (ResetEvent != null)
+            {
+                ResetEvent.Set();
+            }
+            UpdateControlEnableState();
+        }
+        #endregion
+
+        #region 修改配置，下发给Collector
+        private void cbCH1_CheckedChange(object sender, RoutedEventArgs e)
+        {
+            //cbHVCurrents.IsEnabled = cbCH1.IsChecked == true;
+            //if (Collector != null)
+            //{
+            //    Collector.CH1Enabled = cbCH1.IsChecked == true;
+            //}
+        }
+
+        private void cbCH2_CheckedChange(object sender, RoutedEventArgs e)
+        {
+            //cbLVCurrents.IsEnabled = cbCH2.IsChecked == true;
+            //if (Collector != null)
+            //{
+            //    Collector.CH2Enabled = cbCH2.IsChecked == true;
+            //}
+        }
+
+        private void cbHVCurrents_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            //if (Collector != null)
+            //{
+            //    Collector.CH1CurrentConfig = JinYuan20WCollector.GetCH1CurrentConfig(cbHVCurrents.SelectedItem.ToString());
+            //}
+        }
+
+        private void cbLVCurrents_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            //if (Collector != null)
+            //{
+            //    Collector.CH2CurrentConfig = JinYuan20WCollector.GetCH2CurrentConfig(cbLVCurrents.SelectedItem.ToString());
+            //}
+        }
+
+        private void cb20E_ComboBox_ConfigChanges(object sender, RoutedEventArgs e)
+        {
+            if (Collector != null)
+            {
+                Collector.CurrentMode = JinYuan20ECollector.EnumHelper.GetCurrentEnum(cb20ECurrents.SelectedItem.ToString());
+                Collector.Mode = JinYuan20ECollector.EnumHelper.GetModeEnum(cb20EModes.SelectedItem.ToString());
+                Collector.PatternMode = JinYuan20ECollector.EnumHelper.GetPatternEnum(cb20EPatterns.SelectedItem.ToString());
+                Collector.WindingMode = JinYuan20ECollector.EnumHelper.GetWindingEnum(cb20EWindings.SelectedItem.ToString());
+                Collector.SendParameterSetCommand();
+            }
+        }
+        #endregion
+
+        #region 开始常规测试
+        private bool TestConfigCheck()
+        {
+            if (!IsConneted)
+            {
+                MessageBox.Show("请先连接设备！");
+                return false;
+            }
+            //if (cbCH1.IsChecked != true && cbCH2.IsChecked != true)
+            //{
+            //    MessageBox.Show("必须选择一个通道才可以开始测试！");
+            //    return false;
+            //}
+            return true;
+        }
+
+        private void btCommonTest_Click(object sender, RoutedEventArgs e)
+        {
+            if (!TestConfigCheck())
+            {
+                return;
+            }
+            lastPacket = null;
+            panelConfig.IsEnabled = false;
+            panelTestChoice.IsEnabled = false;
+
+            SecondElapsed = 0;
+            UpdateClockDisplay();
+            TimerSecond.Start();
+
+            //Collector?.SetParameters();
+            Collector?.SendTestCommand();
+            IsCommonTesting = true;
+
+            UpdatePanelTestConfigDisplay();
+            btCommonTest.IsEnabled = false;
+        }
+        #endregion
+
+        #region 常规测试结束，填写数据
+        private void btQuitTest_Click(object sender, RoutedEventArgs e)
+        {
+            Collector?.SendResetCommand();
+            panelConfig.IsEnabled = true;
+            panelTestChoice.IsEnabled = true;
+            TimerSecond.Stop();
+            IsCommonTesting = false;
+            btCommonTest.IsEnabled = true;
+
+            float value = 0;
+            if (lastPacket != null)
+            {
+                //if (lastPacket.ch1Enabled)
+                //{
+                //    value = lastPacket.ch1RealTimeResistance * (lastPacket.ch1RealTimeResistanceIsMill ? 0.001f : 1f);
+                //}
+                //else if (lastPacket.ch2Enabled)
+                //{
+                //    value = lastPacket.ch2RealTimeResistance * (lastPacket.ch2RealTimeResistanceIsMill ? 0.001f : 1f);
+                //}
+            }
+            if (value == 0 && IsSimulate)
+            {
+                value = (float)random.Next() % 1000 + (float)random.NextDouble();
+            }
+
+            if (!IsTempRiseCool && tappingResistanceFields.Keys.Contains(SelectedTapping))
+            {
+                tappingResistanceFields[SelectedTapping].UpdateValueForActiveItem(value);
+                UpdateMaxUnBalance();
+            }
+            else if (IsTempRiseCool && (TempRiseCoolSelectedCh1 != "空" || TempRiseCoolSelectedCh2 != "空"))
+            {
+                UpdateTempRiseCoolValue();
+            }
+        }
+
+        #region 计算最大不平衡差
+        private float[]? GetMaxMin(TappingResistanceFields tpr)
+        {
+            if (tpr.ValueAB == null || tpr.ValueBC == null || tpr.ValueCA == null)
+            {
+                return null;
+            }
+            float max = Math.Max((float)tpr.ValueAB, Math.Max((float)tpr.ValueBC, (float)tpr.ValueCA));
+            float min = Math.Min((float)tpr.ValueAB, Math.Min((float)tpr.ValueBC, (float)tpr.ValueCA));
+
+            return new float[] { max, min };
+        }
+
+        private float? CalculateMaxUnbalanceDiff(TappingResistanceFields tpr)
+        {
+            var maxMin = GetMaxMin(tpr);
+            if (maxMin == null || maxMin.Length != 2)
+            {
+                return null;
+            }
+            float sum = ((float)tpr.ValueAB + (float)tpr.ValueBC + (float)tpr.ValueCA);
+            if (sum == 0)
+            {
+                return null;
+            }
+            return (maxMin[0] - maxMin[1]) / sum;
+        }
+        #endregion
+
+        private void UpdateMaxUnBalance()
+        {
+            // 高压
+            List<float> vs = new List<float>();
+            for (int i = 1; i <= 9; i++)
+            {
+                var tpr = tappingResistanceFields[i.ToString()];
+                if (tpr == null)
+                {
+                    continue;
+                }
+                var v = CalculateMaxUnbalanceDiff(tpr);
+                if (v == null)
+                {
+                    continue;
+                }
+                vs.Add((float)v);
+            }
+            vs.Sort();
+            if (vs.Count > 0)
+            {
+                tbHVMaxUnbalanceDiff.Text = Utils.FloatFormat(vs[vs.Count - 1]);
+            }
+            else
+            {
+                tbHVMaxUnbalanceDiff.Text = "";
+            }
+
+            // 低压
+            tbLVMaxUnbalanceDiff11.Text = Utils.FloatFormatZeroIsNull(CalculateMaxUnbalanceDiff(tappingResistanceFields["11"]));
+            tbLVMaxUnbalanceDiff12.Text = Utils.FloatFormatZeroIsNull(CalculateMaxUnbalanceDiff(tappingResistanceFields["12"]));
+            tbLVMaxUnbalanceDiff21.Text = Utils.FloatFormatZeroIsNull(CalculateMaxUnbalanceDiff(tappingResistanceFields["21"]));
+            tbLVMaxUnbalanceDiff22.Text = Utils.FloatFormatZeroIsNull(CalculateMaxUnbalanceDiff(tappingResistanceFields["22"]));
+        }
+
+        private void UpdateTempRiseCoolValue()
+        {
+            float? valueCh1 = null;
+            float? valueCh2 = null;
+            if (lastPacket != null)
+            {
+                //if (lastPacket.ch1Enabled)
+                //{
+                //    valueCh1 = lastPacket.ch1RealTimeResistance * (lastPacket.ch1RealTimeResistanceIsMill ? 0.001f : 1f);
+                //}
+                //if (lastPacket.ch2Enabled)
+                //{
+                //    valueCh2 = lastPacket.ch2RealTimeResistance * (lastPacket.ch2RealTimeResistanceIsMill ? 0.001f : 1f);
+                //}
+            }
+            else if (IsSimulate)
+            {
+                valueCh1 = (float)random.Next() % 1000 + (float)random.NextDouble();
+                valueCh2 = (float)random.Next() % 1000 + (float)random.NextDouble();
+            }
+            string? ch1 = Utils.FloatFormatZeroIsNull(valueCh1);
+            string? ch2 = Utils.FloatFormatZeroIsNull(valueCh2);
+
+            TextBox hv = TempRiseCoolSelectedLevel == "第一次" ? tbTempCoolHV1 : tbTempCoolHV2;
+            TextBox lv1 = TempRiseCoolSelectedLevel == "第一次" ? tbTempCoolLV11 : tbTempCoolLV21;
+            TextBox lv2 = TempRiseCoolSelectedLevel == "第一次" ? tbTempCoolLV12 : tbTempCoolLV22;
+
+            if (ch1 != null)
+            {
+                switch (TempRiseCoolSelectedCh1)
+                {
+                    case "高压":
+                        hv.Text = ch1;
+                        break;
+                    case "低压1":
+                        lv1.Text = ch1;
+                        break;
+                    case "低压2":
+                        lv2.Text = ch1;
+                        break;
+                }
+            }
+
+            if (ch2 != null)
+            {
+                switch (TempRiseCoolSelectedCh2)
+                {
+                    case "高压":
+                        hv.Text = ch2;
+                        break;
+                    case "低压1":
+                        lv1.Text = ch2;
+                        break;
+                    case "低压2":
+                        lv2.Text = ch2;
+                        break;
+                }
+            }
+        }
+        #endregion
+
+        #region 开始温升计时
+        private void btStartTiming_Click(object sender, RoutedEventArgs e)
+        {
+            if (!TestConfigCheck())
+            {
+                return;
+            }
+            lastPacket = null;
+            panelConfig.IsEnabled = false;
+            panelTestChoice.IsEnabled = false;
+
+            SecondElapsed = 0;
+            UpdateClockDisplay();
+            TimerSecond.Start();
+
+            //Collector?.SetParameters();
+            //Collector?.SetTemperatureRaiseTimerCommand();
+
+            UpdatePanelTestConfigDisplay();
+            btStartTiming.IsEnabled = false;
+            btTempRiseTest.IsEnabled = true;
+        }
+        #endregion
+
+        #region 开始温升测试
+        private void UpdateTempRiseRecordInterval()
+        {
+            switch (SelectedTesting)
+            {
+                case TestType20W.TemperatureRise10Sec:
+                    TempRiseRecordInterval = 10;
+                    break;
+                case TestType20W.TemperatureRise30Sec:
+                    TempRiseRecordInterval = 30;
+                    break;
+                case TestType20W.TemperatureRise60Sec:
+                    TempRiseRecordInterval = 60;
+                    break;
+                default:
+                    TempRiseRecordInterval = 10;
+                    break;
+            }
+            TempRiseCountDown = TempRiseRecordInterval;
+            CurrentIndex = 0;
+        }
+
+        private void btTempRiseTest_Click(object sender, RoutedEventArgs e)
+        {
+            btTempRiseTest.IsEnabled = false;
+            UpdateTempRiseRecordInterval();
+            //Collector?.SetTemperatureRaiseTest();
+            IsTempRiseTesting = true;
+
+            cbTestPhase.IsEnabled = false;
+            cbTestStatus.IsEnabled = false;
+            cbTestCount.IsEnabled = false;
+            cbCoolingMode.IsEnabled = false;
+            dataItems.Clear();
+            lvUsers.Items.Refresh();
+        }
+        #endregion
+
+        #region 退出温升测试
+        private void btQuitTestTempRise_Click(object sender, RoutedEventArgs e)
+        {
+            //Collector?.SetRestCommand();
+            panelConfig.IsEnabled = true;
+            panelTestChoice.IsEnabled = true;
+            TimerSecond.Stop();
+            IsTempRiseTesting = false;
+            btStartTiming.IsEnabled = true;
+            btTempRiseTest.IsEnabled = false;
+
+            cbTestPhase.IsEnabled = true;
+            cbTestStatus.IsEnabled = true;
+            cbTestCount.IsEnabled = true;
+            cbCoolingMode.IsEnabled = true;
+        }
+        #endregion
+
+        #region 处理温升定时数据
+        private void TempRiseTestRecord()
+        {
+            TempRiseCountDown -= 1;
+            if (TempRiseCountDown != 0)
+            {
+                return;
+            }
+            TempRiseCountDown = TempRiseRecordInterval;
+
+            // 定时记录数据
+            dataItems.Add(new CommonTempRiseTestResistanceInfo()
+            {
+                SortIndex = CurrentIndex,
+                //CurrentHV = lastPacket != null ? lastPacket.ch1RealTimeCurrent : 0,
+                //ResistanceHV = lastPacket != null ? lastPacket.ch1RealTimeResistance : 0,
+                //CurrentLV = lastPacket != null ? lastPacket.ch2RealTimeCurrent : 0,
+                //ResistanceLV = lastPacket != null ? lastPacket.ch2RealTimeResistance : 0,
+                CurrentTime = TestingTimer.Text
+            });
+            lvUsers.Items.Refresh();
+            CurrentIndex += 1;
+        }
+        #endregion
+
+        #region 页面实时刷新
+        private void UpdatePanelTestConfigDisplay()
+        {
+            string testType = SelectedTesting == TestType20W.CommonTest ? "常规" : "温升";
+            if (cbCH1.IsChecked == true)
+            {
+                tbCH1TestConfig.Text = testType + "-高压CH1-" + cbHVCurrents.Text;
+            }
+            else
+            {
+                tbCH1TestConfig.Text = "";
+            }
+            if (cbCH2.IsChecked == true)
+            {
+                tbCH2TestConfig.Text = testType + "-低压CH2-" + cbLVCurrents.Text;
+            }
+            else
+            {
+                tbCH2TestConfig.Text = "";
+            }
+        }
+
+        private void UpdateRealTimePanelDisplay(JinYuan20ECollector.CommonPacket packet)
+        {
+            tbCH1Resistance.Text = Utils.FloatFormat(packet.CH1Resistance ?? 0, 2) + (packet.CH1ResistanceIsMill ? " mΩ" : "Ω");
+            tbCH2Resistance.Text = Utils.FloatFormat(packet.CH2Resistance ?? 0, 2) + (packet.CH2ResistanceIsMill ? " mΩ" : "Ω");
+            tbCH1State.Text = "【" + packet.Status + "】";
+            tbCH2State.Text = "【" + packet.Status + "】";
+            lastPacket = packet;
+        }
+
+        private void UpdateDisplayByPacket(JinYuan20WCollector.JinYuan20WPacketInfo packet)
+        {
+            tbCH1Enabled.Text = packet.ch1Enabled ? "是" : "否";
+            tbCH2Enabled.Text = packet.ch2Enabled ? "是" : "否";
+
+            tbCH1Status.Text = JinYuan20WCollector.CHStatusMap[packet.ch1Status];
+            tbCH2Status.Text = JinYuan20WCollector.CHStatusMap[packet.ch2Status];
+
+            tbCH1RealTimeCurrent.Text = Utils.FloatFormat(packet.ch1RealTimeCurrent);
+            tbCH2RealTimeCurrent.Text = Utils.FloatFormat(packet.ch2RealTimeCurrent);
+
+            tbCH1RealTimeResistance.Text = Utils.FloatFormat(packet.ch1RealTimeResistance);
+            tbCH2RealTimeResistance.Text = Utils.FloatFormat(packet.ch2RealTimeResistance);
+
+            tbCH1TimedResistance.Text = Utils.FloatFormat(packet.ch1TimedResistance);
+            tbCH2TimedResistance.Text = Utils.FloatFormat(packet.ch2TimedResistance);
+
+            tbDebugMsg.Text = "Debug Packet: " + packet.ToString();
+        }
+        #endregion
+
+        #region 测试仪打印数据
+        private void btPrint_Click(object sender, RoutedEventArgs e)
+        {
+            Collector?.SendPrintCommand();
+        }
+        #endregion
+
+        #region 试验和分接选择
+        private void TestTypeSelectedTappingChange(object sender, RoutedEventArgs e)
+        {
+            ToggleButton? b = sender as ToggleButton;
+            if (b == null)
+            {
+                return;
+            }
+            IsTempRiseCool = false;
+            if (b.IsChecked)
+            {
+                foreach (var item in testTypeToggleButtons)
+                {
+                    if (item.Value == b)
+                    {
+                        SelectedTesting = item.Key;
+                    }
+                    else
+                    {
+                        item.Value.IsChecked = false;
+                    }
+                }
+                if (b == tbTestTypeTempRiseCool)
+                {
+                    SelectedTesting = TestType20W.CommonTest;
+                    IsTempRiseCool = true;
+                }
+                else
+                {
+                    tbTestTypeTempRiseCool.IsChecked = false;
+                }
+            }
+            else
+            {
+                SelectedTesting = null;
+            }
+            DumpSelectedTapping();
+
+            if (SelectedTesting == null)
+            {
+                btCommonTest.Visibility = Visibility.Collapsed;
+                btQuitTest.Visibility = Visibility.Collapsed;
+                btPrint.Visibility = Visibility.Collapsed;
+
+                btStartTiming.Visibility = Visibility.Collapsed;
+                btTempRiseTest.Visibility = Visibility.Collapsed;
+                btQuitTestTempRise.Visibility = Visibility.Collapsed;
+            }
+            else if (SelectedTesting == TestType20W.CommonTest)
+            {
+                btCommonTest.Visibility = Visibility.Visible;
+                btQuitTest.Visibility = Visibility.Visible;
+                btPrint.Visibility = Visibility.Visible;
+
+                btStartTiming.Visibility = Visibility.Collapsed;
+                btTempRiseTest.Visibility = Visibility.Collapsed;
+                btQuitTestTempRise.Visibility = Visibility.Collapsed;
+
+                //panelTappingChoice.Visibility = Visibility.Visible;
+                if (b == tbTestTypeTempRiseCool)
+                {
+                    panelTempRiseCoolTestResult.Visibility = Visibility.Visible;
+                    panelCommonTestResult.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    panelTempRiseCoolTestResult.Visibility = Visibility.Collapsed;
+                    panelCommonTestResult.Visibility = Visibility.Visible;
+                }
+
+                dataGridPanel.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                btCommonTest.Visibility = Visibility.Collapsed;
+                btQuitTest.Visibility = Visibility.Collapsed;
+                btPrint.Visibility = Visibility.Collapsed;
+
+                btStartTiming.Visibility = Visibility.Visible;
+                btTempRiseTest.Visibility = Visibility.Visible;
+                btQuitTestTempRise.Visibility = Visibility.Visible;
+
+                //panelTappingChoice.Visibility = Visibility.Collapsed;
+                panelCommonTestResult.Visibility = Visibility.Collapsed;
+                panelTempRiseCoolTestResult.Visibility = Visibility.Collapsed;
+                dataGridPanel.Visibility = Visibility.Visible;
+            }
+
+            if (SelectedTesting != null && Collector != null)
+            {
+                //Collector.TestType = SelectedTesting ?? TestType20W.CommonTest;
+            }
+        }
+
+        private void HighVoltageSelectedTappingChange(object sender, RoutedEventArgs e)
+        {
+            var b = sender as ToggleButton;
+            if (b == null)
+            {
+                return;
+            }
+            if (b.IsChecked)
+            {
+                foreach (var item in highVoltageToggleButtons)
+                {
+                    if (item.Value == b)
+                    {
+                        SelectedHighVoltageTapping = item.Key;
+                    }
+                    else
+                    {
+                        item.Value.IsChecked = false;
+                    }
+                }
+            }
+            else
+            {
+                SelectedHighVoltageTapping = "";
+            }
+            DumpSelectedTapping();
+        }
+
+        private void LowVoltageSelectedTappingChange(object sender, RoutedEventArgs e)
+        {
+            var b = sender as ToggleButton;
+            if (b == null)
+            {
+                return;
+            }
+            if (b.IsChecked)
+            {
+                foreach (var item in lowVoltageToggleButtons)
+                {
+                    if (item.Value == b)
+                    {
+                        SelectedLowVoltageTapping = item.Key;
+                    }
+                    else
+                    {
+                        item.Value.IsChecked = false;
+                    }
+                }
+            }
+            else
+            {
+                SelectedLowVoltageTapping = "";
+            }
+            DumpSelectedTapping();
+        }
+
+        private void TappingSelectedTappingChange(object sender, RoutedEventArgs e)
+        {
+            var b = sender as ToggleButton;
+            if (b == null)
+            {
+                return;
+            }
+            if (b.IsChecked)
+            {
+                foreach (var item in tappingToggleButtons)
+                {
+                    if (item.Value == b)
+                    {
+                        SelectedTapping = item.Key;
+                    }
+                    else
+                    {
+                        item.Value.IsChecked = false;
+                    }
+                }
+            }
+            else
+            {
+                SelectedTapping = "";
+            }
+            DumpSelectedTapping();
+        }
+
+        // 低压1、低压2 选择
+        private void LowVoltageLevelSelectedChange(object sender, RoutedEventArgs e)
+        {
+            var b = sender as ToggleButton;
+            if (b == null)
+            {
+                return;
+            }
+            if (b == tbLowVoltageLevel1)
+            {
+                tbLowVoltageLevel2.IsChecked = false;
+                SelectedLowVoltageLevel = 1;
+            }
+            else if (b == tbLowVoltageLevel2)
+            {
+                tbLowVoltageLevel1.IsChecked = false;
+                SelectedLowVoltageLevel = 2;
+            }
+            else
+            {
+                SelectedLowVoltageLevel = 0;
+            }
+        }
+
+        private void DumpSelectedTapping()
+        {
+            string testing = "";
+            foreach (var item in TestTypeMap)
+            {
+                if (item.Value == SelectedTesting)
+                {
+                    testing = item.Key;
+                    break;
+                }
+            }
+            tbDebugMsg.Text = $"{testing} - {SelectedTapping} - {SelectedHighVoltageTapping} - {SelectedLowVoltageTapping}";
+        }
+        #endregion
+
+        #region 结果数据表格的激活状态切换
+        private void Trf_ActiveEvent(TappingResistanceFields obj, int index)
+        {
+            foreach (var item in tappingResistanceFields.Values)
+            {
+                if (item == obj)
+                {
+                    continue;
+                }
+                item.ResetSelection();
+            }
+            SelectedTapping = obj.TappingIndex;
+            DumpSelectedTapping();
+        }
+        #endregion
+
+        #region 温升冷电阻选相
+        private bool IsEnableTempRiseCoolSingleSelect = false;
+        private void tbTempCool_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (!IsEnableTempRiseCoolSingleSelect)
+            {
+                return;
+            }
+            foreach (var item in tempRiseCoolTbs)
+            {
+                if (sender == item.Value)
+                {
+                    SelectedTempRiseCoolItem = item.Key;
+                    item.Value.BorderThickness = new Thickness(2);
+                }
+                else
+                {
+                    item.Value.BorderThickness = new Thickness(0);
+                }
+            }
+        }
+
+        private void TempRiseCoolComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (cbTempRiseCoolCH1 == null || cbTempRiseCoolCH2 == null || cbTempRiseCoolLevel == null)
+            {
+                return;
+            }
+            var ch1 = (cbTempRiseCoolCH1.SelectedItem as ComboBoxItem).Content as string;
+            var ch2 = (cbTempRiseCoolCH2.SelectedItem as ComboBoxItem).Content as string;
+            var selectedLevel = (cbTempRiseCoolLevel.SelectedItem as ComboBoxItem).Content as string;
+            var thicknessSelected = new Thickness(2);
+            var thicknessNone = new Thickness(0);
+            tbTempCoolHV1.BorderThickness = ((ch1 == "高压" || ch2 == "高压") && selectedLevel == "第一次") ? thicknessSelected : thicknessNone;
+            tbTempCoolHV2.BorderThickness = ((ch1 == "高压" || ch2 == "高压") && selectedLevel == "第二次") ? thicknessSelected : thicknessNone;
+            tbTempCoolLV11.BorderThickness = ((ch1 == "低压1" || ch2 == "低压1") && selectedLevel == "第一次") ? thicknessSelected : thicknessNone;
+            tbTempCoolLV12.BorderThickness = ((ch1 == "低压2" || ch2 == "低压2") && selectedLevel == "第一次") ? thicknessSelected : thicknessNone;
+            tbTempCoolLV21.BorderThickness = ((ch1 == "低压1" || ch2 == "低压1") && selectedLevel == "第二次") ? thicknessSelected : thicknessNone;
+            tbTempCoolLV22.BorderThickness = ((ch1 == "低压2" || ch2 == "低压2") && selectedLevel == "第二次") ? thicknessSelected : thicknessNone;
+            if (ch1 == ch2 && ch1 != "空")
+            {
+                HandyControl.Controls.Growl.Error("通道一、通道二选择相同冲突");
+            }
+            TempRiseCoolSelectedCh1 = ch1;
+            TempRiseCoolSelectedCh2 = ch2;
+            TempRiseCoolSelectedLevel = selectedLevel;
+        }
+        #endregion
+
+        #region 数据上传
+        private void btUpdateCoolingResistance_Click(object sender, RoutedEventArgs e)
+        {
+            if (!Utils.CheckWorkflowBeforeUpload())
+            {
+                return;
+            }
+            CommonTempRiseCoolResistanceInfo.DeleteData(Configs.Configs.WorkflowID);
+            var value = new CommonTempRiseCoolResistanceInfo()
+            {
+                WorkflowID = Configs.Configs.WorkflowID,
+                Temperature = Utils.ParseFloatNull(tbTemperature2.Text),
+                HighVoltageResistance1 = Utils.ParseFloatNull(tbTempCoolHV1.Text),
+                HighVoltageResistance2 = Utils.ParseFloatNull(tbTempCoolHV2.Text),
+                LowVoltageResistance11 = Utils.ParseFloatNull(tbTempCoolLV11.Text),
+                LowVoltageResistance12 = Utils.ParseFloatNull(tbTempCoolLV12.Text),
+                LowVoltageResistance21 = Utils.ParseFloatNull(tbTempCoolLV21.Text),
+                LowVoltageResistance22 = Utils.ParseFloatNull(tbTempCoolLV22.Text),
+                HighVoltageCurrent = Utils.ParseFloat(cbHVCurrents.Text.Replace("A", "")),
+                LowVoltageCurrent1 = Utils.ParseFloat(cbLVCurrents.Text.Replace("A", "")),
+            };
+            bool ret = value.WriteToDB();
+            Utils.ShowUploadTips(ret);
+        }
+
+        // 温升电阻持续采集数据上传
+        private void btUpdateTempRiseRecords_Click(object sender, RoutedEventArgs e)
+        {
+            if (!Utils.CheckWorkflowBeforeUpload())
+            {
+                return;
+            }
+            CommonTempRiseTestInfo configItem;
+            int testIndex = Utils.ParseInt(cbTestCount.Text);
+            var items = CommonTempRiseTestInfo.ReadFromDB(Configs.Configs.WorkflowID, cbTestPhase.Text, cbTestStatus.Text, cbCoolingMode.Text, testIndex, 2);
+            if (items == null || items.Count == 0)
+            {
+                configItem = new CommonTempRiseTestInfo()
+                {
+                    TestingPhase = cbTestPhase.Text,
+                    TestingStatus = cbTestStatus.Text,
+                    WorkflowId = Configs.Configs.WorkflowID,
+                    TestingIndex = testIndex,
+                    CoolingMode = cbCoolingMode.Text,
+                    DateTime = DateTime.Now,
+                    TestingMode = 2,
+                };
+                if (!configItem.WriteToDB())
+                {
+                    MessageBox.Show("数据上传失败!", "上传结果", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+            }
+            else
+            {
+                configItem = items[0];
+            }
+
+            if (dataItems.Count == 0)
+            {
+                MessageBox.Show("暂无数据可以上传，请先采集数据!", "上传结果", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            // 删除之前的时间数据
+            CommonTempRiseTestResistanceInfo.DeleteData(configItem.ID);
+
+            // 将DataTable中的数据转成试验数据格式并且一条条上传
+            foreach (var item in dataItems)
+            {
+                item.ID = configItem.ID;
+            }
+            bool ret = CommonTempRiseTestResistanceInfo.BatchInsertData(dataItems);
+            if (ret)
+            {
+                MessageBox.Show($"数据上传成功，共{dataItems.Count}条数据!", "上传结果", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                return;
+            }
+            else
+            {
+                MessageBox.Show($"数据上传出错，请检查或者重新尝试!", "上传结果", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+        }
+
+        private void btUpdateResistanceRecords_Click(object sender, RoutedEventArgs e)
+        {
+            if (!Utils.CheckWorkflowBeforeUpload())
+            {
+                return;
+            }
+            DCResistanceInfo.DeleteData(Configs.Configs.WorkflowID);
+            List<DCResistanceInfo> list = new List<DCResistanceInfo>();
+            for (int i = 1; i <= 9; i++)
+            {
+                var tpr = tappingResistanceFields[i.ToString()];
+                var v = new DCResistanceInfo()
+                {
+                    ProductSequence = Configs.Configs.WorkflowID,
+                    Winding = "高压",
+                    Tapping = i.ToString(),
+                    AB = tpr.ValueAB,
+                    BC = tpr.ValueBC,
+                    CA = tpr.ValueCA,
+                };
+                if (i == 1)
+                {
+                    v.Temperature = Utils.ParseFloatNull(tbTemperature.Text);
+                    v.DateTime = DateTime.Now;
+                    v.MaxError = Utils.ParseFloatNull(tbHVMaxUnbalanceDiff.Text);
+                }
+                list.Add(v);
+            }
+
+            var tpr1 = tappingResistanceFields["10"];
+            var item = new DCResistanceInfo()
+            {
+                ProductSequence = Configs.Configs.WorkflowID,
+                Winding = "高压",
+                Tapping = "额定分接",
+                AB = tpr1.ValueAB,
+                BC = tpr1.ValueBC,
+                CA = tpr1.ValueCA,
+            };
+            list.Add(item);
+
+            tpr1 = tappingResistanceFields["11"];
+            item = new DCResistanceInfo()
+            {
+                ProductSequence = Configs.Configs.WorkflowID,
+                Winding = "低压一",
+                Tapping = "线电压",
+                AB = tpr1.ValueAB,
+                BC = tpr1.ValueBC,
+                CA = tpr1.ValueCA,
+            };
+            list.Add(item);
+
+            tpr1 = tappingResistanceFields["12"];
+            item = new DCResistanceInfo()
+            {
+                ProductSequence = Configs.Configs.WorkflowID,
+                Winding = "低压一",
+                Tapping = "相电压",
+                AB = tpr1.ValueAB,
+                BC = tpr1.ValueBC,
+                CA = tpr1.ValueCA,
+            };
+            list.Add(item);
+
+            tpr1 = tappingResistanceFields["21"];
+            item = new DCResistanceInfo()
+            {
+                ProductSequence = Configs.Configs.WorkflowID,
+                Winding = "低压二",
+                Tapping = "线电压",
+                AB = tpr1.ValueAB,
+                BC = tpr1.ValueBC,
+                CA = tpr1.ValueCA,
+            };
+            list.Add(item);
+
+            tpr1 = tappingResistanceFields["22"];
+            item = new DCResistanceInfo()
+            {
+                ProductSequence = Configs.Configs.WorkflowID,
+                Winding = "低压二",
+                Tapping = "相电压",
+                AB = tpr1.ValueAB,
+                BC = tpr1.ValueBC,
+                CA = tpr1.ValueCA,
+            };
+            list.Add(item);
+
+            var ret = DCResistanceInfo.BatchInsertData(list);
+            Utils.ShowUploadTips(ret);
+        }
+        #endregion
+
+    }
+
+}

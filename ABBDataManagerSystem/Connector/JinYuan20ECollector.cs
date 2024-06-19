@@ -1,8 +1,9 @@
 ﻿using System.Text;
+using static ABBDataManagerSystem.Connector.JinYuan20WCollector;
 
 namespace ABBDataManagerSystem.Connector
 {
-    internal class JinYuan20ECollectgor
+    internal class JinYuan20ECollector
     {
         public static readonly int Interval = 400; // 每400ms发送一次寻机指令，从机返回数据
 
@@ -248,7 +249,7 @@ namespace ABBDataManagerSystem.Connector
             }
         }
 
-        public JinYuan20ECollectgor(string portName, int baudRate = 9600)
+        public JinYuan20ECollector(string portName, int baudRate = 9600)
         {
             Collector = new ResistanceCurrentInfoCollector(portName, baudRate)
             {
@@ -257,6 +258,17 @@ namespace ABBDataManagerSystem.Connector
                 DeviceAddress = new byte[] { 0x32, 0x32 }
             };
         }
+
+        public bool Connect()
+        {
+            return Collector.Open();
+        }
+
+        public void Disconnect()
+        {
+            Collector.Close();
+        }
+
 
         //测试/复测命令
         public void SendTestCommand()
@@ -303,7 +315,23 @@ namespace ABBDataManagerSystem.Connector
             Collector.SendCommand(new byte[] { 0x47 });
         }
 
-        public object? ParseResponse(byte[] packet)
+
+        public CommonPacket? ReadPacket()
+        {
+            if (Collector == null)
+            {
+                return null;
+            }
+            SendRequestDataCommand();
+            byte[]? packet = Collector.ReadData();
+            if (packet == null)
+            {
+                return null;
+            }
+            return ParseResponse(packet);
+        }
+
+        public CommonPacket? ParseResponse(byte[] packet)
         {
             if (packet == null || packet.Length < 1)
                 return null;
@@ -318,6 +346,7 @@ namespace ABBDataManagerSystem.Connector
             {
                 return null;
             }
+            commonPacket.Status = GetStatusDescription(Status);
             if (Status != InstrumentStatus.TestComplete)
             {
                 return commonPacket;
@@ -332,16 +361,16 @@ namespace ABBDataManagerSystem.Connector
                         return null;
                     }
                     string strResistance = Encoding.ASCII.GetString(packet, 5, 7);
-                    commonPacket.CH1ResistanceMill = strResistance.IndexOf("m") >= 0;
+                    commonPacket.CH1ResistanceIsMill = strResistance.IndexOf("m") >= 0;
                     commonPacket.CH1Resistance = Utils.ParseFloatNull(strResistance.Replace("m", ""));
                 }
                 else if (commonPacket.pattern == PatternEnum.DoubleChannel)
                 {
                     string strResistance1 = Encoding.ASCII.GetString(packet, 5, 7);
                     string strResistance2 = Encoding.ASCII.GetString(packet, 5 + 7, 7);
-                    commonPacket.CH1ResistanceMill = strResistance1.IndexOf("m") >= 0;
+                    commonPacket.CH1ResistanceIsMill = strResistance1.IndexOf("m") >= 0;
                     commonPacket.CH1Resistance = Utils.ParseFloatNull(strResistance1.Replace("m", ""));
-                    commonPacket.CH2ResistanceMill = strResistance1.IndexOf("m") >= 0;
+                    commonPacket.CH2ResistanceIsMill = strResistance1.IndexOf("m") >= 0;
                     commonPacket.CH2Resistance = Utils.ParseFloatNull(strResistance1.Replace("m", ""));
                 }
 
@@ -390,9 +419,10 @@ namespace ABBDataManagerSystem.Connector
 
             public float? CH1Resistance = null;
             public float? CH2Resistance = null;
-            public bool CH1ResistanceMill = false;
-            public bool CH2ResistanceMill = false;
+            public bool CH1ResistanceIsMill = false;
+            public bool CH2ResistanceIsMill = false;
             public string? Time = null;
+            public string? Status;
         }
 
 

@@ -35,7 +35,7 @@ namespace ABBDataManagerSystem.Connector
             Current2A,
         }
 
-        public static readonly int Interval = 400; // 每400ms发送一次寻机指令，从机返回数据
+        public static readonly int Interval = 500; // 每400ms发送一次寻机指令，从机返回数据
 
         private readonly ResistanceCurrentInfoCollector Collector;
 

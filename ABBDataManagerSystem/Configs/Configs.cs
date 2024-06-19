@@ -66,6 +66,11 @@ namespace ABBDataManagerSystem.Configs
         public static string SerialBoundRate20W { set; get; } = string.Empty;
         #endregion
 
+        #region 20E设置
+        public static string SerialPort20E { set; get; } = string.Empty;
+        public static string SerialBoundRate20E { set; get; } = string.Empty;
+        #endregion
+
         #region JYT-A设置
         public static string SerialPortJYTA { set; get; } = string.Empty;
         public static string SerialBoundRateJYTA { set; get; } = string.Empty;
@@ -83,6 +88,7 @@ namespace ABBDataManagerSystem.Configs
         static string INIPowerAnalyzer = "PowerAnalyzer";
         static string INICommon = "Common";
         static string INIJinYuan20W = "JinYuan20W";
+        static string INIJinYuan20E = "JinYuan20E";
         static string INIJinYuanJYTA = "JinYuanJYTA";
 
         [DllImport("kernel32.dll", EntryPoint = "GetPrivateProfileString")]
@@ -174,6 +180,13 @@ namespace ABBDataManagerSystem.Configs
             SerialBoundRate20W = buff.ToString();
             #endregion
 
+            #region JinYuan20E
+            GetPrivateProfileString(INIJinYuan20E, "SerialPort", "", buff, 32, INIPATH);
+            SerialPort20E = buff.ToString();
+            GetPrivateProfileString(INIJinYuan20E, "BoundRate", "", buff, 32, INIPATH);
+            SerialBoundRate20E = buff.ToString();
+            #endregion
+
             #region JinYuanJYTA
             GetPrivateProfileString(INIJinYuanJYTA, "SerialPort", "", buff, 32, INIPATH);
             SerialPortJYTA = buff.ToString();
@@ -221,6 +234,11 @@ namespace ABBDataManagerSystem.Configs
             #region JinaYuan20W
             WritePrivateProfileString(INIJinYuan20W, "SerialPort", SerialPort20W, INIPATH);
             WritePrivateProfileString(INIJinYuan20W, "BoundRate", SerialBoundRate20W, INIPATH);
+            #endregion
+
+            #region JinaYuan20E
+            WritePrivateProfileString(INIJinYuan20E, "SerialPort", SerialPort20E, INIPATH);
+            WritePrivateProfileString(INIJinYuan20E, "BoundRate", SerialBoundRate20E, INIPATH);
             #endregion
 
             #region JinaYUanJYTA
