@@ -552,11 +552,11 @@ namespace ABBDataManagerSystem.Pages
             {
                 if (lastPacket.ch1Enabled)
                 {
-                    valueCh1 = lastPacket.ch1RealTimeResistance;
+                    valueCh1 = lastPacket.ch1RealTimeResistance * (lastPacket.ch1RealTimeResistanceIsMill ? 0.001f : 1f);
                 }
                 if (lastPacket.ch2Enabled)
                 {
-                    valueCh2 = lastPacket.ch2RealTimeResistance;
+                    valueCh2 = lastPacket.ch2RealTimeResistance * (lastPacket.ch2RealTimeResistanceIsMill ? 0.001f : 1f);
                 }
             }
             else if (IsSimulate)

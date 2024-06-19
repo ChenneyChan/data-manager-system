@@ -374,6 +374,19 @@ namespace ABBDataManagerSystem.Connector
                 strTempSetTimeInterval = strTempSetTimeInterval.Substring(0, 2) + ":" + strTempSetTimeInterval.Substring(2, 2);
             }
 
+            float ch1RealTimeCurrent = Utils.ParseFloat(strCh1Current.Replace("m", ""));
+            float ch2RealTimeCurrent = Utils.ParseFloat(strCh2Current.Replace("m", ""));
+            float ch1RealTimeResistance = Utils.ParseFloat(strCh1Resistance.Replace("m", ""));
+            float ch2RealTimeResistance = Utils.ParseFloat(strCh2Resistance.Replace("m", ""));
+            float ch1TimedResistance = Utils.ParseFloat(strCh1TimedResistant.Replace("m", ""));
+            float ch2TimedResistance = Utils.ParseFloat(strCh2TimedResistant.Replace("m", ""));
+            bool ch1RealTimeCurrentIsMill = strCh1Current.IndexOf("m") >= 0;
+            bool ch2RealTimeCurrentIsMill = strCh2Current.IndexOf("m") >= 0;
+            bool ch1RealTimeResistanceIsMill = strCh1Resistance.IndexOf("m") >= 0;
+            bool ch2RealTimeResistanceIsMill = strCh2Resistance.IndexOf("m") >= 0;
+            bool ch1TimedResistanceIsMill = strCh1TimedResistant.IndexOf("m") >= 0;
+            bool ch2TimedResistanceIsMill = strCh2TimedResistant.IndexOf("m") >= 0;
+
             return new JinYuan20WPacketInfo()
             {
                 ch1Enabled = ch1 == 0x31,
@@ -381,21 +394,21 @@ namespace ABBDataManagerSystem.Connector
                 ch1Status = ch1Status,
                 ch2Status = ch2Status,
                 type = GetTestTypeByByte(testMode),
-                ch1RealTimeCurrent = Utils.ParseFloat(strCh1Current.Replace("m", "")),
-                ch2RealTimeCurrent = Utils.ParseFloat(strCh2Current.Replace("m", "")),
-                ch1RealTimeResistance = Utils.ParseFloat(strCh1Resistance.Replace("m", "")),
-                ch2RealTimeResistance = Utils.ParseFloat(strCh2Resistance.Replace("m", "")),
+                ch1RealTimeCurrent = ch1RealTimeCurrent,
+                ch2RealTimeCurrent = ch2RealTimeCurrent,
+                ch1RealTimeResistance = ch1RealTimeResistance,
+                ch2RealTimeResistance = ch2RealTimeResistance,
                 ch1SelectedCurrent = ch1Current,
                 ch2SelectedCurrent = ch2Current,
-                ch1TimedResistance = Utils.ParseFloat(strCh1TimedResistant.Replace("m", "")),
-                ch2TimedResistance = Utils.ParseFloat(strCh2TimedResistant.Replace("m", "")),
+                ch1TimedResistance = ch1TimedResistance,
+                ch2TimedResistance = ch2TimedResistance,
                 tempRaiseTimeInterval = Utils.ParseFloat(strTempSetTimeInterval),
-                ch1RealTimeCurrentIsMill = strCh1Current.IndexOf("m") >= 0,
-                ch2RealTimeCurrentIsMill = strCh2Current.IndexOf("m") >= 0,
-                ch1RealTimeResistanceIsMill = strCh1Resistance.IndexOf("m") >= 0,
-                ch2RealTimeResistanceIsMill = strCh2Resistance.IndexOf("m") >= 0,
-                ch1TimedResistanceIsMill = strCh1TimedResistant.IndexOf("m") >= 0,
-                ch2TimedResistanceIsMill = strCh2TimedResistant.IndexOf("m") >= 0,
+                ch1RealTimeCurrentIsMill = ch1RealTimeCurrentIsMill,
+                ch2RealTimeCurrentIsMill = ch2RealTimeCurrentIsMill,
+                ch1RealTimeResistanceIsMill = ch1RealTimeResistanceIsMill,
+                ch2RealTimeResistanceIsMill = ch2RealTimeResistanceIsMill,
+                ch1TimedResistanceIsMill = ch1TimedResistanceIsMill,
+                ch2TimedResistanceIsMill = ch2TimedResistanceIsMill,
             };
         }
 
