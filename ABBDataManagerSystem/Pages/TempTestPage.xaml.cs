@@ -993,6 +993,7 @@ namespace ABBDataManagerSystem.Pages
                     EnvTempB = item.Field<float?>(Configs.Configs.EnvB) ?? 0,
                     EnvTempC = item.Field<float?>(Configs.Configs.EnvC) ?? 0,
                     EnvTempD = item.Field<float?>(Configs.Configs.EnvD) ?? 0,
+                    WorkflowID = Configs.Configs.WorkflowID
                 };
                 list.Add(record);
             }

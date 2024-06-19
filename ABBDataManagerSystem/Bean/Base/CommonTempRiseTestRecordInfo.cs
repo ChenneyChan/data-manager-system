@@ -27,6 +27,7 @@ namespace ABBDataManagerSystem.Bean.Base
         public float EnvTempB = 0;
         public float EnvTempC = 0;
         public float EnvTempD = 0;
+        public string WorkflowID = string.Empty;
 
         public static Dictionary<string, string> FieldComments = new Dictionary<string, string>
         {
@@ -151,9 +152,9 @@ namespace ABBDataManagerSystem.Bean.Base
                         command.Connection = connection;
                         command.Transaction = transaction;
                         command.CommandText = $"INSERT INTO {TABLE_NAME} (ID, Timestamp, ua, ub, uc, u3, ia, ib, ic, i3, p3, " +
-                    $"CoreTemperature, WindingATemperature, WindingBTemperature, WindingCTemperature, AmbientATemperature, AmbientBTemperature, AmbientCTemperature, AmbientDTemperature) VALUES " +
+                    $"CoreTemperature, WindingATemperature, WindingBTemperature, WindingCTemperature, AmbientATemperature, AmbientBTemperature, AmbientCTemperature, AmbientDTemperature, workflow_id) VALUES " +
                     "(@ID, @Timestamp, @ua, @ub, @uc, @u3, @ia, @ib, @ic, @i3, @p3, " +
-                    $"@CoreTemp, @WindingTempA, @WindingTempB, @WindingTempC, @EnvTempA, @EnvTempB, @EnvTempC, @EnvTempD)";
+                    $"@CoreTemp, @WindingTempA, @WindingTempB, @WindingTempC, @EnvTempA, @EnvTempB, @EnvTempC, @EnvTempD, @WorkflowID)";
 
                         command.Parameters.Add("@ID", MySqlDbType.Int64);
                         command.Parameters.Add("@Timestamp", MySqlDbType.DateTime);
@@ -174,6 +175,7 @@ namespace ABBDataManagerSystem.Bean.Base
                         command.Parameters.Add("@EnvTempB", MySqlDbType.Float);
                         command.Parameters.Add("@EnvTempC", MySqlDbType.Float);
                         command.Parameters.Add("@EnvTempD", MySqlDbType.Float);
+                        command.Parameters.Add("@WorkflowID", MySqlDbType.String);
 
                         try
                         {
@@ -198,6 +200,7 @@ namespace ABBDataManagerSystem.Bean.Base
                                 command.Parameters["@EnvTempB"].Value = row.EnvTempB;
                                 command.Parameters["@EnvTempC"].Value = row.EnvTempC;
                                 command.Parameters["@EnvTempD"].Value = row.EnvTempD;
+                                command.Parameters["@WorkflowID"].Value = row.WorkflowID;
                                 command.ExecuteNonQuery();
                             }
 
