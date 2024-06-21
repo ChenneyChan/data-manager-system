@@ -38,7 +38,7 @@ namespace ABBDataManagerSystem.Pages
     /// </summary>
     public partial class TempTestPage : UserControl, ICloseable
     {
-        private static bool Simulate = false;
+        private static bool Simulate = true;
         private bool IsFirstLoad = true;
 
         private bool UsingSerial = true;
@@ -1084,5 +1084,21 @@ namespace ABBDataManagerSystem.Pages
             });
         }
         #endregion
+
+        private void MenuItemEditor_Click(object sender, RoutedEventArgs e)
+        {
+            // 获取右键菜单所在的行
+            var selectedRow = (DataGridRow)dgTempRecord.ItemContainerGenerator.ContainerFromItem(dgTempRecord.SelectedItem);
+
+            // 获取该行对应的数据项
+            DataRowView rowView = (DataRowView)selectedRow.Item;
+            DataRow row = rowView.Row;
+
+            // 修改数据项
+            // 假设数据表名为 dataTable，可以通过 row 修改对应的数据
+            row["序号"] = 200; // 修改对应列的值
+
+            // 如果需要保存到数据库或者其他操作，这里进行保存或提交的逻辑
+        }
     }
 }
