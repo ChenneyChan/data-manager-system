@@ -540,10 +540,7 @@ namespace ABBDataManagerSystem
 
                             udpClient.Send(data, data.Length, endPoint);
                         }
-                        else
-                        {
-                            Thread.Sleep(100);
-                        }
+                        Thread.Sleep(2000);
                     }
                 }
             }).Start();
