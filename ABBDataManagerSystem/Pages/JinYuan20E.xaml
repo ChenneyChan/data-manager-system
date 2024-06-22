@@ -98,9 +98,7 @@
             </StackPanel>
             <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" VerticalAlignment="Top" Margin="10,0" >
                 <hc:ComboBox Width="140" Margin="5,0" Name="cb20ECurrents" hc:InfoElement.Title="电压" hc:InfoElement.TitlePlacement="left" SelectionChanged="cb20E_ComboBox_ConfigChanges"/>
-                <hc:ComboBox Width="160" Margin="5,0" Name="cb20EModes" hc:InfoElement.Title="测试类型" hc:InfoElement.TitlePlacement="left" SelectionChanged="cb20E_ComboBox_ConfigChanges"/>
                 <hc:ComboBox Width="160" Margin="5,0" Name="cb20EPatterns" hc:InfoElement.Title="模式" hc:InfoElement.TitlePlacement="left" SelectionChanged="cb20E_ComboBox_ConfigChanges"/>
-                <hc:ComboBox Width="160" Margin="5,0" Name="cb20EWindings" hc:InfoElement.Title="绕组" hc:InfoElement.TitlePlacement="left" SelectionChanged="cb20E_ComboBox_ConfigChanges"/>
             </StackPanel>
         </StackPanel>
 
@@ -111,14 +109,12 @@
                     <SolidColorBrush Color="{DynamicResource SecondaryTextColor}"/>
                 </ToggleButton.Background>
             </ToggleButton>
-            <StackPanel Orientation="Horizontal" Visibility="Collapsed">
-                <Views:ToggleButton IsEnabled="False" Width="100" GridMargin="0" Margin="5,0" CheckedChange="TestTypeSelectedTappingChange" ButtonContent="常规测试" IsChecked="True" x:Name="tbTestTypeCommon"/>
-                <Views:ToggleButton IsEnabled="False" Width="100" GridMargin="0" Margin="5,0" CheckedChange="TestTypeSelectedTappingChange" ButtonContent="温升10''" x:Name="tbTestTypeTempRise10s"/>
-                <Views:ToggleButton IsEnabled="False" Width="100" GridMargin="0" Margin="5,0" CheckedChange="TestTypeSelectedTappingChange" ButtonContent="温升30''" x:Name="tbTestTypeTempRise30s"/>
-                <Views:ToggleButton IsEnabled="False" Width="100" GridMargin="0" Margin="5,0" CheckedChange="TestTypeSelectedTappingChange" ButtonContent="温升60''" x:Name="tbTestTypeTempRise60s"/>
-                <Views:ToggleButton IsEnabled="False" Width="100" GridMargin="0" Margin="5,0" CheckedChange="TestTypeSelectedTappingChange" ButtonContent="温升冷电阻" x:Name="tbTestTypeTempRiseCool"/>
-                <Views:ToggleButton IsEnabled="False" Width="100" GridMargin="0" Margin="60, 0, 5,0" CheckedChange="LowVoltageLevelSelectedChange" ButtonContent="低压一" x:Name="tbLowVoltageLevel1"/>
-                <Views:ToggleButton IsEnabled="False" Width="100" GridMargin="0" Margin="5,0" CheckedChange="LowVoltageLevelSelectedChange" ButtonContent="低压二" x:Name="tbLowVoltageLevel2"/>
+            <StackPanel Orientation="Horizontal">
+                <Views:ToggleButton Width="100" GridMargin="0" Margin="5,0" CheckedChange="TestTypeSelectedTappingChange" ButtonContent="常规测试" IsChecked="True" x:Name="tbTestTypeCommon"/>
+                <Views:ToggleButton Width="100" GridMargin="0" Margin="5,0" CheckedChange="TestTypeSelectedTappingChange" ButtonContent="温升10''" x:Name="tbTestTypeTempRise10s"/>
+                <Views:ToggleButton Width="100" GridMargin="0" Margin="5,0" CheckedChange="TestTypeSelectedTappingChange" ButtonContent="温升30''" x:Name="tbTestTypeTempRise30s"/>
+                <Views:ToggleButton Width="100" GridMargin="0" Margin="5,0" CheckedChange="TestTypeSelectedTappingChange" ButtonContent="温升60''" x:Name="tbTestTypeTempRise60s"/>
+                <Views:ToggleButton Width="100" GridMargin="0" Margin="5,0" CheckedChange="TestTypeSelectedTappingChange" ButtonContent="温升冷电阻" x:Name="tbTestTypeTempRiseCool"/>
             </StackPanel>
         </StackPanel>
         <Grid Grid.Row="3" Margin="10">

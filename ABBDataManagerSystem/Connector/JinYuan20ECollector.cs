@@ -1,5 +1,6 @@
-﻿using System.Text;
-using static ABBDataManagerSystem.Connector.JinYuan20WCollector;
+﻿using NPOI.SS.Formula.Functions;
+using Org.BouncyCastle.Bcpg;
+using System.Text;
 
 namespace ABBDataManagerSystem.Connector
 {
@@ -9,92 +10,90 @@ namespace ABBDataManagerSystem.Connector
 
         private readonly ResistanceCurrentInfoCollector Collector;
 
-        private CurrentEnum _CurrentMode;
+        private TestCurrentType _CurrentMode;
 
-        public CurrentEnum CurrentMode
+        public TestCurrentType CurrentMode
         {
             get { return _CurrentMode; }
             set { _CurrentMode = value; }
         }
 
-        private ModeEnum _Mode;
+        private TestType20E _Mode;
 
-        public ModeEnum Mode
+        public TestType20E Mode
         {
             get { return _Mode; }
             set { _Mode = value; }
         }
 
-        private PatternEnum _Pattern;
+        private TestPattern _Pattern;
 
-        public PatternEnum PatternMode
+        public TestPattern PatternMode
         {
             get { return _Pattern; }
             set { _Pattern = value; }
         }
 
-        private WindingEnum _WindingMode;
+        private TestWindingType _WindingMode;
 
-        public WindingEnum WindingMode
+        public TestWindingType WindingMode
         {
             get { return _WindingMode; }
             set { _WindingMode = value; }
         }
 
-        public enum InstrumentStatus
+        public enum InstrumentStatus : byte
         {
-            Unknown = 0,
-            Reset = 0x41,
-            Charging = 0x42,
-            PreparingForDemagnetization = 0x43,
-            RangeHigh = 0x44,
-            RangeLow = 0x45,
-            Discharging = 0x46,
-            Testing = 0x47,
-            TestComplete = 0x48,
-            Demagnetizing = 0x49,
-            DemagnetizationComplete = 0x4A,
-            TimingSuccess = 0x4B,
-            PreparingForTiming = 0x4C
+            ParameterSetting = 0x01,        // 01H 参数设置状态
+            NormalTesting = 0x02,           // 02H 正常测试状态
+            Demagnetization = 0x03,         // 03H 去磁状态
+            DemagnetizationComplete = 0x14, // 14H 去磁完成状态
+            Discharging = 0x13,             // 13H 正在放电状态
+            MeasurementOutOfRange = 0x04,   // 04H 测量数据超范围
+            TemperatureRiseTiming = 0x05,   // 05H 温升定时状态
+            Charging = 0x06,                // 06H 正在充电状态
+            TemperatureConversionInput = 0x07, // 07H 温度换算输入状态
+            TimeModification = 0x08,        // 08H 时间修改状态
+            ViewHistoricalRecords = 0x09    // 09H 调阅历史记录状态
         }
 
-        public string GetStatusDescription(InstrumentStatus status)
+        public static string GetInstrumentStatusDescription(InstrumentStatus status)
         {
             switch (status)
             {
-                case InstrumentStatus.Reset:
-                    return "复位状态";
-                case InstrumentStatus.Charging:
-                    return "正在充电状态";
-                case InstrumentStatus.PreparingForDemagnetization:
-                    return "准备开始去磁状态";
-                case InstrumentStatus.RangeHigh:
-                    return "量程大状态";
-                case InstrumentStatus.RangeLow:
-                    return "量程小状态";
-                case InstrumentStatus.Discharging:
-                    return "正在放电状态";
-                case InstrumentStatus.Testing:
-                    return "正在测试状态";
-                case InstrumentStatus.TestComplete:
-                    return "测试完成循环测试状态";
-                case InstrumentStatus.Demagnetizing:
-                    return "正在去磁状态";
+                case InstrumentStatus.ParameterSetting:
+                    return "参数设置状态";
+                case InstrumentStatus.NormalTesting:
+                    return "正常测试状态";
+                case InstrumentStatus.Demagnetization:
+                    return "去磁状态";
                 case InstrumentStatus.DemagnetizationComplete:
                     return "去磁完成状态";
-                case InstrumentStatus.TimingSuccess:
-                    return "定时成功状态";
-                case InstrumentStatus.PreparingForTiming:
-                    return "准备定时状态";
+                case InstrumentStatus.Discharging:
+                    return "正在放电状态";
+                case InstrumentStatus.MeasurementOutOfRange:
+                    return "测量数据超范围";
+                case InstrumentStatus.TemperatureRiseTiming:
+                    return "温升定时状态";
+                case InstrumentStatus.Charging:
+                    return "正在充电状态";
+                case InstrumentStatus.TemperatureConversionInput:
+                    return "温度换算输入状态";
+                case InstrumentStatus.TimeModification:
+                    return "时间修改状态";
+                case InstrumentStatus.ViewHistoricalRecords:
+                    return "调阅历史记录状态";
                 default:
                     return "未知状态";
             }
         }
 
+
         // 电流枚举
-        public enum CurrentEnum : byte
+        public enum TestCurrentType : byte
         {
-            _15mA = 0x35,
+            _03A = 0x36,
+            _25mA = 0x35,
             _1A = 0x34,
             _3A = 0x33,
             _10A = 0x32,
@@ -102,32 +101,34 @@ namespace ABBDataManagerSystem.Connector
         }
 
         // 方式枚举
-        public enum ModeEnum : byte
+        public enum TestType20E : byte
         {
-            Normal = 0x31,
-            TemperatureRise = 0x30
+            Normal = 0x30,
+            TemperatureRise10Sec = 0x31,
+            TemperatureRise30Sec = 0x32,
+            TemperatureRise60Sec = 0x33
         }
 
         // 模式枚举
-        public enum PatternEnum : byte
+        public enum TestPattern : byte
         {
-            DoubleChannel = 0x31,
             SingleChannel = 0x30,
+            DoubleChannel = 0x31,
             YnD11 = 0x32,
             PhaseSelection = 0x33
         }
 
         // 绕组枚举
-        public enum WindingEnum : byte
+        public enum TestWindingType : byte
         {
             Rx = 0x30,
             Rx1_Rx2 = 0x31,
-            Rca_RAO = 0x32,
-            Rab_RBO = 0x33,
-            Rbc_RCO = 0x34,
-            Rca = 0x35,
-            Rab = 0x36,
-            Rbc = 0x37,
+            Rab_RBO = 0x32,
+            Rbc_RCO = 0x33,
+            Rca_RAO = 0x34,
+            Rab = 0x35,
+            Rbc = 0x36,
+            Rca = 0x37,
             RAO = 0x38,
             RBO = 0x39,
             RCO = 0x3A
@@ -138,7 +139,8 @@ namespace ABBDataManagerSystem.Connector
             // 电流枚举值与字符串的映射表
             public static readonly Dictionary<byte, string> currentMap = new Dictionary<byte, string>
             {
-                { 0x35, "15mA" },
+                { 0x36, "0.3A" },
+                { 0x35, "25mA" },
                 { 0x34, "1A" },
                 { 0x33, "3A" },
                 { 0x32, "10A" },
@@ -148,15 +150,17 @@ namespace ABBDataManagerSystem.Connector
             // 方式枚举值与字符串的映射表
             public static readonly Dictionary<byte, string> modeMap = new Dictionary<byte, string>
             {
-                { 0x31, "正常" },
-                { 0x30, "温升" }
+                { 0x30, "常规" },
+                { 0x31, "温升10s" },
+                { 0x32, "温升30s" },
+                { 0x33, "温升60s" }
             };
 
             // 模式枚举值与字符串的映射表
             public static readonly Dictionary<byte, string> patternMap = new Dictionary<byte, string>
             {
-                { 0x31, "双通道" },
                 { 0x30, "单通道" },
+                { 0x31, "双通道" },
                 { 0x32, "YnD11助磁" },
                 { 0x33, "选相" }
             };
@@ -166,37 +170,37 @@ namespace ABBDataManagerSystem.Connector
             {
                 { 0x30, "Rx" },
                 { 0x31, "Rx1-Rx2" },
-                { 0x32, "Rca-RAO" },
-                { 0x33, "Rab-RBO" },
-                { 0x34, "Rbc-RCO" },
-                { 0x35, "Rca" },
-                { 0x36, "Rab" },
-                { 0x37, "Rbc" },
+                { 0x32, "Rab-RBO" },
+                { 0x33, "Rbc-RCO" },
+                { 0x34, "Rca-RAO" },
+                { 0x35, "Rab" },
+                { 0x36, "Rbc" },
+                { 0x37, "Rca" },
                 { 0x38, "RAO" },
                 { 0x39, "RBO" },
                 { 0x3A, "RCO" }
             };
 
             // 获取电流枚举值对应的字符串
-            public static string GetCurrentString(CurrentEnum current)
+            public static string GetCurrentString(TestCurrentType current)
             {
                 return GetValueFromDictionary(currentMap, (byte)current);
             }
 
             // 获取方式枚举值对应的字符串
-            public static string GetModeString(ModeEnum mode)
+            public static string GetModeString(TestType20E mode)
             {
                 return GetValueFromDictionary(modeMap, (byte)mode);
             }
 
             // 获取模式枚举值对应的字符串
-            public static string GetPatternString(PatternEnum pattern)
+            public static string GetPatternString(TestPattern pattern)
             {
                 return GetValueFromDictionary(patternMap, (byte)pattern);
             }
 
             // 获取绕组枚举值对应的字符串
-            public static string GetWindingString(WindingEnum winding)
+            public static string GetWindingString(TestWindingType winding)
             {
                 return GetValueFromDictionary(windingMap, (byte)winding);
             }
@@ -212,27 +216,27 @@ namespace ABBDataManagerSystem.Connector
             }
 
             // 获取电流字符串对应的枚举值
-            public static CurrentEnum GetCurrentEnum(string currentStr)
+            public static TestCurrentType GetCurrentEnum(string currentStr)
             {
-                return GetEnumFromDictionary<CurrentEnum>(currentMap, currentStr);
+                return GetEnumFromDictionary<TestCurrentType>(currentMap, currentStr);
             }
 
             // 获取方式字符串对应的枚举值
-            public static ModeEnum GetModeEnum(string modeStr)
+            public static TestType20E GetModeEnum(string modeStr)
             {
-                return GetEnumFromDictionary<ModeEnum>(modeMap, modeStr);
+                return GetEnumFromDictionary<TestType20E>(modeMap, modeStr);
             }
 
             // 获取模式字符串对应的枚举值
-            public static PatternEnum GetPatternEnum(string patternStr)
+            public static TestPattern GetPatternEnum(string patternStr)
             {
-                return GetEnumFromDictionary<PatternEnum>(patternMap, patternStr);
+                return GetEnumFromDictionary<TestPattern>(patternMap, patternStr);
             }
 
             // 获取绕组字符串对应的枚举值
-            public static WindingEnum GetWindingEnum(string windingStr)
+            public static TestWindingType GetWindingEnum(string windingStr)
             {
-                return GetEnumFromDictionary<WindingEnum>(windingMap, windingStr);
+                return GetEnumFromDictionary<TestWindingType>(windingMap, windingStr);
             }
 
             // 从字典中获取枚举值
@@ -255,7 +259,8 @@ namespace ABBDataManagerSystem.Connector
             {
                 StartByte = 0x7E,
                 StopByte = 0x0D,
-                DeviceAddress = new byte[] { 0x32, 0x32 }
+                DeviceAddress = new byte[] { 0x51, 0x51 },
+                SendLenByteCount = 1,
             };
         }
 
@@ -270,49 +275,80 @@ namespace ABBDataManagerSystem.Connector
         }
 
 
-        //测试/复测命令
+        //测试命令，温升模式下为定时
         public void SendTestCommand()
         {
-            byte[] command = new byte[] { 0x41, (byte)CurrentMode, (byte)Mode, (byte)PatternMode, (byte)WindingMode };
+            byte[] command = new byte[] { 0x62, 0x20, 0x20, 0x20, 0x20 };
             Collector.SendCommand(command);
         }
 
         //参数设置命令
         public void SendParameterSetCommand()
         {
-            byte[] command = new byte[] { 0x42, (byte)CurrentMode, (byte)Mode, (byte)PatternMode, (byte)WindingMode };
+            byte[] command = new byte[] { 0x60, (byte)Mode, (byte)PatternMode, (byte)WindingMode, (byte)CurrentMode };
             Collector.SendCommand(command);
         }
 
-        //复位命令
+        //复位命令 测试过程中不可用
         public void SendResetCommand()
         {
-            Collector.SendCommand(new byte[] { 0x43 });
+            Collector.SendCommand(new byte[] { 0x6B, 0x20, 0x20, 0x20, 0x20 });
+        }
+
+        #region 常规测试界面下可用的命令
+        //保存命令
+        public void SendSaveCommandAtNormal()
+        {
+            Collector.SendCommand(new byte[] { 0x63, 0x20, 0x20, 0x20, 0x20 });
         }
 
         //打印命令
-        public void SendPrintCommand()
+        public void SendPrintCommandAtNormal()
         {
-            Collector.SendCommand(new byte[] { 0x44 });
+            Collector.SendCommand(new byte[] { 0x64, 0x20, 0x20, 0x20, 0x20 });
         }
 
-        //定时命令
-        public void SendTimingCommand(string time)
+        //退出命令
+        public void SendExitCommandAtNormal()
         {
-            byte[] command = new byte[] { 0x45 }; // todo
-            Collector.SendCommand(command);
+            Collector.SendCommand(new byte[] { 0x65, 0x20, 0x20, 0x20, 0x20 });
+        }
+        #endregion
+
+        #region 温升定时界面下可用的命令
+        //测试命令
+        public void SendTempRiseTestCommandAtTiming()
+        {
+            Collector.SendCommand(new byte[] { 0x67, 0x20, 0x20, 0x20, 0x20 });
         }
 
-        //去磁命令
-        public void SendDemagnetizeCommand()
+        //退出命令
+        public void SendTempRiseExitCommandAtTiming()
         {
-            Collector.SendCommand(new byte[] { 0x46 });
+            Collector.SendCommand(new byte[] { 0x66, 0x20, 0x20, 0x20, 0x20 });
         }
+        #endregion
+
+        #region 温升测试界面下可用的命令
+        //退出命令
+        public void SendTempRiseExitCommandAtTest()
+        {
+            Collector.SendCommand(new byte[] { 0x68, 0x20, 0x20, 0x20, 0x20 });
+        }
+        #endregion
+
+        #region 去磁测试界面下可用的命令
+        //退出命令
+        public void SendExitDemagnetizeCommand()
+        {
+            Collector.SendCommand(new byte[] { 0x69, 0x20, 0x20, 0x20, 0x20 });
+        }
+        #endregion
 
         //请求数据命令
         public void SendRequestDataCommand()
         {
-            Collector.SendCommand(new byte[] { 0x47 });
+            Collector.SendCommand(new byte[] { 0x70, 0x20, 0x20, 0x20, 0x20 });
         }
 
 
@@ -335,58 +371,81 @@ namespace ABBDataManagerSystem.Connector
         {
             if (packet == null || packet.Length < 1)
                 return null;
-
-            InstrumentStatus Status = (InstrumentStatus)packet[0];
-            if (Status == InstrumentStatus.Unknown)
+            if (packet[0] == 0x00 || packet[0] >= 0xA)
             {
                 return null;
             }
+            InstrumentStatus Status = (InstrumentStatus)packet[0];
             CommonPacket? commonPacket = ParseCommonPacket(packet);
             if (commonPacket == null)
             {
                 return null;
             }
-            commonPacket.Status = GetStatusDescription(Status);
-            if (Status != InstrumentStatus.TestComplete)
+            commonPacket.Status = GetInstrumentStatusDescription(Status);
+            if (Status != InstrumentStatus.NormalTesting && Status != InstrumentStatus.MeasurementOutOfRange)
             {
                 return commonPacket;
             }
-            // 每个电阻7字节
-            if (commonPacket.mode == ModeEnum.Normal || commonPacket.mode == ModeEnum.TemperatureRise)
+            int offset = 5;
+            if (commonPacket.mode == TestType20E.Normal)
             {
-                if (commonPacket.pattern == PatternEnum.SingleChannel)
+                if (packet.Length < 50)
                 {
-                    if (packet.Length < 5 + 7)
-                    {
-                        return null;
-                    }
-                    string strResistance = Encoding.ASCII.GetString(packet, 5, 7);
-                    commonPacket.CH1ResistanceIsMill = strResistance.IndexOf("m") >= 0;
-                    commonPacket.CH1Resistance = Utils.ParseFloatNull(strResistance.Replace("m", ""));
+                    return null;
                 }
-                else if (commonPacket.pattern == PatternEnum.DoubleChannel)
-                {
-                    string strResistance1 = Encoding.ASCII.GetString(packet, 5, 7);
-                    string strResistance2 = Encoding.ASCII.GetString(packet, 5 + 7, 7);
-                    commonPacket.CH1ResistanceIsMill = strResistance1.IndexOf("m") >= 0;
-                    commonPacket.CH1Resistance = Utils.ParseFloatNull(strResistance1.Replace("m", ""));
-                    commonPacket.CH2ResistanceIsMill = strResistance1.IndexOf("m") >= 0;
-                    commonPacket.CH2Resistance = Utils.ParseFloatNull(strResistance1.Replace("m", ""));
-                }
+                // 实时时间（4位）+实时电流（5位）+实时电阻1（7位）+实时电阻2（7位）
+                // +秒时间（4位）<可忽略>
+                // +第1电阻的温度转换值（7位）<可忽略>
+                // +第2电阻的转换值（7位）<可忽略>，
+                // 其中每组数据最后一位为单位，即k、m或者μ(电阻Ω，电流A为默认，不传送)。
+                string strRealTime = Encoding.ASCII.GetString(packet, offset, 4);
+                offset += 4;
+                string strRealTimeCurrent = Encoding.ASCII.GetString(packet, offset, 5);
+                offset += 5;
+                string strRealTimeResistance1 = Encoding.ASCII.GetString(packet, offset, 7);
+                offset += 7;
+                string strRealTimeResistance2 = Encoding.ASCII.GetString(packet, offset, 7);
+                offset += 7;
+                string strSecTime = Encoding.ASCII.GetString(packet, offset, 4);
+                offset += 4;
+                string strResistanceTemp1 = Encoding.ASCII.GetString(packet, offset, 7);
+                offset += 7;
+                string strResistanceTemp2 = Encoding.ASCII.GetString(packet, offset, 7);
 
-                if (commonPacket.mode == ModeEnum.TemperatureRise && (commonPacket.pattern == PatternEnum.SingleChannel || commonPacket.pattern == PatternEnum.DoubleChannel))
-                {
-                    int offset = commonPacket.pattern == PatternEnum.SingleChannel ? (5 + 7) : (5 + 7 + 7);
-                    if (packet.Length < offset + 6)
-                    {
-                        return null;
-                    }
-                    string strTime = Encoding.ASCII.GetString(packet, offset, 6).Trim();
-                    if (strTime.Length == 6)
-                    {
-                        commonPacket.Time = strTime.Substring(0, 2) + ":" + strTime.Substring(2, 2) + ":" + strTime.Substring(4);
-                    }
-                }
+                commonPacket.strRealTime = strRealTime;
+                commonPacket.strRealTimeCurrent = strRealTimeCurrent;
+                commonPacket.strRealTimeResistance1 = strRealTimeResistance1;
+                commonPacket.strRealTimeResistance2 = strRealTimeResistance2;
+                commonPacket.strSecTime = strSecTime;
+                commonPacket.strResistanceTemp1 = strResistanceTemp1;
+                commonPacket.strResistanceTemp2 = strResistanceTemp2;
+            }
+            else
+            {
+                // 实时时间（4位）+实时电流（5位）+实时电阻1（7位）+实时电阻2（7位）
+                // +秒时间（4位）+秒电阻1（7位）+秒电阻2（7位），
+                // 其中每组数据最后一位为单位，即k、m或者μ(电阻Ω，电流A为默认，不传送)。
+                string strRealTime = Encoding.ASCII.GetString(packet, offset, 4);
+                offset += 4;
+                string strRealTimeCurrent = Encoding.ASCII.GetString(packet, offset, 5);
+                offset += 5;
+                string strRealTimeResistance1 = Encoding.ASCII.GetString(packet, offset, 7);
+                offset += 7;
+                string strRealTimeResistance2 = Encoding.ASCII.GetString(packet, offset, 7);
+                offset += 7;
+                string strSecTime = Encoding.ASCII.GetString(packet, offset, 4);
+                offset += 4;
+                string strSecResistance1 = Encoding.ASCII.GetString(packet, offset, 7);
+                offset += 7;
+                string strSecResistance2 = Encoding.ASCII.GetString(packet, offset, 7);
+
+                commonPacket.strRealTime = strRealTime;
+                commonPacket.strRealTimeCurrent = strRealTimeCurrent;
+                commonPacket.strRealTimeResistance1 = strRealTimeResistance1;
+                commonPacket.strRealTimeResistance2 = strRealTimeResistance2;
+                commonPacket.strSecTime = strSecTime;
+                commonPacket.strSecResistance1 = strSecResistance1;
+                commonPacket.strSecResistance2 = strSecResistance2;
             }
 
             return commonPacket;
@@ -394,12 +453,12 @@ namespace ABBDataManagerSystem.Connector
 
         private CommonPacket? ParseCommonPacket(byte[] packet)
         {
-            // 7E 32 32 30 35 41 （电流）（方式）（模式）（绕组）(XOR) 0D
+            // 仪器状态+模式+方式+绕组+电流（量程）
             if (packet.Length < 5) return null;
-            CurrentEnum current = (CurrentEnum)packet[1];
-            ModeEnum mode = (ModeEnum)packet[2];
-            PatternEnum pattern = (PatternEnum)packet[3];
-            WindingEnum winding = (WindingEnum)packet[4];
+            TestPattern pattern = (TestPattern)packet[1];
+            TestType20E mode = (TestType20E)packet[2];
+            TestWindingType winding = (TestWindingType)packet[3];
+            TestCurrentType current = (TestCurrentType)packet[4];
 
             return new CommonPacket()
             {
@@ -412,19 +471,42 @@ namespace ABBDataManagerSystem.Connector
 
         public class CommonPacket
         {
-            public CurrentEnum current;
-            public ModeEnum mode;
-            public PatternEnum pattern;
-            public WindingEnum winding;
+            public TestCurrentType current;
+            public TestType20E mode;
+            public TestPattern pattern;
+            public TestWindingType winding;
+            public string? Status = string.Empty;
 
-            public float? CH1Resistance = null;
-            public float? CH2Resistance = null;
-            public bool CH1ResistanceIsMill = false;
-            public bool CH2ResistanceIsMill = false;
-            public string? Time = null;
-            public string? Status;
+            public string? strRealTime = string.Empty;
+            public string? strRealTimeCurrent = string.Empty;
+            public string? strRealTimeResistance1 = string.Empty;
+            public string? strRealTimeResistance2 = string.Empty;
+            public string? strSecTime = string.Empty;
+            public string? strSecResistance1 = string.Empty;
+            public string? strSecResistance2 = string.Empty;
+            public string? strResistanceTemp1 = string.Empty;
+            public string? strResistanceTemp2 = string.Empty;
+
+            public override string ToString()
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine($"current: {current}");
+                sb.AppendLine($"mode: {mode}");
+                sb.AppendLine($"pattern: {pattern}");
+                sb.AppendLine($"winding: {winding}");
+                sb.AppendLine($"Status: {Status}");
+                sb.AppendLine($"strRealTime: {strRealTime}");
+                sb.AppendLine($"strRealTimeCurrent: {strRealTimeCurrent}");
+                sb.AppendLine($"strRealTimeResistance1: {strRealTimeResistance1}");
+                sb.AppendLine($"strRealTimeResistance2: {strRealTimeResistance2}");
+                sb.AppendLine($"strSecTime: {strSecTime}");
+                sb.AppendLine($"strSecResistance1: {strSecResistance1}");
+                sb.AppendLine($"strSecResistance2: {strSecResistance2}");
+                sb.AppendLine($"strResistanceTemp1: {strResistanceTemp1}");
+                sb.AppendLine($"strResistanceTemp2: {strResistanceTemp2}");
+
+                return sb.ToString();
+            }
         }
-
-
     }
 }

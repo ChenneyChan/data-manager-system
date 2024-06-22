@@ -1,12 +1,11 @@
 ﻿using ABBDataManagerSystem.Bean.Base;
 using ABBDataManagerSystem.Connector;
 using ABBDataManagerSystem.Pages.Views;
-using System.Collections.ObjectModel;
 using System.IO.Ports;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
-using static ABBDataManagerSystem.Connector.JinYuan20WCollector;
+using static ABBDataManagerSystem.Connector.JinYuan20ECollector;
 
 namespace ABBDataManagerSystem.Pages
 {
@@ -20,7 +19,6 @@ namespace ABBDataManagerSystem.Pages
         private bool IsFirstLoaded = true;
         private JinYuan20ECollector? Collector = null;
         private List<CommonTempRiseTestResistanceInfo> dataItems = new List<CommonTempRiseTestResistanceInfo>();
-        private ObservableCollection<MyItem> items2;
         private bool IsConneted = false;
         private bool IsCollecting = false;
         private ManualResetEvent? ResetEvent = null;
@@ -30,13 +28,13 @@ namespace ABBDataManagerSystem.Pages
         private Dictionary<string, ToggleButton> highVoltageToggleButtons = new Dictionary<string, ToggleButton>();
         private Dictionary<string, ToggleButton> lowVoltageToggleButtons = new Dictionary<string, ToggleButton>();
         private Dictionary<string, ToggleButton> tappingToggleButtons = new Dictionary<string, ToggleButton>();
-        private Dictionary<TestType20W, ToggleButton> testTypeToggleButtons = new Dictionary<TestType20W, ToggleButton>();
+        private Dictionary<TestType20E, ToggleButton> testTypeToggleButtons = new Dictionary<TestType20E, ToggleButton>();
         private Dictionary<string, TextBox> tempRiseCoolTbs = new Dictionary<string, TextBox>();
 
         private string SelectedHighVoltageTapping = "";
         private string SelectedLowVoltageTapping = "";
         private string SelectedTapping = "";
-        private TestType20W? SelectedTesting = TestType20W.CommonTest;
+        private TestType20E? SelectedTesting = TestType20E.Normal;
         private bool IsTempRiseCool = false;
         private int TempRiseRecordInterval = 10;
         private int TempRiseCountDown = 0;
@@ -73,26 +71,13 @@ namespace ABBDataManagerSystem.Pages
             }
             cb20ECurrents.SelectedIndex = 0;
 
-            var modes = JinYuan20ECollector.EnumHelper.modeMap.Values;
-            foreach (var mode in modes)
-            {
-                cb20EModes.Items.Add(mode);
-            }
-            cb20EModes.SelectedIndex = 0;
-
             var patterns = JinYuan20ECollector.EnumHelper.patternMap.Values;
-            foreach (var pattern in patterns)
+            //foreach (var pattern in patterns)
             {
-                cb20EPatterns.Items.Add(pattern);
+                cb20EPatterns.Items.Add("单通道");
+                cb20EPatterns.Items.Add("双通道");
             }
             cb20EPatterns.SelectedIndex = 0;
-
-            var windings = JinYuan20ECollector.EnumHelper.windingMap.Values;
-            foreach (var winding in windings)
-            {
-                cb20EWindings.Items.Add(winding);
-            }
-            cb20EWindings.SelectedIndex = 0;
         }
 
         private void InitToggleButtons()
@@ -122,10 +107,10 @@ namespace ABBDataManagerSystem.Pages
             tappingToggleButtons.Add("9", tbTapping9);
             tappingToggleButtons.Add("21", tbTapping21);
 
-            testTypeToggleButtons.Add(TestType20W.CommonTest, tbTestTypeCommon);
-            testTypeToggleButtons.Add(TestType20W.TemperatureRise10Sec, tbTestTypeTempRise10s);
-            testTypeToggleButtons.Add(TestType20W.TemperatureRise30Sec, tbTestTypeTempRise30s);
-            testTypeToggleButtons.Add(TestType20W.TemperatureRise60Sec, tbTestTypeTempRise60s);
+            testTypeToggleButtons.Add(TestType20E.Normal, tbTestTypeCommon);
+            testTypeToggleButtons.Add(TestType20E.TemperatureRise10Sec, tbTestTypeTempRise10s);
+            testTypeToggleButtons.Add(TestType20E.TemperatureRise30Sec, tbTestTypeTempRise30s);
+            testTypeToggleButtons.Add(TestType20E.TemperatureRise60Sec, tbTestTypeTempRise60s);
             //testTypeToggleButtons.Add(TestType20W.TemperatureRise10Sec, tbTestTypeTempRiseCool);
         }
 
@@ -176,7 +161,7 @@ namespace ABBDataManagerSystem.Pages
                 SecondElapsed = 0;
             }
             UpdateClockDisplay();
-            if (SelectedTesting != TestType20W.CommonTest && IsTempRiseTesting)
+            if (SelectedTesting != TestType20E.Normal && IsTempRiseTesting)
             {
                 TempRiseTestRecord();
             }
@@ -241,13 +226,11 @@ namespace ABBDataManagerSystem.Pages
             {
                 IsConneted = true;
                 Configs.Configs.SerialPort20E = cbSerialPort.Text;
-                Collector = new JinYuan20ECollector(cbSerialPort.SelectedItem.ToString(), Utils.ParseInt(cbBoundRate.Text))
-                {
-                    CurrentMode = JinYuan20ECollector.EnumHelper.GetCurrentEnum(cb20ECurrents.SelectedItem.ToString()),
-                    Mode = JinYuan20ECollector.EnumHelper.GetModeEnum(cb20EModes.SelectedItem.ToString()),
-                    PatternMode = JinYuan20ECollector.EnumHelper.GetPatternEnum(cb20EPatterns.SelectedItem.ToString()),
-                    WindingMode = JinYuan20ECollector.EnumHelper.GetWindingEnum(cb20EWindings.SelectedItem.ToString()),
-                };
+                Collector = new JinYuan20ECollector(cbSerialPort.SelectedItem.ToString(), Utils.ParseInt(cbBoundRate.Text));
+                Collector.CurrentMode = JinYuan20ECollector.EnumHelper.GetCurrentEnum(cb20ECurrents.SelectedItem.ToString());
+                Collector.Mode = SelectedTesting ?? TestType20E.Normal;
+                Collector.PatternMode = JinYuan20ECollector.EnumHelper.GetPatternEnum(cb20EPatterns.SelectedItem.ToString());
+                Collector.WindingMode = Collector.PatternMode == TestPattern.SingleChannel ? TestWindingType.Rx : TestWindingType.Rx1_Rx2;
                 Collector.SendParameterSetCommand();
                 new Thread(() =>
                 {
@@ -420,12 +403,24 @@ namespace ABBDataManagerSystem.Pages
 
         private void cb20E_ComboBox_ConfigChanges(object sender, RoutedEventArgs e)
         {
+            if (cb20EPatterns.SelectedItem == null || cb20ECurrents.SelectedItem == null)
+            {
+                return;
+            }
+            if (cb20EPatterns.SelectedItem.ToString() != "单通道" || SelectedTesting != TestType20E.Normal)
+            {
+                if (cb20ECurrents.SelectedItem.ToString() == "25mA")
+                {
+                    MessageBox.Show("只有常规单通道测试模式下，才可以使用25mA电压！", "错误", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+            }
             if (Collector != null)
             {
                 Collector.CurrentMode = JinYuan20ECollector.EnumHelper.GetCurrentEnum(cb20ECurrents.SelectedItem.ToString());
-                Collector.Mode = JinYuan20ECollector.EnumHelper.GetModeEnum(cb20EModes.SelectedItem.ToString());
+                Collector.Mode = SelectedTesting ?? TestType20E.Normal;
                 Collector.PatternMode = JinYuan20ECollector.EnumHelper.GetPatternEnum(cb20EPatterns.SelectedItem.ToString());
-                Collector.WindingMode = JinYuan20ECollector.EnumHelper.GetWindingEnum(cb20EWindings.SelectedItem.ToString());
+                Collector.WindingMode = Collector.PatternMode == TestPattern.SingleChannel ? TestWindingType.Rx : TestWindingType.Rx1_Rx2;
                 Collector.SendParameterSetCommand();
             }
         }
@@ -461,7 +456,6 @@ namespace ABBDataManagerSystem.Pages
             UpdateClockDisplay();
             TimerSecond.Start();
 
-            //Collector?.SetParameters();
             Collector?.SendTestCommand();
             IsCommonTesting = true;
 
@@ -473,7 +467,7 @@ namespace ABBDataManagerSystem.Pages
         #region 常规测试结束，填写数据
         private void btQuitTest_Click(object sender, RoutedEventArgs e)
         {
-            Collector?.SendResetCommand();
+            Collector?.SendExitCommandAtNormal();
             panelConfig.IsEnabled = true;
             panelTestChoice.IsEnabled = true;
             TimerSecond.Stop();
@@ -648,8 +642,7 @@ namespace ABBDataManagerSystem.Pages
             UpdateClockDisplay();
             TimerSecond.Start();
 
-            //Collector?.SetParameters();
-            //Collector?.SetTemperatureRaiseTimerCommand();
+            Collector?.SendTestCommand();
 
             UpdatePanelTestConfigDisplay();
             btStartTiming.IsEnabled = false;
@@ -662,13 +655,13 @@ namespace ABBDataManagerSystem.Pages
         {
             switch (SelectedTesting)
             {
-                case TestType20W.TemperatureRise10Sec:
+                case TestType20E.TemperatureRise10Sec:
                     TempRiseRecordInterval = 10;
                     break;
-                case TestType20W.TemperatureRise30Sec:
+                case TestType20E.TemperatureRise30Sec:
                     TempRiseRecordInterval = 30;
                     break;
-                case TestType20W.TemperatureRise60Sec:
+                case TestType20E.TemperatureRise60Sec:
                     TempRiseRecordInterval = 60;
                     break;
                 default:
@@ -683,7 +676,7 @@ namespace ABBDataManagerSystem.Pages
         {
             btTempRiseTest.IsEnabled = false;
             UpdateTempRiseRecordInterval();
-            //Collector?.SetTemperatureRaiseTest();
+            Collector?.SendTempRiseTestCommandAtTiming();
             IsTempRiseTesting = true;
 
             cbTestPhase.IsEnabled = false;
@@ -698,7 +691,7 @@ namespace ABBDataManagerSystem.Pages
         #region 退出温升测试
         private void btQuitTestTempRise_Click(object sender, RoutedEventArgs e)
         {
-            //Collector?.SetRestCommand();
+            Collector?.SendTempRiseExitCommandAtTest();
             panelConfig.IsEnabled = true;
             panelTestChoice.IsEnabled = true;
             TimerSecond.Stop();
@@ -741,7 +734,7 @@ namespace ABBDataManagerSystem.Pages
         #region 页面实时刷新
         private void UpdatePanelTestConfigDisplay()
         {
-            string testType = SelectedTesting == TestType20W.CommonTest ? "常规" : "温升";
+            string testType = SelectedTesting == TestType20E.Normal ? "常规" : "温升";
             if (cbCH1.IsChecked == true)
             {
                 tbCH1TestConfig.Text = testType + "-高压CH1-" + cbHVCurrents.Text;
@@ -762,38 +755,19 @@ namespace ABBDataManagerSystem.Pages
 
         private void UpdateRealTimePanelDisplay(JinYuan20ECollector.CommonPacket packet)
         {
-            tbCH1Resistance.Text = Utils.FloatFormat(packet.CH1Resistance ?? 0, 2) + (packet.CH1ResistanceIsMill ? " mΩ" : "Ω");
-            tbCH2Resistance.Text = Utils.FloatFormat(packet.CH2Resistance ?? 0, 2) + (packet.CH2ResistanceIsMill ? " mΩ" : "Ω");
+            Log.Info("UpdateRealTimePanelDisplay: " + packet.ToString());
+            tbCH1Resistance.Text = packet.strRealTimeResistance1;
+            tbCH2Resistance.Text = packet.strRealTimeResistance2;
             tbCH1State.Text = "【" + packet.Status + "】";
             tbCH2State.Text = "【" + packet.Status + "】";
             lastPacket = packet;
-        }
-
-        private void UpdateDisplayByPacket(JinYuan20WCollector.JinYuan20WPacketInfo packet)
-        {
-            tbCH1Enabled.Text = packet.ch1Enabled ? "是" : "否";
-            tbCH2Enabled.Text = packet.ch2Enabled ? "是" : "否";
-
-            tbCH1Status.Text = JinYuan20WCollector.CHStatusMap[packet.ch1Status];
-            tbCH2Status.Text = JinYuan20WCollector.CHStatusMap[packet.ch2Status];
-
-            tbCH1RealTimeCurrent.Text = Utils.FloatFormat(packet.ch1RealTimeCurrent);
-            tbCH2RealTimeCurrent.Text = Utils.FloatFormat(packet.ch2RealTimeCurrent);
-
-            tbCH1RealTimeResistance.Text = Utils.FloatFormat(packet.ch1RealTimeResistance);
-            tbCH2RealTimeResistance.Text = Utils.FloatFormat(packet.ch2RealTimeResistance);
-
-            tbCH1TimedResistance.Text = Utils.FloatFormat(packet.ch1TimedResistance);
-            tbCH2TimedResistance.Text = Utils.FloatFormat(packet.ch2TimedResistance);
-
-            tbDebugMsg.Text = "Debug Packet: " + packet.ToString();
         }
         #endregion
 
         #region 测试仪打印数据
         private void btPrint_Click(object sender, RoutedEventArgs e)
         {
-            Collector?.SendPrintCommand();
+            Collector?.SendPrintCommandAtNormal();
         }
         #endregion
 
@@ -821,7 +795,7 @@ namespace ABBDataManagerSystem.Pages
                 }
                 if (b == tbTestTypeTempRiseCool)
                 {
-                    SelectedTesting = TestType20W.CommonTest;
+                    SelectedTesting = TestType20E.Normal;
                     IsTempRiseCool = true;
                 }
                 else
@@ -832,6 +806,11 @@ namespace ABBDataManagerSystem.Pages
             else
             {
                 SelectedTesting = null;
+            }
+            if (SelectedTesting != null && Collector != null)
+            {
+                Collector.Mode = SelectedTesting ?? TestType20E.Normal;
+                Collector.SendParameterSetCommand();
             }
             DumpSelectedTapping();
 
@@ -845,7 +824,7 @@ namespace ABBDataManagerSystem.Pages
                 btTempRiseTest.Visibility = Visibility.Collapsed;
                 btQuitTestTempRise.Visibility = Visibility.Collapsed;
             }
-            else if (SelectedTesting == TestType20W.CommonTest)
+            else if (SelectedTesting == TestType20E.Normal)
             {
                 btCommonTest.Visibility = Visibility.Visible;
                 btQuitTest.Visibility = Visibility.Visible;
@@ -983,16 +962,17 @@ namespace ABBDataManagerSystem.Pages
             {
                 return;
             }
-            if (b == tbLowVoltageLevel1)
-            {
-                tbLowVoltageLevel2.IsChecked = false;
-                SelectedLowVoltageLevel = 1;
-            }
-            else if (b == tbLowVoltageLevel2)
-            {
-                tbLowVoltageLevel1.IsChecked = false;
-                SelectedLowVoltageLevel = 2;
-            }
+            // todo
+            //if (b == tbLowVoltageLevel1)
+            //{
+            //    tbLowVoltageLevel2.IsChecked = false;
+            //    SelectedLowVoltageLevel = 1;
+            //}
+            //else if (b == tbLowVoltageLevel2)
+            //{
+            //    tbLowVoltageLevel1.IsChecked = false;
+            //    SelectedLowVoltageLevel = 2;
+            //}
             else
             {
                 SelectedLowVoltageLevel = 0;
@@ -1002,14 +982,14 @@ namespace ABBDataManagerSystem.Pages
         private void DumpSelectedTapping()
         {
             string testing = "";
-            foreach (var item in TestTypeMap)
-            {
-                if (item.Value == SelectedTesting)
-                {
-                    testing = item.Key;
-                    break;
-                }
-            }
+            //foreach (var item in TestTypeMap)
+            //{
+            //    if (item.Value == SelectedTesting)
+            //    {
+            //        testing = item.Key;
+            //        break;
+            //    }
+            //}
             tbDebugMsg.Text = $"{testing} - {SelectedTapping} - {SelectedHighVoltageTapping} - {SelectedLowVoltageTapping}";
         }
         #endregion

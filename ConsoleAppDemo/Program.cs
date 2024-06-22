@@ -3,12 +3,10 @@ using System.Net.Sockets;
 using System.Net;
 using System.Text;
 using System.Collections;
-using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
-using System.IO;
 using Newtonsoft.Json.Linq;
-using Org.BouncyCastle.Bcpg;
+using System.IO.Ports;
 
 class Program
 {
@@ -310,7 +308,7 @@ class Program
         }
     }
 
-    static void Main()
+    static void MainA()
     {
         PacketParse20W();
         //PacketByteParse();
@@ -459,3 +457,52 @@ class ProgramB
         }
     }
 }
+
+#region 打印串口读取到的数据
+class ProgramC
+{
+    static void Main()
+    {
+        string portName = "COM7"; // 串口名称，根据实际情况修改
+        int baudRate = 9600; // 波特率，根据实际情况修改
+
+        SerialPort serialPort = new SerialPort(portName, baudRate);
+        serialPort.DataReceived += SerialPort_DataReceived;
+
+        try
+        {
+            serialPort.Open();
+            Console.WriteLine($"串口 {portName} 已打开，等待接收数据...");
+
+            Console.ReadLine(); // 等待用户输入任意键退出
+
+            serialPort.Close();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"发生异常：{ex.Message}");
+        }
+    }
+
+    private static void SerialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
+    {
+        SerialPort serialPort = (SerialPort)sender;
+        int bytesToRead = serialPort.BytesToRead;
+        byte[] buffer = new byte[bytesToRead];
+
+        serialPort.Read(buffer, 0, bytesToRead);
+
+        DateTime timestamp = DateTime.Now;
+        string formattedTimestamp = timestamp.ToString("yyyy-MM-dd HH:mm:ss.fff");
+
+        StringBuilder hexBuilder = new StringBuilder(buffer.Length * 3);
+        foreach (byte b in buffer)
+        {
+            hexBuilder.Append(Convert.ToString(b, 16).PadLeft(2, '0').ToUpper() + " ");
+        }
+        string hexString = hexBuilder.ToString().Trim();
+
+        Console.WriteLine($"[{formattedTimestamp}] 接收到数据：{hexString}");
+    }
+}
+#endregion
