@@ -244,17 +244,17 @@ namespace ABBDataManagerSystem
             throw new NotImplementedException();
         }
 
-        public static string DumpBuffer(byte[]buffer, int offset, int len)
+        public static string DumpBuffer(byte[] buffer, int offset, int len)
         {
             string s = "";
-            for (int i = 0; i < len && i<buffer.Length; i++)
+            for (int i = 0; i < len && i < buffer.Length; i++)
             {
                 s += buffer[i].ToString("x2") + " ";
             }
             return s;
         }
 
-        public static void ByteCopy(byte[] src, byte[]dst, byte placeholder = 0x20)
+        public static void ByteCopy(byte[] src, byte[] dst, byte placeholder = 0x20)
         {
             if (src.Length > dst.Length)
             {
@@ -267,7 +267,7 @@ namespace ABBDataManagerSystem
             }
         }
 
-        public static void FloatToBytes(float value, byte[]buf, byte placeholder = 0x20)
+        public static void FloatToBytes(float value, byte[] buf, byte placeholder = 0x20)
         {
             string str = FloatFormat(value);
             var bytes = Encoding.UTF8.GetBytes(str);
@@ -354,6 +354,26 @@ namespace ABBDataManagerSystem
             {
                 return null;
             }
+        }
+
+        public static float? GetFloat(string str)
+        {
+            // 定义匹配浮点数值的正则表达式
+            string pattern = @"[-+]?\d*\.?\d+";
+
+            // 使用 Regex 类进行匹配
+            MatchCollection matches = Regex.Matches(str, pattern);
+
+            // 遍历匹配结果
+            foreach (Match match in matches)
+            {
+                // 将匹配的字符串转换为 float 类型
+                if (float.TryParse(match.Value, out float result))
+                {
+                    return result;
+                }
+            }
+            return null;
         }
     }
 }

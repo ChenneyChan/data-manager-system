@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using ABBDataManagerSystem.Bean.Base;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace ABBDataManagerSystem.Configs
@@ -11,6 +12,7 @@ namespace ABBDataManagerSystem.Configs
 
         public static TestingType TestingType { set; get; } = TestingType.DryTypeTransformerTesting;
 
+        public static WorkflowInfo? WorkflowInfo { set; get; } = null;
         public static string WorkflowID = "";
         public static string ProductUserName = "";
         public static string ProductFigureNo = "";

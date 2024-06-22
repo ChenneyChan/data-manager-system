@@ -5,11 +5,14 @@ using ABBDataManagerSystem.PowerAnalyzer;
 using ABBDataManagerSystem.Tools;
 using DevZest.Windows.Docking;
 using System.IO.Ports;
+using System.Net.Sockets;
+using System.Net;
 using System.Windows;
 using System.Windows.Controls;
 using EventManager = ABBDataManagerSystem.Tools.EventManager;
 using TabItem = HandyControl.Controls.TabItem;
 using Window = System.Windows.Window;
+using System.Text;
 
 namespace ABBDataManagerSystem
 {
@@ -27,11 +30,19 @@ namespace ABBDataManagerSystem
             EventManager.Instance.Subscribe("WorkflowSelected", EventHandler);
             tbCurrentWorkflow.Text = "当前工作令：" + Configs.Configs.WorkflowID;
             Loaded += MainWindow_Loaded;
+            Closed += MainWindow_Closed;
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             dockBottom.Close();
+            Task.Run(() => { UpdateWorkflow(); });
+            StartBroadCastWorkflowInfo();
+        }
+
+        private void MainWindow_Closed(object? sender, EventArgs e)
+        {
+            IsBroadCasting = false;
         }
 
         private void MenuItemSetting_Click(object sender, RoutedEventArgs e)
@@ -438,12 +449,105 @@ namespace ABBDataManagerSystem
             new WorkflowInfoView().ShowDialog();
         }
 
-        private void EventHandler(object sender, TestEventArgs e) 
+        private void EventHandler(object sender, TestEventArgs e)
         {
             Dispatcher.Invoke(() =>
             {
                 tbCurrentWorkflow.Text = "当前工作令：" + Configs.Configs.WorkflowID;
+                Task.Run(() => { UpdateWorkflow(); });
             });
         }
+
+        private void UpdateWorkflow()
+        {
+            var infos = WorkflowInfo.ReadFromDB(Configs.Configs.WorkflowID);
+            if (infos != null && infos.Count > 0)
+            {
+                Configs.Configs.WorkflowInfo = infos[0];
+            }
+            else
+            {
+                Configs.Configs.WorkflowInfo = null;
+            }
+        }
+
+        #region 数据广播
+        private bool IsBroadCasting = false;
+        private void StartBroadCastWorkflowInfo()
+        {
+            IsBroadCasting = true;
+            new Thread(() =>
+            {
+                Log.Info("Start BroadCast Workflow");
+                // 创建UdpClient实例  
+                using (UdpClient udpClient = new UdpClient())
+                {
+                    // 设置广播模式（如果需要）  
+                    // 注意：在某些系统上，可能需要管理员权限来启用广播  
+                    udpClient.EnableBroadcast = true;
+
+                    // 构造目标EndPoint（广播地址和端口）  
+                    IPEndPoint endPoint = new IPEndPoint(IPAddress.Loopback, 8844);
+
+                    // 发送数据  
+                    while (IsBroadCasting)
+                    {
+                        var workflow = Configs.Configs.WorkflowInfo;
+                        if (workflow != null)
+                        {
+                            int workflowLen = 16;
+                            int tappingLen = 16;
+                            // xxxx
+                            float?[] floatsToSend = new float?[] {
+                                (float)workflow.RatedPower,
+                                workflow.RatedVoltageHv,
+                                workflow.RatedVoltageLv, workflow.RatedVoltageYv,
+                                workflow.RatedCurrentHv, workflow.Frequency, Utils.GetFloat(workflow.ImpedanceS)
+                            };
+
+                            string msg = "";
+                            // 将float数组转换为byte数组  
+                            byte[] data = new byte[floatsToSend.Length * 4 + workflowLen + tappingLen];
+                            for (int i = 0; i < floatsToSend.Length; i++)
+                            {
+                                msg += floatsToSend[i].ToString() + "\t";
+                                byte[] bs = Utils.FloatToBigEndianBytes(floatsToSend[i] ?? 0);
+                                Buffer.BlockCopy(bs, 0, data, i * 4, 4);
+                            }
+                            var Id = workflow.ID;
+                            if (Id.Length > workflowLen)
+                            {
+                                Id = Id.Substring(0, workflowLen);
+                            }
+                            else
+                            {
+                                Id = Id.PadLeft(workflowLen, ' ');
+                            }
+
+                            var tapping = workflow.CONNSymbol;
+                            if (tapping.Length > tappingLen)
+                            {
+                                tapping = tapping.Substring(0, tappingLen);
+                            }
+                            else
+                            {
+                                tapping = tapping.PadLeft(tappingLen, ' ');
+                            }
+                            byte[] workflowIdStr = Encoding.ASCII.GetBytes(Id);
+                            byte[] tappingStr = Encoding.ASCII.GetBytes(tapping);
+                            Buffer.BlockCopy(workflowIdStr, 0, data, floatsToSend.Length * 4, Math.Min(workflowIdStr.Length, workflowLen));
+                            Buffer.BlockCopy(tappingStr, 0, data, floatsToSend.Length * 4 + workflowLen, Math.Min(tappingStr.Length, tappingLen));
+
+                            udpClient.Send(data, data.Length, endPoint);
+                        }
+                        else
+                        {
+                            Thread.Sleep(100);
+                        }
+                    }
+                }
+            }).Start();
+        }
+        #endregion
     }
 }

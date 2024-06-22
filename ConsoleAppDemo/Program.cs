@@ -266,7 +266,7 @@ class Program
 
     static void UdpListen()
     {
-        int port = 8899;
+        int port = 8844;
         UdpClient udpClient = new UdpClient(port);
 
         try
@@ -289,13 +289,18 @@ class Program
 
                 byte[] buf = new byte[4];
                 // 如果需要，可以持续监听，只需将上面的接收代码放在一个循环中  
-                for (int i = 0; i < receivedBytes.Length / 4; i++)
+                for (int i = 0; i < (receivedBytes.Length - 16 * 2) / 4; i++)
                 {
                     Array.Copy(receivedBytes, i * 4, buf, 0, 4);
                     // 将大端字节序的byte数组转换回float  
                     float convertedValue = BigEndianBytesToFloat(buf);
                     Console.Write(convertedValue.ToString() + "\t");
                 }
+                buf = new byte[16];
+                Array.Copy(receivedBytes, receivedBytes.Length - 16 * 2, buf, 0, 16);
+                Console.WriteLine("WorkflowId = " + Encoding.ASCII.GetString(buf));
+                Array.Copy(receivedBytes, receivedBytes.Length - 16, buf, 0, 16);
+                Console.WriteLine("Tapping = " + Encoding.ASCII.GetString(buf));
                 Console.WriteLine();
             }
 
@@ -308,7 +313,7 @@ class Program
         }
     }
 
-    static void MainA()
+    static void Main()
     {
         PacketParse20W();
         //PacketByteParse();
@@ -336,6 +341,7 @@ class Program
 
         new Thread(() => { UdpListen(); }).Start();
 
+        return;
         // 创建UdpClient实例  
         using (UdpClient udpClient = new UdpClient())
         {
@@ -461,7 +467,7 @@ class ProgramB
 #region 打印串口读取到的数据
 class ProgramC
 {
-    static void Main()
+    static void MainC()
     {
         string portName = "COM7"; // 串口名称，根据实际情况修改
         int baudRate = 9600; // 波特率，根据实际情况修改
