@@ -87,16 +87,7 @@
                 <RadioButton Content="低压通道" FontSize="18" IsChecked="False"/>
             </hc:ButtonGroup>
 
-            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" VerticalAlignment="Top" Margin="10,0" Name="panelConfig" Visibility="Collapsed">
-                <CheckBox Content="高压侧" VerticalAlignment="Center" Name="cbCH1" Checked="cbCH1_CheckedChange" Unchecked="cbCH1_CheckedChange"/>
-                <Viewbox Width="10"/>
-                <hc:ComboBox Width="100" Name="cbHVCurrents" SelectionChanged="cbHVCurrents_SelectionChanged"/>
-                <Viewbox Width="10"/>
-                <CheckBox Content="低压侧" VerticalAlignment="Center" Name="cbCH2" Checked="cbCH2_CheckedChange" Unchecked="cbCH2_CheckedChange"/>
-                <Viewbox Width="10"/>
-                <hc:ComboBox Width="100" Name="cbLVCurrents" SelectionChanged="cbLVCurrents_SelectionChanged"/>
-            </StackPanel>
-            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" VerticalAlignment="Top" Margin="10,0" >
+            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" VerticalAlignment="Top" Margin="10,0" Name="panelConfig">
                 <hc:ComboBox Width="140" Margin="5,0" Name="cb20ECurrents" hc:InfoElement.Title="电压" hc:InfoElement.TitlePlacement="left" SelectionChanged="cb20E_ComboBox_ConfigChanges"/>
                 <hc:ComboBox Width="160" Margin="5,0" Name="cb20EPatterns" hc:InfoElement.Title="模式" hc:InfoElement.TitlePlacement="left" SelectionChanged="cb20E_ComboBox_ConfigChanges"/>
             </StackPanel>
@@ -569,7 +560,7 @@
                 <Border Grid.Row="1" Grid.Column="1" BorderThickness="1" Margin="0, 5, 0 ,0"/>
                 <Border Grid.Row="2" Grid.ColumnSpan="2" BorderThickness="1" Margin="0, 5"/>
                 <Border Grid.Row="3" Grid.ColumnSpan="2" BorderThickness="1" Margin="0, 5"/>
-                <ScrollViewer Grid.Row="4" VerticalScrollBarVisibility="Auto">
+                <ScrollViewer Grid.Row="4" VerticalScrollBarVisibility="Auto" Height="200">
                     <TextBox Name="tbDebug" MinHeight="60" TextWrapping="Wrap"/>
                 </ScrollViewer>
             </Grid>

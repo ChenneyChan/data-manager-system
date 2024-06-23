@@ -10,7 +10,7 @@ using static ABBDataManagerSystem.Connector.JinYuan20ECollector;
 namespace ABBDataManagerSystem.Pages
 {
     /// <summary>
-    /// JinYuan20W.xaml 的交互逻辑
+    /// JinYuan20E.xaml 的交互逻辑
     /// </summary>
     public partial class JinYuan20E : UserControl, ICloseable
     {
@@ -111,7 +111,6 @@ namespace ABBDataManagerSystem.Pages
             testTypeToggleButtons.Add(TestType20E.TemperatureRise10Sec, tbTestTypeTempRise10s);
             testTypeToggleButtons.Add(TestType20E.TemperatureRise30Sec, tbTestTypeTempRise30s);
             testTypeToggleButtons.Add(TestType20E.TemperatureRise60Sec, tbTestTypeTempRise60s);
-            //testTypeToggleButtons.Add(TestType20W.TemperatureRise10Sec, tbTestTypeTempRiseCool);
         }
 
         private void InitTappings()
@@ -199,18 +198,6 @@ namespace ABBDataManagerSystem.Pages
             }
             cbSerialPort.SelectedIndex = selectedIndex;
 
-            foreach (var item in JinYuan20WCollector.CH1CurrentsMap.Keys)
-            {
-                cbHVCurrents.Items.Add(item);
-            }
-            cbHVCurrents.SelectedIndex = 0;
-
-            foreach (var item in JinYuan20WCollector.CH2CurrentsMap.Keys)
-            {
-                cbLVCurrents.Items.Add(item);
-            }
-            cbLVCurrents.SelectedIndex = 0;
-
             UpdateControlEnableState();
         }
 
@@ -267,12 +254,6 @@ namespace ABBDataManagerSystem.Pages
         {
             cbBoundRate.IsEnabled = !IsConneted;
             cbSerialPort.IsEnabled = !IsConneted;
-
-            //btStart.IsEnabled = IsConneted && !IsCollecting;
-            //btStop.IsEnabled = IsConneted && IsCollecting;
-
-            cbHVCurrents.IsEnabled = cbCH1.IsChecked == true;
-            cbLVCurrents.IsEnabled = cbCH2.IsChecked == true;
         }
 
         private void UserControl_Unloaded(object sender, RoutedEventArgs e)
@@ -332,7 +313,7 @@ namespace ABBDataManagerSystem.Pages
             ResetEvent = new ManualResetEvent(false);
             IsCollecting = true;
             Dispatcher.Invoke(new Action(() => { UpdateControlEnableState(); }));
-            Log.Info("Start 20W Collect...");
+            Log.Info("Start 20E/40E Collect...");
 
             // 创建一个新线程并执行任务  
             new Thread(() =>
@@ -340,7 +321,7 @@ namespace ABBDataManagerSystem.Pages
                 while (IsCollecting)
                 {
                     CollectDataOnce();
-                    if (ResetEvent.WaitOne(JinYuan20WCollector.Interval))
+                    if (ResetEvent.WaitOne(JinYuan20ECollector.Interval))
                     {
                         // 线程没有超时被唤醒，说明要停止循环了
                     }
@@ -367,40 +348,6 @@ namespace ABBDataManagerSystem.Pages
         #endregion
 
         #region 修改配置，下发给Collector
-        private void cbCH1_CheckedChange(object sender, RoutedEventArgs e)
-        {
-            //cbHVCurrents.IsEnabled = cbCH1.IsChecked == true;
-            //if (Collector != null)
-            //{
-            //    Collector.CH1Enabled = cbCH1.IsChecked == true;
-            //}
-        }
-
-        private void cbCH2_CheckedChange(object sender, RoutedEventArgs e)
-        {
-            //cbLVCurrents.IsEnabled = cbCH2.IsChecked == true;
-            //if (Collector != null)
-            //{
-            //    Collector.CH2Enabled = cbCH2.IsChecked == true;
-            //}
-        }
-
-        private void cbHVCurrents_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            //if (Collector != null)
-            //{
-            //    Collector.CH1CurrentConfig = JinYuan20WCollector.GetCH1CurrentConfig(cbHVCurrents.SelectedItem.ToString());
-            //}
-        }
-
-        private void cbLVCurrents_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            //if (Collector != null)
-            //{
-            //    Collector.CH2CurrentConfig = JinYuan20WCollector.GetCH2CurrentConfig(cbLVCurrents.SelectedItem.ToString());
-            //}
-        }
-
         private void cb20E_ComboBox_ConfigChanges(object sender, RoutedEventArgs e)
         {
             if (cb20EPatterns.SelectedItem == null || cb20ECurrents.SelectedItem == null)
@@ -722,22 +669,22 @@ namespace ABBDataManagerSystem.Pages
         private void UpdatePanelTestConfigDisplay()
         {
             string testType = SelectedTesting == TestType20E.Normal ? "常规" : "温升";
-            if (cbCH1.IsChecked == true)
-            {
-                tbCH1TestConfig.Text = testType + "-高压CH1-" + cbHVCurrents.Text;
-            }
-            else
-            {
-                tbCH1TestConfig.Text = "";
-            }
-            if (cbCH2.IsChecked == true)
-            {
-                tbCH2TestConfig.Text = testType + "-低压CH2-" + cbLVCurrents.Text;
-            }
-            else
-            {
-                tbCH2TestConfig.Text = "";
-            }
+            //if (cbCH1.IsChecked == true)
+            //{
+            //    tbCH1TestConfig.Text = testType + "-高压CH1-" + cbHVCurrents.Text;
+            //}
+            //else
+            //{
+            //    tbCH1TestConfig.Text = "";
+            //}
+            //if (cbCH2.IsChecked == true)
+            //{
+            //    tbCH2TestConfig.Text = testType + "-低压CH2-" + cbLVCurrents.Text;
+            //}
+            //else
+            //{
+            //    tbCH2TestConfig.Text = "";
+            //}
         }
 
         private void UpdateRealTimePanelDisplay(JinYuan20ECollector.CommonPacket packet)
@@ -1051,6 +998,8 @@ namespace ABBDataManagerSystem.Pages
             {
                 return;
             }
+            bool isMill = cb20ECurrents.Text.IndexOf("m") >= 0;
+            float current = Utils.GetFloat(cb20ECurrents.Text) ?? 0 * (isMill ? 0.001f : 1f);
             CommonTempRiseCoolResistanceInfo.DeleteData(Configs.Configs.WorkflowID);
             var value = new CommonTempRiseCoolResistanceInfo()
             {
@@ -1062,8 +1011,8 @@ namespace ABBDataManagerSystem.Pages
                 LowVoltageResistance12 = Utils.ParseFloatNull(tbTempCoolLV12.Text),
                 LowVoltageResistance21 = Utils.ParseFloatNull(tbTempCoolLV21.Text),
                 LowVoltageResistance22 = Utils.ParseFloatNull(tbTempCoolLV22.Text),
-                HighVoltageCurrent = Utils.ParseFloat(cbHVCurrents.Text.Replace("A", "")),
-                LowVoltageCurrent1 = Utils.ParseFloat(cbLVCurrents.Text.Replace("A", "")),
+                HighVoltageCurrent = current,
+                LowVoltageCurrent1 = current,
             };
             bool ret = value.WriteToDB();
             Utils.ShowUploadTips(ret);
