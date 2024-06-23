@@ -52,6 +52,8 @@ namespace ABBDataManagerSystem.Configs
         public static int TPUsingSerialPort { set; get; } = 0;
         public static string TPSlots { set; get; } = string.Empty;
         public static string TPInterval { set; get; } = string.Empty;
+        
+        public static bool TPIsSimulate { set; get; } = false;
 
         public static string WindingA {  set; get; } = string.Empty;
         public static string WindingB {  set; get; } = string.Empty;
@@ -71,6 +73,7 @@ namespace ABBDataManagerSystem.Configs
         #region 20E设置
         public static string SerialPort20E { set; get; } = string.Empty;
         public static string SerialBoundRate20E { set; get; } = string.Empty;
+        public static string Current20E { set; get; } = string.Empty;
         #endregion
 
         #region JYT-A设置
@@ -161,6 +164,8 @@ namespace ABBDataManagerSystem.Configs
             EnvC = buff.ToString();
             GetPrivateProfileString(INITemperature, "EnvD", "", buff, 32, INIPATH);
             EnvD = buff.ToString();
+            GetPrivateProfileString(INITemperature, "IsSimulate", "", buff, 32, INIPATH);
+            TPIsSimulate = buff.ToString().Trim().ToLower() == "true";
             #endregion
 
             #region 功率分析仪
@@ -194,6 +199,8 @@ namespace ABBDataManagerSystem.Configs
             SerialPortJYTA = buff.ToString();
             GetPrivateProfileString(INIJinYuanJYTA, "BoundRate", "", buff, 32, INIPATH);
             SerialBoundRateJYTA = buff.ToString();
+            GetPrivateProfileString(INIJinYuanJYTA, "Current", "", buff, 32, INIPATH);
+            Current20E = buff.ToString();
             #endregion
         }
 
@@ -241,9 +248,10 @@ namespace ABBDataManagerSystem.Configs
             #region JinaYuan20E
             WritePrivateProfileString(INIJinYuan20E, "SerialPort", SerialPort20E, INIPATH);
             WritePrivateProfileString(INIJinYuan20E, "BoundRate", SerialBoundRate20E, INIPATH);
+            WritePrivateProfileString(INIJinYuan20E, "Current", Current20E, INIPATH);
             #endregion
 
-            #region JinaYUanJYTA
+            #region JinaYuanJYTA
             WritePrivateProfileString(INIJinYuanJYTA, "SerialPort", SerialPortJYTA, INIPATH);
             WritePrivateProfileString(INIJinYuanJYTA, "BoundRate", SerialBoundRateJYTA, INIPATH);
             #endregion
