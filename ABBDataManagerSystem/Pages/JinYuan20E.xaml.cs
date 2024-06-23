@@ -1,6 +1,7 @@
 ﻿using ABBDataManagerSystem.Bean.Base;
 using ABBDataManagerSystem.Connector;
 using ABBDataManagerSystem.Pages.Views;
+using NLog.LayoutRenderers;
 using System.IO.Ports;
 using System.Windows;
 using System.Windows.Controls;
@@ -36,8 +37,6 @@ namespace ABBDataManagerSystem.Pages
         private string SelectedTapping = "";
         private TestType20E? SelectedTesting = TestType20E.Normal;
         private bool IsTempRiseCool = false;
-        private int TempRiseRecordInterval = 10;
-        private int TempRiseCountDown = 0;
         private int CurrentIndex = 0;
 
         private DispatcherTimer TimerSecond;
@@ -160,10 +159,6 @@ namespace ABBDataManagerSystem.Pages
                 SecondElapsed = 0;
             }
             UpdateClockDisplay();
-            if (SelectedTesting != TestType20E.Normal && IsTempRiseTesting)
-            {
-                TempRiseTestRecord();
-            }
         }
 
         private void UpdateClockDisplay()
@@ -199,12 +194,6 @@ namespace ABBDataManagerSystem.Pages
             cbSerialPort.SelectedIndex = selectedIndex;
 
             UpdateControlEnableState();
-        }
-
-        public class MyItem
-        {
-            public string Name { get; set; }
-            public string Description { get; set; }
         }
 
         private void swConnect_CheckedChange(object sender, RoutedEventArgs e)
@@ -381,11 +370,6 @@ namespace ABBDataManagerSystem.Pages
                 MessageBox.Show("请先连接设备！");
                 return false;
             }
-            //if (cbCH1.IsChecked != true && cbCH2.IsChecked != true)
-            //{
-            //    MessageBox.Show("必须选择一个通道才可以开始测试！");
-            //    return false;
-            //}
             return true;
         }
 
@@ -585,31 +569,9 @@ namespace ABBDataManagerSystem.Pages
         #endregion
 
         #region 开始温升测试
-        private void UpdateTempRiseRecordInterval()
-        {
-            switch (SelectedTesting)
-            {
-                case TestType20E.TemperatureRise10Sec:
-                    TempRiseRecordInterval = 10;
-                    break;
-                case TestType20E.TemperatureRise30Sec:
-                    TempRiseRecordInterval = 30;
-                    break;
-                case TestType20E.TemperatureRise60Sec:
-                    TempRiseRecordInterval = 60;
-                    break;
-                default:
-                    TempRiseRecordInterval = 10;
-                    break;
-            }
-            TempRiseCountDown = TempRiseRecordInterval;
-            CurrentIndex = 0;
-        }
-
         private void btTempRiseTest_Click(object sender, RoutedEventArgs e)
         {
             btTempRiseTest.IsEnabled = false;
-            UpdateTempRiseRecordInterval();
             Collector?.SendTempRiseTestCommandAtTiming();
             IsTempRiseTesting = true;
 
@@ -643,25 +605,26 @@ namespace ABBDataManagerSystem.Pages
         #region 处理温升定时数据
         private void TempRiseTestRecord()
         {
-            TempRiseCountDown -= 1;
-            if (TempRiseCountDown != 0)
+            if (lastPacket == null)
             {
                 return;
             }
-            TempRiseCountDown = TempRiseRecordInterval;
+            float current = Utils.GetValueWithMill(lastPacket.strRealTimeCurrent, false) ?? 0;
+            float resistance1 = Utils.GetValueWithMill(lastPacket.strSecResistance1, false) ?? 0;
+            float resistance2 = Utils.GetValueWithMill(lastPacket.strSecResistance2, false) ?? 0;
+            string time = (lastPacket.strSecTime != null && lastPacket.strSecTime.Length == 4) ? lastPacket.strSecTime.Substring(0, 2) + ":" + lastPacket.strSecTime.Substring(2, 2) : "";
 
             // 定时记录数据
             dataItems.Add(new CommonTempRiseTestResistanceInfo()
             {
                 SortIndex = CurrentIndex,
-                //CurrentHV = lastPacket != null ? lastPacket.ch1RealTimeCurrent : 0,
-                //ResistanceHV = lastPacket != null ? lastPacket.ch1RealTimeResistance : 0,
-                //CurrentLV = lastPacket != null ? lastPacket.ch2RealTimeCurrent : 0,
-                //ResistanceLV = lastPacket != null ? lastPacket.ch2RealTimeResistance : 0,
-                CurrentTime = TestingTimer.Text
+                CurrentHV = current,
+                ResistanceHV = resistance1,
+                CurrentLV = cb20EPatterns.Text == "双通道" ? current : 0,
+                ResistanceLV = cb20EPatterns.Text == "双通道" ? resistance2 : 0,
+                CurrentTime = time
             });
             lvUsers.Items.Refresh();
-            CurrentIndex += 1;
         }
         #endregion
 
@@ -696,7 +659,17 @@ namespace ABBDataManagerSystem.Pages
             tbCH2State.Text = "【" + packet.Status + "】";
             tbCH1Current.Text = packet.strRealTimeCurrent + "A";
             tbCH2Current.Text = packet.strRealTimeCurrent + "A";
+            bool needRecordTempRise = false;
+            if (SelectedTesting != TestType20E.Normal && lastPacket != null && packet.strSecTime != lastPacket.strSecTime)
+            {
+                // 记录一次温升数据
+                needRecordTempRise = true;
+            }
             lastPacket = packet;
+            if (needRecordTempRise)
+            {
+                TempRiseTestRecord();
+            }
             DumpPacekt();
         }
         #endregion
