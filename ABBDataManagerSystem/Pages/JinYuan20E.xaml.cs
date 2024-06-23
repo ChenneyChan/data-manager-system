@@ -77,6 +77,9 @@ namespace ABBDataManagerSystem.Pages
                 cb20EPatterns.Items.Add("双通道");
             }
             cb20EPatterns.SelectedIndex = 0;
+
+            // 数据绑定
+            this.DataContext = new { Items = dataItems };
         }
 
         private void InitToggleButtons()
@@ -660,10 +663,12 @@ namespace ABBDataManagerSystem.Pages
             tbCH1Current.Text = packet.strRealTimeCurrent + "A";
             tbCH2Current.Text = packet.strRealTimeCurrent + "A";
             bool needRecordTempRise = false;
-            if (SelectedTesting != TestType20E.Normal && lastPacket != null && packet.strSecTime != lastPacket.strSecTime)
+
+            if (SelectedTesting != TestType20E.Normal && lastPacket != null)
             {
                 // 记录一次温升数据
-                needRecordTempRise = true;
+                needRecordTempRise = packet.strSecTime != lastPacket.strSecTime && packet.strSecTime != "0000";
+                Log.Info($"lastTime = {lastPacket.strSecTime} currentTime = {packet.strSecTime} needRecord = {needRecordTempRise}");
             }
             lastPacket = packet;
             if (needRecordTempRise)
