@@ -617,6 +617,7 @@ namespace ABBDataManagerSystem.Pages
             float resistance2 = Utils.GetValueWithMill(lastPacket.strSecResistance2, false) ?? 0;
             string time = (lastPacket.strSecTime != null && lastPacket.strSecTime.Length == 4) ? lastPacket.strSecTime.Substring(0, 2) + ":" + lastPacket.strSecTime.Substring(2, 2) : "";
 
+            CurrentIndex += 1;
             // 定时记录数据
             dataItems.Add(new CommonTempRiseTestResistanceInfo()
             {
@@ -664,7 +665,7 @@ namespace ABBDataManagerSystem.Pages
             tbCH2Current.Text = packet.strRealTimeCurrent + "A";
             bool needRecordTempRise = false;
 
-            if (SelectedTesting != TestType20E.Normal && lastPacket != null)
+            if (SelectedTesting != TestType20E.Normal && lastPacket != null && packet.strSecTime.Length > 0)
             {
                 // 记录一次温升数据
                 needRecordTempRise = packet.strSecTime != lastPacket.strSecTime && packet.strSecTime != "0000";
