@@ -1,7 +1,6 @@
 ﻿using ABBDataManagerSystem.Bean.Base;
 using ABBDataManagerSystem.Connector;
 using ABBDataManagerSystem.Pages.Views;
-using System.Collections.ObjectModel;
 using System.IO.Ports;
 using System.Windows;
 using System.Windows.Controls;
@@ -20,7 +19,6 @@ namespace ABBDataManagerSystem.Pages
         private bool IsFirstLoaded = true;
         private JinYuan20WCollector? Collector = null;
         private List<CommonTempRiseTestResistanceInfo> dataItems = new List<CommonTempRiseTestResistanceInfo>();
-        private ObservableCollection<MyItem> items2;
         private bool IsConneted = false;
         private bool IsCollecting = false;
         private ManualResetEvent? ResetEvent = null;
@@ -38,8 +36,6 @@ namespace ABBDataManagerSystem.Pages
         private string SelectedTapping = "";
         private TestType20W? SelectedTesting = TestType20W.CommonTest;
         private bool IsTempRiseCool = false;
-        private int TempRiseRecordInterval = 10;
-        private int TempRiseCountDown = 0;
         private int CurrentIndex = 0;
 
         private DispatcherTimer TimerSecond;
@@ -65,14 +61,6 @@ namespace ABBDataManagerSystem.Pages
             btStartTiming.Visibility = Visibility.Collapsed;
             panelTappingChoice.Visibility = Visibility.Collapsed;
             dataGridPanel.Visibility = Visibility.Collapsed;
-
-            // 数据模型
-            items2 = new ObservableCollection<MyItem>
-            {
-                new MyItem { Name = "项目1", Description = "这是项目1的描述" },
-                new MyItem { Name = "项目2", Description = "这是项目2的描述" },
-                new MyItem { Name = "项目3", Description = "这是项目3的描述" }
-            };
 
             // 数据绑定
             this.DataContext = new { Items = dataItems };
@@ -159,10 +147,6 @@ namespace ABBDataManagerSystem.Pages
                 SecondElapsed = 0;
             }
             UpdateClockDisplay();
-            if (SelectedTesting != TestType20W.CommonTest && IsTempRiseTesting)
-            {
-                TempRiseTestRecord();
-            }
         }
 
         private void UpdateClockDisplay()
@@ -185,7 +169,7 @@ namespace ABBDataManagerSystem.Pages
             IsFirstLoaded = false;
             var ports = SerialPort.GetPortNames();
             Array.Sort(ports);
-            int selectedIndex = ports.Length > 0 ? 0 : - 1;
+            int selectedIndex = ports.Length > 0 ? 0 : -1;
             for (int i = 0; i < ports.Length; i++)
             {
                 var item = ports[i];
@@ -210,12 +194,6 @@ namespace ABBDataManagerSystem.Pages
             cbLVCurrents.SelectedIndex = 0;
 
             UpdateControlEnableState();
-        }
-
-        public class MyItem
-        {
-            public string Name { get; set; }
-            public string Description { get; set; }
         }
 
         private void swConnect_CheckedChange(object sender, RoutedEventArgs e)
@@ -311,7 +289,6 @@ namespace ABBDataManagerSystem.Pages
                     {
                         Dispatcher.Invoke(() =>
                         {
-                            UpdateDisplayByPacket(packet); // todo desperate
                             UpdateRealTimePanelDisplay(packet);
                         });
                     }
@@ -433,7 +410,6 @@ namespace ABBDataManagerSystem.Pages
             UpdateClockDisplay();
             TimerSecond.Start();
 
-            Collector?.SetParameters();
             Collector?.SetCommonTest();
             IsCommonTesting = true;
 
@@ -538,7 +514,7 @@ namespace ABBDataManagerSystem.Pages
             }
 
             // 低压
-            tbLVMaxUnbalanceDiff11.Text = Utils.FloatFormatZeroIsNull(CalculateMaxUnbalanceDiff(tappingResistanceFields["11"])); 
+            tbLVMaxUnbalanceDiff11.Text = Utils.FloatFormatZeroIsNull(CalculateMaxUnbalanceDiff(tappingResistanceFields["11"]));
             tbLVMaxUnbalanceDiff12.Text = Utils.FloatFormatZeroIsNull(CalculateMaxUnbalanceDiff(tappingResistanceFields["12"]));
             tbLVMaxUnbalanceDiff21.Text = Utils.FloatFormatZeroIsNull(CalculateMaxUnbalanceDiff(tappingResistanceFields["21"]));
             tbLVMaxUnbalanceDiff22.Text = Utils.FloatFormatZeroIsNull(CalculateMaxUnbalanceDiff(tappingResistanceFields["22"]));
@@ -564,41 +540,39 @@ namespace ABBDataManagerSystem.Pages
                 valueCh1 = (float)random.Next() % 1000 + (float)random.NextDouble();
                 valueCh2 = (float)random.Next() % 1000 + (float)random.NextDouble();
             }
-            string? ch1 = Utils.FloatFormatZeroIsNull(valueCh1);
-            string? ch2 = Utils.FloatFormatZeroIsNull(valueCh2);
 
             TextBox hv = TempRiseCoolSelectedLevel == "第一次" ? tbTempCoolHV1 : tbTempCoolHV2;
             TextBox lv1 = TempRiseCoolSelectedLevel == "第一次" ? tbTempCoolLV11 : tbTempCoolLV21;
             TextBox lv2 = TempRiseCoolSelectedLevel == "第一次" ? tbTempCoolLV12 : tbTempCoolLV22;
 
-            if (ch1 != null)
+            if (valueCh1 != null)
             {
                 switch (TempRiseCoolSelectedCh1)
                 {
                     case "高压":
-                        hv.Text = ch1;
+                        hv.Text = valueCh1.ToString();
                         break;
                     case "低压1":
-                        lv1.Text = ch1;
+                        lv1.Text = (valueCh1 * 1000).ToString();
                         break;
                     case "低压2":
-                        lv2.Text = ch1;
+                        lv2.Text = (valueCh1 * 1000).ToString();
                         break;
                 }
             }
 
-            if (ch2 != null)
+            if (valueCh2 != null)
             {
                 switch (TempRiseCoolSelectedCh2)
                 {
                     case "高压":
-                        hv.Text = ch2;
+                        hv.Text = valueCh2.ToString();
                         break;
                     case "低压1":
-                        lv1.Text = ch2;
+                        lv1.Text = (valueCh2 * 1000).ToString();
                         break;
                     case "低压2":
-                        lv2.Text = ch2;
+                        lv2.Text = (valueCh2 * 1000).ToString();
                         break;
                 }
             }
@@ -620,7 +594,6 @@ namespace ABBDataManagerSystem.Pages
             UpdateClockDisplay();
             TimerSecond.Start();
 
-            Collector?.SetParameters();
             Collector?.SetTemperatureRaiseTimerCommand();
 
             UpdatePanelTestConfigDisplay();
@@ -630,31 +603,9 @@ namespace ABBDataManagerSystem.Pages
         #endregion
 
         #region 开始温升测试
-        private void UpdateTempRiseRecordInterval()
-        {
-            switch (SelectedTesting)
-            {
-                case TestType20W.TemperatureRise10Sec:
-                    TempRiseRecordInterval = 10;
-                    break;
-                case TestType20W.TemperatureRise30Sec:
-                    TempRiseRecordInterval = 30;
-                    break;
-                case TestType20W.TemperatureRise60Sec:
-                    TempRiseRecordInterval = 60;
-                    break;
-                default:
-                    TempRiseRecordInterval = 10;
-                    break;
-            }
-            TempRiseCountDown = TempRiseRecordInterval;
-            CurrentIndex = 0;
-        }
-
         private void btTempRiseTest_Click(object sender, RoutedEventArgs e)
         {
             btTempRiseTest.IsEnabled = false;
-            UpdateTempRiseRecordInterval();
             Collector?.SetTemperatureRaiseTest();
             IsTempRiseTesting = true;
 
@@ -688,25 +639,26 @@ namespace ABBDataManagerSystem.Pages
         #region 处理温升定时数据
         private void TempRiseTestRecord()
         {
-            TempRiseCountDown -= 1;
-            if (TempRiseCountDown != 0)
+            if (lastPacket == null)
             {
                 return;
             }
-            TempRiseCountDown = TempRiseRecordInterval;
-
+            CurrentIndex += 1;
             // 定时记录数据
+            float rhv = lastPacket.ch1TimedResistance * (lastPacket.ch1TimedResistanceIsMill ? 0.001f : 1f);
+            float rlv  = lastPacket.ch2TimedResistance * (lastPacket.ch2TimedResistanceIsMill ? 0.001f : 1f);
+            float chv = lastPacket.ch1RealTimeCurrent * (lastPacket.ch1RealTimeCurrentIsMill ? 0.001f : 1f);
+            float clv = lastPacket.ch2RealTimeCurrent * (lastPacket.ch2RealTimeCurrentIsMill ? 0.001f : 1f);
             dataItems.Add(new CommonTempRiseTestResistanceInfo()
             {
                 SortIndex = CurrentIndex,
-                CurrentHV = lastPacket != null ? lastPacket.ch1RealTimeCurrent : 0,
-                ResistanceHV = lastPacket != null ? lastPacket.ch1RealTimeResistance : 0,
-                CurrentLV = lastPacket != null ? lastPacket.ch2RealTimeCurrent : 0,
-                ResistanceLV = lastPacket != null ? lastPacket.ch2RealTimeResistance : 0,
-                CurrentTime = TestingTimer.Text
+                CurrentHV = chv,
+                ResistanceHV = rhv,
+                CurrentLV = clv,
+                ResistanceLV = rlv,
+                CurrentTime = lastPacket.tempRaiseTime,
             });
             lvUsers.Items.Refresh();
-            CurrentIndex += 1;
         }
         #endregion
 
@@ -734,34 +686,25 @@ namespace ABBDataManagerSystem.Pages
 
         private void UpdateRealTimePanelDisplay(JinYuan20WCollector.JinYuan20WPacketInfo packet)
         {
-            tbCH1Current.Text = Utils.FloatFormat(packet.ch1RealTimeCurrent, 2) + (packet.ch1RealTimeCurrentIsMill ? "mA" : " A");
-            tbCH2Current.Text = Utils.FloatFormat(packet.ch2RealTimeCurrent, 2) + (packet.ch2RealTimeCurrentIsMill ? "mA" : " A");
-            tbCH1Resistance.Text = Utils.FloatFormat(packet.ch1RealTimeResistance, 3) + (packet.ch1RealTimeResistanceIsMill ? " mΩ" : "Ω");
-            tbCH2Resistance.Text = Utils.FloatFormat(packet.ch2RealTimeResistance, 3) + (packet.ch2RealTimeResistanceIsMill ? " mΩ" : "Ω");
+            tbCH1Current.Text = packet.ch1RealTimeCurrent + (packet.ch1RealTimeCurrentIsMill ? "mA" : " A");
+            tbCH2Current.Text = packet.ch2RealTimeCurrent + (packet.ch2RealTimeCurrentIsMill ? "mA" : " A");
+            tbCH1Resistance.Text = packet.ch1RealTimeResistance + (packet.ch1RealTimeResistanceIsMill ? " mΩ" : "Ω");
+            tbCH2Resistance.Text = packet.ch2RealTimeResistance + (packet.ch2RealTimeResistanceIsMill ? " mΩ" : "Ω");
             tbCH1State.Text = "【" + JinYuan20WCollector.CHStatusMap[packet.ch1Status] + "】";
             tbCH2State.Text = "【" + JinYuan20WCollector.CHStatusMap[packet.ch2Status] + "】";
+            bool needRecordTempRise = false;
+            if (SelectedTesting != TestType20W.CommonTest && lastPacket != null && packet.tempRaiseTime.Length > 0)
+            {
+                needRecordTempRise = packet.tempRaiseTime != lastPacket.tempRaiseTime;
+            }
             lastPacket = packet;
+            if (needRecordTempRise)
+            {
+                TempRiseTestRecord();
+            }
+            DumpPacekt();
         }
 
-        private void UpdateDisplayByPacket(JinYuan20WCollector.JinYuan20WPacketInfo packet)
-        {
-            tbCH1Enabled.Text = packet.ch1Enabled ? "是" : "否";
-            tbCH2Enabled.Text = packet.ch2Enabled ? "是" : "否";
-
-            tbCH1Status.Text = JinYuan20WCollector.CHStatusMap[packet.ch1Status];
-            tbCH2Status.Text = JinYuan20WCollector.CHStatusMap[packet.ch2Status];
-
-            tbCH1RealTimeCurrent.Text = Utils.FloatFormat(packet.ch1RealTimeCurrent);
-            tbCH2RealTimeCurrent.Text = Utils.FloatFormat(packet.ch2RealTimeCurrent);
-
-            tbCH1RealTimeResistance.Text = Utils.FloatFormat(packet.ch1RealTimeResistance);
-            tbCH2RealTimeResistance.Text = Utils.FloatFormat(packet.ch2RealTimeResistance);
-
-            tbCH1TimedResistance.Text = Utils.FloatFormat(packet.ch1TimedResistance);
-            tbCH2TimedResistance.Text = Utils.FloatFormat(packet.ch2TimedResistance);
-
-            tbDebugMsg.Text = "Debug Packet: " + packet.ToString();
-        }
         #endregion
 
         #region 测试仪打印数据
@@ -859,7 +802,7 @@ namespace ABBDataManagerSystem.Pages
                 dataGridPanel.Visibility = Visibility.Visible;
             }
 
-            if (SelectedTesting != null && Collector != null)
+            if (Collector != null)
             {
                 Collector.TestType = SelectedTesting ?? TestType20W.CommonTest;
             }
@@ -1207,6 +1150,17 @@ namespace ABBDataManagerSystem.Pages
             Utils.ShowUploadTips(ret);
         }
         #endregion
+
+        private void DumpPacekt()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                if (lastPacket != null)
+                {
+                    tbDebug.Text = $"{DateTime.Now.ToString()}: {lastPacket.ToString()}";
+                }
+            });
+        }
     }
 
 }

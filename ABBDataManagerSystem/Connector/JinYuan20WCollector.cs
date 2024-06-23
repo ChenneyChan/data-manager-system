@@ -138,8 +138,8 @@ namespace ABBDataManagerSystem.Connector
                 GetBoundRateByte(9600),
                 GetTestType(TestType),
                 (byte)(CH1Enabled ? 0x31 : 0x30),
-                (byte)(CH2Enabled ? 0x31 : 0x30),
                 GetChanelOneCurrentSet(CH1CurrentConfig),
+                (byte)(CH2Enabled ? 0x31 : 0x30),
                 GetChanelTwoCurrentSet(CH2CurrentConfig),
             });
             NeedDelay = true;
@@ -243,7 +243,7 @@ namespace ABBDataManagerSystem.Connector
             public float ch2RealTimeResistance;
             public float ch1TimedResistance;
             public float ch2TimedResistance;
-            public float tempRaiseTimeInterval;
+            public string tempRaiseTime;
             public bool ch1RealTimeCurrentIsMill = false;
             public bool ch2RealTimeCurrentIsMill = false;
             public bool ch1RealTimeResistanceIsMill = false;
@@ -257,20 +257,27 @@ namespace ABBDataManagerSystem.Connector
 
             public override string ToString()
             {
-                return $"Channel 1 Status: {ch1Status}, " +
-                       $"Channel 2 Status: {ch2Status}, " +
-                       $"Channel 1 Enabled: {ch1Enabled}, " +
-                       $"Channel 2 Enabled: {ch2Enabled}, " +
-                       $"Type: {type}, " +
-                       $"Channel 1 Selected Current: {ch1SelectedCurrent}, " +
-                       $"Channel 2 Selected Current: {ch2SelectedCurrent}, " +
-                       $"Channel 1 Real Time Current: {ch1RealTimeCurrent}, " +
-                       $"Channel 2 Real Time Current: {ch2RealTimeCurrent}, " +
-                       $"Channel 1 Real Time Resistance: {ch1RealTimeResistance}, " +
-                       $"Channel 2 Real Time Resistance: {ch2RealTimeResistance}, " +
-                       $"Channel 1 Timed Resistance: {ch1TimedResistance}, " +
-                       $"Channel 2 Timed Resistance: {ch2TimedResistance}, " +
-                       $"Temperature Raise Time Interval: {tempRaiseTimeInterval}";
+                return $"JinYuan20WPacketInfo:\n" +
+                       $"ch1Status: {ch1Status}\n" +
+                       $"ch2Status: {ch2Status}\n" +
+                       $"ch1Enabled: {ch1Enabled}\n" +
+                       $"ch2Enabled: {ch2Enabled}\n" +
+                       $"type: {type}\n" +
+                       $"ch1SelectedCurrent: {ch1SelectedCurrent}\n" +
+                       $"ch2SelectedCurrent: {ch2SelectedCurrent}\n" +
+                       $"ch1RealTimeCurrent: {ch1RealTimeCurrent}{(ch1RealTimeCurrentIsMill ? " mA" : " A")}\n" +
+                       $"ch2RealTimeCurrent: {ch2RealTimeCurrent}{(ch2RealTimeCurrentIsMill ? " mA" : " A")}\n" +
+                       $"ch1RealTimeResistance: {ch1RealTimeResistance}{(ch1RealTimeResistanceIsMill ? " mΩ" : " Ω")}\n" +
+                       $"ch2RealTimeResistance: {ch2RealTimeResistance}{(ch2RealTimeResistanceIsMill ? " mΩ" : " Ω")}\n" +
+                       $"ch1TimedResistance: {ch1TimedResistance}{(ch1TimedResistanceIsMill ? " mΩ" : " Ω")}\n" +
+                       $"ch2TimedResistance: {ch2TimedResistance}{(ch2TimedResistanceIsMill ? " mΩ" : " Ω")}\n" +
+                       $"tempRaiseTime: {tempRaiseTime}\n" +
+                       $"ch1RealTimeCurrentIsMill: {ch1RealTimeCurrentIsMill}\n" +
+                       $"ch2RealTimeCurrentIsMill: {ch2RealTimeCurrentIsMill}\n" +
+                       $"ch1RealTimeResistanceIsMill: {ch1RealTimeResistanceIsMill}\n" +
+                       $"ch2RealTimeResistanceIsMill: {ch2RealTimeResistanceIsMill}\n" +
+                       $"ch1TimedResistanceIsMill: {ch1TimedResistanceIsMill}\n" +
+                       $"ch2TimedResistanceIsMill: {ch2TimedResistanceIsMill}\n";
             }
         }
 
@@ -372,7 +379,7 @@ namespace ABBDataManagerSystem.Connector
             byte[] ch2CurrentValue = { packet[startIndex + 1], packet[startIndex + 2], packet[startIndex + 3], packet[startIndex + 4], packet[startIndex + 5] };
             byte[] ch2ResistanceValue = { packet[startIndex + 6], packet[startIndex + 7], packet[startIndex + 8], packet[startIndex + 9], packet[startIndex + 10], packet[startIndex + 11], packet[startIndex + 12] };
             startIndex = startIndex + 12;
-            byte[] tempSetTimeInterval = { packet[startIndex + 1], packet[startIndex + 2], packet[startIndex + 3], packet[startIndex + 4] };
+            byte[] tempRiseTime = { packet[startIndex + 1], packet[startIndex + 2], packet[startIndex + 3], packet[startIndex + 4] };
             startIndex = startIndex + 4;
             byte[] ch1TimedResistanceValue = { packet[startIndex + 1], packet[startIndex + 2], packet[startIndex + 3], packet[startIndex + 4], packet[startIndex + 5], packet[startIndex + 6], packet[startIndex + 7] };
             startIndex = startIndex + 7;
@@ -385,10 +392,10 @@ namespace ABBDataManagerSystem.Connector
             string strCh2Resistance = Encoding.ASCII.GetString(ch2ResistanceValue);
             string strCh1TimedResistant = Encoding.ASCII.GetString(ch1TimedResistanceValue);
             string strCh2TimedResistant = Encoding.ASCII.GetString(ch2TimedResistanceValue);
-            string strTempSetTimeInterval = Encoding.ASCII.GetString(tempSetTimeInterval);
-            if (strTempSetTimeInterval.Length == 4)
+            string strTempRiseTime = Encoding.ASCII.GetString(tempRiseTime);
+            if (strTempRiseTime.Length == 4)
             {
-                strTempSetTimeInterval = strTempSetTimeInterval.Substring(0, 2) + ":" + strTempSetTimeInterval.Substring(2, 2);
+                strTempRiseTime = strTempRiseTime.Substring(0, 2) + ":" + strTempRiseTime.Substring(2, 2);
             }
 
             float ch1RealTimeCurrent = Utils.ParseFloat(strCh1Current.Replace("m", ""));
@@ -419,7 +426,7 @@ namespace ABBDataManagerSystem.Connector
                 ch2SelectedCurrent = ch2Current,
                 ch1TimedResistance = ch1TimedResistance,
                 ch2TimedResistance = ch2TimedResistance,
-                tempRaiseTimeInterval = Utils.ParseFloat(strTempSetTimeInterval),
+                tempRaiseTime = strTempRiseTime,
                 ch1RealTimeCurrentIsMill = ch1RealTimeCurrentIsMill,
                 ch2RealTimeCurrentIsMill = ch2RealTimeCurrentIsMill,
                 ch1RealTimeResistanceIsMill = ch1RealTimeResistanceIsMill,

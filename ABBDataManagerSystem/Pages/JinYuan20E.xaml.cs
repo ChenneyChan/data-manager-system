@@ -1,7 +1,6 @@
 ﻿using ABBDataManagerSystem.Bean.Base;
 using ABBDataManagerSystem.Connector;
 using ABBDataManagerSystem.Pages.Views;
-using NLog.LayoutRenderers;
 using System.IO.Ports;
 using System.Windows;
 using System.Windows.Controls;
@@ -636,22 +635,15 @@ namespace ABBDataManagerSystem.Pages
         private void UpdatePanelTestConfigDisplay()
         {
             string testType = SelectedTesting == TestType20E.Normal ? "常规" : "温升";
-            //if (cbCH1.IsChecked == true)
-            //{
-            //    tbCH1TestConfig.Text = testType + "-高压CH1-" + cbHVCurrents.Text;
-            //}
-            //else
-            //{
-            //    tbCH1TestConfig.Text = "";
-            //}
-            //if (cbCH2.IsChecked == true)
-            //{
-            //    tbCH2TestConfig.Text = testType + "-低压CH2-" + cbLVCurrents.Text;
-            //}
-            //else
-            //{
-            //    tbCH2TestConfig.Text = "";
-            //}
+            tbCH1TestConfig.Text = testType + "-高压CH1-" + cb20ECurrents.Text;
+            if (cb20EPatterns.Text == "双通道")
+            {
+                tbCH2TestConfig.Text = testType + "-低压CH2-" + cb20ECurrents.Text;
+            }
+            else
+            {
+                tbCH2TestConfig.Text = "";
+            }
         }
 
         private void UpdateRealTimePanelDisplay(JinYuan20ECollector.CommonPacket packet)
@@ -863,31 +855,6 @@ namespace ABBDataManagerSystem.Pages
                 SelectedTapping = "";
             }
             DumpSelectedTapping();
-        }
-
-        // 低压1、低压2 选择
-        private void LowVoltageLevelSelectedChange(object sender, RoutedEventArgs e)
-        {
-            var b = sender as ToggleButton;
-            if (b == null)
-            {
-                return;
-            }
-            // todo
-            //if (b == tbLowVoltageLevel1)
-            //{
-            //    tbLowVoltageLevel2.IsChecked = false;
-            //    SelectedLowVoltageLevel = 1;
-            //}
-            //else if (b == tbLowVoltageLevel2)
-            //{
-            //    tbLowVoltageLevel1.IsChecked = false;
-            //    SelectedLowVoltageLevel = 2;
-            //}
-            else
-            {
-                SelectedLowVoltageLevel = 0;
-            }
         }
 
         private void DumpSelectedTapping()
