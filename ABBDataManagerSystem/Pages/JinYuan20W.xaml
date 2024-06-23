@@ -110,8 +110,6 @@
             <Views:ToggleButton Width="100" GridMargin="0" Margin="5,0" CheckedChange="TestTypeSelectedTappingChange" ButtonContent="温升30''" x:Name="tbTestTypeTempRise30s"/>
             <Views:ToggleButton Width="100" GridMargin="0" Margin="5,0" CheckedChange="TestTypeSelectedTappingChange" ButtonContent="温升60''" x:Name="tbTestTypeTempRise60s"/>
             <Views:ToggleButton Width="100" GridMargin="0" Margin="5,0" CheckedChange="TestTypeSelectedTappingChange" ButtonContent="温升冷电阻" x:Name="tbTestTypeTempRiseCool"/>
-            <Views:ToggleButton Width="100" GridMargin="0" Margin="60, 0, 5,0" CheckedChange="LowVoltageLevelSelectedChange" ButtonContent="低压一" x:Name="tbLowVoltageLevel1"/>
-            <Views:ToggleButton Width="100" GridMargin="0" Margin="5,0" CheckedChange="LowVoltageLevelSelectedChange" ButtonContent="低压二" x:Name="tbLowVoltageLevel2"/>
         </StackPanel>
         <Grid Grid.Row="3" Margin="10">
             <Grid.ColumnDefinitions>

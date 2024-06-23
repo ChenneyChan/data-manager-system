@@ -949,30 +949,6 @@ namespace ABBDataManagerSystem.Pages
             DumpSelectedTapping();
         }
 
-        // 低压1、低压2 选择
-        private void LowVoltageLevelSelectedChange(object sender, RoutedEventArgs e)
-        {
-            var b = sender as ToggleButton;
-            if (b == null)
-            {
-                return;
-            }
-            if (b == tbLowVoltageLevel1)
-            {
-                tbLowVoltageLevel2.IsChecked = false;
-                SelectedLowVoltageLevel = 1;
-            }
-            else if (b == tbLowVoltageLevel2)
-            {
-                tbLowVoltageLevel1.IsChecked = false;
-                SelectedLowVoltageLevel = 2;
-            }
-            else
-            {
-                SelectedLowVoltageLevel = 0;
-            }
-        }
-
         private void DumpSelectedTapping()
         {
             string testing = "";

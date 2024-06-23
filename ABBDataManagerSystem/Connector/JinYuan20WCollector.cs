@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Collections.Concurrent;
+using System.Text;
 
 namespace ABBDataManagerSystem.Connector
 {
@@ -59,7 +60,7 @@ namespace ABBDataManagerSystem.Connector
 
         private bool NeedDelay = false;
 
-
+        private ConcurrentQueue<Action> commondActions = new ConcurrentQueue<Action>();
         public JinYuan20WCollector(string portName, int baudRate = 9600)
         {
             Collector = new ResistanceCurrentInfoCollector(portName, baudRate)
@@ -82,37 +83,50 @@ namespace ABBDataManagerSystem.Connector
 
         public void SetCommonTest()
         {
-            Collector.SendCommand(new byte[] { 0x41 });
-            NeedDelay = true;
+            commondActions.Enqueue(() =>
+            {
+                Collector.SendCommand(new byte[] { 0x41 });
+            });
         }
 
         public void SetTemperatureRaiseTest()
         {
-            Collector.SendCommand(new byte[] { 0x42 });
-            NeedDelay = true;
+            commondActions.Enqueue(() =>
+            {
+                Collector.SendCommand(new byte[] { 0x42 });
+            });
         }
 
         public void SetTemperatureRaiseTimerCommand()
         {
-            Collector.SendCommand(new byte[] { 0x43 });
-            NeedDelay = true;
+            commondActions.Enqueue(() =>
+            {
+                Collector.SendCommand(new byte[] { 0x43 });
+            });
         }
 
         public void SetRestCommand()
         {
-            Collector.SendCommand(new byte[] { 0x44 });
-            NeedDelay = true;
+            commondActions.Enqueue(() =>
+            {
+                Collector.SendCommand(new byte[] { 0x44 });
+            });
         }
 
         public void SetPrintCommand()
         {
-            Collector.SendCommand(new byte[] { 0x47 });
-            NeedDelay = true;
+            commondActions.Enqueue(() =>
+            {
+                Collector.SendCommand(new byte[] { 0x47 });
+            });
         }
 
         public void SendRequest()
         {
-            Collector.SendCommand(new byte[] { 0x48 });
+            commondActions.Enqueue(() =>
+            {
+                Collector.SendCommand(new byte[] { 0x48 });
+            });
         }
 
         #region 仪器参数设置命令
@@ -324,10 +338,13 @@ namespace ABBDataManagerSystem.Connector
                 SetParameters();
                 return null;
             }
-            if (NeedDelay)
+            if (commondActions.TryDequeue(out Action? action))
             {
-                NeedDelay = false;
-                return null;
+                if (action != null)
+                {
+                    action();
+                    return null;
+                }
             }
             SendRequest();
             byte[]? packet = Collector.ReadData();

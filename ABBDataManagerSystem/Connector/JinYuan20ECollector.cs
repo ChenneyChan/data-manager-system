@@ -405,7 +405,6 @@ namespace ABBDataManagerSystem.Connector
             {
 
                 SendRequestDataCommand();
-
             }
             byte[]? packet = Collector.ReadData();
             if (packet == null)
