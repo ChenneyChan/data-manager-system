@@ -183,7 +183,7 @@
                     <TextBlock Text="电压" Width="32" Margin="0, 0, 10,0" VerticalAlignment="Center"/>
                     <hc:TextBox Name="tbTestingVoltage" Width="80" FontSize="16"/>
                     <TextBlock Text="电流" Width="32" Margin="10,0" VerticalAlignment="Center"/>
-                    <hc:TextBox Name="tbTestingCurrent" Width="80" IsReadOnly="True" FontSize="16"/>
+                    <hc:TextBox Name="tbTestingCurrent" Width="80" FontSize="16"/>
                     <TextBlock Text="高压校正" Width="64" Margin="10,0" VerticalAlignment="Center"/>
                     <hc:ComboBox Width="80" VerticalAlignment="Center" Name="cbHVCorrectionFact">
                         <ComboBoxItem Content="225" IsSelected="True"/>
@@ -215,14 +215,23 @@
                 <WrapPanel MaxWidth="940" HorizontalAlignment="Left">
                     <TextBlock Text="通道选择：" FontWeight="Bold"/>
                     <TextBlock Text="" Name="tbSlotMappingShow" Visibility="Collapsed"/>
-                    <hc:Shield FontSize="18" Height="30" Margin="5, 0" Name="shWindingA" Subject="线圈A" Status="槽位1" Color="#1182c3"/>
-                    <hc:Shield FontSize="18" Height="30" Margin="5, 0" Name="shWindingB" Subject="线圈B" Status="槽位1" Color="#1182c3"/>
-                    <hc:Shield FontSize="18" Height="30" Margin="5, 0" Name="shWindingC" Subject="线圈C" Status="槽位1" Color="#1182c3"/>
-                    <hc:Shield FontSize="18" Height="30" Margin="5, 0" Name="shCore" Subject="铁心"  Status="槽位2" Color="#1182c3"/>
-                    <hc:Shield FontSize="18" Height="30" Margin="5, 0" Name="shEnvA" Subject="环境A" Status="槽位1" Color="#1182c3"/>
-                    <hc:Shield FontSize="18" Height="30" Margin="5, 0" Name="shEnvB" Subject="环境B" Status="槽位1" Color="#1182c3"/>
-                    <hc:Shield FontSize="18" Height="30" Margin="5, 0" Name="shEnvC" Subject="环境C" Status="槽位1" Color="#1182c3"/>
-                    <hc:Shield FontSize="18" Height="30" Margin="5, 0" Name="shEnvD" Subject="环境D" Status="槽位1" Color="#1182c3"/>
+                    <hc:Shield FontSize="18" Height="30" Margin="4, 2" Name="shWindingA" Subject="线圈A" Status="" Color="#1182c3"/>
+                    <hc:Shield FontSize="18" Height="30" Margin="4, 2" Name="shWindingB" Subject="线圈B" Status="" Color="#1182c3"/>
+                    <hc:Shield FontSize="18" Height="30" Margin="4, 2" Name="shWindingC" Subject="线圈C" Status="" Color="#1182c3"/>
+                    <hc:Shield FontSize="18" Height="30" Margin="4, 2" Name="shCore" Subject="铁心"  Status="" Color="#1182c3"/>
+                    <hc:Shield FontSize="18" Height="30" Margin="4, 2" Name="shEnvA" Subject="环境A" Status="" Color="#1182c3"/>
+                    <hc:Shield FontSize="18" Height="30" Margin="4, 2" Name="shEnvB" Subject="环境B" Status="" Color="#1182c3"/>
+                    <hc:Shield FontSize="18" Height="30" Margin="4, 2" Name="shEnvC" Subject="环境C" Status="" Color="#1182c3"/>
+                    <hc:Shield FontSize="18" Height="30" Margin="4, 2" Name="shEnvD" Subject="环境D" Status="" Color="#1182c3"/>
+                    <hc:Shield FontSize="18" Height="30" Margin="4, 2" Name="shOut1" Subject="出风口温度1" Status="" Color="#1182c3"/>
+                    <hc:Shield FontSize="18" Height="30" Margin="4, 2" Name="shOut2" Subject="出风口温度2" Status="" Color="#1182c3"/>
+                    <hc:Shield FontSize="18" Height="30" Margin="4, 2" Name="shOut3" Subject="出风口温度3" Status="" Color="#1182c3"/>
+                    <hc:Shield FontSize="18" Height="30" Margin="4, 2" Name="shOut4" Subject="出风口温度4" Status="" Color="#1182c3"/>
+                    <hc:Shield FontSize="18" Height="30" Margin="4, 2" Name="shOut5" Subject="出风口温度5" Status="" Color="#1182c3"/>
+                    <hc:Shield FontSize="18" Height="30" Margin="4, 2" Name="shOut6" Subject="出风口温度6" Status="" Color="#1182c3"/>
+                    <hc:Shield FontSize="18" Height="30" Margin="4, 2" Name="shIn1" Subject="进风口温度1" Status="" Color="#1182c3"/>
+                    <hc:Shield FontSize="18" Height="30" Margin="4, 2" Name="shIn2" Subject="进风口温度2" Status="" Color="#1182c3"/>
+                    <hc:Shield FontSize="18" Height="30" Margin="4, 2" Name="shIn3" Subject="进风口温度3" Status="" Color="#1182c3"/>
                 </WrapPanel>
                 <TextBlock Text="功率分析仪数据：" Margin="0, 5, 5, 5" FontWeight="Bold"/>
                 <TextBlock Text="" Name="tbPorwerAnalyzerInfo" Margin="0, 5, 5, 5"  TextWrapping="Wrap"/>

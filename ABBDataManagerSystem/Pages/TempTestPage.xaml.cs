@@ -67,6 +67,7 @@ namespace ABBDataManagerSystem.Pages
         private VoltageInfo CurrentVoltageInfo = new();
         private Object objLock = new object();
         private int Index = 0;
+        private bool IsAFWF = false; // 是否水冷
 
         public TempTestPage()
         {
@@ -111,6 +112,8 @@ namespace ABBDataManagerSystem.Pages
             cbInterval.SelectionChanged += CbInterval_SelectedIndexChanged;
             UpdateByConfig();
             UpdateInterval();
+            UpdateSlotShieldState();
+            cbCoolingMode.SelectionChanged += cbCoolingMode_SelectionChanged;
         }
 
         private void RbSerialPort_Checked(object sender, RoutedEventArgs e)
@@ -137,6 +140,7 @@ namespace ABBDataManagerSystem.Pages
             cbTestPhase.IsEnabled = !IsCollecting;
             cbTestStatus.IsEnabled = !IsCollecting;
             btSelectSlots.IsEnabled = !IsCollecting;
+            cbCoolingMode.IsEnabled = !IsCollecting;
 
             if (IsCollecting)
             {
@@ -439,62 +443,86 @@ namespace ABBDataManagerSystem.Pages
                 MinWidth = 60
             });
 
-            dgTempRecord.Columns.Add(new DataGridTextColumn()
+            if (!IsAFWF)
             {
-                Header = "Ua",
-                Binding = new Binding("Ua") { StringFormat = "{0:N2}" },
-                MinWidth = 40
-            });
-            dgTempRecord.Columns.Add(new DataGridTextColumn()
-            {
-                Header = "Ub",
-                Binding = new Binding("Ub") { StringFormat = "{0:N2}" },
-                MinWidth = 40
-            });
-            dgTempRecord.Columns.Add(new DataGridTextColumn()
-            {
-                Header = "Uc",
-                Binding = new Binding("Uc") { StringFormat = "{0:N2}" },
-                MinWidth = 40
-            });
-            dgTempRecord.Columns.Add(new DataGridTextColumn()
-            {
-                Header = "U3",
-                Binding = new Binding("U3") { StringFormat = "{0:N2}" },
-                MinWidth = 40
-            });
+                dgTempRecord.Columns.Add(new DataGridTextColumn()
+                {
+                    Header = "Ua",
+                    Binding = new Binding("Ua") { StringFormat = "{0:N2}" },
+                    MinWidth = 40
+                });
+                dgTempRecord.Columns.Add(new DataGridTextColumn()
+                {
+                    Header = "Ub",
+                    Binding = new Binding("Ub") { StringFormat = "{0:N2}" },
+                    MinWidth = 40
+                });
+                dgTempRecord.Columns.Add(new DataGridTextColumn()
+                {
+                    Header = "Uc",
+                    Binding = new Binding("Uc") { StringFormat = "{0:N2}" },
+                    MinWidth = 40
+                });
+                dgTempRecord.Columns.Add(new DataGridTextColumn()
+                {
+                    Header = "U3",
+                    Binding = new Binding("U3") { StringFormat = "{0:N2}" },
+                    MinWidth = 40
+                });
 
-            dgTempRecord.Columns.Add(new DataGridTextColumn()
-            {
-                Header = "Ia",
-                Binding = new Binding("Ia") { StringFormat = "{0:N2}" },
-                MinWidth = 40
-            });
-            dgTempRecord.Columns.Add(new DataGridTextColumn()
-            {
-                Header = "Ib",
-                Binding = new Binding("Ib") { StringFormat = "{0:N2}" },
-                MinWidth = 40
-            });
-            dgTempRecord.Columns.Add(new DataGridTextColumn()
-            {
-                Header = "Ic",
-                Binding = new Binding("Ic") { StringFormat = "{0:N2}" },
-                MinWidth = 40
-            });
-            dgTempRecord.Columns.Add(new DataGridTextColumn()
-            {
-                Header = "I3",
-                Binding = new Binding("I3") { StringFormat = "{0:N2}" },
-                MinWidth = 40
-            });
+                dgTempRecord.Columns.Add(new DataGridTextColumn()
+                {
+                    Header = "Ia",
+                    Binding = new Binding("Ia") { StringFormat = "{0:N2}" },
+                    MinWidth = 40
+                });
+                dgTempRecord.Columns.Add(new DataGridTextColumn()
+                {
+                    Header = "Ib",
+                    Binding = new Binding("Ib") { StringFormat = "{0:N2}" },
+                    MinWidth = 40
+                });
+                dgTempRecord.Columns.Add(new DataGridTextColumn()
+                {
+                    Header = "Ic",
+                    Binding = new Binding("Ic") { StringFormat = "{0:N2}" },
+                    MinWidth = 40
+                });
+                dgTempRecord.Columns.Add(new DataGridTextColumn()
+                {
+                    Header = "I3",
+                    Binding = new Binding("I3") { StringFormat = "{0:N2}" },
+                    MinWidth = 40
+                });
 
-            dgTempRecord.Columns.Add(new DataGridTextColumn()
+                dgTempRecord.Columns.Add(new DataGridTextColumn()
+                {
+                    Header = "P3",
+                    Binding = new Binding("P3") { StringFormat = "{0:N2}" },
+                    MinWidth = 40
+                });
+            }
+            else
             {
-                Header = "P3",
-                Binding = new Binding("P3") { StringFormat = "{0:N2}" },
-                MinWidth = 40
-            });
+                dgTempRecord.Columns.Add(new DataGridTextColumn()
+                {
+                    Header = "U3",
+                    Binding = new Binding("U3") { StringFormat = "{0:N2}" },
+                    MinWidth = 40
+                });
+                dgTempRecord.Columns.Add(new DataGridTextColumn()
+                {
+                    Header = "I3",
+                    Binding = new Binding("I3") { StringFormat = "{0:N2}" },
+                    MinWidth = 40
+                });
+                dgTempRecord.Columns.Add(new DataGridTextColumn()
+                {
+                    Header = "P3",
+                    Binding = new Binding("P3") { StringFormat = "{0:N2}" },
+                    MinWidth = 40
+                });
+            }
 
             Table.Columns.Add("序号", typeof(int));
             Table.Columns.Add("时间", typeof(DateTime));
@@ -532,30 +560,60 @@ namespace ABBDataManagerSystem.Pages
                 Binding = new Binding(Configs.Configs.Core),
                 MinWidth = 40
             });
-            dgTempRecord.Columns.Add(new DataGridTextColumn()
+
+            if (!IsAFWF)
             {
-                Header = $"环境A",
-                Binding = new Binding(Configs.Configs.EnvA),
-                MinWidth = 40
-            });
-            dgTempRecord.Columns.Add(new DataGridTextColumn()
+                dgTempRecord.Columns.Add(new DataGridTextColumn()
+                {
+                    Header = $"环境A",
+                    Binding = new Binding(Configs.Configs.EnvA),
+                    MinWidth = 40
+                });
+                dgTempRecord.Columns.Add(new DataGridTextColumn()
+                {
+                    Header = $"环境B",
+                    Binding = new Binding(Configs.Configs.EnvB),
+                    MinWidth = 40
+                });
+                dgTempRecord.Columns.Add(new DataGridTextColumn()
+                {
+                    Header = $"环境C",
+                    Binding = new Binding(Configs.Configs.EnvC),
+                    MinWidth = 40
+                });
+                dgTempRecord.Columns.Add(new DataGridTextColumn()
+                {
+                    Header = $"环境D",
+                    Binding = new Binding(Configs.Configs.EnvD),
+                    MinWidth = 40
+                });
+            }
+            else
             {
-                Header = $"环境B",
-                Binding = new Binding(Configs.Configs.EnvB),
-                MinWidth = 40
-            });
-            dgTempRecord.Columns.Add(new DataGridTextColumn()
-            {
-                Header = $"环境C",
-                Binding = new Binding(Configs.Configs.EnvC),
-                MinWidth = 40
-            });
-            dgTempRecord.Columns.Add(new DataGridTextColumn()
-            {
-                Header = $"环境D",
-                Binding = new Binding(Configs.Configs.EnvD),
-                MinWidth = 40
-            });
+                var outs = Configs.Configs.OutletTemperature.Split(",");
+                var ins = Configs.Configs.InletTemperature.Split(",");
+                for (int i = 1; i <= 6; i++)
+                {
+                    string binding = outs.Length >= i ? outs[i - 1] : "None";
+                    dgTempRecord.Columns.Add(new DataGridTextColumn()
+                    {
+                        Header = $"出风口温度{i}",
+                        Binding = new Binding(binding),
+                        MinWidth = 40
+                    });
+                }
+                for (int i = 1; i <= 3; i++)
+                {
+                    string binding = ins.Length >= i ? ins[i - 1] : "None";
+                    dgTempRecord.Columns.Add(new DataGridTextColumn()
+                    {
+                        Header = $"进风口温度{i}",
+                        Binding = new Binding(binding),
+                        MinWidth = 40
+                    });
+                }
+            }
+
             for (int i = 0; i < SelectedSlots.Count; i++)
             {
                 var slot = SelectedSlots[i];
@@ -857,6 +915,35 @@ namespace ABBDataManagerSystem.Pages
         #endregion
 
         #region 温度槽位选择
+        private void cbCoolingMode_SelectionChanged(object sender, RoutedEventArgs e)
+        {
+            bool _IsAFWF = cbCoolingMode.SelectedIndex == 2;
+            if (_IsAFWF != IsAFWF)
+            {
+                IsAFWF = _IsAFWF;
+                UpdateSlotShieldState();
+                SelectedSlots_SelectionChanged();
+            }
+        }
+
+        private void UpdateSlotShieldState()
+        {
+            shEnvA.Visibility = IsAFWF ? Visibility.Collapsed : Visibility.Visible;
+            shEnvB.Visibility = IsAFWF ? Visibility.Collapsed : Visibility.Visible;
+            shEnvC.Visibility = IsAFWF ? Visibility.Collapsed : Visibility.Visible;
+            shEnvD.Visibility = IsAFWF ? Visibility.Collapsed : Visibility.Visible;
+            shOut1.Visibility = !IsAFWF ? Visibility.Collapsed : Visibility.Visible;
+            shOut2.Visibility = !IsAFWF ? Visibility.Collapsed : Visibility.Visible;
+            shOut3.Visibility = !IsAFWF ? Visibility.Collapsed : Visibility.Visible;
+            shOut4.Visibility = !IsAFWF ? Visibility.Collapsed : Visibility.Visible;
+            shOut5.Visibility = !IsAFWF ? Visibility.Collapsed : Visibility.Visible;
+            shOut6.Visibility = !IsAFWF ? Visibility.Collapsed : Visibility.Visible;
+            shIn1.Visibility = !IsAFWF ? Visibility.Collapsed : Visibility.Visible;
+            shIn2.Visibility = !IsAFWF ? Visibility.Collapsed : Visibility.Visible;
+            shIn3.Visibility = !IsAFWF ? Visibility.Collapsed : Visibility.Visible;
+            shIn3.Visibility = !IsAFWF ? Visibility.Collapsed : Visibility.Visible;
+        }
+
         private void SelectedSlots_SelectionChanged()
         {
             InitSlot();
@@ -872,10 +959,26 @@ namespace ABBDataManagerSystem.Pages
             slots.Add(Configs.Configs.WindingB);
             slots.Add(Configs.Configs.WindingC);
             slots.Add(Configs.Configs.Core);
-            slots.Add(Configs.Configs.EnvA);
-            slots.Add(Configs.Configs.EnvB);
-            slots.Add(Configs.Configs.EnvC);
-            slots.Add(Configs.Configs.EnvD);
+            if (!IsAFWF)
+            {
+                slots.Add(Configs.Configs.EnvA);
+                slots.Add(Configs.Configs.EnvB);
+                slots.Add(Configs.Configs.EnvC);
+                slots.Add(Configs.Configs.EnvD);
+            }
+            else
+            {
+                var _outletSlots = Configs.Configs.OutletTemperature.Split(','); // 出风口温度最多6个
+                var _inletSlots = Configs.Configs.InletTemperature.Split(','); // 进风口温度最多3个
+                for (int i = 0; i < _outletSlots.Length && i < 6; i++)
+                {
+                    slots.Add(_outletSlots[i]);
+                }
+                for (int i = 0; i < _inletSlots.Length && i < 3; i++)
+                {
+                    slots.Add(_inletSlots[i]);
+                }
+            }
             foreach (var item in slots)
             {
                 try
@@ -895,7 +998,7 @@ namespace ABBDataManagerSystem.Pages
 
         private void btSelectSlots_Click(object sender, RoutedEventArgs e)
         {
-            var selectDialog = new TempSlotSelectView(MaxSlotCount) { WindowStartupLocation = WindowStartupLocation.CenterScreen };
+            var selectDialog = new TempSlotSelectView(MaxSlotCount, IsAFWF) { WindowStartupLocation = WindowStartupLocation.CenterScreen };
             if (selectDialog.ShowDialog() == true)
             {
                 SelectedSlots_SelectionChanged();
@@ -922,6 +1025,18 @@ namespace ABBDataManagerSystem.Pages
             shEnvB.Status = Configs.Configs.EnvB;
             shEnvC.Status = Configs.Configs.EnvC;
             shEnvD.Status = Configs.Configs.EnvD;
+            string[] outSlots = Configs.Configs.OutletTemperature.Split(",");
+            string[] inSlots = Configs.Configs.InletTemperature.Split(",");
+            shOut1.Status = outSlots.Length > 0 ? outSlots[0] : "";
+            shOut2.Status = outSlots.Length > 1 ? outSlots[1] : "";
+            shOut3.Status = outSlots.Length > 2 ? outSlots[2] : "";
+            shOut4.Status = outSlots.Length > 3 ? outSlots[3] : "";
+            shOut5.Status = outSlots.Length > 4 ? outSlots[4] : "";
+            shOut6.Status = outSlots.Length > 5 ? outSlots[5] : "";
+
+            shIn1.Status = inSlots.Length > 0 ? inSlots[0] : "";
+            shIn2.Status = inSlots.Length > 1 ? inSlots[1] : "";
+            shIn3.Status = inSlots.Length > 2 ? inSlots[2] : "";
         }
         #endregion
 
@@ -963,7 +1078,6 @@ namespace ABBDataManagerSystem.Pages
 
             // 删除之前的时间数据
             CommonTempRiseTestRecordInfo.DeleteData(configItem.ID);
-
             // 将DataTable中的数据转成试验数据格式并且一条条上传
             var query = from row in Table.AsEnumerable()
                         select row;
@@ -989,12 +1103,31 @@ namespace ABBDataManagerSystem.Pages
                     WindingTempA = item.Field<float?>(Configs.Configs.WindingA) ?? 0,
                     WindingTempB = item.Field<float?>(Configs.Configs.WindingB) ?? 0,
                     WindingTempC = item.Field<float?>(Configs.Configs.WindingC) ?? 0,
-                    EnvTempA = item.Field<float?>(Configs.Configs.EnvA) ?? 0,
-                    EnvTempB = item.Field<float?>(Configs.Configs.EnvB) ?? 0,
-                    EnvTempC = item.Field<float?>(Configs.Configs.EnvC) ?? 0,
-                    EnvTempD = item.Field<float?>(Configs.Configs.EnvD) ?? 0,
+                    IsAFWF = IsAFWF,
                     WorkflowID = Configs.Configs.WorkflowID
                 };
+                if (!IsAFWF)
+                {
+                    record.EnvTempA = item.Field<float?>(Configs.Configs.EnvA) ?? 0;
+                    record.EnvTempB = item.Field<float?>(Configs.Configs.EnvB) ?? 0;
+                    record.EnvTempC = item.Field<float?>(Configs.Configs.EnvC) ?? 0;
+                    record.EnvTempD = item.Field<float?>(Configs.Configs.EnvD) ?? 0;
+                }
+                else
+                {
+                    var outlets = Configs.Configs.OutletTemperature.Split(",");
+                    var inlets = Configs.Configs.InletTemperature.Split(",");
+
+                    record.Outlet1 = item.Field<float?>(outlets[0]) ?? 0;
+                    record.Outlet2 = item.Field<float?>(outlets[1]) ?? 0;
+                    record.Outlet3 = item.Field<float?>(outlets[2]) ?? 0;
+                    record.Outlet4 = item.Field<float?>(outlets[3]) ?? 0;
+                    record.Outlet5 = item.Field<float?>(outlets[4]) ?? 0;
+                    record.Outlet6 = item.Field<float?>(outlets[5]) ?? 0;
+                    record.Inlet1 = item.Field<float?>(inlets[0]) ?? 0;
+                    record.Inlet2 = item.Field<float?>(inlets[1]) ?? 0;
+                    record.Inlet3 = item.Field<float?>(inlets[2]) ?? 0;
+                }
                 list.Add(record);
             }
             bool ret = CommonTempRiseTestRecordInfo.BatchInsertData(list);

@@ -63,6 +63,8 @@ namespace ABBDataManagerSystem.Configs
         public static string EnvB {  set; get; } = string.Empty;
         public static string EnvC {  set; get; } = string.Empty;
         public static string EnvD {  set; get; } = string.Empty;
+        public static string OutletTemperature { set; get; } = string.Empty; // 出风口温度
+        public static string InletTemperature { set; get; } = string.Empty;   // 进风口温度
         #endregion
 
         #region 20W设置
@@ -164,6 +166,18 @@ namespace ABBDataManagerSystem.Configs
             EnvC = buff.ToString();
             GetPrivateProfileString(INITemperature, "EnvD", "", buff, 32, INIPATH);
             EnvD = buff.ToString();
+            GetPrivateProfileString(INITemperature, "OutletTemperature", "", buff, 64, INIPATH);
+            OutletTemperature = buff.ToString();
+            if (OutletTemperature.Trim().Length == 0)
+            {
+                OutletTemperature = "Slot-1,Slot-2,Slot-3,Slot-4,Slot-5,Slot-6";
+            }
+            GetPrivateProfileString(INITemperature, "InletTemperature", "", buff, 64, INIPATH);
+            InletTemperature = buff.ToString();
+            if (InletTemperature.Trim().Length == 0)
+            {
+                InletTemperature = "Slot-1,Slot-2,Slot-3";
+            }
             GetPrivateProfileString(INITemperature, "IsSimulate", "", buff, 32, INIPATH);
             TPIsSimulate = buff.ToString().Trim().ToLower() == "true";
             #endregion
@@ -231,6 +245,9 @@ namespace ABBDataManagerSystem.Configs
             WritePrivateProfileString(INITemperature, "EnvB", EnvB, INIPATH);
             WritePrivateProfileString(INITemperature, "EnvC", EnvC, INIPATH);
             WritePrivateProfileString(INITemperature, "EnvD", EnvD, INIPATH);
+            WritePrivateProfileString(INITemperature, "OutletTemperature", OutletTemperature, INIPATH);
+            WritePrivateProfileString(INITemperature, "InletTemperature", InletTemperature, INIPATH);
+            WritePrivateProfileString(INITemperature, "IsSimulate", TPIsSimulate.ToString(), INIPATH);
 
             #region 功率分析仪
             WritePrivateProfileString(INIPowerAnalyzer, "VT", VT != null ? Utils.FloatFormat((float)VT, 4) : "" , INIPATH);

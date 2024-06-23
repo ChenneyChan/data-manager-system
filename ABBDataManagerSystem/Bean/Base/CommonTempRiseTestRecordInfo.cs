@@ -27,6 +27,16 @@ namespace ABBDataManagerSystem.Bean.Base
         public float EnvTempB = 0;
         public float EnvTempC = 0;
         public float EnvTempD = 0;
+        public float Outlet1 = 0;
+        public float Outlet2 = 0;
+        public float Outlet3 = 0;
+        public float Outlet4 = 0;
+        public float Outlet5 = 0;
+        public float Outlet6 = 0;
+        public float Inlet1 = 0;
+        public float Inlet2 = 0;
+        public float Inlet3 = 0;
+        public bool IsAFWF = false;
         public string WorkflowID = string.Empty;
 
         public static Dictionary<string, string> FieldComments = new Dictionary<string, string>

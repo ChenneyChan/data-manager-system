@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ABBDataManagerSystem.Pages"
         xmlns:hc="https://handyorg.github.io/handycontrol"
         mc:Ignorable="d"
-        Title="温度测试槽位选择" Height="300" Width="900" ShowInTaskbar="False" ResizeMode="NoResize">
+        Title="温度测试槽位选择" Height="500" Width="1000" ShowInTaskbar="False" ResizeMode="NoResize">
     <Window.Resources>
         <Style TargetType="hc:ComboBox" BasedOn="{StaticResource GlobalComboBoxStyle}">
             <Setter Property="Margin" Value="2"/>
@@ -27,8 +27,12 @@
             <ColumnDefinition/>
             <ColumnDefinition/>
             <ColumnDefinition/>
+            <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
             <RowDefinition/>
             <RowDefinition/>
             <RowDefinition/>
@@ -59,6 +63,33 @@
         <Border Grid.Column="6" Grid.Row="2" BorderThickness="1, 1, 0, 1" />
         <Border Grid.Column="7" Grid.Row="2" BorderThickness="1, 1, 1, 1" />
 
+        <Border Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="9" Background="#FFD2D2D2" Margin="0, 5, 0, 0"/>
+        <Border Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="9" Background="#FFF5F5D5"/>
+        <Border Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="9" Background="#FFE5F7E9"/>
+
+        <Border Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="6" BorderThickness="1, 1, 0, 0" Margin="0, 5, 0, 0"/>
+        <Border Grid.Column="6" Grid.Row="3" Grid.ColumnSpan="3" BorderThickness="1, 1, 0, 1" Margin="0, 5, 0, 0"/>
+        <Border Grid.Column="0" Grid.Row="4" BorderThickness="1, 1, 0, 0" />
+        <Border Grid.Column="1" Grid.Row="4" BorderThickness="1, 1, 0, 0" />
+        <Border Grid.Column="2" Grid.Row="4" BorderThickness="1, 1, 0, 0" />
+        <Border Grid.Column="3" Grid.Row="4" BorderThickness="1, 1, 0, 0" />
+        <Border Grid.Column="4" Grid.Row="4" BorderThickness="1, 1, 0, 0" />
+        <Border Grid.Column="5" Grid.Row="4" BorderThickness="1, 1, 0, 0" />
+        <Border Grid.Column="6" Grid.Row="4" BorderThickness="1, 1, 0, 0" />
+        <Border Grid.Column="7" Grid.Row="4" BorderThickness="1, 1, 0, 0" />
+        <Border Grid.Column="8" Grid.Row="4" BorderThickness="1, 1, 1, 0" />
+
+        <Border Grid.Column="0" Grid.Row="5" BorderThickness="1, 1, 0, 1" />
+        <Border Grid.Column="1" Grid.Row="5" BorderThickness="1, 1, 0, 1" />
+        <Border Grid.Column="2" Grid.Row="5" BorderThickness="1, 1, 0, 1" />
+        <Border Grid.Column="3" Grid.Row="5" BorderThickness="1, 1, 0, 1" />
+        <Border Grid.Column="4" Grid.Row="5" BorderThickness="1, 1, 0, 1" />
+        <Border Grid.Column="5" Grid.Row="5" BorderThickness="1, 1, 0, 1" />
+        <Border Grid.Column="6" Grid.Row="5" BorderThickness="1, 1, 0, 1" />
+        <Border Grid.Column="7" Grid.Row="5" BorderThickness="1, 1, 1, 1" />
+        <Border Grid.Column="8" Grid.Row="5" BorderThickness="1, 1, 1, 1" />
+
+
         <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Text="绕组温度" FontSize="18" FontWeight="bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         <TextBlock Grid.Row="0" Grid.Column="3" Grid.ColumnSpan="1" Text="铁心温度" FontSize="18" FontWeight="bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         <TextBlock Grid.Row="0" Grid.Column="4" Grid.ColumnSpan="4" Text="环境温度" FontSize="18" FontWeight="bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
@@ -79,7 +110,30 @@
         <hc:ComboBox Grid.Row="2" Grid.Column="5"  Name="cbEnvB" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
         <hc:ComboBox Grid.Row="2" Grid.Column="6"  Name="cbEnvC" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
         <hc:ComboBox Grid.Row="2" Grid.Column="7"  Name="cbEnvD" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-        <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="8" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+
+        <TextBlock Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="6" Text="罩壳出风口温度" FontSize="18" FontWeight="bold" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0, 5, 0, 0"/>
+        <TextBlock Grid.Row="3" Grid.Column="6" Grid.ColumnSpan="3" Text="罩壳进风口温度" FontSize="18" FontWeight="bold" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0, 5, 0, 0"/>
+        <TextBlock Grid.Row="4" Grid.Column="0"  Text="1" VerticalAlignment="Center" FontSize="16" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="4" Grid.Column="1"  Text="2" VerticalAlignment="Center" FontSize="16" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="4" Grid.Column="2"  Text="3" VerticalAlignment="Center" FontSize="16" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="4" Grid.Column="3"  Text="4" VerticalAlignment="Center" FontSize="16" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="4" Grid.Column="4"  Text="5" VerticalAlignment="Center" FontSize="16" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="4" Grid.Column="5"  Text="6" VerticalAlignment="Center" FontSize="16" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="4" Grid.Column="6"  Text="1" VerticalAlignment="Center" FontSize="16" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="4" Grid.Column="7"  Text="2" VerticalAlignment="Center" FontSize="16" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="4" Grid.Column="8"  Text="3" VerticalAlignment="Center" FontSize="16" HorizontalAlignment="Center"/>
+
+        <hc:ComboBox Grid.Row="5" Grid.Column="0"  Name="cbOutlet1" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+        <hc:ComboBox Grid.Row="5" Grid.Column="1"  Name="cbOutlet2" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+        <hc:ComboBox Grid.Row="5" Grid.Column="2"  Name="cbOutlet3" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+        <hc:ComboBox Grid.Row="5" Grid.Column="3"  Name="cbOutlet4" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+        <hc:ComboBox Grid.Row="5" Grid.Column="4"  Name="cbOutlet5" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+        <hc:ComboBox Grid.Row="5" Grid.Column="5"  Name="cbOutlet6" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+        <hc:ComboBox Grid.Row="5" Grid.Column="6"  Name="cbInlet1" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+        <hc:ComboBox Grid.Row="5" Grid.Column="7"  Name="cbInlet2" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+        <hc:ComboBox Grid.Row="5" Grid.Column="8"  Name="cbInlet3" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+        
+        <StackPanel Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="8" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
             <Button Content="确认" Style="{StaticResource ButtonPrimary}" Width="80" Height="36" FontSize="16" Margin="0,20,20,0" Name="btConfirm" Click="btConfirm_Click"/>
             <Button Content="取消" Style="{StaticResource ButtonPrimary}" Width="80" Height="36" FontSize="16" Margin="0,20,0,0" Name="btCancel" Click="btCancel_Click"/>
         </StackPanel>
