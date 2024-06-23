@@ -477,14 +477,7 @@ namespace ABBDataManagerSystem.Pages
             float value = 0;
             if (lastPacket != null)
             {
-                //if (lastPacket.ch1Enabled)
-                //{
-                //    value = lastPacket.ch1RealTimeResistance * (lastPacket.ch1RealTimeResistanceIsMill ? 0.001f : 1f);
-                //}
-                //else if (lastPacket.ch2Enabled)
-                //{
-                //    value = lastPacket.ch2RealTimeResistance * (lastPacket.ch2RealTimeResistanceIsMill ? 0.001f : 1f);
-                //}
+                value = Utils.GetValueWithMill(lastPacket.strRealTimeResistance1, false) ?? 0;
             }
             if (value == 0 && IsSimulate)
             {
@@ -572,22 +565,16 @@ namespace ABBDataManagerSystem.Pages
             float? valueCh2 = null;
             if (lastPacket != null)
             {
-                //if (lastPacket.ch1Enabled)
-                //{
-                //    valueCh1 = lastPacket.ch1RealTimeResistance * (lastPacket.ch1RealTimeResistanceIsMill ? 0.001f : 1f);
-                //}
-                //if (lastPacket.ch2Enabled)
-                //{
-                //    valueCh2 = lastPacket.ch2RealTimeResistance * (lastPacket.ch2RealTimeResistanceIsMill ? 0.001f : 1f);
-                //}
+                valueCh1 = Utils.GetValueWithMill(lastPacket.strRealTimeResistance1, false);
+                valueCh2 = Utils.GetValueWithMill(lastPacket.strRealTimeResistance2, true);
             }
             else if (IsSimulate)
             {
                 valueCh1 = (float)random.Next() % 1000 + (float)random.NextDouble();
                 valueCh2 = (float)random.Next() % 1000 + (float)random.NextDouble();
             }
-            string? ch1 = Utils.FloatFormatZeroIsNull(valueCh1);
-            string? ch2 = Utils.FloatFormatZeroIsNull(valueCh2);
+            string? ch1 = valueCh1.ToString();
+            string? ch2 = valueCh2.ToString();
 
             TextBox hv = TempRiseCoolSelectedLevel == "第一次" ? tbTempCoolHV1 : tbTempCoolHV2;
             TextBox lv1 = TempRiseCoolSelectedLevel == "第一次" ? tbTempCoolLV11 : tbTempCoolLV21;
@@ -755,12 +742,15 @@ namespace ABBDataManagerSystem.Pages
 
         private void UpdateRealTimePanelDisplay(JinYuan20ECollector.CommonPacket packet)
         {
-            Log.Info("UpdateRealTimePanelDisplay: " + packet.ToString());
-            tbCH1Resistance.Text = packet.strRealTimeResistance1;
-            tbCH2Resistance.Text = packet.strRealTimeResistance2;
+            //Log.Info("UpdateRealTimePanelDisplay: " + packet.ToString());
+            tbCH1Resistance.Text = packet.strRealTimeResistance1 + "Ω";
+            tbCH2Resistance.Text = packet.strRealTimeResistance2 + "Ω";
             tbCH1State.Text = "【" + packet.Status + "】";
             tbCH2State.Text = "【" + packet.Status + "】";
+            tbCH1Current.Text = packet.strRealTimeCurrent + "A";
+            tbCH2Current.Text = packet.strRealTimeCurrent + "A";
             lastPacket = packet;
+            DumpPacekt();
         }
         #endregion
 
@@ -807,7 +797,7 @@ namespace ABBDataManagerSystem.Pages
             {
                 SelectedTesting = null;
             }
-            if (SelectedTesting != null && Collector != null)
+            if (Collector != null)
             {
                 Collector.Mode = SelectedTesting ?? TestType20E.Normal;
                 Collector.SendParameterSetCommand();
@@ -862,11 +852,6 @@ namespace ABBDataManagerSystem.Pages
                 panelCommonTestResult.Visibility = Visibility.Collapsed;
                 panelTempRiseCoolTestResult.Visibility = Visibility.Collapsed;
                 dataGridPanel.Visibility = Visibility.Visible;
-            }
-
-            if (SelectedTesting != null && Collector != null)
-            {
-                //Collector.TestType = SelectedTesting ?? TestType20W.CommonTest;
             }
         }
 
@@ -1238,6 +1223,16 @@ namespace ABBDataManagerSystem.Pages
         }
         #endregion
 
+        private void DumpPacekt()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                if (lastPacket != null)
+                {
+                    tbDebug.Text = $"{DateTime.Now.ToString()}: {lastPacket.ToString()}";
+                }
+            });
+        }
     }
 
 }

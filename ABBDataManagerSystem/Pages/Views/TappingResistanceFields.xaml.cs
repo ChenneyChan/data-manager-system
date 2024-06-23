@@ -96,9 +96,9 @@ namespace ABBDataManagerSystem.Pages.Views
 
         private void UpdateDisplay()
         {
-            tbResistanceAB.Text = ValueAB == null ? "" : Utils.ZeroIsNull(Utils.FloatFormat((float)ValueAB));
-            tbResistanceBC.Text = ValueBC == null ? "" : Utils.ZeroIsNull(Utils.FloatFormat((float)ValueBC));
-            tbResistanceCA.Text = ValueCA == null ? "" : Utils.ZeroIsNull(Utils.FloatFormat((float)ValueCA));
+            tbResistanceAB.Text = ValueAB == null ? "" : Utils.ZeroIsNull(((float)ValueAB).ToString());
+            tbResistanceBC.Text = ValueBC == null ? "" : Utils.ZeroIsNull(((float)ValueBC).ToString());
+            tbResistanceCA.Text = ValueCA == null ? "" : Utils.ZeroIsNull(((float)ValueCA).ToString());
 
             //tbResistanceAB.Background = SelectedIndex == 1 ? ActiveBackGroud : OriginBackGroud;
             //tbResistanceBC.Background = SelectedIndex == 2 ? ActiveBackGroud : OriginBackGroud;

@@ -375,5 +375,34 @@ namespace ABBDataManagerSystem
             }
             return null;
         }
+
+        public static float? GetValueWithMill(string? v, bool needMill = true)
+        {
+            if (v == null)
+            {
+                return null;
+            }
+            float? value = GetFloat(v);
+            if (value == null)
+            {
+                return null;
+            }
+            if (needMill)
+            {
+                if (v.IndexOf("m") >= 0)
+                {
+                    return value;
+                }
+                return value * 1000;
+            }
+            else
+            {
+                if (v.IndexOf("m") >= 0)
+                {
+                    return value / 1000;
+                }
+                return value;
+            }
+        }
     }
 }

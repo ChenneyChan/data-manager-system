@@ -1,5 +1,6 @@
 ﻿using NPOI.SS.Formula.Functions;
 using Org.BouncyCastle.Bcpg;
+using System.Collections.Concurrent;
 using System.Text;
 
 namespace ABBDataManagerSystem.Connector
@@ -7,6 +8,8 @@ namespace ABBDataManagerSystem.Connector
     internal class JinYuan20ECollector
     {
         public static readonly int Interval = 400; // 每400ms发送一次寻机指令，从机返回数据
+
+        private ConcurrentQueue<Action> actions = new ConcurrentQueue<Action>();
 
         private readonly ResistanceCurrentInfoCollector Collector;
 
@@ -134,6 +137,7 @@ namespace ABBDataManagerSystem.Connector
             RCO = 0x3A
         }
 
+        #region 枚举值转换
         public static class EnumHelper
         {
             // 电流枚举值与字符串的映射表
@@ -252,6 +256,7 @@ namespace ABBDataManagerSystem.Connector
                 throw new ArgumentException("Invalid string value.");
             }
         }
+        #endregion
 
         public JinYuan20ECollector(string portName, int baudRate = 9600)
         {
@@ -278,40 +283,58 @@ namespace ABBDataManagerSystem.Connector
         //测试命令，温升模式下为定时
         public void SendTestCommand()
         {
-            byte[] command = new byte[] { 0x62, 0x20, 0x20, 0x20, 0x20 };
-            Collector.SendCommand(command);
+            actions.Enqueue(() =>
+            {
+                byte[] command = new byte[] { 0x62, 0x20, 0x20, 0x20, 0x20 };
+                Collector.SendCommand(command);
+            });
         }
 
         //参数设置命令
         public void SendParameterSetCommand()
         {
-            byte[] command = new byte[] { 0x60, (byte)Mode, (byte)PatternMode, (byte)WindingMode, (byte)CurrentMode };
-            Collector.SendCommand(command);
+            actions.Enqueue(() =>
+            {
+                byte[] command = new byte[] { 0x60, (byte)Mode, (byte)PatternMode, (byte)WindingMode, (byte)CurrentMode };
+                Collector.SendCommand(command);
+            });
         }
 
         //复位命令 测试过程中不可用
         public void SendResetCommand()
         {
-            Collector.SendCommand(new byte[] { 0x6B, 0x20, 0x20, 0x20, 0x20 });
+            actions.Enqueue(() =>
+            {
+                Collector.SendCommand(new byte[] { 0x6B, 0x20, 0x20, 0x20, 0x20 });
+            });
         }
 
         #region 常规测试界面下可用的命令
         //保存命令
         public void SendSaveCommandAtNormal()
         {
-            Collector.SendCommand(new byte[] { 0x63, 0x20, 0x20, 0x20, 0x20 });
+            actions.Enqueue(() =>
+            {
+                Collector.SendCommand(new byte[] { 0x63, 0x20, 0x20, 0x20, 0x20 });
+            });
         }
 
         //打印命令
         public void SendPrintCommandAtNormal()
         {
-            Collector.SendCommand(new byte[] { 0x64, 0x20, 0x20, 0x20, 0x20 });
+            actions.Enqueue(() =>
+            {
+                Collector.SendCommand(new byte[] { 0x64, 0x20, 0x20, 0x20, 0x20 });
+            });
         }
 
         //退出命令
         public void SendExitCommandAtNormal()
         {
-            Collector.SendCommand(new byte[] { 0x65, 0x20, 0x20, 0x20, 0x20 });
+            actions.Enqueue(() =>
+            {
+                Collector.SendCommand(new byte[] { 0x65, 0x20, 0x20, 0x20, 0x20 });
+            });
         }
         #endregion
 
@@ -319,13 +342,19 @@ namespace ABBDataManagerSystem.Connector
         //测试命令
         public void SendTempRiseTestCommandAtTiming()
         {
-            Collector.SendCommand(new byte[] { 0x67, 0x20, 0x20, 0x20, 0x20 });
+            actions.Enqueue(() =>
+            {
+                Collector.SendCommand(new byte[] { 0x67, 0x20, 0x20, 0x20, 0x20 });
+            });
         }
 
         //退出命令
         public void SendTempRiseExitCommandAtTiming()
         {
-            Collector.SendCommand(new byte[] { 0x66, 0x20, 0x20, 0x20, 0x20 });
+            actions.Enqueue(() =>
+            {
+                Collector.SendCommand(new byte[] { 0x66, 0x20, 0x20, 0x20, 0x20 });
+            });
         }
         #endregion
 
@@ -333,7 +362,10 @@ namespace ABBDataManagerSystem.Connector
         //退出命令
         public void SendTempRiseExitCommandAtTest()
         {
-            Collector.SendCommand(new byte[] { 0x68, 0x20, 0x20, 0x20, 0x20 });
+            actions.Enqueue(() =>
+            {
+                Collector.SendCommand(new byte[] { 0x68, 0x20, 0x20, 0x20, 0x20 });
+            });
         }
         #endregion
 
@@ -358,7 +390,23 @@ namespace ABBDataManagerSystem.Connector
             {
                 return null;
             }
-            SendRequestDataCommand();
+            if (actions.TryDequeue(out Action? action))
+            {
+                if (action != null)
+                {
+                    action();
+                }
+                else
+                {
+                    SendRequestDataCommand();
+                }
+            }
+            else
+            {
+
+                SendRequestDataCommand();
+
+            }
             byte[]? packet = Collector.ReadData();
             if (packet == null)
             {
@@ -379,6 +427,7 @@ namespace ABBDataManagerSystem.Connector
             CommonPacket? commonPacket = ParseCommonPacket(packet);
             if (commonPacket == null)
             {
+                Log.Info("Fail to parse packet step1");
                 return null;
             }
             commonPacket.Status = GetInstrumentStatusDescription(Status);
@@ -389,8 +438,9 @@ namespace ABBDataManagerSystem.Connector
             int offset = 5;
             if (commonPacket.mode == TestType20E.Normal)
             {
-                if (packet.Length < 50)
+                if (packet.Length < 46)
                 {
+                    Log.Info("Fail to parse packet step2");
                     return null;
                 }
                 // 实时时间（4位）+实时电流（5位）+实时电阻1（7位）+实时电阻2（7位）
