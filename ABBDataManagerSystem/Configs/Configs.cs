@@ -85,6 +85,7 @@ namespace ABBDataManagerSystem.Configs
 
         #region 常规设置
         public static int WorkStationNo = 1;
+        public static bool IsEnableVerboseDebug = false;
         #endregion
 
         #region 读写配置
@@ -182,16 +183,21 @@ namespace ABBDataManagerSystem.Configs
             TPIsSimulate = buff.ToString().Trim().ToLower() == "true";
             #endregion
 
+
+            #region 公共配置
+            GetPrivateProfileString(INICommon, "WorkStationNo", "", buff, 32, INIPATH);
+            WorkStationNo = Utils.ParseIntNull(buff.ToString()) ?? 1;
+            GetPrivateProfileString(INICommon, "WorkflowID", "", buff, 32, INIPATH);
+            WorkflowID = buff.ToString();
+            GetPrivateProfileString(INICommon, "IsEnableVerboseDebug", "", buff, 32, INIPATH);
+            IsEnableVerboseDebug = buff.ToString().Trim().ToLower() == "true";
+            #endregion
+
             #region 功率分析仪
             GetPrivateProfileString(INIPowerAnalyzer, "VT", "", buff, 32, INIPATH);
             VT = Utils.ParseFloatNull(buff.ToString());
             GetPrivateProfileString(INIPowerAnalyzer, "CT", "", buff, 32, INIPATH);
             CT = Utils.ParseFloatNull(buff.ToString());
-
-            GetPrivateProfileString(INICommon, "WorkStationNo", "", buff, 32, INIPATH);
-            WorkStationNo = Utils.ParseIntNull(buff.ToString()) ?? 1;
-            GetPrivateProfileString(INICommon, "WorkflowID", "", buff, 32, INIPATH);
-            WorkflowID = buff.ToString();
             #endregion
 
             #region JinYuan20W
@@ -249,12 +255,15 @@ namespace ABBDataManagerSystem.Configs
             WritePrivateProfileString(INITemperature, "InletTemperature", InletTemperature, INIPATH);
             WritePrivateProfileString(INITemperature, "IsSimulate", TPIsSimulate.ToString(), INIPATH);
 
+            #region 公共配置
+            WritePrivateProfileString(INICommon, "WorkStationNo", WorkStationNo.ToString(), INIPATH);
+            WritePrivateProfileString(INICommon, "WorkflowID", WorkflowID, INIPATH);
+            WritePrivateProfileString(INICommon, "IsEnableVerboseDebug", IsEnableVerboseDebug.ToString(), INIPATH);
+            #endregion
+
             #region 功率分析仪
             WritePrivateProfileString(INIPowerAnalyzer, "VT", VT != null ? Utils.FloatFormat((float)VT, 4) : "" , INIPATH);
             WritePrivateProfileString(INIPowerAnalyzer, "CT", CT != null ? Utils.FloatFormat((float)CT, 4) : "" , INIPATH);
-
-            WritePrivateProfileString(INICommon, "WorkStationNo", WorkStationNo.ToString(), INIPATH);
-            WritePrivateProfileString(INICommon, "WorkflowID", WorkflowID, INIPATH);
             #endregion
 
             #region JinaYuan20W

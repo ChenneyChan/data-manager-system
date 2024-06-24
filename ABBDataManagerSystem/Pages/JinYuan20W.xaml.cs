@@ -64,6 +64,9 @@ namespace ABBDataManagerSystem.Pages
 
             // 数据绑定
             this.DataContext = new { Items = dataItems };
+
+            // 开关调试信息
+            panelDebug.Visibility = Configs.Configs.IsEnableVerboseDebug ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void InitToggleButtons()
