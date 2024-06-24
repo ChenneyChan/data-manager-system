@@ -1137,6 +1137,7 @@ namespace ABBDataManagerSystem.Pages
                     record.Inlet1 = item.Field<float?>(inlets[0]) ?? 0;
                     record.Inlet2 = item.Field<float?>(inlets[1]) ?? 0;
                     record.Inlet3 = item.Field<float?>(inlets[2]) ?? 0;
+                    record.TopTemp = item.Field<float?>(Configs.Configs.TopTemperature) ?? 0;
                 }
                 list.Add(record);
             }

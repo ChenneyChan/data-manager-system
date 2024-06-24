@@ -36,6 +36,7 @@ namespace ABBDataManagerSystem.Bean.Base
         public float Inlet1 = 0;
         public float Inlet2 = 0;
         public float Inlet3 = 0;
+        public float TopTemp = 0;
         public bool IsAFWF = false;
         public string WorkflowID = string.Empty;
 
@@ -62,9 +63,13 @@ namespace ABBDataManagerSystem.Bean.Base
                 connection.Open();
 
                 using (SQLCommond command = new SQLCommond($"INSERT INTO {TABLE_NAME} (ID, Timestamp, ua, ub, uc, u3, ia, ib, ic, i3, p3, " +
-                    $"CoreTemperature, WindingATemperature, WindingBTemperature, WindingCTemperature, AmbientATemperature, AmbientBTemperature, AmbientCTemperature, AmbientDTemperature) VALUES " +
+                    $"CoreTemperature, WindingATemperature, WindingBTemperature, WindingCTemperature, AmbientATemperature, AmbientBTemperature, AmbientCTemperature, AmbientDTemperature, " +
+                    "Outlet1, Outlet2, Outlet3, Outlet4, Outlet5, Outlet6, Inlet1, Inlet2, Inlet3, TopTemperature, " +
+                    ") VALUES " +
                     "(@ID, @Timestamp, @ua, @ub, @uc, @u3, @ia, @ib, @ic, @i3, @p3, " +
-                    $"@CoreTemp, @WindingTempA, @WindingTempB, @WindingTempC, @EnvTempA, @EnvTempB, @EnvTempC, @EnvTempD)", connection))
+                    $"@CoreTemp, @WindingTempA, @WindingTempB, @WindingTempC, @EnvTempA, @EnvTempB, @EnvTempC, @EnvTempD, " +
+                    "@Outlet1, @Outlet2, @Outlet3, @Outlet4, @Outlet5, @Outlet6, @Inlet1, @Inlet2, @Inlet3, @TopTemperature, " +
+                    ")", connection))
                 {
                     command.Parameters.AddWithValue("@ID", ID);
                     command.Parameters.AddWithValue("@Timestamp", Timestamp);
@@ -85,6 +90,16 @@ namespace ABBDataManagerSystem.Bean.Base
                     command.Parameters.AddWithValue("@EnvTempB", EnvTempB);
                     command.Parameters.AddWithValue("@EnvTempC", EnvTempC);
                     command.Parameters.AddWithValue("@EnvTempD", EnvTempD);
+                    command.Parameters.AddWithValue("@Outlet1", Outlet1);
+                    command.Parameters.AddWithValue("@Outlet2", Outlet2);
+                    command.Parameters.AddWithValue("@Outlet3", Outlet3);
+                    command.Parameters.AddWithValue("@Outlet4", Outlet4);
+                    command.Parameters.AddWithValue("@Outlet5", Outlet5);
+                    command.Parameters.AddWithValue("@Outlet6", Outlet6);
+                    command.Parameters.AddWithValue("@Inlet1", Inlet1);
+                    command.Parameters.AddWithValue("@Inlet2", Inlet2);
+                    command.Parameters.AddWithValue("@Inlet3", Inlet3);
+                    command.Parameters.AddWithValue("@TopTemperature", TopTemp);
                     int count = command.ExecuteNonQuery();
                     return count > 0;
                 }
@@ -162,9 +177,13 @@ namespace ABBDataManagerSystem.Bean.Base
                         command.Connection = connection;
                         command.Transaction = transaction;
                         command.CommandText = $"INSERT INTO {TABLE_NAME} (ID, Timestamp, ua, ub, uc, u3, ia, ib, ic, i3, p3, " +
-                    $"CoreTemperature, WindingATemperature, WindingBTemperature, WindingCTemperature, AmbientATemperature, AmbientBTemperature, AmbientCTemperature, AmbientDTemperature, workflow_id) VALUES " +
-                    "(@ID, @Timestamp, @ua, @ub, @uc, @u3, @ia, @ib, @ic, @i3, @p3, " +
-                    $"@CoreTemp, @WindingTempA, @WindingTempB, @WindingTempC, @EnvTempA, @EnvTempB, @EnvTempC, @EnvTempD, @WorkflowID)";
+                    $"CoreTemperature, WindingATemperature, WindingBTemperature, WindingCTemperature, AmbientATemperature, AmbientBTemperature, AmbientCTemperature, AmbientDTemperature, " +
+                    $"Outlet1, Outlet2, Outlet3, Outlet4, Outlet5, Outlet6, Inlet1, Inlet2, Inlet3, TopTemperature, " +
+                    $"workflow_id) VALUES " +
+                    $"(@ID, @Timestamp, @ua, @ub, @uc, @u3, @ia, @ib, @ic, @i3, @p3, " +
+                    $"@CoreTemp, @WindingTempA, @WindingTempB, @WindingTempC, @EnvTempA, @EnvTempB, @EnvTempC, @EnvTempD, "+
+                    $"@Outlet1, @Outlet2, @Outlet3, @Outlet4, @Outlet5, @Outlet6, @Inlet1, @Inlet2, @Inlet3, @TopTemperature, " +
+                    $"@WorkflowID)";
 
                         command.Parameters.Add("@ID", MySqlDbType.Int64);
                         command.Parameters.Add("@Timestamp", MySqlDbType.DateTime);
@@ -186,7 +205,16 @@ namespace ABBDataManagerSystem.Bean.Base
                         command.Parameters.Add("@EnvTempC", MySqlDbType.Float);
                         command.Parameters.Add("@EnvTempD", MySqlDbType.Float);
                         command.Parameters.Add("@WorkflowID", MySqlDbType.String);
-
+                        command.Parameters.Add("@Outlet1", MySqlDbType.Float);
+                        command.Parameters.Add("@Outlet2", MySqlDbType.Float);
+                        command.Parameters.Add("@Outlet3", MySqlDbType.Float);
+                        command.Parameters.Add("@Outlet4", MySqlDbType.Float);
+                        command.Parameters.Add("@Outlet5", MySqlDbType.Float);
+                        command.Parameters.Add("@Outlet6", MySqlDbType.Float);
+                        command.Parameters.Add("@Inlet1", MySqlDbType.Float);
+                        command.Parameters.Add("@Inlet2", MySqlDbType.Float);
+                        command.Parameters.Add("@Inlet3", MySqlDbType.Float);
+                        command.Parameters.Add("@TopTemperature", MySqlDbType.Float);
                         try
                         {
                             foreach (var row in dataRows)
@@ -211,6 +239,16 @@ namespace ABBDataManagerSystem.Bean.Base
                                 command.Parameters["@EnvTempC"].Value = row.EnvTempC;
                                 command.Parameters["@EnvTempD"].Value = row.EnvTempD;
                                 command.Parameters["@WorkflowID"].Value = row.WorkflowID;
+                                command.Parameters["@Outlet1"].Value = row.Outlet1;
+                                command.Parameters["@Outlet2"].Value = row.Outlet2;
+                                command.Parameters["@Outlet3"].Value = row.Outlet3;
+                                command.Parameters["@Outlet4"].Value = row.Outlet4;
+                                command.Parameters["@Outlet5"].Value = row.Outlet5;
+                                command.Parameters["@Outlet6"].Value = row.Outlet6;
+                                command.Parameters["@Inlet1"].Value = row.Inlet1;
+                                command.Parameters["@Inlet2"].Value = row.Inlet2;
+                                command.Parameters["@Inlet3"].Value = row.Inlet3;
+                                command.Parameters["@TopTemperature"].Value = row.TopTemp;
                                 command.ExecuteNonQuery();
                             }
 
