@@ -1167,15 +1167,8 @@ namespace ABBDataManagerSystem.Pages
                 return;
             }
             float voltage = Utils.ParseFloat(tbTestingVoltage.Text);
-            float current = 0;
-            //容量除以试验电压除以根号三
+            float current = Utils.ParseFloat(tbTestingCurrent.Text);
             WorkflowInfo workflowInfo = vs[0];
-            if (voltage != 0)
-            {
-                current = (workflowInfo.RatedPower / voltage) / (float)Math.Sqrt(3);
-            }
-            tbTestingCurrent.Text = Utils.FloatFormat(current);
-
             workflowInfo.TempRiseHVCorrectionFactor = Utils.ParseFloatNull(cbHVCorrectionFact.Text);
             workflowInfo.TempRiseLVCorrectionFactor = Utils.ParseFloatNull(cbLVCorrectionFact.Text);
             workflowInfo.TempRiseRelativeTo = cbRelatedTo.Text;
