@@ -1236,5 +1236,15 @@ namespace ABBDataManagerSystem.Pages
 
             // 如果需要保存到数据库或者其他操作，这里进行保存或提交的逻辑
         }
+
+        private void MenuItemEnableEdit_Click(object sender, RoutedEventArgs e)
+        {
+            dgTempRecord.IsReadOnly = false;
+        }
+
+        private void MenuItemCloseEdit_Click(object sender, RoutedEventArgs e)
+        {
+            dgTempRecord.IsReadOnly = true;
+        }
     }
 }

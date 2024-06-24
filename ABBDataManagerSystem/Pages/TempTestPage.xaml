@@ -10,8 +10,8 @@
              d:DesignHeight="1080" d:DesignWidth="1920" Loaded="UserControl_Loaded" Unloaded="UserControl_Unloaded" MinHeight="800" MinWidth="800">
     <UserControl.Resources>
         <ContextMenu x:Key="DataGridContextMenu">
-            <MenuItem Header="Edit" Click="MenuItemEditor_Click"/>
-            <MenuItem Header="Delete"/>
+            <MenuItem Header="开启编辑" Click="MenuItemEnableEdit_Click"/>
+            <MenuItem Header="关闭编辑" Click="MenuItemCloseEdit_Click"/>
         </ContextMenu>
         <local1:AlternationConverter x:Key="AlternationConverter"/>
         <Style TargetType="RadioButton" BasedOn="{StaticResource {x:Type RadioButton}}">
