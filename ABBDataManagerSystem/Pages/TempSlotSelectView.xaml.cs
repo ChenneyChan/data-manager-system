@@ -43,6 +43,7 @@ namespace ABBDataManagerSystem.Pages
             InitComboBox(cbInlet1);
             InitComboBox(cbInlet2);
             InitComboBox(cbInlet3);
+            InitComboBox(cbTop);
             cbWindingA.Text = Configs.Configs.WindingA;
             cbWindingB.Text = Configs.Configs.WindingB;
             cbWindingC.Text = Configs.Configs.WindingC;
@@ -62,6 +63,7 @@ namespace ABBDataManagerSystem.Pages
             cbInlet1.Text = inlets.Length > 0 ? inlets[0] : "";
             cbInlet2.Text = inlets.Length > 1 ? inlets[1] : "";
             cbInlet3.Text = inlets.Length > 2 ? inlets[2] : "";
+            cbTop.Text = Configs.Configs.TopTemperature;
         }
 
         private void btCancel_Click(object sender, RoutedEventArgs e)
@@ -82,7 +84,7 @@ namespace ABBDataManagerSystem.Pages
             Configs.Configs.EnvD = cbEnvD.Text;
             Configs.Configs.OutletTemperature = cbOutlet1.Text + "," + cbOutlet2.Text + "," + cbOutlet3.Text + "," + cbOutlet4.Text + "," + cbOutlet5.Text + "," + cbOutlet6.Text;
             Configs.Configs.InletTemperature = cbInlet1.Text + "," + cbInlet2.Text + "," + cbInlet3.Text;
-
+            Configs.Configs.TopTemperature = cbTop.Text;
             DialogResult = true;
             Close();
         }

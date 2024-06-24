@@ -65,6 +65,7 @@ namespace ABBDataManagerSystem.Configs
         public static string EnvD {  set; get; } = string.Empty;
         public static string OutletTemperature { set; get; } = string.Empty; // 出风口温度
         public static string InletTemperature { set; get; } = string.Empty;   // 进风口温度
+        public static string TopTemperature { set; get; } = string.Empty;
         #endregion
 
         #region 20W设置
@@ -179,6 +180,8 @@ namespace ABBDataManagerSystem.Configs
             {
                 InletTemperature = "Slot-1,Slot-2,Slot-3";
             }
+            GetPrivateProfileString(INITemperature, "TopTemperature", "", buff, 32, INIPATH);
+            TopTemperature = buff.ToString();
             GetPrivateProfileString(INITemperature, "IsSimulate", "", buff, 32, INIPATH);
             TPIsSimulate = buff.ToString().Trim().ToLower() == "true";
             #endregion
@@ -253,6 +256,7 @@ namespace ABBDataManagerSystem.Configs
             WritePrivateProfileString(INITemperature, "EnvD", EnvD, INIPATH);
             WritePrivateProfileString(INITemperature, "OutletTemperature", OutletTemperature, INIPATH);
             WritePrivateProfileString(INITemperature, "InletTemperature", InletTemperature, INIPATH);
+            WritePrivateProfileString(INITemperature, "TopTemperature", TopTemperature, INIPATH);
             WritePrivateProfileString(INITemperature, "IsSimulate", TPIsSimulate.ToString(), INIPATH);
 
             #region 公共配置

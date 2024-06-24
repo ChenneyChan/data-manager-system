@@ -167,6 +167,7 @@ namespace ABBDataManagerSystem.Pages
             InitChartRange();
             tempCharts = new TempChartsNew(plotView, SelectedSlots);
             tempCharts.InitChart();
+            tempCharts.ToogleLegends();
             GetWorkflowBaseInfo();
             Tools.EventManager.Instance.Subscribe("WorkflowSelected", WorkflowUpdateEvent);
             Tools.EventManager.Instance.Subscribe("PowerAnalyzer", EventHandler);
@@ -265,6 +266,7 @@ namespace ABBDataManagerSystem.Pages
                 SelectedSlotChange = false;
                 tempCharts = new TempChartsNew(plotView, SelectedSlots);
                 tempCharts.InitChart();
+                tempCharts.ToogleLegends();
             }
             if (needSaveCsv)
             {
@@ -612,6 +614,12 @@ namespace ABBDataManagerSystem.Pages
                         MinWidth = 40
                     });
                 }
+                dgTempRecord.Columns.Add(new DataGridTextColumn()
+                {
+                    Header = $"顶部温度",
+                    Binding = new Binding(Configs.Configs.TopTemperature),
+                    MinWidth = 40
+                });
             }
 
             for (int i = 0; i < SelectedSlots.Count; i++)
@@ -941,7 +949,7 @@ namespace ABBDataManagerSystem.Pages
             shIn1.Visibility = !IsAFWF ? Visibility.Collapsed : Visibility.Visible;
             shIn2.Visibility = !IsAFWF ? Visibility.Collapsed : Visibility.Visible;
             shIn3.Visibility = !IsAFWF ? Visibility.Collapsed : Visibility.Visible;
-            shIn3.Visibility = !IsAFWF ? Visibility.Collapsed : Visibility.Visible;
+            shTop.Visibility = !IsAFWF ? Visibility.Collapsed : Visibility.Visible;
         }
 
         private void SelectedSlots_SelectionChanged()
@@ -978,6 +986,7 @@ namespace ABBDataManagerSystem.Pages
                 {
                     slots.Add(_inletSlots[i]);
                 }
+                slots.Add(Configs.Configs.TopTemperature);
             }
             foreach (var item in slots)
             {
@@ -1037,6 +1046,7 @@ namespace ABBDataManagerSystem.Pages
             shIn1.Status = inSlots.Length > 0 ? inSlots[0] : "";
             shIn2.Status = inSlots.Length > 1 ? inSlots[1] : "";
             shIn3.Status = inSlots.Length > 2 ? inSlots[2] : "";
+            shTop.Status = Configs.Configs.TopTemperature;
         }
         #endregion
 
