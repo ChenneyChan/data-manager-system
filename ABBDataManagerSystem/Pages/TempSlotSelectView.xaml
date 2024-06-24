@@ -28,7 +28,6 @@
             <ColumnDefinition/>
             <ColumnDefinition/>
             <ColumnDefinition/>
-            <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition/>
@@ -39,13 +38,14 @@
             <RowDefinition/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="8" Background="#FFD2D2D2"/>
-        <Border Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="8" Background="#FFF5F5D5"/>
-        <Border Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="8" Background="#FFE5F7E9"/>
+        <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="9" Background="#FFD2D2D2"/>
+        <Border Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="9" Background="#FFF5F5D5"/>
+        <Border Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="9" Background="#FFE5F7E9"/>
 
         <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" BorderThickness="1, 1, 0, 0" />
         <Border Grid.Column="3" Grid.Row="0" Grid.ColumnSpan="1" BorderThickness="1, 1, 0, 0" />
-        <Border Grid.Column="4" Grid.Row="0" Grid.ColumnSpan="4" BorderThickness="1, 1, 1, 0" />
+        <Border Grid.Column="4" Grid.Row="0" Grid.ColumnSpan="4" BorderThickness="1, 1, 0, 0" />
+        <Border Grid.Column="8" Grid.Row="0" Grid.ColumnSpan="1" BorderThickness="1, 1, 1, 0" />
         <Border Grid.Column="0" Grid.Row="1" BorderThickness="1, 1, 0, 0" />
         <Border Grid.Column="1" Grid.Row="1" BorderThickness="1, 1, 0, 0" />
         <Border Grid.Column="2" Grid.Row="1" BorderThickness="1, 1, 0, 0" />
@@ -53,7 +53,8 @@
         <Border Grid.Column="4" Grid.Row="1" BorderThickness="1, 1, 0, 0" />
         <Border Grid.Column="5" Grid.Row="1" BorderThickness="1, 1, 0, 0" />
         <Border Grid.Column="6" Grid.Row="1" BorderThickness="1, 1, 0, 0" />
-        <Border Grid.Column="7" Grid.Row="1" BorderThickness="1, 1, 1, 0" />
+        <Border Grid.Column="7" Grid.Row="1" BorderThickness="1, 1, 0, 0" />
+        <Border Grid.Column="8" Grid.Row="1" BorderThickness="1, 1, 1, 0" />
 
         <Border Grid.Column="0" Grid.Row="2" BorderThickness="1, 1, 0, 1" />
         <Border Grid.Column="1" Grid.Row="2" BorderThickness="1, 1, 0, 1" />
@@ -62,15 +63,15 @@
         <Border Grid.Column="4" Grid.Row="2" BorderThickness="1, 1, 0, 1" />
         <Border Grid.Column="5" Grid.Row="2" BorderThickness="1, 1, 0, 1" />
         <Border Grid.Column="6" Grid.Row="2" BorderThickness="1, 1, 0, 1" />
-        <Border Grid.Column="7" Grid.Row="2" BorderThickness="1, 1, 1, 1" />
+        <Border Grid.Column="7" Grid.Row="2" BorderThickness="1, 1, 0, 1" />
+        <Border Grid.Column="8" Grid.Row="2" BorderThickness="1, 1, 1, 1" />
 
-        <Border Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="10" Background="#FFD2D2D2" Margin="0, 5, 0, 0"/>
-        <Border Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="10" Background="#FFF5F5D5"/>
-        <Border Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="10" Background="#FFE5F7E9"/>
+        <Border Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="9" Background="#FFD2D2D2" Margin="0, 5, 0, 0"/>
+        <Border Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="9" Background="#FFF5F5D5"/>
+        <Border Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="9" Background="#FFE5F7E9"/>
 
         <Border Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="6" BorderThickness="1, 1, 0, 0" Margin="0, 5, 0, 0"/>
         <Border Grid.Column="6" Grid.Row="3" Grid.ColumnSpan="3" BorderThickness="1, 1, 0, 0" Margin="0, 5, 0, 0"/>
-        <Border Grid.Column="9" Grid.Row="3" BorderThickness="1, 1, 0, 1" Margin="0, 5, 0, 0"/>
         <Border Grid.Column="0" Grid.Row="4" BorderThickness="1, 1, 0, 0" />
         <Border Grid.Column="1" Grid.Row="4" BorderThickness="1, 1, 0, 0" />
         <Border Grid.Column="2" Grid.Row="4" BorderThickness="1, 1, 0, 0" />
@@ -115,7 +116,7 @@
 
         <TextBlock Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="6" Text="罩壳出风口温度" FontSize="18" FontWeight="bold" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0, 5, 0, 0"/>
         <TextBlock Grid.Row="3" Grid.Column="6" Grid.ColumnSpan="3" Text="罩壳进风口温度" FontSize="18" FontWeight="bold" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0, 5, 0, 0"/>
-        <TextBlock Grid.Row="3" Grid.Column="9"  Text="壳内顶部温度" FontSize="18" FontWeight="bold" TextWrapping="Wrap" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0, 5, 0, 0"/>
+        <TextBlock Grid.Row="0" Grid.Column="8"  Text="壳内顶部温度" FontSize="18" FontWeight="bold" TextWrapping="Wrap" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0, 5, 0, 0"/>
         <TextBlock Grid.Row="4" Grid.Column="0"  Text="1" VerticalAlignment="Center" FontSize="16" HorizontalAlignment="Center"/>
         <TextBlock Grid.Row="4" Grid.Column="1"  Text="2" VerticalAlignment="Center" FontSize="16" HorizontalAlignment="Center"/>
         <TextBlock Grid.Row="4" Grid.Column="2"  Text="3" VerticalAlignment="Center" FontSize="16" HorizontalAlignment="Center"/>
@@ -135,7 +136,7 @@
         <hc:ComboBox Grid.Row="5" Grid.Column="6"  Name="cbInlet1" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
         <hc:ComboBox Grid.Row="5" Grid.Column="7"  Name="cbInlet2" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
         <hc:ComboBox Grid.Row="5" Grid.Column="8"  Name="cbInlet3" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-        <hc:ComboBox Grid.Row="5" Grid.Column="9"  Name="cbTop" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+        <hc:ComboBox Grid.Row="2" Grid.Column="8"  Name="cbTop" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
         
         <StackPanel Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="8" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
             <Button Content="确认" Style="{StaticResource ButtonPrimary}" Width="80" Height="36" FontSize="16" Margin="0,20,20,0" Name="btConfirm" Click="btConfirm_Click"/>
