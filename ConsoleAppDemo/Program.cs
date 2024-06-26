@@ -2,10 +2,6 @@
 using System.Net.Sockets;
 using System.Net;
 using System.Text;
-using System.Collections;
-using NPOI.SS.UserModel;
-using NPOI.XSSF.UserModel;
-using Newtonsoft.Json.Linq;
 using System.IO.Ports;
 
 class Program
@@ -313,7 +309,7 @@ class Program
         }
     }
 
-    static void Main()
+    static void MainA()
     {
         PacketParse20W();
         //PacketByteParse();
@@ -372,97 +368,98 @@ class Program
     }
 }
 
-
+#region NPOI测试Demo
 class ProgramB
 {
-    static void MainB()
-    {
-        // 替换为你的 JSON 数据
-        string jsonData = File.ReadAllText("C:\\Users\\cheneychan\\AppData\\Local\\Temp\\__temp__workflow__.json");
+    //static void MainB()
+    //{
+    //    // 替换为你的 JSON 数据
+    //    string jsonData = File.ReadAllText("C:\\Users\\cheneychan\\AppData\\Local\\Temp\\__temp__workflow__.json");
 
-        // 替换为你的 Excel 模板文件路径
-        string templatePath = "E:\\01_Code\\vite-electron\\extraResources\\templates\\source_data_template.xlsx";
+    //    // 替换为你的 Excel 模板文件路径
+    //    string templatePath = "E:\\01_Code\\vite-electron\\extraResources\\templates\\source_data_template.xlsx";
 
-        // 替换为你的输出 Excel 文件路径
-        string outputPath = "demo_output.xlsx";
+    //    // 替换为你的输出 Excel 文件路径
+    //    string outputPath = "demo_output.xlsx";
 
-        WriteJsonToExcel(jsonData, templatePath, outputPath);
-    }
+    //    WriteJsonToExcel(jsonData, templatePath, outputPath);
+    //}
 
-    static void WriteJsonToExcel(string jsonData, string templatePath, string outputPath)
-    {
-        // 读取 JSON 数据
-        var jsonObject = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(jsonData);
-        if (jsonObject == null)
-        {
-            return;
-        }
+    //    static void WriteJsonToExcel(string jsonData, string templatePath, string outputPath)
+    //    {
+    //        // 读取 JSON 数据
+    //        var jsonObject = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(jsonData);
+    //        if (jsonObject == null)
+    //        {
+    //            return;
+    //        }
 
-        // 加载 Excel 模板文件
-        using (var templateFile = new FileStream(templatePath, FileMode.Open, FileAccess.Read))
-        {
-            var workbook = new XSSFWorkbook(templateFile);
-            var sheet = workbook.GetSheetAt(0);
+    //        // 加载 Excel 模板文件
+    //        using (var templateFile = new FileStream(templatePath, FileMode.Open, FileAccess.Read))
+    //        {
+    //            var workbook = new XSSFWorkbook(templateFile);
+    //            var sheet = workbook.GetSheetAt(0);
 
-            IEnumerator rowEnumerator = sheet.GetRowEnumerator();
-            while (rowEnumerator.MoveNext())
-            {
-                XSSFRow row = (XSSFRow)rowEnumerator.Current;
+    //            IEnumerator rowEnumerator = sheet.GetRowEnumerator();
+    //            while (rowEnumerator.MoveNext())
+    //            {
+    //                XSSFRow row = (XSSFRow)rowEnumerator.Current;
 
-                // 获取单元格迭代器
-                IEnumerator cellEnumerator = row.GetEnumerator();
+    //                // 获取单元格迭代器
+    //                IEnumerator cellEnumerator = row.GetEnumerator();
 
-                while (cellEnumerator.MoveNext())
-                {
-                    XSSFCell cell = (XSSFCell)cellEnumerator.Current;
+    //                while (cellEnumerator.MoveNext())
+    //                {
+    //                    XSSFCell cell = (XSSFCell)cellEnumerator.Current;
 
-                    // 获取单元格的内容
-                    string cellValue = cell.ToString().Trim();
-                    //Console.WriteLine("Cell Value: " + cellValue);
+    //                    // 获取单元格的内容
+    //                    string cellValue = cell.ToString().Trim();
+    //                    //Console.WriteLine("Cell Value: " + cellValue);
 
-                    // 在模板中填写 JSON 数据
-                    if (cellValue.StartsWith("${") && cellValue.EndsWith("}"))
-                    {
-                        Console.WriteLine("Cell Value: " + cellValue);
+    //                    // 在模板中填写 JSON 数据
+    //                    if (cellValue.StartsWith("${") && cellValue.EndsWith("}"))
+    //                    {
+    //                        Console.WriteLine("Cell Value: " + cellValue);
 
-                        var placeholder = cellValue.Substring(2, cellValue.Length - 3);
-                        Console.WriteLine("JsonDesc " + placeholder);
+    //                        var placeholder = cellValue.Substring(2, cellValue.Length - 3);
+    //                        Console.WriteLine("JsonDesc " + placeholder);
 
-                        // 获取路径1的值
-                        JToken token1 = jsonObject.SelectToken(placeholder);
-                        if (token1 != null)
-                        {
-                            string value1 = token1.ToString();
-                            Console.WriteLine($"{placeholder} 的值为: {value1}");
-                            cell.SetCellValue(value1);
-                            if (value1.GetType() == typeof(float) || value1.GetType() == typeof(int) || value1.GetType() == typeof(double))
-                            {
-                                cell.SetCellType(CellType.Numeric);
-                                cell.SetCellValue(value1);
-                            }
-                            else
-                            {
-                                cell.SetCellType(CellType.String);
-                            }
-                            cell.SetCellValue(value1);
-                        }
-                        else
-                        {
-                            Console.WriteLine($"{placeholder} 未找到对应的值.");
-                            cell.SetCellValue("");
-                        }
-                    }
-                }
-            }
+    //                        // 获取路径1的值
+    //                        JToken token1 = jsonObject.SelectToken(placeholder);
+    //                        if (token1 != null)
+    //                        {
+    //                            string value1 = token1.ToString();
+    //                            Console.WriteLine($"{placeholder} 的值为: {value1}");
+    //                            cell.SetCellValue(value1);
+    //                            if (value1.GetType() == typeof(float) || value1.GetType() == typeof(int) || value1.GetType() == typeof(double))
+    //                            {
+    //                                cell.SetCellType(CellType.Numeric);
+    //                                cell.SetCellValue(value1);
+    //                            }
+    //                            else
+    //                            {
+    //                                cell.SetCellType(CellType.String);
+    //                            }
+    //                            cell.SetCellValue(value1);
+    //                        }
+    //                        else
+    //                        {
+    //                            Console.WriteLine($"{placeholder} 未找到对应的值.");
+    //                            cell.SetCellValue("");
+    //                        }
+    //                    }
+    //                }
+    //            }
 
-            // 保存输出 Excel 文件
-            using (var outputFile = new FileStream(outputPath, FileMode.Create, FileAccess.Write))
-            {
-                workbook.Write(outputFile);
-            }
-        }
-    }
+    //            // 保存输出 Excel 文件
+    //            using (var outputFile = new FileStream(outputPath, FileMode.Create, FileAccess.Write))
+    //            {
+    //                workbook.Write(outputFile);
+    //            }
+    //        }
+    //    }
 }
+#endregion
 
 #region 打印串口读取到的数据
 class ProgramC
@@ -509,6 +506,107 @@ class ProgramC
         string hexString = hexBuilder.ToString().Trim();
 
         Console.WriteLine($"[{formattedTimestamp}] 接收到数据：{hexString}");
+    }
+}
+#endregion
+
+
+#region 水冷设备数据采集
+class ProgramShuileng
+{
+    static void Main()
+    {
+        Console.WriteLine("请输入串口端口：");
+        var port = Console.ReadLine();
+
+        Console.WriteLine("你输入的是：" + port);
+        var serialPort = new SerialPort(port, 9600)
+        {
+            ReadTimeout = 100,
+            WriteTimeout = 100,
+        };
+        try
+        {
+            serialPort.Open();
+            byte[] buffer = new byte[1024];
+            Console.WriteLine("开始读取数据：");
+            while (true)
+            {
+                try
+                {
+                    serialPort.Write("#0A.");
+                    int readLen = serialPort.Read(buffer, 0, 1024);
+                    if (readLen > 0)
+                    {
+                        Console.Write("回水温度: " + Encoding.UTF8.GetString(buffer, 0, readLen) + ", ");
+                    }
+
+                    serialPort.Write("#0B0.");
+                    readLen = serialPort.Read(buffer, 0, 1024);
+                    if (readLen > 0)
+                    {
+                        Console.Write("1#出风温度: " + Encoding.UTF8.GetString(buffer, 0, readLen) + ", ");
+                    }
+
+                    serialPort.Write("#0B1.");
+                    readLen = serialPort.Read(buffer, 0, 1024);
+                    if (readLen > 0)
+                    {
+                        Console.Write("2#出风温度: " + Encoding.UTF8.GetString(buffer, 0, readLen) + ", ");
+                    }
+
+                    serialPort.Write("#0B2.");
+                    readLen = serialPort.Read(buffer, 0, 1024);
+                    if (readLen > 0)
+                    {
+                        Console.Write("3#出风温度: " + Encoding.UTF8.GetString(buffer, 0, readLen) + ", ");
+                    }
+
+                    serialPort.Write("#0B3.");
+                    readLen = serialPort.Read(buffer, 0, 1024);
+                    if (readLen > 0)
+                    {
+                        Console.Write("4#出风温度: " + Encoding.UTF8.GetString(buffer, 0, readLen) + ", ");
+                    }
+
+                    serialPort.Write("#0B4.");
+                    readLen = serialPort.Read(buffer, 0, 1024);
+                    if (readLen > 0)
+                    {
+                        Console.Write("1#环境温度: " + Encoding.UTF8.GetString(buffer, 0, readLen) + ", ");
+                    }
+
+                    serialPort.Write("#0B5.");
+                    readLen = serialPort.Read(buffer, 0, 1024);
+                    if (readLen > 0)
+                    {
+                        Console.Write("2#环境温度: " + Encoding.UTF8.GetString(buffer, 0, readLen) + ", ");
+                    }
+
+                    serialPort.Write("#0C0.");
+                    readLen = serialPort.Read(buffer, 0, 1024);
+                    if (readLen > 0)
+                    {
+                        Console.Write("泵后压力: " + Encoding.UTF8.GetString(buffer, 0, readLen) + ", ");
+                    }
+
+                    serialPort.Write(new byte[] { 0x01, 0x03, 0x07, 0xd5, 0x00, 0x01, 0x94, 0x86 }, 0, 8);
+                    readLen = serialPort.Read(buffer, 0, 1024);
+                    if (readLen > 0)
+                    {
+                        Console.Write("水流: " + Encoding.UTF8.GetString(buffer, 0, readLen) + ", ");
+                    }
+                    Console.WriteLine();
+
+                }
+                catch (TimeoutException e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+                Thread.Sleep(1000);
+            }
+        }
+        catch (Exception ex) { Console.WriteLine(ex.ToString()); }
     }
 }
 #endregion
