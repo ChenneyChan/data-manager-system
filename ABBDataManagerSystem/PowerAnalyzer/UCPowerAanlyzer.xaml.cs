@@ -143,6 +143,16 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
         private void BtHarmonic_Click(object sender, RoutedEventArgs e)
         {
+            IsShowHarmonic = true;
+            ThreadPool.QueueUserWorkItem((o) =>
+            {
+                SendItemSettings();
+                GetItemData();
+
+                IsShowHarmonic = false;
+                SendItemSettings();
+            });
+
             HarmonicInfoView = new HarmonicInfo(HarmonicCount, () =>
             {
                 this.HarmonicInfoView = null;
@@ -1979,7 +1989,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             //{
             lock (obj)
             {
-                if (!IsHold)
+                if (!IsShowHarmonic)
                 {
                     GetItemData();
                 }
@@ -1987,17 +1997,6 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             //}
         }
 
-        private void Timer2_Tick(object sender, System.EventArgs e)
-        {
-            lock (obj)
-            {
-                if (!IsHold)
-                {
-                    GetItemData();
-                }
-            }
-            return;
-        }
         #endregion
 
         #region GetDataSingle
@@ -2575,39 +2574,43 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
             float? fu = ItemSettings[12].Value; // GetFCOValue("fU", "0");
 
-            var rowElement1 = DataTableSource.Rows[0];
-            var rowElement2 = DataTableSource.Rows[1];
-            var rowElement3 = DataTableSource.Rows[2];
-            var rowMean = DataTableSource.Rows[3];
-
-            rowElement1[INDEX_URMS] = urms1;
-            rowElement2[INDEX_URMS] = urms2;
-            rowElement3[INDEX_URMS] = urms3;
-            rowMean[INDEX_URMS] = (urms1 + urms2 + urms3) / 3;
-
-            rowElement1[INDEX_IRMS] = irms1;
-            rowElement2[INDEX_IRMS] = irms2;
-            rowElement3[INDEX_IRMS] = irms3;
-            rowMean[INDEX_IRMS] = (irms1 + irms2 + irms3) / 3;
-
-            rowElement1[INDEX_UMN] = umn1;
-            rowElement2[INDEX_UMN] = umn2;
-            rowElement3[INDEX_UMN] = umn3;
-            rowMean[INDEX_UMN] = (umn1 + umn2 + umn3) / 3;
-
-            rowElement1[INDEX_P] = p1;
-            rowElement2[INDEX_P] = p2;
-            rowElement3[INDEX_P] = p3;
-            if (SelectedWiringSystem == "3V3A")
+            // 显示实时数据
+            if (!IsHold)
             {
-                rowMean[INDEX_P] = (p1 + p2);
-            }
-            else
-            {
-                rowMean[INDEX_P] = (p1 + p2 + p3);
-            }
+                var rowElement1 = DataTableSource.Rows[0];
+                var rowElement2 = DataTableSource.Rows[1];
+                var rowElement3 = DataTableSource.Rows[2];
+                var rowMean = DataTableSource.Rows[3];
 
-            rowElement1[INDEX_FU] = fu;
+                rowElement1[INDEX_URMS] = urms1;
+                rowElement2[INDEX_URMS] = urms2;
+                rowElement3[INDEX_URMS] = urms3;
+                rowMean[INDEX_URMS] = (urms1 + urms2 + urms3) / 3;
+
+                rowElement1[INDEX_IRMS] = irms1;
+                rowElement2[INDEX_IRMS] = irms2;
+                rowElement3[INDEX_IRMS] = irms3;
+                rowMean[INDEX_IRMS] = (irms1 + irms2 + irms3) / 3;
+
+                rowElement1[INDEX_UMN] = umn1;
+                rowElement2[INDEX_UMN] = umn2;
+                rowElement3[INDEX_UMN] = umn3;
+                rowMean[INDEX_UMN] = (umn1 + umn2 + umn3) / 3;
+
+                rowElement1[INDEX_P] = p1;
+                rowElement2[INDEX_P] = p2;
+                rowElement3[INDEX_P] = p3;
+                if (SelectedWiringSystem == "3V3A")
+                {
+                    rowMean[INDEX_P] = (p1 + p2);
+                }
+                else
+                {
+                    rowMean[INDEX_P] = (p1 + p2 + p3);
+                }
+
+                rowElement1[INDEX_FU] = fu;
+            }
 
             #region 存储数据到本地字段中
             CurrentData.ua = urms1;
@@ -2705,23 +2708,13 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 if (IsHold)
                 {
                     btHold.Background = new SolidColorBrush(Color.FromRgb(0x45, 0xF5, 0x21)); // FFEF2B2B
-                    IsShowHarmonic = false;
-                    SendItemSettings();
                 }
                 else
                 {
                     btHold.Background = new SolidColorBrush(Color.FromRgb(0xEF, 0x2B, 0x2B)); // FFEF2B2B
-                    IsShowHarmonic = true;
-                    ThreadPool.QueueUserWorkItem((o) =>
-                    {
-                        SendItemSettings();
-                        GetItemData();
-                    });
                     TranslateData();
                 }
                 IsHold = !IsHold;
-                btHarmonic.IsEnabled = IsHold;
-                btRequestContinue.IsEnabled = !IsHold;
             }
         }
 
@@ -2737,6 +2730,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 panelConfig2.IsEnabled = !IsCollecting;
                 panelConfig3.IsEnabled = !IsCollecting;
                 btHold.IsEnabled = IsCollecting;
+                btHarmonic.IsEnabled = IsCollecting;
             });
         }
 
