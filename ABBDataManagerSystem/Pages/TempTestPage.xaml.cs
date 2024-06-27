@@ -712,8 +712,8 @@ namespace ABBDataManagerSystem.Pages
                 });
                 Dictionary<string, string> maps = new Dictionary<string, string>()
                 {
-                    { "出水口", "Outletwater"},
-                    { "回水口", "Inletwater"},
+                    { "出水口温度", "Outletwater"},
+                    { "回水口温度", "Inletwater"},
                     { "外循环出风口1", "OutletAir1"},
                     { "外循环出风口2", "OutletAir2"},
                     { "外循环出风口3", "OutletAir3"},
@@ -728,7 +728,7 @@ namespace ABBDataManagerSystem.Pages
                     {
                         Header = item.Key,
                         Binding = new Binding(item.Value),
-                        Width = 40
+                        Width = item.Key.IndexOf("外循环环境温度") >= 0 ? 48 :44
                     });
                     Table.Columns.Add(item.Value, typeof(float));
                 }
