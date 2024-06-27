@@ -144,6 +144,10 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
             EventManager.Instance.Subscribe("WorkflowSelected", WorkflowEventHandler);
             HandleWorkflowChange();
+            if (Configs.Configs.WorkStationNo == 1)
+            {
+                StartListeningRatio();
+            }
         }
 
         private void BtHarmonic_Click(object sender, RoutedEventArgs e)
@@ -1146,6 +1150,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             Configs.Configs.cbVT = cbVoltageRatio.Text;
             Configs.Configs.cbCT = cbCurrentRatio.Text;
             EventManager.Instance.Unsubscribe("WorkflowSelected", WorkflowEventHandler);
+            StopListeningRatio();
         }
         #endregion
 
@@ -3112,6 +3117,63 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         private void btStopCountDown_Click(object sender, RoutedEventArgs e)
         {
             IsSenseCountDowning = false;
+        }
+        #endregion
+
+        #region 读取电流电压比值
+        private Thread listenerThread;
+        private UdpClient udpClient;
+        private bool isListening;
+
+
+        private void StartListeningRatio()
+        {
+            isListening = true;
+            listenerThread = new Thread(ListenForUdpPackets);
+            listenerThread.IsBackground = true; // Make sure the thread doesn't block the application from exiting
+            listenerThread.Start();
+        }
+
+        private void StopListeningRatio()
+        {
+            isListening = false;
+            udpClient?.Close();
+            listenerThread?.Join(); // Wait for the listener thread to finish
+        }
+
+        private void ListenForUdpPackets()
+        {
+            udpClient = new UdpClient(8855);
+            IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, 8855);
+
+            while (isListening)
+            {
+                try
+                {
+                    byte[] receivedData = udpClient.Receive(ref endPoint);
+                    if (receivedData.Length >= 2)
+                    {
+                        int ct = (int)receivedData[0];
+                        int vt = (int)receivedData[1];
+                        Dispatcher.Invoke(() =>
+                        {
+                            if (tbVT.Visibility == Visibility.Visible && tbVT.IsEnabled == true)
+                            {
+                                tbCT.Value = ct;
+                                tbVT.Value = vt;
+                            }
+                        });
+                    }
+                }
+                catch (ObjectDisposedException)
+                {
+                    // This exception is expected when the UdpClient is closed
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error receiving UDP packet: {ex.Message}");
+                }
+            }
         }
         #endregion
     }
