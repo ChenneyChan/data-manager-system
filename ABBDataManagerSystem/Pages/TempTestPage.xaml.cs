@@ -706,7 +706,7 @@ namespace ABBDataManagerSystem.Pages
                     {
                         Header = item.Key,
                         Binding = new Binding(item.Value),
-                        MinWidth = 40
+                        Width = 40
                     });
                     Table.Columns.Add(item.Value, typeof(float));
                 }
@@ -1356,12 +1356,15 @@ namespace ABBDataManagerSystem.Pages
                 IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Any, 0);
                 while (isListening)
                 {
-                    if (udpClient.Available > 0)
+                    if (udpClient.Available > 0 && IsAFWF)
                     {
                         byte[] receiveBytes = udpClient.Receive(ref remoteEndPoint);
                         string receiveString = Encoding.ASCII.GetString(receiveBytes);
                         string[] values = receiveString.Split(';');
-                        Log.Info($"Received: {receiveString}");
+                        if (Configs.Configs.IsEnableVerboseDebug) 
+                        {
+                            Log.Info($"Received: {receiveString}");
+                        }
                         if (values.Length >= 9)
                         {
                             CurrentCoolDeviceInfo.OutletWaterTemperature = Utils.ParseFloat(values[0]);

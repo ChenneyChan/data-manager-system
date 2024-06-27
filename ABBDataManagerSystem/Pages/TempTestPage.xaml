@@ -108,6 +108,13 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
+            <Setter Property="ContentTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <TextBlock TextWrapping="Wrap" Text="{Binding}" />
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
         
         <!--单元格样式触发-->
