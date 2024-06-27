@@ -514,7 +514,7 @@ class ProgramC
 #region 水冷设备数据采集
 class ProgramShuileng
 {
-    static void Main()
+    static void MainX()
     {
         Console.WriteLine("请输入串口端口：");
         var port = Console.ReadLine();
@@ -607,6 +607,34 @@ class ProgramShuileng
             }
         }
         catch (Exception ex) { Console.WriteLine(ex.ToString()); }
+    }
+
+    static async Task Main(string[] args)
+    {
+        int listenPort = 8877;
+        UdpClient udpClient = new UdpClient(listenPort);
+
+        try
+        {
+            Console.WriteLine($"Listening for UDP broadcasts on port {listenPort}");
+
+            while (true)
+            {
+                UdpReceiveResult receiveResult = await udpClient.ReceiveAsync();
+                byte[] receiveBytes = receiveResult.Buffer;
+                string receiveString = Encoding.ASCII.GetString(receiveBytes);
+
+                Console.WriteLine($"Received broadcast from {receiveResult.RemoteEndPoint} : {receiveString}");
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.ToString());
+        }
+        finally
+        {
+            udpClient.Close();
+        }
     }
 }
 #endregion
