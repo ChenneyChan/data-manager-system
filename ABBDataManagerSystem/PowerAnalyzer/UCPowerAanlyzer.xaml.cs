@@ -131,6 +131,12 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             DataTableSource.Rows.Add("B", 0, 0, 0, 0, "");
             DataTableSource.Rows.Add("C", 0, 0, 0, 0, "");
             DataTableSource.Rows.Add("Σ", 0, 0, 0, 0, "");
+            cbVoltageRatio.Visibility = Configs.Configs.WorkStationNo == 2 ? Visibility.Visible : Visibility.Collapsed;
+            cbCurrentRatio.Visibility = Configs.Configs.WorkStationNo == 2 ? Visibility.Visible : Visibility.Collapsed;
+            tbVT.Visibility = Configs.Configs.WorkStationNo == 1 ? Visibility.Visible : Visibility.Collapsed;
+            tbCT.Visibility = Configs.Configs.WorkStationNo == 1 ? Visibility.Visible : Visibility.Collapsed;
+            cbVoltageRatio.Text = Configs.Configs.cbVT;
+            cbCurrentRatio.Text = Configs.Configs.cbCT;
 
             InitDataShow();
             UpdateDateShow();
@@ -1108,6 +1114,8 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             //Close();
             Configs.Configs.VT = SelectedVT;
             Configs.Configs.CT = SelectedCT;
+            Configs.Configs.cbVT = cbVoltageRatio.Text;
+            Configs.Configs.cbCT = cbCurrentRatio.Text;
         }
 
         public void Close()
@@ -1122,6 +1130,8 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
             Configs.Configs.VT = SelectedVT;
             Configs.Configs.CT = SelectedCT;
+            Configs.Configs.cbVT = cbVoltageRatio.Text;
+            Configs.Configs.cbCT = cbCurrentRatio.Text;
             EventManager.Instance.Unsubscribe("WorkflowSelected", WorkflowEventHandler);
         }
         #endregion
@@ -2665,8 +2675,58 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             SelectedVoltageRange = cbVoltageRange.SelectedItem != null ? cbVoltageRange.SelectedItem.ToString() : null;
             SelectedCurrentRange = cbCurrentRange.SelectedItem != null ? cbCurrentRange.SelectedItem.ToString() : null;
 
-            SelectedVT = (float?)tbVT.Value;
-            SelectedCT = (float?)tbCT.Value;
+            #region 互感器比值计算
+            if (tbVT.Visibility == Visibility.Visible)
+            {
+                SelectedVT = (float?)tbVT.Value;
+                SelectedCT = (float?)tbCT.Value;
+            }
+            else
+            {
+                if (cbVoltageRatio.SelectedIndex >= 0)
+                {
+                    SelectedVT = cbVoltageRatio.SelectedIndex == 0 ? 1 : 30;
+                }
+                else
+                {
+                    SelectedVT = 1;
+                }
+
+                switch (cbCurrentRatio.SelectedIndex)
+                {
+                    case 0:
+                        {
+                            SelectedCT = 1f;
+                            break;
+                        }
+                    case 1:
+                        {
+                            SelectedCT = 5f;
+                            break;
+                        }
+                    case 2:
+                        {
+                            SelectedCT = 10f;
+                            break;
+                        }
+                    case 3:
+                        {
+                            SelectedCT = 20f;
+                            break;
+                        }
+                    case 4:
+                        {
+                            SelectedCT = 40f;
+                            break;
+                        }
+                    default:
+                        {
+                            SelectedCT = 1;
+                            break;
+                        }
+                }
+            }
+            #endregion
 
             SelectedUpdateRate = cbUpdateRate.SelectedItem != null ? cbUpdateRate.SelectedItem.ToString() : null;
             SelectedWiringSystem = cbWire.SelectedItem != null ? cbWire.SelectedItem.ToString() : null;

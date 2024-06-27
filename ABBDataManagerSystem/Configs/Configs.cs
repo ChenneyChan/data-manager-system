@@ -41,7 +41,10 @@ namespace ABBDataManagerSystem.Configs
 
         #region 功率分析仪设置
         public static float? VT { set; get; } = null;  
-        public static float? CT { set; get; } = null;  
+        public static float? CT { set; get; } = null;
+
+        public static string cbVT = "";
+        public static string cbCT = "";
         #endregion
 
         #region 温度检测设置
@@ -186,7 +189,6 @@ namespace ABBDataManagerSystem.Configs
             TPIsSimulate = buff.ToString().Trim().ToLower() == "true";
             #endregion
 
-
             #region 公共配置
             GetPrivateProfileString(INICommon, "WorkStationNo", "", buff, 32, INIPATH);
             WorkStationNo = Utils.ParseIntNull(buff.ToString()) ?? 1;
@@ -197,10 +199,14 @@ namespace ABBDataManagerSystem.Configs
             #endregion
 
             #region 功率分析仪
-            GetPrivateProfileString(INIPowerAnalyzer, "VT", "", buff, 32, INIPATH);
+            GetPrivateProfileString(INIPowerAnalyzer, "VT", "", buff, 16, INIPATH);
             VT = Utils.ParseFloatNull(buff.ToString());
-            GetPrivateProfileString(INIPowerAnalyzer, "CT", "", buff, 32, INIPATH);
+            GetPrivateProfileString(INIPowerAnalyzer, "CT", "", buff, 16, INIPATH);
             CT = Utils.ParseFloatNull(buff.ToString());
+            GetPrivateProfileString(INIPowerAnalyzer, "cbVT", "", buff, 16, INIPATH);
+            cbVT = buff.ToString();
+            GetPrivateProfileString(INIPowerAnalyzer, "cbCT", "", buff, 16, INIPATH);
+            cbCT = buff.ToString();
             #endregion
 
             #region JinYuan20W
@@ -268,6 +274,8 @@ namespace ABBDataManagerSystem.Configs
             #region 功率分析仪
             WritePrivateProfileString(INIPowerAnalyzer, "VT", VT != null ? Utils.FloatFormat((float)VT, 4) : "" , INIPATH);
             WritePrivateProfileString(INIPowerAnalyzer, "CT", CT != null ? Utils.FloatFormat((float)CT, 4) : "" , INIPATH);
+            WritePrivateProfileString(INIPowerAnalyzer, "cbVT", cbVT, INIPATH);
+            WritePrivateProfileString(INIPowerAnalyzer, "cbCT", cbCT, INIPATH);
             #endregion
 
             #region JinaYuan20W
