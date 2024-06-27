@@ -37,8 +37,18 @@ namespace ABBDataManagerSystem.Bean.Base
         public float Inlet2 = 0;
         public float Inlet3 = 0;
         public float TopTemp = 0;
+        public float OutletWaterTemperature = 0;
+        public float InletWaterTemperature = 0;
+        public float AmbientTemperature1 = 0;
+        public float AmbientTemperature2 = 0;
+        public float OutletAirTemperature1 = 0;
+        public float OutletAirTemperature2 = 0;
+        public float OutletAirTemperature3 = 0;
+        public float OutletAirTemperature4 = 0;
+        public float WaterFlowRate = 0;
         public bool IsAFWF = false;
         public string WorkflowID = string.Empty;
+
 
         public static Dictionary<string, string> FieldComments = new Dictionary<string, string>
         {
@@ -52,6 +62,15 @@ namespace ABBDataManagerSystem.Bean.Base
             {"EnvTempB", "环境B温度"},
             {"EnvTempC", "环境C温度"},
             {"EnvTempD", "环境D温度"},
+            {"OutletWaterTemperature", "出水口温度"},
+            {"InletWaterTemperature", "进水口温度"},
+            {"AmbientTemperature1", "外循环环境温度1"},
+            {"AmbientTemperature2", "外循环环境温度2"},
+            {"OutletAirTemperature1", "外循环出风口温度1"},
+            {"OutletAirTemperature2", "外循环出风口温度2"},
+            {"OutletAirTemperature3", "外循环出风口温度3"},
+            {"OutletAirTemperature4", "外循环出风口温度4"},
+            {"WaterFlowRate", "冷却液流量"},
         };
 
         public bool WriteToDB()
@@ -65,10 +84,12 @@ namespace ABBDataManagerSystem.Bean.Base
                 using (SQLCommond command = new SQLCommond($"INSERT INTO {TABLE_NAME} (ID, Timestamp, ua, ub, uc, u3, ia, ib, ic, i3, p3, " +
                     $"CoreTemperature, WindingATemperature, WindingBTemperature, WindingCTemperature, AmbientATemperature, AmbientBTemperature, AmbientCTemperature, AmbientDTemperature, " +
                     "Outlet1, Outlet2, Outlet3, Outlet4, Outlet5, Outlet6, Inlet1, Inlet2, Inlet3, TopTemperature, " +
+                    "OutletWaterTemperature, InletWaterTemperature, AmbientTemperature1, AmbientTemperature2, OutletAirTemperature1, OutletAirTemperature2, OutletAirTemperature3, OutletAirTemperature4, WaterFlowRate" +
                     ") VALUES " +
                     "(@ID, @Timestamp, @ua, @ub, @uc, @u3, @ia, @ib, @ic, @i3, @p3, " +
                     $"@CoreTemp, @WindingTempA, @WindingTempB, @WindingTempC, @EnvTempA, @EnvTempB, @EnvTempC, @EnvTempD, " +
                     "@Outlet1, @Outlet2, @Outlet3, @Outlet4, @Outlet5, @Outlet6, @Inlet1, @Inlet2, @Inlet3, @TopTemperature, " +
+                    "@OutletWaterTemperature, @InletWaterTemperature, @AmbientTemperature1, @AmbientTemperature2, @OutletAirTemperature1, @OutletAirTemperature2, @OutletAirTemperature3, @OutletAirTemperature4, @WaterFlowRate" +
                     ")", connection))
                 {
                     command.Parameters.AddWithValue("@ID", ID);
@@ -99,7 +120,15 @@ namespace ABBDataManagerSystem.Bean.Base
                     command.Parameters.AddWithValue("@Inlet1", Inlet1);
                     command.Parameters.AddWithValue("@Inlet2", Inlet2);
                     command.Parameters.AddWithValue("@Inlet3", Inlet3);
-                    command.Parameters.AddWithValue("@TopTemperature", TopTemp);
+                    command.Parameters.AddWithValue("@OutletWaterTemperature", OutletWaterTemperature);
+                    command.Parameters.AddWithValue("@InletWaterTemperature", InletWaterTemperature);
+                    command.Parameters.AddWithValue("@AmbientTemperature1", AmbientTemperature1);
+                    command.Parameters.AddWithValue("@AmbientTemperature2", AmbientTemperature2);
+                    command.Parameters.AddWithValue("@OutletAirTemperature1", OutletAirTemperature1);
+                    command.Parameters.AddWithValue("@OutletAirTemperature2", OutletAirTemperature2);
+                    command.Parameters.AddWithValue("@OutletAirTemperature3", OutletAirTemperature3);
+                    command.Parameters.AddWithValue("@OutletAirTemperature4", OutletAirTemperature4);
+                    command.Parameters.AddWithValue("@WaterFlowRate", WaterFlowRate);
                     int count = command.ExecuteNonQuery();
                     return count > 0;
                 }
@@ -179,10 +208,12 @@ namespace ABBDataManagerSystem.Bean.Base
                         command.CommandText = $"INSERT INTO {TABLE_NAME} (ID, Timestamp, ua, ub, uc, u3, ia, ib, ic, i3, p3, " +
                     $"CoreTemperature, WindingATemperature, WindingBTemperature, WindingCTemperature, AmbientATemperature, AmbientBTemperature, AmbientCTemperature, AmbientDTemperature, " +
                     $"Outlet1, Outlet2, Outlet3, Outlet4, Outlet5, Outlet6, Inlet1, Inlet2, Inlet3, TopTemperature, " +
+                    $"OutletWaterTemperature, InletWaterTemperature, AmbientTemperature1, AmbientTemperature2, OutletAirTemperature1, OutletAirTemperature2, OutletAirTemperature3, OutletAirTemperature4, WaterFlowRate, " +
                     $"workflow_id) VALUES " +
                     $"(@ID, @Timestamp, @ua, @ub, @uc, @u3, @ia, @ib, @ic, @i3, @p3, " +
                     $"@CoreTemp, @WindingTempA, @WindingTempB, @WindingTempC, @EnvTempA, @EnvTempB, @EnvTempC, @EnvTempD, "+
                     $"@Outlet1, @Outlet2, @Outlet3, @Outlet4, @Outlet5, @Outlet6, @Inlet1, @Inlet2, @Inlet3, @TopTemperature, " +
+                    $"@OutletWaterTemperature, @InletWaterTemperature, @AmbientTemperature1, @AmbientTemperature2, @OutletAirTemperature1, @OutletAirTemperature2, @OutletAirTemperature3, @OutletAirTemperature4, @WaterFlowRate, " +
                     $"@WorkflowID)";
 
                         command.Parameters.Add("@ID", MySqlDbType.Int64);
@@ -215,6 +246,15 @@ namespace ABBDataManagerSystem.Bean.Base
                         command.Parameters.Add("@Inlet2", MySqlDbType.Float);
                         command.Parameters.Add("@Inlet3", MySqlDbType.Float);
                         command.Parameters.Add("@TopTemperature", MySqlDbType.Float);
+                        command.Parameters.Add("@OutletWaterTemperature", MySqlDbType.Float);
+                        command.Parameters.Add("@InletWaterTemperature", MySqlDbType.Float);
+                        command.Parameters.Add("@AmbientTemperature1", MySqlDbType.Float);
+                        command.Parameters.Add("@AmbientTemperature2", MySqlDbType.Float);
+                        command.Parameters.Add("@OutletAirTemperature1", MySqlDbType.Float);
+                        command.Parameters.Add("@OutletAirTemperature2", MySqlDbType.Float);
+                        command.Parameters.Add("@OutletAirTemperature3", MySqlDbType.Float);
+                        command.Parameters.Add("@OutletAirTemperature4", MySqlDbType.Float);
+                        command.Parameters.Add("@WaterFlowRate", MySqlDbType.Float);
                         try
                         {
                             foreach (var row in dataRows)
@@ -249,6 +289,15 @@ namespace ABBDataManagerSystem.Bean.Base
                                 command.Parameters["@Inlet2"].Value = row.Inlet2;
                                 command.Parameters["@Inlet3"].Value = row.Inlet3;
                                 command.Parameters["@TopTemperature"].Value = row.TopTemp;
+                                command.Parameters["@OutletWaterTemperature"].Value = row.OutletWaterTemperature;
+                                command.Parameters["@InletWaterTemperature"].Value = row.InletWaterTemperature;
+                                command.Parameters["@AmbientTemperature1"].Value = row.AmbientTemperature1;
+                                command.Parameters["@AmbientTemperature2"].Value = row.AmbientTemperature2;
+                                command.Parameters["@OutletAirTemperature1"].Value = row.OutletAirTemperature1;
+                                command.Parameters["@OutletAirTemperature2"].Value = row.OutletAirTemperature2;
+                                command.Parameters["@OutletAirTemperature3"].Value = row.OutletAirTemperature3;
+                                command.Parameters["@OutletAirTemperature4"].Value = row.OutletAirTemperature4;
+                                command.Parameters["@WaterFlowRate"].Value = row.WaterFlowRate;
                                 command.ExecuteNonQuery();
                             }
 

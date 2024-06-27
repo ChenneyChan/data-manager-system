@@ -1241,6 +1241,15 @@ namespace ABBDataManagerSystem.Pages
                     record.Inlet2 = item.Field<float?>(inlets[1]) ?? 0;
                     record.Inlet3 = item.Field<float?>(inlets[2]) ?? 0;
                     record.TopTemp = item.Field<float?>(Configs.Configs.TopTemperature) ?? 0;
+                    record.OutletWaterTemperature = item.Field<float?>("Outletwater") ?? 0;
+                    record.InletWaterTemperature = item.Field<float?>("Inletwater") ?? 0;
+                    record.AmbientTemperature1 = item.Field<float?>("Ambient1") ?? 0;
+                    record.AmbientTemperature2 = item.Field<float?>("Ambient2") ?? 0;
+                    record.OutletAirTemperature1 = item.Field<float?>("OutletAir1") ?? 0;
+                    record.OutletAirTemperature2 = item.Field<float?>("OutletAir2") ?? 0;
+                    record.OutletAirTemperature3 = item.Field<float?>("OutletAir3") ?? 0;
+                    record.OutletAirTemperature4 = item.Field<float?>("OutletAir4") ?? 0;
+                    record.WaterFlowRate = item.Field<float?>("Flow") ?? 0;
                 }
                 list.Add(record);
             }
