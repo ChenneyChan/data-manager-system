@@ -91,6 +91,10 @@
                 <ComboBoxItem Content="200A"/>
             </hc:ComboBox>
             <hc:NumericUpDown Width="100" Name="tbCT" FontSize="18" Minimum="0" Margin="5,0 " DecimalPlaces="2" />
+            <hc:ComboBox Margin="2,0,6,0" Name="cbAutoChangeRatio" SelectionChanged="ComboBox_Selected">
+                <ComboBoxItem Content="自动" IsSelected="True"/>
+                <ComboBoxItem Content="手动"/>
+            </hc:ComboBox>
             <Button Name="btRatioSet" Width="60" Content="设置" Click="btRatioSet_Click" BorderBrush="DarkGray"/>
             <Button Name="btRatioGet" Width="60" Content="读取" Click="btRatioGet_Click" BorderBrush="DarkGray" Margin="5, 0" Visibility="Collapsed"/>
             <StackPanel Orientation="Horizontal" Visibility="Collapsed">

@@ -611,7 +611,11 @@ class ProgramShuileng
 
     static async Task Main(string[] args)
     {
-        int listenPort = 8877;
+        Console.WriteLine("请输入端口号：");
+        var port = Console.ReadLine();
+
+        Console.WriteLine("你输入的是：" + port);
+        int listenPort = int.Parse(port);
         UdpClient udpClient = new UdpClient(listenPort);
 
         try
@@ -623,7 +627,11 @@ class ProgramShuileng
                 UdpReceiveResult receiveResult = await udpClient.ReceiveAsync();
                 byte[] receiveBytes = receiveResult.Buffer;
                 string receiveString = Encoding.ASCII.GetString(receiveBytes);
-
+                foreach (byte b in receiveBytes)
+                {
+                    Console.Write("{0:X2} ", b);
+                }
+                Console.WriteLine();
                 Console.WriteLine($"Received broadcast from {receiveResult.RemoteEndPoint} : {receiveString}");
             }
         }

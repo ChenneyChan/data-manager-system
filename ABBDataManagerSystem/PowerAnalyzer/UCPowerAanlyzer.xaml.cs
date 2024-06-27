@@ -96,6 +96,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         private float RatedCurrent = 0;
         private string WorkflowType = "双绕组";
         private string SelectedTab = "空载";
+        private bool IsAutoRatio = true;
 
         #endregion
 
@@ -130,13 +131,6 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             DataTableSource.Rows.Add("B", 0, 0, 0, 0, "");
             DataTableSource.Rows.Add("C", 0, 0, 0, 0, "");
             DataTableSource.Rows.Add("Σ", 0, 0, 0, 0, "");
-            cbVoltageRatio.Visibility = Configs.Configs.WorkStationNo == 2 ? Visibility.Visible : Visibility.Collapsed;
-            cbCurrentRatio.Visibility = Configs.Configs.WorkStationNo == 2 ? Visibility.Visible : Visibility.Collapsed;
-            tbVT.Visibility = Configs.Configs.WorkStationNo == 1 ? Visibility.Visible : Visibility.Collapsed;
-            tbCT.Visibility = Configs.Configs.WorkStationNo == 1 ? Visibility.Visible : Visibility.Collapsed;
-            cbVoltageRatio.Text = Configs.Configs.cbVT;
-            cbCurrentRatio.Text = Configs.Configs.cbCT;
-
             InitDataShow();
             UpdateDateShow();
 
@@ -144,7 +138,36 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
             EventManager.Instance.Subscribe("WorkflowSelected", WorkflowEventHandler);
             HandleWorkflowChange();
-            if (Configs.Configs.WorkStationNo == 1)
+            if (IsWorkstationOne)
+            {
+                cbVoltageRatio.Items.Clear();
+                cbVoltageRatio.Items.Add("1kV");
+                cbVoltageRatio.Items.Add("2kV");
+                cbVoltageRatio.Items.Add("5kV");
+                cbVoltageRatio.Items.Add("12kV");
+                cbVoltageRatio.Items.Add("22kV");
+                cbVoltageRatio.SelectedIndex = 0;
+
+                cbCurrentRatio.Items.Clear();
+                cbCurrentRatio.Items.Add("5A");
+                cbCurrentRatio.Items.Add("25A");
+                cbCurrentRatio.Items.Add("50A");
+                cbCurrentRatio.Items.Add("100A");
+                cbCurrentRatio.Items.Add("300A");
+                cbCurrentRatio.Items.Add("600A");
+                cbCurrentRatio.SelectedIndex = 0;
+            }
+            cbVoltageRatio.Visibility = Visibility.Visible;
+            cbCurrentRatio.Visibility = Visibility.Visible;
+            tbVT.Visibility = Visibility.Collapsed;
+            tbCT.Visibility = Visibility.Collapsed;
+            cbVoltageRatio.Text = Configs.Configs.cbVT;
+            cbCurrentRatio.Text = Configs.Configs.cbCT;
+            float? ct, vt;
+            CalculateVTCT(out ct, out vt);
+            tbVT.Value = vt ?? 0;
+            tbCT.Value = vt ?? 0;
+            if (IsWorkstationOne)
             {
                 StartListeningRatio();
             }
@@ -2690,40 +2713,43 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             }
         }
 
+        private void CalculateVTCT(out float? ct, out float? vt)
+        {
+            if (cbVoltageRatio.SelectedItem != null)
+            {
+                var _vt = cbVoltageRatio.SelectedItem.ToString();
+                if (_vt != null)
+                    ct = (float)(Utils.GetInt32(_vt) ?? 0) * 10f;
+                else
+                    ct = 1;
+            }
+            else
+            {
+                ct = 1;
+            }
+
+            if (cbCurrentRatio.SelectedItem != null)
+            {
+                var _ct = cbCurrentRatio.SelectedItem.ToString();
+                if (_ct != null)
+                    vt = (float)(Utils.GetInt32(_ct) ?? 0) / 5.0f;
+                else
+                    vt = 1;
+            }
+            else
+            {
+                vt = 1;
+            }
+        }
+
         private void UpdateSelectedConfigs()
         {
             SelectedVoltageRange = cbVoltageRange.SelectedItem != null ? cbVoltageRange.SelectedItem.ToString() : null;
             SelectedCurrentRange = cbCurrentRange.SelectedItem != null ? cbCurrentRange.SelectedItem.ToString() : null;
 
             #region 互感器比值计算
-            if (tbVT.Visibility == Visibility.Visible)
             {
-                SelectedVT = (float?)tbVT.Value;
-                SelectedCT = (float?)tbCT.Value;
-            }
-            else
-            {
-                if (cbVoltageRatio.SelectedIndex >= 0)
-                {
-                    SelectedVT = cbVoltageRatio.SelectedIndex == 0 ? 1 : 30;
-                }
-                else
-                {
-                    SelectedVT = 1;
-                }
-
-                if (cbCurrentRatio.SelectedItem != null)
-                {
-                    var ct = cbCurrentRatio.SelectedItem.ToString();
-                    if (ct != null)
-                        SelectedCT = (float)(Utils.GetInt32(ct) ?? 0) / 5.0f;
-                    else
-                        SelectedCT = 1;
-                }
-                else
-                {
-                    SelectedCT = 1;
-                }
+                CalculateVTCT(out SelectedCT, out SelectedVT);
             }
             #endregion
 
@@ -3151,19 +3177,26 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 try
                 {
                     byte[] receivedData = udpClient.Receive(ref endPoint);
-                    if (receivedData.Length >= 2)
+                    if (receivedData.Length >= 2 && IsAutoRatio)
                     {
                         int ct = (int)receivedData[0];
                         int vt = (int)receivedData[1];
                         Dispatcher.Invoke(() =>
                         {
-                            if (tbVT.Visibility == Visibility.Visible && tbVT.IsEnabled == true)
+                            if (!IsCollecting)
                             {
-                                tbCT.Value = ct;
-                                tbVT.Value = vt;
+                                if (vt == cbVoltageRatio.SelectedIndex && ct == cbCurrentRatio.SelectedIndex)
+                                {
+                                    return;
+                                }
+                                Log.Info($"Update CT_VT: {ct}, {vt}");
+                                cbVoltageRatio.SelectedIndex = vt;
+                                cbCurrentRatio.SelectedIndex = ct;
+                                RatioSetCommand();
                             }
                         });
                     }
+                    Thread.Sleep(10);
                 }
                 catch (ObjectDisposedException)
                 {
@@ -3176,5 +3209,10 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             }
         }
         #endregion
+
+        private void ComboBox_Selected(object sender, RoutedEventArgs e)
+        {
+            IsAutoRatio = cbAutoChangeRatio.SelectedIndex == 0;
+        }
     }
 }
