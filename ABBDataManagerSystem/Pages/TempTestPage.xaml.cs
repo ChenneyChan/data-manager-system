@@ -7,6 +7,8 @@ using Microsoft.Win32;
 using System.Data;
 using System.IO;
 using System.IO.Ports;
+using System.Net.Sockets;
+using System.Net;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -33,6 +35,68 @@ namespace ABBDataManagerSystem.Pages
 
         public bool IsUpdated = false;
     }
+
+    public class CoolDeviceInfo
+    {
+        /// <summary>
+        /// 出水口温度
+        /// </summary>
+        public float OutletWaterTemperature { get; set; }
+
+        /// <summary>
+        /// 回水口温度
+        /// </summary>
+        public float InletWaterTemperature { get; set; }
+
+        /// <summary>
+        /// 环境温度1
+        /// </summary>
+        public float AmbientTemperature1 { get; set; }
+
+        /// <summary>
+        /// 环境温度2
+        /// </summary>
+        public float AmbientTemperature2 { get; set; }
+
+        /// <summary>
+        /// 出风口温度1
+        /// </summary>
+        public float OutletAirTemperature1 { get; set; }
+
+        /// <summary>
+        /// 出风口温度2
+        /// </summary>
+        public float OutletAirTemperature2 { get; set; }
+
+        /// <summary>
+        /// 出风口温度3
+        /// </summary>
+        public float OutletAirTemperature3 { get; set; }
+
+        /// <summary>
+        /// 出风口温度4
+        /// </summary>
+        public float OutletAirTemperature4 { get; set; }
+
+        /// <summary>
+        /// 水流量
+        /// </summary>
+        public float WaterFlowRate { get; set; }
+
+        public bool IsUpdated { get; set; } = false;
+
+        public override string ToString()
+        {
+            return $"OutletWaterTemperature: {OutletWaterTemperature}, InletWaterTemperature: {InletWaterTemperature}, " +
+                   $"AmbientTemperature1: {AmbientTemperature1}, AmbientTemperature2: {AmbientTemperature2}, " +
+                   $"OutletAirTemperature1: {OutletAirTemperature1}, OutletAirTemperature2: {OutletAirTemperature2}, " +
+                   $"OutletAirTemperature3: {OutletAirTemperature3}, OutletAirTemperature4: {OutletAirTemperature4}, " +
+                   $"WaterFlowRate: {WaterFlowRate}";
+        }
+    }
+
+
+
     /// <summary>
     /// TempTestPage.xaml 的交互逻辑
     /// </summary>
@@ -65,6 +129,7 @@ namespace ABBDataManagerSystem.Pages
         private static readonly int MaxSlotCount = 36;
         private DataTable Table = new DataTable();
         private VoltageInfo CurrentVoltageInfo = new();
+        private CoolDeviceInfo CurrentCoolDeviceInfo = new();
         private Object objLock = new object();
         private int Index = 0;
         private bool IsAFWF = false; // 是否水冷
@@ -114,6 +179,7 @@ namespace ABBDataManagerSystem.Pages
             UpdateInterval();
             UpdateSlotShieldState();
             cbCoolingMode.SelectionChanged += cbCoolingMode_SelectionChanged;
+            panelCoolDevice.Visibility = IsAFWF ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void RbSerialPort_Checked(object sender, RoutedEventArgs e)
@@ -171,6 +237,7 @@ namespace ABBDataManagerSystem.Pages
             GetWorkflowBaseInfo();
             Tools.EventManager.Instance.Subscribe("WorkflowSelected", WorkflowUpdateEvent);
             Tools.EventManager.Instance.Subscribe("PowerAnalyzer", EventHandler);
+            StartListening();
         }
 
         private void UserControl_Unloaded(object sender, RoutedEventArgs e)
@@ -313,6 +380,7 @@ namespace ABBDataManagerSystem.Pages
             }
             Tools.EventManager.Instance.Unsubscribe("PowerAnalyzer", EventHandler);
             Tools.EventManager.Instance.Unsubscribe("WorkflowSelected", WorkflowUpdateEvent);
+            StopListening();
         }
 
         #region 图表相关操作
@@ -932,6 +1000,7 @@ namespace ABBDataManagerSystem.Pages
                 UpdateSlotShieldState();
                 SelectedSlots_SelectionChanged();
             }
+            panelCoolDevice.Visibility = IsAFWF ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void UpdateSlotShieldState()
@@ -1219,6 +1288,96 @@ namespace ABBDataManagerSystem.Pages
                     }
                 });
             });
+        }
+        #endregion
+
+        #region 监听水冷温度流量数据
+
+        private UdpClient udpClient;
+        private Thread listenThread;
+        private bool isListening;
+
+        private void StartListening()
+        {
+            udpClient = new UdpClient(8877);
+            isListening = true;
+
+            listenThread = new Thread(ListenForMessages);
+            listenThread.Start();
+        }
+
+        private void ListenForMessages()
+        {
+            try
+            {
+                IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Any, 0);
+                while (isListening)
+                {
+                    if (udpClient.Available > 0)
+                    {
+                        byte[] receiveBytes = udpClient.Receive(ref remoteEndPoint);
+                        string receiveString = Encoding.ASCII.GetString(receiveBytes);
+                        string[] values = receiveString.Split(';');
+                        Log.Info($"Received: {receiveString}");
+                        if (values.Length >= 9)
+                        {
+                            CurrentCoolDeviceInfo.OutletWaterTemperature = Utils.ParseFloat(values[0]);
+                            CurrentCoolDeviceInfo.InletWaterTemperature = Utils.ParseFloat(values[1]);
+                            CurrentCoolDeviceInfo.WaterFlowRate = Utils.ParseFloat(values[2]);
+                            CurrentCoolDeviceInfo.AmbientTemperature1 = Utils.ParseFloat(values[3]);
+                            CurrentCoolDeviceInfo.AmbientTemperature2 = Utils.ParseFloat(values[4]);
+                            CurrentCoolDeviceInfo.OutletAirTemperature1 = Utils.ParseFloat(values[5]);
+                            CurrentCoolDeviceInfo.OutletAirTemperature2 = Utils.ParseFloat(values[6]);
+                            CurrentCoolDeviceInfo.OutletAirTemperature3 = Utils.ParseFloat(values[7]);
+                            CurrentCoolDeviceInfo.OutletAirTemperature4 = Utils.ParseFloat(values[8]);
+                            Log.Info(CurrentCoolDeviceInfo.ToString());
+                            Dispatcher.Invoke(() =>
+                            {
+                               tbOutletWater.Text = CurrentCoolDeviceInfo.OutletWaterTemperature + "";
+                                tbInletWater.Text = CurrentCoolDeviceInfo.InletWaterTemperature + "";
+                                tbFlow.Text = CurrentCoolDeviceInfo.WaterFlowRate + "";
+                                tbEnvTemp1.Text = CurrentCoolDeviceInfo.AmbientTemperature1 + "";
+                                tbEnvTemp2.Text = CurrentCoolDeviceInfo.AmbientTemperature2 + "";
+                                tbOutletAir1.Text = CurrentCoolDeviceInfo.OutletAirTemperature1 + "";
+                                tbOutletAir2.Text = CurrentCoolDeviceInfo.OutletAirTemperature2 + "";
+                                tbOutletAir3.Text = CurrentCoolDeviceInfo.OutletAirTemperature3 + "";
+                                tbOutletAir4.Text = CurrentCoolDeviceInfo.OutletAirTemperature4 + "";
+                            });
+                        }
+                    }
+                    else
+                    {
+                        Thread.Sleep(100); // Reduce CPU usage
+                    }
+                }
+            }
+            catch (SocketException ex)
+            {
+                if (ex.SocketErrorCode != SocketError.Interrupted)
+                {
+                    Log.Info($"Socket exception: {ex.Message}");
+                }
+            }
+            catch (ObjectDisposedException)
+            {
+                // This exception is expected when closing the UdpClient.
+            }
+        }
+
+        private void StopListening()
+        {
+            isListening = false;
+
+            // Close the UdpClient to stop the blocking Receive call.
+            udpClient.Close();
+
+            // Wait for the listening thread to finish.
+            if (listenThread != null && listenThread.IsAlive)
+            {
+                listenThread.Join();
+            }
+
+            Log.Info("Stopped listening.");
         }
         #endregion
 
