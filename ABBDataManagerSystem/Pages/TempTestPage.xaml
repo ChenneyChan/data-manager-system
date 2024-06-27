@@ -244,12 +244,12 @@
         <WrapPanel Grid.Column="0" Grid.Row="1"  Name="panelCoolDevice">
             <hc:TextBox IsReadOnly="True" Name="tbOutletWater" hc:InfoElement.Title="出水温度" hc:InfoElement.TitlePlacement="left"  Width="160" FontSize="16" Margin="0, 2, 4, 2"/>
             <hc:TextBox IsReadOnly="True" Name="tbInletWater" hc:InfoElement.Title="回水温度" hc:InfoElement.TitlePlacement="left"  Width="160" FontSize="16" Margin="0, 2, 4, 2"/>
-            <hc:TextBox IsReadOnly="True" Name="tbEnvTemp1" hc:InfoElement.Title="环境温度1" hc:InfoElement.TitlePlacement="left"  Width="160" FontSize="16" Margin="0, 2, 4, 2"/>
-            <hc:TextBox IsReadOnly="True" Name="tbEnvTemp2" hc:InfoElement.Title="环境温度2" hc:InfoElement.TitlePlacement="left"  Width="160" FontSize="16" Margin="0, 2, 4, 2"/>
             <hc:TextBox IsReadOnly="True" Name="tbOutletAir1" hc:InfoElement.Title="出风温度1" hc:InfoElement.TitlePlacement="left"  Width="160" FontSize="16" Margin="0, 2, 4, 2"/>
             <hc:TextBox IsReadOnly="True" Name="tbOutletAir2" hc:InfoElement.Title="出风温度2" hc:InfoElement.TitlePlacement="left"  Width="160" FontSize="16" Margin="0, 2, 4, 2"/>
             <hc:TextBox IsReadOnly="True" Name="tbOutletAir3" hc:InfoElement.Title="出风温度3" hc:InfoElement.TitlePlacement="left"  Width="160" FontSize="16" Margin="0, 2, 4, 2"/>
             <hc:TextBox IsReadOnly="True" Name="tbOutletAir4" hc:InfoElement.Title="出风温度4" hc:InfoElement.TitlePlacement="left"  Width="160" FontSize="16" Margin="0, 2, 4, 2"/>
+            <hc:TextBox IsReadOnly="True" Name="tbEnvTemp1" hc:InfoElement.Title="环境温度1" hc:InfoElement.TitlePlacement="left"  Width="160" FontSize="16" Margin="0, 2, 4, 2"/>
+            <hc:TextBox IsReadOnly="True" Name="tbEnvTemp2" hc:InfoElement.Title="环境温度2" hc:InfoElement.TitlePlacement="left"  Width="160" FontSize="16" Margin="0, 2, 4, 2"/>
             <hc:TextBox IsReadOnly="True" Name="tbFlow" hc:InfoElement.Title="流量" hc:InfoElement.TitlePlacement="left"  Width="120" FontSize="16" Margin="0, 2, 2, 5"/>
         </WrapPanel>
         <WrapPanel Grid.Column="0" Grid.Row="2" Name="SlotWrapPanel" Background="#FFD1D4D6" Grid.ColumnSpan="2" Margin="0,10,0,0">
@@ -257,15 +257,15 @@
         </WrapPanel>
         <Grid Grid.Column="0" Grid.Row="3" Margin="0,5">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1.4*"/>
-                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <Grid Margin="0,0,5,0">
+            <Grid Margin="0,0,5,0" Grid.Column="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <oxy:PlotView Grid.Row="0" Grid.Column="0" Name="plotView" Margin="5,5"/>
+                <oxy:PlotView Grid.Row="0" Grid.Column="0" Name="plotView" Margin="5,5" MinWidth="400"/>
                 <WrapPanel Margin="0, 4" Grid.Row="1" HorizontalAlignment="Center">
                     <Button Style="{StaticResource plotButton}" Content="清空" Name="btClearChart" Click="btClear_Click"/>
                     <Button Style="{StaticResource plotButton}" Content="恢复坐标" Name="btResetChartAxias" Click="btResteAxis_Click"/>
@@ -275,10 +275,10 @@
                     <Button Style="{StaticResource plotButton}" Content="恢复所有线条" Name="btResumeAllLine" Click="btResumeLines_Click"/>
                 </WrapPanel>
             </Grid>
-            <DataGrid Name="dgTempRecord" Grid.Column="1" Margin="5, 0, 0, 0"  HorizontalAlignment="Stretch" VerticalAlignment="Top" MaxHeight="600"
+            <DataGrid Name="dgTempRecord" Grid.Column="0" Margin="5, 0, 0, 0"  HorizontalAlignment="Stretch" VerticalAlignment="Top" MaxHeight="600"
                   ScrollViewer.VerticalScrollBarVisibility="Auto" HeadersVisibility="Column" SelectionMode="Single" AlternationCount="2" 
                   ScrollViewer.HorizontalScrollBarVisibility="Auto" IsReadOnly="True" RowHeight="30" ColumnHeaderHeight="30" CanUserAddRows="False" CanUserDeleteRows="False" 
-                  CanUserResizeRows="False" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserSortColumns="False" >
+                  CanUserResizeRows="False" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserSortColumns="False" MinWidth="600">
                 <DataGrid.ContextMenu>
                     <StaticResource ResourceKey="DataGridContextMenu"/>
                 </DataGrid.ContextMenu>

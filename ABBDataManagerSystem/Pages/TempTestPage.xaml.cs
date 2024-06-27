@@ -508,7 +508,7 @@ namespace ABBDataManagerSystem.Pages
                 Header = "时间",
                 Binding = new Binding("时间")
                 {
-                    StringFormat = "yyyy-MM-dd HH:mm:ss"
+                    StringFormat = "HH:mm:ss"
                 },
                 MinWidth = 60
             });
@@ -669,7 +669,7 @@ namespace ABBDataManagerSystem.Pages
                     {
                         Header = $"出风口温度{i}",
                         Binding = new Binding(binding),
-                        MinWidth = 40
+                        Width = 40
                     });
                 }
                 for (int i = 1; i <= 3; i++)
@@ -679,15 +679,37 @@ namespace ABBDataManagerSystem.Pages
                     {
                         Header = $"进风口温度{i}",
                         Binding = new Binding(binding),
-                        MinWidth = 40
+                        Width = 40
                     });
                 }
                 dgTempRecord.Columns.Add(new DataGridTextColumn()
                 {
                     Header = $"顶部温度",
                     Binding = new Binding(Configs.Configs.TopTemperature),
-                    MinWidth = 40
+                    Width = 40
                 });
+                Dictionary<string, string> maps = new Dictionary<string, string>()
+                {
+                    { "出水口", "Outletwater"},
+                    { "回水口", "Inletwater"},
+                    { "外循环出风口1", "OutletAir1"},
+                    { "外循环出风口2", "OutletAir2"},
+                    { "外循环出风口3", "OutletAir3"},
+                    { "外循环出风口4", "OutletAir4"},
+                    { "外循环环境温度1", "Ambient1"},
+                    { "外循环环境温度2", "Ambient2"},
+                    { "流量", "Flow"},
+                };
+                foreach (var item in maps)
+                {
+                    dgTempRecord.Columns.Add(new DataGridTextColumn()
+                    {
+                        Header = item.Key,
+                        Binding = new Binding(item.Value),
+                        MinWidth = 40
+                    });
+                    Table.Columns.Add(item.Value, typeof(float));
+                }
             }
 
             for (int i = 0; i < SelectedSlots.Count; i++)
@@ -709,6 +731,18 @@ namespace ABBDataManagerSystem.Pages
             {
                 var slot = SelectedSlots[i];
                 newRow[$"Slot-{slot}"] = values[i];
+            }
+            if (IsAFWF)
+            {
+                newRow["Ambient1"] = CurrentCoolDeviceInfo.AmbientTemperature1;
+                newRow["Ambient2"] = CurrentCoolDeviceInfo.AmbientTemperature2;
+                newRow["Inletwater"] = CurrentCoolDeviceInfo.InletWaterTemperature;
+                newRow["Outletwater"] = CurrentCoolDeviceInfo.OutletWaterTemperature;
+                newRow["OutletAir1"] = CurrentCoolDeviceInfo.OutletAirTemperature1;
+                newRow["OutletAir2"] = CurrentCoolDeviceInfo.OutletAirTemperature2;
+                newRow["OutletAir3"] = CurrentCoolDeviceInfo.OutletAirTemperature3;
+                newRow["OutletAir4"] = CurrentCoolDeviceInfo.OutletAirTemperature4;
+                newRow["Flow"] = CurrentCoolDeviceInfo.WaterFlowRate;
             }
             lock (objLock)
             {
@@ -1333,7 +1367,7 @@ namespace ABBDataManagerSystem.Pages
                             Log.Info(CurrentCoolDeviceInfo.ToString());
                             Dispatcher.Invoke(() =>
                             {
-                               tbOutletWater.Text = CurrentCoolDeviceInfo.OutletWaterTemperature + "";
+                                tbOutletWater.Text = CurrentCoolDeviceInfo.OutletWaterTemperature + "";
                                 tbInletWater.Text = CurrentCoolDeviceInfo.InletWaterTemperature + "";
                                 tbFlow.Text = CurrentCoolDeviceInfo.WaterFlowRate + "";
                                 tbEnvTemp1.Text = CurrentCoolDeviceInfo.AmbientTemperature1 + "";
