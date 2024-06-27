@@ -76,7 +76,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         private EncodeType encodeType = EncodeType.ASCII;
 
         private bool IsCollecting = false;
-        private bool IsEnableDebug = true;
+        private bool IsEnableDebug = false;
         private bool IsShowHarmonic = false;
 
         private Object obj = new object();
