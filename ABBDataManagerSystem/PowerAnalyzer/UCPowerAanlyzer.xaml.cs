@@ -2689,38 +2689,17 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                     SelectedVT = 1;
                 }
 
-                switch (cbCurrentRatio.SelectedIndex)
+                if (cbCurrentRatio.SelectedItem != null)
                 {
-                    case 0:
-                        {
-                            SelectedCT = 1f;
-                            break;
-                        }
-                    case 1:
-                        {
-                            SelectedCT = 5f;
-                            break;
-                        }
-                    case 2:
-                        {
-                            SelectedCT = 10f;
-                            break;
-                        }
-                    case 3:
-                        {
-                            SelectedCT = 20f;
-                            break;
-                        }
-                    case 4:
-                        {
-                            SelectedCT = 40f;
-                            break;
-                        }
-                    default:
-                        {
-                            SelectedCT = 1;
-                            break;
-                        }
+                    var ct = cbCurrentRatio.SelectedItem.ToString();
+                    if (ct != null)
+                        SelectedCT = (float)(Utils.GetInt32(ct) ?? 0) / 5.0f;
+                    else
+                        SelectedCT = 1;
+                }
+                else
+                {
+                    SelectedCT = 1;
                 }
             }
             #endregion
