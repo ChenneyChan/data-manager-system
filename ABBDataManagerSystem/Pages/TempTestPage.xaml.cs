@@ -233,6 +233,10 @@ namespace ABBDataManagerSystem.Pages
             InitChartRange();
             tempCharts = new TempChartsNew(plotView, SelectedSlots);
             tempCharts.InitChart();
+            if (IsAFWF)
+            {
+                AddCoolTempToCharts();
+            }
             tempCharts.ToogleLegends();
             GetWorkflowBaseInfo();
             Tools.EventManager.Instance.Subscribe("WorkflowSelected", WorkflowUpdateEvent);
@@ -333,6 +337,10 @@ namespace ABBDataManagerSystem.Pages
                 SelectedSlotChange = false;
                 tempCharts = new TempChartsNew(plotView, SelectedSlots);
                 tempCharts.InitChart();
+                if (IsAFWF) 
+                {
+                    AddCoolTempToCharts();
+                }
                 tempCharts.ToogleLegends();
             }
             if (needSaveCsv)
@@ -384,6 +392,20 @@ namespace ABBDataManagerSystem.Pages
         }
 
         #region 图表相关操作
+        private void AddCoolTempToCharts()
+        {
+            tempCharts.AddSeries(new List<string> {
+                "出水口温度",
+                "回水口温度",
+                "外循环出风口1",
+                "外循环出风口2",
+                "外循环出风口3",
+                "外循环出风口4",
+                "外循环环境温度1",
+                "外循环环境温度2",
+            });
+        }
+
         private void btClear_Click(object sender, RoutedEventArgs e)
         {
             var ret = MessageBox.Show("确定清空数据？", "提示", MessageBoxButton.YesNo, MessageBoxImage.Warning);
@@ -886,7 +908,22 @@ namespace ABBDataManagerSystem.Pages
                 UpdateDataGrid(values);
                 Dispatcher.Invoke(() =>
                 {
-                    tempCharts.AddRecords(values);
+                    float[]? coolTemp = null;
+                    if (IsAFWF && CurrentCoolDeviceInfo != null)
+                    {
+                        coolTemp = new float[]
+                        {
+                            CurrentCoolDeviceInfo.OutletWaterTemperature,
+                            CurrentCoolDeviceInfo.InletWaterTemperature,
+                            CurrentCoolDeviceInfo.OutletAirTemperature1,
+                            CurrentCoolDeviceInfo.OutletAirTemperature2,
+                            CurrentCoolDeviceInfo.OutletAirTemperature3,
+                            CurrentCoolDeviceInfo.OutletAirTemperature4,
+                            CurrentCoolDeviceInfo.AmbientTemperature1,
+                            CurrentCoolDeviceInfo.AmbientTemperature2
+                        };
+                    }
+                    tempCharts.AddRecords(values, coolTemp);
                 });
             }
         }

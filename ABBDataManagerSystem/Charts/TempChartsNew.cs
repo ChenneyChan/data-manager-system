@@ -5,7 +5,6 @@ using OxyPlot.Legends;
 using OxyPlot.Series;
 using LineStyle = OxyPlot.LineStyle;
 using OxyPlot.Wpf;
-using System.Windows.Threading;
 
 namespace ABBDataManagerSystem.Charts
 {
@@ -121,6 +120,22 @@ namespace ABBDataManagerSystem.Charts
             }
         }
 
+        public void AddSeries(List<string>seriesList)
+        {
+            foreach(var s in seriesList)
+            {
+                var series = new LineSeries()
+                {
+                    StrokeThickness = 1,
+                    MarkerSize = 2,
+                    MarkerType = MarkerType.Diamond,
+                    Title = s,
+                    IsVisible = true,
+                };
+                _myPlotModel.Series.Add(series);
+            }
+        }
+
         private void InitAnnotation()
         {
             //添加标注线，温度上下限和湿度上下限
@@ -166,9 +181,9 @@ namespace ABBDataManagerSystem.Charts
             _myPlotModel.Annotations.Add(lineHumiMinAnnotation);
         }
 
-        public void AddRecords(float[] values)
+        public void AddRecords(float[] values, float[]? extentionValues = null)
         {
-            if (values.Length == 0)
+            if (values.Length == 0 || _myPlotModel == null)
             {
                 return;
             }
@@ -176,14 +191,26 @@ namespace ABBDataManagerSystem.Charts
             _myPlotModel.Axes[0].Maximum = DateTimeAxis.ToDouble(date.AddSeconds(1));
             SetDateTimeAxisRange(MinutesRange, false);
 
-            for (int i = 0; i < values.Length && i < _myPlotModel.Series.Count; i++)
+            int extesionSize = extentionValues != null ? extentionValues.Length : 0;
+            for (int i = 0; i < values.Length + extesionSize && i < _myPlotModel.Series.Count; i++)
             {
                 LineSeries? lineSer = plot.Model.Series[i] as LineSeries;
                 if (lineSer == null)
                 {
                     return;
                 }
-                lineSer.Points.Add(new DataPoint(DateTimeAxis.ToDouble(date), values[i]));
+
+                float? value = null;
+                if (i < values.Length)
+                {
+                    value = values[i];
+                }
+                else if (extentionValues != null)
+                {
+                    value = extentionValues[i - values.Length];
+                }
+
+                lineSer.Points.Add(new DataPoint(DateTimeAxis.ToDouble(date), value ?? 0));
                 if (lineSer.Points.Count > MAX_RECORD_COUNT)
                 {
                     lineSer.Points.RemoveAt(0);
