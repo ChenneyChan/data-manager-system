@@ -404,5 +404,22 @@ namespace ABBDataManagerSystem
                 return value;
             }
         }
+
+        public static bool IsLocked(object obj)
+        {
+            bool lockTaken = false;
+            try
+            {
+                Monitor.TryEnter(obj, ref lockTaken);
+                return !lockTaken;
+            }
+            finally
+            {
+                if (lockTaken)
+                {
+                    Monitor.Exit(obj);
+                }
+            }
+        }
     }
 }

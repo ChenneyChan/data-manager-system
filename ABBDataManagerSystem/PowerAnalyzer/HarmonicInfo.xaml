@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ABBDataManagerSystem.PowerAnalyzer"
+        xmlns:hc="https://handyorg.github.io/handycontrol"
         mc:Ignorable="d"
         Title="谐波数据" Height="800" Width="1600" Closed="Window_Closed">
     <Window.Resources>
@@ -58,5 +59,8 @@
                 </DataGrid.Columns>
             </DataGrid>
         </ScrollViewer>
+        <StackPanel Width="600" Margin="32" VerticalAlignment="Center" Grid.ColumnSpan="3" Grid.RowSpan="2" Visibility="Visible" Name="progressView">
+            <hc:LoadingLine Margin="0,30" Foreground="BlueViolet" Style="{StaticResource LoadingLineLarge}"/>
+        </StackPanel>
     </Grid>
 </Window>

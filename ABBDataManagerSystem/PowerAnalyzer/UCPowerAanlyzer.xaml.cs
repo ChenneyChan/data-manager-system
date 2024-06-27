@@ -76,10 +76,9 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         private EncodeType encodeType = EncodeType.ASCII;
 
         private bool IsCollecting = false;
-        private bool IsEnableDebug = false;
+        private bool IsEnableDebug = true;
         private bool IsShowHarmonic = false;
 
-        private bool IsHold = false;
         private Object obj = new object();
 
         private string? SelectedVoltageRange = null;
@@ -149,14 +148,23 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
         private void BtHarmonic_Click(object sender, RoutedEventArgs e)
         {
-            IsShowHarmonic = true;
+            if (Utils.IsLocked(obj))
+            {
+                System.Windows.MessageBox.Show("谐波采集中，请稍等！");
+                return;
+            }
             ThreadPool.QueueUserWorkItem((o) =>
             {
-                SendItemSettings();
-                GetItemData();
+                lock (obj)
+                {
+                    IsHarmonicUpdated = false;
+                    IsShowHarmonic = true;
+                    SendItemSettings();
+                    GetItemData();
 
-                IsShowHarmonic = false;
-                SendItemSettings();
+                    IsShowHarmonic = false;
+                    SendItemSettings();
+                }
             });
 
             HarmonicInfoView = new HarmonicInfo(HarmonicCount, () =>
@@ -164,7 +172,10 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 this.HarmonicInfoView = null;
             })
             { WindowStartupLocation = WindowStartupLocation.CenterScreen };
-            HarmonicInfoView.HandleUpdate(HarmonicItemSettings, HarmonicCount);
+            if (IsHarmonicUpdated)
+            {
+                HarmonicInfoView.HandleUpdate(HarmonicItemSettings, HarmonicCount);
+            }
             HarmonicInfoView.ShowDialog();
         }
 
@@ -1122,11 +1133,13 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         {
             //close connection after exiting.
             connection.Finish();
-            if (Timer1.Enabled)
-            {
-                Timer1.Stop();
-            }
+            Timer1.Stop();
+            Timer1.Elapsed -= Timer1_Tick;
+            Timer1.Dispose();
             OneSecTimer.Stop();
+            OneSecTimer.Elapsed -= OneSecTimer_Elapsed;
+            OneSecTimer.Dispose();
+            IsCollecting = false;
 
             Configs.Configs.VT = SelectedVT;
             Configs.Configs.CT = SelectedCT;
@@ -1466,6 +1479,10 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 dumpMsg += ($"step3 {s.ElapsedMilliseconds}ms ");
 
                 s.Start();
+                if (IsShowHarmonic)
+                {
+                    IsHarmonicUpdated = true;
+                }
                 RefreshValueDisplay();
                 s.Stop();
                 dumpMsg += ($"step4 {s.ElapsedMilliseconds}ms ");
@@ -1729,7 +1746,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 msg = "RATE 500ms";
                 SetSendMonitor(msg);
                 int rtn = connection.Send(msg);
-                System.Threading.Thread.Sleep(6000);
+                Thread.Sleep(6000);
                 msg = ":RATE?";
                 SetSendMonitor(msg);
                 if (!QueriesData(40, msg, ref data))
@@ -2477,6 +2494,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             new FCODefine {Function = "fU", Element = "0", Order = ""},
         };
 
+        private bool IsHarmonicUpdated = false;
         private List<FCODefine> HarmonicItemSettings = new List<FCODefine>();
 
         private void InitHarmonicItems()
@@ -2739,19 +2757,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
         private void btHold_Click(object sender, RoutedEventArgs e)
         {
-            lock (obj)
-            {
-                if (IsHold)
-                {
-                    btHold.Background = new SolidColorBrush(Color.FromRgb(0x45, 0xF5, 0x21)); // FFEF2B2B
-                }
-                else
-                {
-                    btHold.Background = new SolidColorBrush(Color.FromRgb(0xEF, 0x2B, 0x2B)); // FFEF2B2B
-                    TranslateData();
-                }
-                IsHold = !IsHold;
-            }
+            TranslateData();
         }
 
         #region UDP广播数据给其他软件使用
@@ -2886,7 +2892,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                         }
                         else
                         {
-                            Thread.Sleep(10);
+                            Thread.Sleep(50);
                         }
                     }
 

@@ -62,6 +62,10 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         {
             lock (obj)
             {
+                Dispatcher.Invoke(() =>
+                {
+                    progressView.Visibility = Visibility.Collapsed;
+                });
                 int singlePhaseCount = 1 + 1 + PhaseHarmonicCount;
                 int phaseTotalCount = 3 * singlePhaseCount; // （Total、DC、1~PhaseHarmonicCount）* 3（UK\IK\PK）
                 for (int i = harmonicOffset; i < items.Count; i++)
