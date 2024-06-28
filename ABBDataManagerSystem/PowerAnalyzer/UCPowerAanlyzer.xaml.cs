@@ -163,6 +163,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             tbCT.Visibility = Visibility.Collapsed;
             cbVoltageRatio.Text = Configs.Configs.cbVT;
             cbCurrentRatio.Text = Configs.Configs.cbCT;
+            cbAutoChangeRatio.Visibility = IsWorkstationOne ? Visibility.Visible : Visibility.Collapsed;
             float? ct, vt;
             CalculateVTCT(out ct, out vt);
             tbVT.Value = vt ?? 0;
@@ -2719,26 +2720,26 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             {
                 var _vt = cbVoltageRatio.SelectedItem.ToString();
                 if (_vt != null)
-                    ct = (float)(Utils.GetInt32(_vt) ?? 0) * 10f;
-                else
-                    ct = 1;
-            }
-            else
-            {
-                ct = 1;
-            }
-
-            if (cbCurrentRatio.SelectedItem != null)
-            {
-                var _ct = cbCurrentRatio.SelectedItem.ToString();
-                if (_ct != null)
-                    vt = (float)(Utils.GetInt32(_ct) ?? 0) / 5.0f;
+                    vt = (float)(Utils.GetFloat(_vt) ?? 0) * 10f;
                 else
                     vt = 1;
             }
             else
             {
                 vt = 1;
+            }
+
+            if (cbCurrentRatio.SelectedItem != null)
+            {
+                var _ct = cbCurrentRatio.SelectedItem.ToString();
+                if (_ct != null)
+                    ct = (float)(Utils.GetFloat(_ct) ?? 0) / 5.0f;
+                else
+                    ct = 1;
+            }
+            else
+            {
+                ct = 1;
             }
         }
 
