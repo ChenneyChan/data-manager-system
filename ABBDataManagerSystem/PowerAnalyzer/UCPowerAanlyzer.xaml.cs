@@ -52,6 +52,9 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         private VoltageCurrentLossDataInfo NoLoadInfo110 = new();
         private VoltageCurrentLossDataInfo SenseInfo = new();
 
+        private int voltageRatioSelectedIndex = 0;
+        private int currentRatioSelectedIndex = 0;
+
         #region Variables
         private readonly string[] errorMsg = new string[14];
         private readonly string[] updateRateList = new string[10];  //update rate combo list(foreach)
@@ -168,10 +171,20 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             CalculateVTCT(out ct, out vt);
             tbVT.Value = vt ?? 0;
             tbCT.Value = vt ?? 0;
+            voltageRatioSelectedIndex = cbVoltageRatio.SelectedIndex;
+            currentRatioSelectedIndex = cbCurrentRatio.SelectedIndex;
             if (IsWorkstationOne)
             {
                 StartListeningRatio();
             }
+            cbVoltageRatio.SelectionChanged += Ratio_SelectionChanged;
+            cbCurrentRatio.SelectionChanged += Ratio_SelectionChanged;
+        }
+
+        private void Ratio_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            voltageRatioSelectedIndex = cbVoltageRatio.SelectedIndex;
+            currentRatioSelectedIndex = cbCurrentRatio.SelectedIndex;
         }
 
         private void BtHarmonic_Click(object sender, RoutedEventArgs e)
@@ -2899,7 +2912,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                                 CurrentData.ua, CurrentData.ub, CurrentData.uc, CurrentData.u3,
                                 CurrentData.ia, CurrentData.ib, CurrentData.ic, CurrentData.i3,
                                 CurrentData.pa, CurrentData.pb, CurrentData.pc, CurrentData.p3,
-                                CurrentData.fU
+                                CurrentData.fU, currentRatioSelectedIndex, voltageRatioSelectedIndex
                             };
 
                             string msg = "";
