@@ -7,13 +7,14 @@ namespace ABBDataManagerSystem.Bean.Base
     {
         public static string TABLE_NAME = "commonTempRiseConfigRecord";
 
-        public string ID = String.Empty;
-        public string WorkflowId = String.Empty;
-        public string TestingPhase = String.Empty;
-        public string TestingStatus = String.Empty;
-        public string CoolingMode = String.Empty;
+        public string ID = string.Empty;
+        public string WorkflowId = string.Empty;
+        public string TestingPhase = string.Empty;
+        public string TestingStatus = string.Empty;
+        public string CoolingMode = string.Empty;
         public int TestingMode = 1; // 1、电压电流功率；2、电阻
         public int TestingIndex = 1;
+        public string Remark = string.Empty;
         public DateTime? DateTime = null;
 
         public static Dictionary<string, string> FieldComments = new Dictionary<string, string>
@@ -25,6 +26,7 @@ namespace ABBDataManagerSystem.Bean.Base
             {"TestingIndex", "试验次数"},
             {"TestingMode", "试验类型"},
             {"CoolingMode", "冷却方式"},
+            {"Remark", "备注"},
             {"DateTime", "试验时间"},
         };
 
@@ -42,8 +44,8 @@ namespace ABBDataManagerSystem.Bean.Base
                 connection.Open();
 
                 using (SQLCommond command = new SQLCommond($"INSERT INTO {TABLE_NAME} (ID, workflow_id, testing_phase, testing_status, testing_index, cooling_mode, testing_mode, " +
-                    $"datetime) VALUES (@ID, @WorkflowId, @TestingPhase, @TestingStatus, @TestingIndex, @CoolingMode, @TestingMode, " +
-                    $"@DateTime)", connection))
+                    $"datetime, remark) VALUES (@ID, @WorkflowId, @TestingPhase, @TestingStatus, @TestingIndex, @CoolingMode, @TestingMode, " +
+                    $"@DateTime, @Remark)", connection))
                 {
                     command.Parameters.AddWithValue("@ID", ID);
                     command.Parameters.AddWithValue("@WorkflowId", WorkflowId);
@@ -52,6 +54,7 @@ namespace ABBDataManagerSystem.Bean.Base
                     command.Parameters.AddWithValue("@TestingIndex", TestingIndex);
                     command.Parameters.AddWithValue("@CoolingMode", CoolingMode);
                     command.Parameters.AddWithValue("@TestingMode", TestingMode);
+                    command.Parameters.AddWithValue("@Remark", Remark);
                     command.Parameters.AddWithValue("@DateTime", DateTime??System.DateTime.Now);
                     int count = command.ExecuteNonQuery();
                     return count > 0;
@@ -102,6 +105,7 @@ namespace ABBDataManagerSystem.Bean.Base
                     TestingIndex = reader.GetInt32("testing_index"),
                     CoolingMode = reader.GetString("cooling_mode"),
                     TestingMode = reader.GetInt32("testing_mode"),
+                    Remark = !reader.IsDBNull("remark") ? reader.GetString("remark") : string.Empty,
                     DateTime = !reader.IsDBNull("datetime") ? reader.GetDateTime("datetime") : System.DateTime.Now,
                 };
             });

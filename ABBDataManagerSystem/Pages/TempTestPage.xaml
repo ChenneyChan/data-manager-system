@@ -215,7 +215,9 @@
                     <Button Name="btStart" Content="开始采集" Grid.Column="0" Click="btStart_Click" Style="{StaticResource startbutton}" Background="DodgerBlue"/>
                     <Button Name="btUpload" Content="上传数据" Grid.Column="0" Click="btUpload_Click" Style="{StaticResource startbutton}" Background="DodgerBlue"/>
                     <TextBlock Text="存储到CVS路径：" VerticalAlignment="Center" Margin="10,0"/>
-                    <hc:TextBox Grid.Column="1" Grid.Row="0" HorizontalAlignment="Stretch" MinWidth="280" Name="tbSaveFilePath" IsReadOnly="True" Height="30"/>
+                    <hc:TextBox Grid.Column="1" Grid.Row="0" HorizontalAlignment="Stretch" MinWidth="280" FontSize="16" Name="tbSaveFilePath" IsReadOnly="True" Height="30"/>
+                    <TextBlock Text="备注：" VerticalAlignment="Center" Margin="10,0"/>
+                    <hc:TextBox Grid.Column="1" Grid.Row="0" HorizontalAlignment="Stretch" MinWidth="120" FontSize="16" Name="tbRemark" Height="30"/>
                 </StackPanel>
             </StackPanel>
 

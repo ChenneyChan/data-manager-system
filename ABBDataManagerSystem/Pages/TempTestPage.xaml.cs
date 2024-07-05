@@ -1208,6 +1208,7 @@ namespace ABBDataManagerSystem.Pages
                     CoolingMode = cbCoolingMode.Text,
                     DateTime = DateTime.Now,
                     TestingMode = 1,
+                    Remark = tbRemark.Text,
                 };
                 if (!configItem.WriteToDB())
                 {
