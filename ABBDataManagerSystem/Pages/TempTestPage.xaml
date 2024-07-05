@@ -215,15 +215,15 @@
                     <Button Name="btStart" Content="开始采集" Grid.Column="0" Click="btStart_Click" Style="{StaticResource startbutton}" Background="DodgerBlue"/>
                     <Button Name="btUpload" Content="上传数据" Grid.Column="0" Click="btUpload_Click" Style="{StaticResource startbutton}" Background="DodgerBlue"/>
                     <TextBlock Text="存储到CVS路径：" VerticalAlignment="Center" Margin="10,0"/>
-                    <hc:TextBox Grid.Column="1" Grid.Row="0" HorizontalAlignment="Stretch" MinWidth="280" FontSize="16" Name="tbSaveFilePath" IsReadOnly="True" Height="30"/>
+                    <hc:TextBox Grid.Column="1" Grid.Row="0" HorizontalAlignment="Stretch" Width="280" FontSize="16" Name="tbSaveFilePath" IsReadOnly="True" Height="30"/>
                     <TextBlock Text="备注：" VerticalAlignment="Center" Margin="10,0"/>
-                    <hc:TextBox Grid.Column="1" Grid.Row="0" HorizontalAlignment="Stretch" MinWidth="120" FontSize="16" Name="tbRemark" Height="30"/>
+                    <hc:TextBox Grid.Column="1" Grid.Row="0" HorizontalAlignment="Stretch" Width="120" FontSize="16" Name="tbRemark" Height="30"/>
                 </StackPanel>
             </StackPanel>
 
             <!--<TextBlock Text="通道选择" Width="80" Grid.Column="0" Margin="0, 0, 20,0"/>-->
             <StackPanel Grid.Column="1" >
-                <WrapPanel MaxWidth="940" HorizontalAlignment="Left">
+                <WrapPanel HorizontalAlignment="Left">
                     <TextBlock Text="通道选择：" FontWeight="Bold"/>
                     <TextBlock Text="" Name="tbSlotMappingShow" Visibility="Collapsed"/>
                     <hc:Shield FontSize="18" Height="30" Margin="4, 2" Name="shWindingA" Subject="线圈A" Status="" Color="#1182c3"/>
@@ -246,8 +246,20 @@
                     <hc:Shield FontSize="18" Height="30" Margin="4, 2" Name="shTop" Subject="顶部温度" Status="" Color="#1182c3"/>
                 </WrapPanel>
                 <TextBlock Text="功率分析仪数据：" Margin="0, 5, 5, 5" FontWeight="Bold"/>
-                <TextBlock Text="" Name="tbPorwerAnalyzerInfo" Margin="0, 5, 5, 5"  TextWrapping="Wrap"/>
-
+                <TextBlock Text="" Name="tbPorwerAnalyzerInfo" Margin="0, 5, 5, 5"  TextWrapping="Wrap" Visibility="Collapsed"/>
+                <WrapPanel  MaxWidth="980" HorizontalAlignment="Left" IsEnabled="False">
+                    <hc:TextBox hc:InfoElement.Title="Ia" Name="tbIa" hc:InfoElement.TitlePlacement="left" Width="100" FontSize="16" Margin="2,0"/>
+                    <hc:TextBox hc:InfoElement.Title="Ib" Name="tbIb" hc:InfoElement.TitlePlacement="left" Width="100" FontSize="16" Margin="2"/>
+                    <hc:TextBox hc:InfoElement.Title="Ic" Name="tbIc" hc:InfoElement.TitlePlacement="left" Width="100" FontSize="16" Margin="2"/>
+                    <hc:TextBox hc:InfoElement.Title="I3" Name="tbI3" hc:InfoElement.TitlePlacement="left" Width="100" FontSize="16" Margin="2"/>
+                    <hc:TextBox hc:InfoElement.Title="Ua" Name="tbUa" hc:InfoElement.TitlePlacement="left" Width="100" FontSize="16" Margin="2"/>
+                    <hc:TextBox hc:InfoElement.Title="Ub" Name="tbUb" hc:InfoElement.TitlePlacement="left" Width="100" FontSize="16" Margin="2"/>
+                    <hc:TextBox hc:InfoElement.Title="Uc" Name="tbUc" hc:InfoElement.TitlePlacement="left" Width="100" FontSize="16" Margin="2"/>
+                    <hc:TextBox hc:InfoElement.Title="U3" Name="tbU3" hc:InfoElement.TitlePlacement="left" Width="100" FontSize="16" Margin="2"/>
+                    <hc:TextBox hc:InfoElement.Title="P3" Name="tbP3" hc:InfoElement.TitlePlacement="left" Width="100" FontSize="16" Margin="2"/>
+                    <hc:TextBox hc:InfoElement.Title="Fu" Name="tbFu" hc:InfoElement.TitlePlacement="left" Width="100" FontSize="16" Margin="2"/>
+                </WrapPanel>
+    
             </StackPanel>
         </Grid>
         <WrapPanel Grid.Column="0" Grid.Row="1"  Name="panelCoolDevice" IsEnabled="False">

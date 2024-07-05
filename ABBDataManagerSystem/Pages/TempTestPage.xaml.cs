@@ -219,8 +219,6 @@ namespace ABBDataManagerSystem.Pages
             }
         }
 
-        #region 从Winform拷贝的代码
-
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             if (!IsFirstLoad)
@@ -830,6 +828,16 @@ namespace ABBDataManagerSystem.Pages
                 msg += $"P3: {Utils.FloatFormat(CurrentVoltageInfo.p3)},  ";
                 msg += $"Fu: {Utils.FloatFormat(CurrentVoltageInfo.fu)},  ";
                 tbPorwerAnalyzerInfo.Text = msg;
+                tbIa.Text = Utils.FloatFormat(CurrentVoltageInfo.ia);
+                tbIb.Text = Utils.FloatFormat(CurrentVoltageInfo.ib);
+                tbIc.Text = Utils.FloatFormat(CurrentVoltageInfo.ic);
+                tbI3.Text = Utils.FloatFormat(CurrentVoltageInfo.i3);
+                tbUa.Text = Utils.FloatFormat(CurrentVoltageInfo.ua);
+                tbUb.Text = Utils.FloatFormat(CurrentVoltageInfo.ub);
+                tbUc.Text = Utils.FloatFormat(CurrentVoltageInfo.uc);
+                tbU3.Text = Utils.FloatFormat(CurrentVoltageInfo.u3);
+                tbP3.Text = Utils.FloatFormat(CurrentVoltageInfo.p3);
+                tbFu.Text = Utils.FloatFormat(CurrentVoltageInfo.fu);
             });
         }
         #endregion
@@ -1057,8 +1065,6 @@ namespace ABBDataManagerSystem.Pages
             Configs.Configs.TPSlots = slots;
             Configs.Configs.TPInterval = cbInterval.Text;
         }
-        #endregion
-
         #endregion
 
         #region 温度槽位选择
