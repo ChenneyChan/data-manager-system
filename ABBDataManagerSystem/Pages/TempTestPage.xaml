@@ -144,7 +144,7 @@
         </Grid.RowDefinitions>
         <Grid Grid.Row="0" Grid.Column="0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="840"/>
+                <ColumnDefinition Width="860"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <StackPanel Orientation="Vertical" >
@@ -158,7 +158,7 @@
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0, 10">
                     <TextBlock Text="阶段" Width="32" Margin="0, 0, 10,0" VerticalAlignment="Center"/>
-                    <hc:ComboBox Width="80" VerticalAlignment="Center" Name="cbTestPhase">
+                    <hc:ComboBox Width="120" VerticalAlignment="Center" Name="cbTestPhase">
                         <ComboBoxItem Content="空载" IsSelected="True"/>
                         <ComboBoxItem Content="负载"/>
                     </hc:ComboBox>
@@ -189,7 +189,7 @@
                     <Button Content="选择温度通道" Name="btSelectSlots" Width="120" Margin="10, 0" Click="btSelectSlots_Click" Height="30" BorderThickness="1" BorderBrush="Gray"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0, 5, 0, 10">
-                    <TextBlock Text="电压" Width="32" Margin="0, 0, 10,0" VerticalAlignment="Center"/>
+                    <TextBlock Text="试验档位下电压" Width="116" Margin="0, 0, 10,0" VerticalAlignment="Center"/>
                     <hc:TextBox Name="tbTestingVoltage" Width="80" FontSize="16"/>
                     <TextBlock Text="电流" Width="32" Margin="10,0" VerticalAlignment="Center"/>
                     <hc:TextBox Name="tbTestingCurrent" Width="80" FontSize="16"/>
@@ -248,7 +248,7 @@
 
             </StackPanel>
         </Grid>
-        <WrapPanel Grid.Column="0" Grid.Row="1"  Name="panelCoolDevice">
+        <WrapPanel Grid.Column="0" Grid.Row="1"  Name="panelCoolDevice" IsEnabled="False">
             <hc:TextBox IsReadOnly="True" Name="tbOutletWater" hc:InfoElement.Title="出水温度" hc:InfoElement.TitlePlacement="left"  Width="160" FontSize="16" Margin="0, 2, 4, 2"/>
             <hc:TextBox IsReadOnly="True" Name="tbInletWater" hc:InfoElement.Title="回水温度" hc:InfoElement.TitlePlacement="left"  Width="160" FontSize="16" Margin="0, 2, 4, 2"/>
             <hc:TextBox IsReadOnly="True" Name="tbOutletAir1" hc:InfoElement.Title="出风温度1" hc:InfoElement.TitlePlacement="left"  Width="160" FontSize="16" Margin="0, 2, 4, 2"/>

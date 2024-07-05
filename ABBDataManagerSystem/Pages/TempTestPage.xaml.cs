@@ -1365,6 +1365,24 @@ namespace ABBDataManagerSystem.Pages
                         cbRelatedTo.Text = workflowInfo.TempRiseRelativeTo;
                         tbTestingVoltage.Text = workflowInfo.TempRiseTestingVoltage.ToString();
                         tbTestingCurrent.Text = workflowInfo.TempRiseTestingCurrent.ToString();
+                        bool isCommon = true;
+                        if (workflowInfo.WorkflowType == "三绕组")
+                        {
+                            isCommon = workflowInfo.RatedPower1 == workflowInfo.RatedPower2;
+                        }
+                        cbTestPhase.Items.Clear();
+                        if (isCommon)
+                        {
+                            cbTestPhase.Items.Add("空载");
+                            cbTestPhase.Items.Add("负载");
+                        }
+                        else
+                        {
+                            cbTestPhase.Items.Add("空载");
+                            cbTestPhase.Items.Add("负载（大容量）");
+                            cbTestPhase.Items.Add("负载（小容量）");
+                        }
+                        cbTestPhase.SelectedIndex = 0;
                     }
                 });
             });
