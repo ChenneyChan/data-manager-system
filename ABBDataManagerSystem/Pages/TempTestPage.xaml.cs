@@ -1353,8 +1353,7 @@ namespace ABBDataManagerSystem.Pages
         {
             Task.Run(() =>
             {
-                var vs = WorkflowInfo.ReadFromDB(Configs.Configs.WorkflowID);
-                WorkflowInfo? workflowInfo = (vs != null & vs.Count != 0) ? vs[0] : null;
+                WorkflowInfo? workflowInfo = Configs.Configs.WorkflowInfo;
                 Dispatcher.Invoke(() =>
                 {
                     if (workflowInfo == null)

@@ -57,7 +57,7 @@
         </ToolBar>
         <Grid Grid.Row="2">
             <dz:DockControl Name="dockControl" ActiveItemChanged="dockControl_ActiveItemChanged">
-                <dz:DockItem TabText="Welcome" Title="Welcome" ShowAction="{dz:ShowAsDockPositionAction DockPosition=Document}">
+                <!--<dz:DockItem TabText="Welcome" Title="Welcome" ShowAction="{dz:ShowAsDockPositionAction DockPosition=Document}">
                     <FlowDocumentScrollViewer>
                         <FlowDocumentScrollViewer.Document>
                             <FlowDocument FontFamily="Calibri" FontSize="14.5" TextAlignment="Left">
@@ -65,7 +65,7 @@
                             </FlowDocument>
                         </FlowDocumentScrollViewer.Document>
                     </FlowDocumentScrollViewer>
-                </dz:DockItem>
+                </dz:DockItem>-->
                 <dz:DockItem TabText="Test" Title="Test" ShowAction="{dz:ShowAsDockPositionAction DockPosition=Bottom}" Name="dockBottom">
                     <Grid>
                         <Grid.RowDefinitions>

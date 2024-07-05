@@ -4,14 +4,23 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ABBDataManagerSystem.Pages.Views"
+             xmlns:hc="https://handyorg.github.io/handycontrol"
              mc:Ignorable="d" 
              d:DesignHeight="100" d:DesignWidth="800">
+    <UserControl.Resources>
+        <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style TargetType="hc:TextBox" BasedOn="{StaticResource GlobalTextBoxStyle}">
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        </Style>
+    </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition  Width="*"/>
+            <ColumnDefinition Width="180"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <TextBlock Text="{Binding LabelText}"  VerticalAlignment="Center" Margin="0, 0, 5 ,0" FontSize="{Binding FontSize}"/>
-        <TextBox Grid.Column="1" FontSize="{Binding FontSize}" Text="{Binding ContentText}"/>
+        <TextBlock Text="{Binding LabelText, UpdateSourceTrigger=PropertyChanged}"  VerticalAlignment="Center" Margin="0, 0, 5 ,0" TextWrapping="Wrap"/>
+        <hc:TextBox Grid.Column="1" Text="{Binding Content, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" TextWrapping="Wrap" MaxHeight="60"/>
     </Grid>
 </UserControl>

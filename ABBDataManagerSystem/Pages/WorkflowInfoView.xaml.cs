@@ -81,6 +81,7 @@ namespace ABBDataManagerSystem.Pages
                     // 根据需要转换为相应的类型
                     string? columnValueString = columnValue.ToString();
                     Configs.Configs.WorkflowID = columnValueString ?? "";
+                    MainWindow.UpdateWorkflow();
                     Tools.EventManager.Instance.TriggerEvent("WorkflowSelected", this, new Tools.TestEventArgs());
                 }
                 Close();
@@ -140,6 +141,7 @@ namespace ABBDataManagerSystem.Pages
                     // 根据需要转换为相应的类型
                     string? columnValueString = columnValue.ToString();
                     Configs.Configs.WorkflowID = columnValueString ?? "";
+                    MainWindow.UpdateWorkflow();
                     Tools.EventManager.Instance.TriggerEvent("WorkflowSelected", this, new Tools.TestEventArgs());
                 }
                 Close();

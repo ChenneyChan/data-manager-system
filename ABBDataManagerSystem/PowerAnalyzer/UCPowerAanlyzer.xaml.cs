@@ -2960,12 +2960,11 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         {
             Task.Run(() =>
             {
-                var workflows = WorkflowInfo.ReadFromDB(Configs.Configs.WorkflowID);
-                if (workflows == null || workflows.Count == 0)
+                var workflow = Configs.Configs.WorkflowInfo;
+                if (workflow == null)
                 {
                     return;
                 }
-                var workflow = workflows[0];
                 RatedCurrent = workflow.RatedCurrentLv;
                 WorkflowType = workflow.WorkflowType;
                 Dispatcher.Invoke(() =>

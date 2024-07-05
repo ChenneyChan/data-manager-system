@@ -479,12 +479,11 @@ namespace ABBDataManagerSystem.Pages
             });
             Task.Run(() =>
             {
-                var workflows = WorkflowInfo.ReadFromDB(Configs.Configs.WorkflowID);
-                if (workflows == null || workflows.Count == 0)
+                var workflow = Configs.Configs.WorkflowInfo;
+                if (workflow == null)
                 {
                     return;
                 }
-                var workflow = workflows[0];
                 List<float> tappings = new List<float>();
                 var voltages = workflow.TappingVoltages.Split(" ");
                 foreach (var v in voltages)

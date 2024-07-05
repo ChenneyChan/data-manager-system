@@ -38,6 +38,7 @@ namespace ABBDataManagerSystem
             dockBottom.Close();
             Task.Run(() => { UpdateWorkflow(); });
             StartBroadCastWorkflowInfo();
+            StartTabItem<WorkflowDetail>("工作令信息");
         }
 
         private void MainWindow_Closed(object? sender, EventArgs e)
@@ -454,11 +455,10 @@ namespace ABBDataManagerSystem
             Dispatcher.Invoke(() =>
             {
                 tbCurrentWorkflow.Text = "当前工作令：" + Configs.Configs.WorkflowID;
-                Task.Run(() => { UpdateWorkflow(); });
-            });
+           });
         }
 
-        private void UpdateWorkflow()
+        public static void UpdateWorkflow()
         {
             var infos = WorkflowInfo.ReadFromDB(Configs.Configs.WorkflowID);
             if (infos != null && infos.Count > 0)
