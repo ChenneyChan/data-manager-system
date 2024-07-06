@@ -16,8 +16,12 @@ namespace ABBDataManagerSystem.Pages
             InitView();
         }
 
-        private void InitComboBox(ComboBox cb)
+        private void InitComboBox(ComboBox cb, bool isExtension = false)
         {
+            if (isExtension)
+            {
+                cb.Items.Add("");
+            }
             for (int i = 0; i < MaxSlot; i++)
             {
                 cb.Items.Add($"Slot-{i + 1}");
@@ -44,6 +48,15 @@ namespace ABBDataManagerSystem.Pages
             InitComboBox(cbInlet2);
             InitComboBox(cbInlet3);
             InitComboBox(cbTop);
+            InitComboBox(cbExtension1, true);
+            InitComboBox(cbExtension2, true);
+            InitComboBox(cbExtension3, true);
+            InitComboBox(cbExtension4, true);
+            InitComboBox(cbExtension5, true);
+            InitComboBox(cbExtension6, true);
+            InitComboBox(cbExtension7, true);
+            InitComboBox(cbExtension8, true);
+            InitComboBox(cbExtension9, true);
             cbWindingA.Text = Configs.Configs.WindingA;
             cbWindingB.Text = Configs.Configs.WindingB;
             cbWindingC.Text = Configs.Configs.WindingC;
@@ -52,6 +65,7 @@ namespace ABBDataManagerSystem.Pages
             cbEnvB.Text = Configs.Configs.EnvB;
             cbEnvC.Text = Configs.Configs.EnvC;
             cbEnvD.Text = Configs.Configs.EnvD;
+
             var outlets = Configs.Configs.OutletTemperature.Split(",");
             var inlets = Configs.Configs.InletTemperature.Split(",");
             cbOutlet1.Text = outlets.Length > 0 ? outlets[0] : "";
@@ -64,6 +78,17 @@ namespace ABBDataManagerSystem.Pages
             cbInlet2.Text = inlets.Length > 1 ? inlets[1] : "";
             cbInlet3.Text = inlets.Length > 2 ? inlets[2] : "";
             cbTop.Text = Configs.Configs.TopTemperature;
+
+            var extensions = Configs.Configs.ExtensionSlots.Split(",");
+            cbExtension1.Text = extensions.Length > 0 ? extensions[0] : "";
+            cbExtension2.Text = extensions.Length > 1 ? extensions[1] : "";
+            cbExtension3.Text = extensions.Length > 2 ? extensions[2] : "";
+            cbExtension4.Text = extensions.Length > 3 ? extensions[3] : "";
+            cbExtension5.Text = extensions.Length > 4 ? extensions[4] : "";
+            cbExtension6.Text = extensions.Length > 5 ? extensions[5] : "";
+            cbExtension7.Text = extensions.Length > 6 ? extensions[6] : "";
+            cbExtension8.Text = extensions.Length > 7 ? extensions[7] : "";
+            cbExtension9.Text = extensions.Length > 8 ? extensions[8] : "";
         }
 
         private void btCancel_Click(object sender, RoutedEventArgs e)
@@ -85,6 +110,8 @@ namespace ABBDataManagerSystem.Pages
             Configs.Configs.OutletTemperature = cbOutlet1.Text + "," + cbOutlet2.Text + "," + cbOutlet3.Text + "," + cbOutlet4.Text + "," + cbOutlet5.Text + "," + cbOutlet6.Text;
             Configs.Configs.InletTemperature = cbInlet1.Text + "," + cbInlet2.Text + "," + cbInlet3.Text;
             Configs.Configs.TopTemperature = cbTop.Text;
+            Configs.Configs.ExtensionSlots = cbExtension1.Text + "," + cbExtension2.Text + "," + cbExtension3.Text + "," + cbExtension4.Text + "," +
+                cbExtension5.Text + "," + cbExtension6.Text + "," + cbExtension7.Text + "," + cbExtension8.Text + "," + cbExtension9.Text;
             DialogResult = true;
             Close();
         }

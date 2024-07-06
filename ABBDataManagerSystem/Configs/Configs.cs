@@ -69,6 +69,7 @@ namespace ABBDataManagerSystem.Configs
         public static string OutletTemperature { set; get; } = string.Empty; // 出风口温度
         public static string InletTemperature { set; get; } = string.Empty;   // 进风口温度
         public static string TopTemperature { set; get; } = string.Empty;
+        public static string ExtensionSlots { set; get; } = string.Empty;
         #endregion
 
         #region 20W设置
@@ -187,6 +188,8 @@ namespace ABBDataManagerSystem.Configs
             TopTemperature = buff.ToString();
             GetPrivateProfileString(INITemperature, "IsSimulate", "", buff, 32, INIPATH);
             TPIsSimulate = buff.ToString().Trim().ToLower() == "true";
+            GetPrivateProfileString(INITemperature, "ExtensionSlots", "", buff, 64, INIPATH);
+            ExtensionSlots = buff.ToString();
             #endregion
 
             #region 公共配置
@@ -264,6 +267,7 @@ namespace ABBDataManagerSystem.Configs
             WritePrivateProfileString(INITemperature, "InletTemperature", InletTemperature, INIPATH);
             WritePrivateProfileString(INITemperature, "TopTemperature", TopTemperature, INIPATH);
             WritePrivateProfileString(INITemperature, "IsSimulate", TPIsSimulate.ToString(), INIPATH);
+            WritePrivateProfileString(INITemperature, "ExtensionSlots", ExtensionSlots, INIPATH);
 
             #region 公共配置
             WritePrivateProfileString(INICommon, "WorkStationNo", WorkStationNo.ToString(), INIPATH);

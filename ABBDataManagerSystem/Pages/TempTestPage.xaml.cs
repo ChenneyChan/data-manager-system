@@ -15,6 +15,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 using MessageBox = HandyControl.Controls.MessageBox;
+using HandyControl.Controls;
 
 namespace ABBDataManagerSystem.Pages
 {
@@ -107,6 +108,7 @@ namespace ABBDataManagerSystem.Pages
 
         private bool UsingSerial = true;
         private List<TemperatureSlotView> Slots = new List<TemperatureSlotView>();
+        private Dictionary<int, string> ExtensionSlotMaps = new Dictionary<int, string>();
 
         private TempChartsNew tempCharts;
 
@@ -738,6 +740,16 @@ namespace ABBDataManagerSystem.Pages
                 Table.Columns.Add($"Slot-{slot}", typeof(float));
             }
 
+            foreach(var extensionItem in ExtensionSlotMaps)
+            {
+                dgTempRecord.Columns.Add(new DataGridTextColumn()
+                {
+                    Header = $"其他{extensionItem.Key}",
+                    Binding = new Binding(extensionItem.Value),
+                    Width = 40
+                });
+            }
+
             dgTempRecord.AutoGenerateColumns = false;
             dgTempRecord.ItemsSource = Table.DefaultView;
 
@@ -834,18 +846,6 @@ namespace ABBDataManagerSystem.Pages
         {
             Dispatcher.Invoke(() =>
             {
-                string msg = "";
-                msg += $"Ua: {Utils.FloatFormat(CurrentVoltageInfo.ua)},  ";
-                msg += $"Ub: {Utils.FloatFormat(CurrentVoltageInfo.ub)},  ";
-                msg += $"Uc: {Utils.FloatFormat(CurrentVoltageInfo.uc)},  ";
-                msg += $"U3: {Utils.FloatFormat(CurrentVoltageInfo.u3)},  ";
-                msg += $"Ia: {Utils.FloatFormat(CurrentVoltageInfo.ia)},  ";
-                msg += $"Ib: {Utils.FloatFormat(CurrentVoltageInfo.ib)},  ";
-                msg += $"Ic: {Utils.FloatFormat(CurrentVoltageInfo.ic)},  ";
-                msg += $"I3: {Utils.FloatFormat(CurrentVoltageInfo.i3)},  ";
-                msg += $"P3: {Utils.FloatFormat(CurrentVoltageInfo.p3)},  ";
-                msg += $"Fu: {Utils.FloatFormat(CurrentVoltageInfo.fu)},  ";
-                tbPorwerAnalyzerInfo.Text = msg;
                 tbIa.Text = Utils.FloatFormat(CurrentVoltageInfo.ia);
                 tbIb.Text = Utils.FloatFormat(CurrentVoltageInfo.ib);
                 tbIc.Text = Utils.FloatFormat(CurrentVoltageInfo.ic);
@@ -1152,6 +1152,22 @@ namespace ABBDataManagerSystem.Pages
                 }
                 slots.Add(Configs.Configs.TopTemperature);
             }
+            if (Configs.Configs.ExtensionSlots.Length > 0)
+            {
+                ExtensionSlotMaps.Clear();
+                var _extensionSlots = Configs.Configs.ExtensionSlots.Split(',');
+                int index = 0;
+                foreach (var _extensionSlot in _extensionSlots) 
+                {
+                    index++;
+                    if (_extensionSlot.Trim().Length == 0)
+                    {
+                        continue;
+                    }
+                    slots.Add(_extensionSlot);
+                    ExtensionSlotMaps.Add(index, _extensionSlot);
+                }
+            }
             foreach (var item in slots)
             {
                 try
@@ -1211,6 +1227,44 @@ namespace ABBDataManagerSystem.Pages
             shIn2.Status = inSlots.Length > 1 ? inSlots[1] : "";
             shIn3.Status = inSlots.Length > 2 ? inSlots[2] : "";
             shTop.Status = Configs.Configs.TopTemperature;
+
+            if (Configs.Configs.ExtensionSlots.Length > 0 && ExtensionSlotMaps.Count == 0)
+            {
+                var _extensionSlots = Configs.Configs.ExtensionSlots.Split(',');
+                int index = 0;
+                foreach (var _extensionSlot in _extensionSlots)
+                {
+                    index++;
+                    if (_extensionSlot.Trim().Length == 0)
+                    {
+                        continue;
+                    }
+                    ExtensionSlotMaps.Add(index, _extensionSlot);
+                }
+            }
+
+            UpdateExtensionSheild(1, shExtension1);
+            UpdateExtensionSheild(2, shExtension2);
+            UpdateExtensionSheild(3, shExtension3);
+            UpdateExtensionSheild(4, shExtension4);
+            UpdateExtensionSheild(5, shExtension5);
+            UpdateExtensionSheild(6, shExtension6);
+            UpdateExtensionSheild(7, shExtension7);
+            UpdateExtensionSheild(8, shExtension8);
+            UpdateExtensionSheild(9, shExtension9);
+        }
+
+        private void UpdateExtensionSheild(int key, Shield sh)
+        {
+            if (ExtensionSlotMaps.ContainsKey(key))
+            {
+                sh.Visibility = Visibility.Visible;
+                sh.Status = ExtensionSlotMaps[key];
+            } 
+            else
+            {
+                sh.Visibility = Visibility.Collapsed;
+            }
         }
         #endregion
 
