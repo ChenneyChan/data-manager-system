@@ -335,7 +335,7 @@ namespace ABBDataManagerSystem.Pages
                 SelectedSlotChange = false;
                 tempCharts = new TempChartsNew(plotView, SelectedSlots);
                 tempCharts.InitChart();
-                if (IsAFWF) 
+                if (IsAFWF)
                 {
                     AddCoolTempToCharts();
                 }
@@ -726,7 +726,7 @@ namespace ABBDataManagerSystem.Pages
                     {
                         Header = item.Key,
                         Binding = new Binding(item.Value),
-                        Width = item.Key.IndexOf("外循环环境温度") >= 0 ? 48 :44
+                        Width = item.Key.IndexOf("外循环环境温度") >= 0 ? 48 : 44
                     });
                     Table.Columns.Add(item.Value, typeof(float));
                 }
@@ -740,6 +740,8 @@ namespace ABBDataManagerSystem.Pages
 
             dgTempRecord.AutoGenerateColumns = false;
             dgTempRecord.ItemsSource = Table.DefaultView;
+
+            AddSlotRow();
         }
 
         private void UpdateDataGrid(float[] values)
@@ -779,6 +781,22 @@ namespace ABBDataManagerSystem.Pages
                     newRow["i3"] = CurrentVoltageInfo.i3;
                     newRow["p3"] = CurrentVoltageInfo.p3;
                 }
+            }
+            Dispatcher.Invoke(() =>
+            {
+                Table.Rows.Add(newRow);
+            });
+        }
+
+        private void AddSlotRow()
+        {
+            DataRow newRow = Table.NewRow();
+            newRow["序号"] = 0;
+            newRow["时间"] = DateTime.Now.Date;
+            for (int i = 0; i < SelectedSlots.Count; i++)
+            {
+                var slot = SelectedSlots[i];
+                newRow[$"Slot-{slot}"] = slot;
             }
             Dispatcher.Invoke(() =>
             {
@@ -1422,7 +1440,7 @@ namespace ABBDataManagerSystem.Pages
                         byte[] receiveBytes = udpClient.Receive(ref remoteEndPoint);
                         string receiveString = Encoding.ASCII.GetString(receiveBytes);
                         string[] values = receiveString.Split(';');
-                        if (Configs.Configs.IsEnableVerboseDebug) 
+                        if (Configs.Configs.IsEnableVerboseDebug)
                         {
                             Log.Info($"Received: {receiveString}");
                         }
