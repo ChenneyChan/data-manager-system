@@ -14,7 +14,7 @@ namespace ABBDataManagerSystem.Bean.Base
         public string CoolingMode = string.Empty;
         public int TestingMode = 1; // 1、电压电流功率；2、电阻
         public int TestingIndex = 1;
-        public string Remark = string.Empty;
+        public string? Remark = null;
         public DateTime? DateTime = null;
 
         public static Dictionary<string, string> FieldComments = new Dictionary<string, string>

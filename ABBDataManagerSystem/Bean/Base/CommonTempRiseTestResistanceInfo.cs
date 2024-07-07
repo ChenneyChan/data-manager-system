@@ -8,6 +8,7 @@ namespace ABBDataManagerSystem.Bean.Base
         public static string TABLE_NAME = "commonTempRiseTestResistance";
 
         public string ID = String.Empty;
+        public int VoltageType { get; set; } = 0;
         public int SortIndex { get; set; }
         public string CurrentTime { get; set; } = string.Empty;
         public float CurrentHV { get; set; }
@@ -19,7 +20,9 @@ namespace ABBDataManagerSystem.Bean.Base
         public static Dictionary<string, string> FieldComments = new Dictionary<string, string>
         {
             {"ID", "温升试验编号"},
+            {"VoltageType", "电压类型"},
             {"SortIndex", "索引"},
+            {"CurrentTime", "采集时间"},
             {"CurrentHV", "高压电流"},
             {"CurrentLV", "低压电流"},
             {"ResistanceHV", "高压电阻"},
@@ -34,11 +37,12 @@ namespace ABBDataManagerSystem.Bean.Base
                 // 打开数据库连接
                 connection.Open();
 
-                using (SQLCommond command = new SQLCommond($"INSERT INTO {TABLE_NAME} (ID, SortIndex, CurrentTime, CurrentHV, CurrentLV, ResistanceHV, ResistanceLV) " +
-                    " VALUES (@ID, @SortIndex, @CurrentTime, @CurrentHV, @CurrentLV, @ResistanceHV, @ResistanceLV)", connection))
+                using (SQLCommond command = new SQLCommond($"INSERT INTO {TABLE_NAME} (ID, SortIndex, VoltageType, CurrentTime, CurrentHV, CurrentLV, ResistanceHV, ResistanceLV) " +
+                    " VALUES (@ID, @SortIndex, @VoltageType, @CurrentTime, @CurrentHV, @CurrentLV, @ResistanceHV, @ResistanceLV)", connection))
                 {
                     command.Parameters.AddWithValue("@ID", ID);
                     command.Parameters.AddWithValue("@SortIndex", SortIndex);
+                    command.Parameters.AddWithValue("@VoltageType", VoltageType);
                     command.Parameters.AddWithValue("@CurrentTime", CurrentTime);
                     command.Parameters.AddWithValue("@CurrentHV", CurrentHV);
                     command.Parameters.AddWithValue("@CurrentLV", CurrentLV);
@@ -50,13 +54,22 @@ namespace ABBDataManagerSystem.Bean.Base
             }
         }
 
-        public static bool DeleteData(string ID)
+        public static bool DeleteData(string ID, int? VoltageType = null)
         {
             using (SQLConnection connection = new SQLConnection(DBConnector.GetConnectionString()))
             {
                 connection.Open();
-                SQLCommond command = new SQLCommond($"DELETE FROM {TABLE_NAME} WHERE ID = @ID", connection);
+                string voltageCondition = "";
+                if (VoltageType != null)
+                {
+                    voltageCondition = " AND VoltageType = @VoltageType";
+                }
+                SQLCommond command = new SQLCommond($"DELETE FROM {TABLE_NAME} WHERE ID = @ID {voltageCondition}", connection);
                 command.Parameters.AddWithValue("@ID", ID);
+                if (VoltageType != null)
+                {
+                    command.Parameters.AddWithValue("@VoltageType", VoltageType);
+                }
                 int count = command.ExecuteNonQuery();
                 return count > 0;
             }
@@ -83,11 +96,12 @@ namespace ABBDataManagerSystem.Bean.Base
                     {
                         command.Connection = connection;
                         command.Transaction = transaction;
-                        command.CommandText = $"INSERT INTO {TABLE_NAME} (ID, SortIndex, CurrentTime, CurrentHV, CurrentLV, ResistanceHV, ResistanceLV) " +
-                            " VALUES (@ID, @SortIndex, @CurrentTime, @CurrentHV, @CurrentLV, @ResistanceHV, @ResistanceLV)";
+                        command.CommandText = $"INSERT INTO {TABLE_NAME} (ID, SortIndex, VoltageType, CurrentTime, CurrentHV, CurrentLV, ResistanceHV, ResistanceLV) " +
+                            " VALUES (@ID, @SortIndex, @VoltageType, @CurrentTime, @CurrentHV, @CurrentLV, @ResistanceHV, @ResistanceLV)";
 
                         command.Parameters.Add("@ID", MySqlDbType.Int64);
                         command.Parameters.Add("@SortIndex", MySqlDbType.Int32);
+                        command.Parameters.Add("@VoltageType", MySqlDbType.Int16);
                         command.Parameters.Add("@CurrentTime", MySqlDbType.String);
                         command.Parameters.Add("@CurrentHV", MySqlDbType.Float);
                         command.Parameters.Add("@CurrentLV", MySqlDbType.Float);
@@ -100,6 +114,7 @@ namespace ABBDataManagerSystem.Bean.Base
                             {
                                 command.Parameters["@ID"].Value = row.ID;
                                 command.Parameters["@SortIndex"].Value = row.SortIndex;
+                                command.Parameters["@VoltageType"].Value = row.VoltageType;
                                 command.Parameters["@CurrentTime"].Value = row.CurrentTime;
                                 command.Parameters["@CurrentHV"].Value = row.CurrentHV;
                                 command.Parameters["@CurrentLV"].Value = row.CurrentLV;

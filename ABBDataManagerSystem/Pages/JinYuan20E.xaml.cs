@@ -970,14 +970,24 @@ namespace ABBDataManagerSystem.Pages
         // 温升电阻持续采集数据上传
         private void btUpdateTempRiseRecords_Click(object sender, RoutedEventArgs e)
         {
+            int? slot1Type = null, slot2Type = null;
+            bool isSanRaoZu = false;
             if (!Utils.CheckWorkflowBeforeUpload())
             {
                 return;
             }
+            // 三绕组场景，需要获取判断具体通道选择
             if (Configs.Configs.WorkflowInfo != null && Configs.Configs.WorkflowInfo.WorkflowType == "三绕组")
             {
-                new TempRiseResistanceDialog().ShowDialog();
-                return;
+                isSanRaoZu = true;
+                var dialog = new TempRiseResistanceDialog();
+                var result = dialog.ShowDialog();
+                slot1Type = dialog.Slot1VoltageType;
+                slot2Type = dialog.Slot2VoltageType;
+                if (result != true || ((slot1Type == null || slot1Type < 0) && (slot2Type == null || slot2Type < 0)))
+                {
+                    return;
+                }
             }
             CommonTempRiseTestInfo configItem;
             int testIndex = Utils.ParseInt(cbTestCount.Text);
@@ -1011,15 +1021,58 @@ namespace ABBDataManagerSystem.Pages
                 return;
             }
 
-            // 删除之前的时间数据
-            CommonTempRiseTestResistanceInfo.DeleteData(configItem.ID);
-
-            // 将DataTable中的数据转成试验数据格式并且一条条上传
-            foreach (var item in dataItems)
+            bool ret = false;
+            if (!isSanRaoZu)
             {
-                item.ID = configItem.ID;
+                // 删除之前的时间数据
+                CommonTempRiseTestResistanceInfo.DeleteData(configItem.ID);
+
+                // 将DataTable中的数据转成试验数据格式并且一条条上传
+                foreach (var item in dataItems)
+                {
+                    item.ID = configItem.ID;
+                }
+                ret = CommonTempRiseTestResistanceInfo.BatchInsertData(dataItems);
             }
-            bool ret = CommonTempRiseTestResistanceInfo.BatchInsertData(dataItems);
+            else
+            {
+                List<CommonTempRiseTestResistanceInfo> dataList = new List<CommonTempRiseTestResistanceInfo>();
+                // 三绕组场景，本次要上传哪个电压的数据，就先删除这个电压的已有数据
+                if (slot1Type != null && slot1Type >= 0)
+                {
+                    CommonTempRiseTestResistanceInfo.DeleteData(configItem.ID, slot1Type + 1);
+                    foreach(var item in dataItems)
+                    {
+                        dataList.Add(new CommonTempRiseTestResistanceInfo()
+                        {
+                            ID = configItem.ID,
+                            SortIndex = item.SortIndex,
+                            CurrentTime = item.CurrentTime,
+                            VoltageType = slot1Type ?? 0 + 1,
+                            CurrentHV = item.CurrentHV,
+                            ResistanceHV = item.ResistanceHV
+                        });
+                    }
+                }
+                if (slot2Type != null && slot2Type >= 0)
+                {
+                    CommonTempRiseTestResistanceInfo.DeleteData(configItem.ID, slot2Type + 1);
+                    foreach (var item in dataItems)
+                    {
+                        dataList.Add(new CommonTempRiseTestResistanceInfo()
+                        {
+                            ID = configItem.ID,
+                            SortIndex = item.SortIndex,
+                            CurrentTime = item.CurrentTime,
+                            VoltageType = slot2Type ?? 0 + 1,
+                            CurrentHV = item.CurrentLV,
+                            ResistanceHV = item.ResistanceLV
+                        });
+                    }
+                }
+                ret = CommonTempRiseTestResistanceInfo.BatchInsertData(dataList);
+            }
+
             if (ret)
             {
                 MessageBox.Show($"数据上传成功，共{dataItems.Count}条数据!", "上传结果", MessageBoxButton.OK, MessageBoxImage.Exclamation);

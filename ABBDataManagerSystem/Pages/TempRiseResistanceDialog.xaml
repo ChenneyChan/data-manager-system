@@ -4,26 +4,31 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ABBDataManagerSystem.Pages"
+        xmlns:hc="https://handyorg.github.io/handycontrol"
         mc:Ignorable="d" Background="#FFDDDDDD" 
         Title="三绕组温升热电阻数据上传确认" Height="300" Width="600" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
+    <Window.Resources>
+        <Style TargetType="hc:ComboBox" BasedOn="{StaticResource GlobalComboBoxStyle}">
+        </Style>
+    </Window.Resources>
     <Grid>
         <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
             <TextBlock Text="请选择本次温升热电阻数据测量位置：" FontSize="20"/>
             <WrapPanel Height="40"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" >
                 <TextBlock Text="通道1" FontSize="20" VerticalAlignment="Center" Margin="10, 0"/>
-                <ComboBox Width="120" FontSize="20" Height="40">
+                <hc:ComboBox Name="comboBox1" Width="120" FontSize="20" Height="40" hc:InfoElement.ShowClearButton="True" SelectionChanged="ComboBox1_SelectionChanged">
                     <ComboBoxItem Content="高压"/>
                     <ComboBoxItem Content="低压1"/>
                     <ComboBoxItem Content="低压2"/>
-                </ComboBox>
+                </hc:ComboBox>
                 <Label Width="20" Visibility="Hidden"/>
                 <TextBlock Text="通道2" FontSize="20" VerticalAlignment="Center" Margin="10, 0"/>
-                <ComboBox Width="120" FontSize="20" Height="40">
+                <hc:ComboBox Name="comboBox2" Width="120" FontSize="20" Height="40" hc:InfoElement.ShowClearButton="True" SelectionChanged="ComboBox2_SelectionChanged">
                     <ComboBoxItem Content="高压"/>
                     <ComboBoxItem Content="低压1"/>
                     <ComboBoxItem Content="低压2"/>
-                </ComboBox>
+                </hc:ComboBox>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="0,40,0,10">
                 <Button Style="{StaticResource ButtonPrimary}" FontSize="20" Height="40" Width="140" Content="确认" Name="btConfirm" Click="btConfirm_Click"/>
