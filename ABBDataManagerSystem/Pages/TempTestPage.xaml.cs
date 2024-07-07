@@ -97,6 +97,12 @@ namespace ABBDataManagerSystem.Pages
     }
 
 
+    enum TempMode
+    {
+        COMMON = 0, // 常规模式，AN或者AF+相对于环境
+        AF_AIR = 1, // AF+相对于进风口温度
+        AFWF = 2,   // AFWF，水冷模式
+    }
 
     /// <summary>
     /// TempTestPage.xaml 的交互逻辑
@@ -134,7 +140,7 @@ namespace ABBDataManagerSystem.Pages
         private CoolDeviceInfo CurrentCoolDeviceInfo = new();
         private Object objLock = new object();
         private int Index = 0;
-        private bool IsAFWF = false; // 是否水冷
+        private TempMode TempTestMode = TempMode.COMMON;
 
         public TempTestPage()
         {
@@ -182,7 +188,7 @@ namespace ABBDataManagerSystem.Pages
             UpdateSlotShieldState();
             cbCoolingMode.SelectionChanged += cbCoolingMode_SelectionChanged;
             cbRelatedTo.SelectionChanged += cbCoolingMode_SelectionChanged;
-            panelCoolDevice.Visibility = IsAFWF ? Visibility.Visible : Visibility.Collapsed;
+            panelCoolDevice.Visibility = TempTestMode == TempMode.AFWF ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void RbSerialPort_Checked(object sender, RoutedEventArgs e)
@@ -235,7 +241,7 @@ namespace ABBDataManagerSystem.Pages
             InitChartRange();
             tempCharts = new TempChartsNew(plotView, SelectedSlots);
             tempCharts.InitChart();
-            if (IsAFWF)
+            if (TempTestMode == TempMode.AFWF)
             {
                 AddCoolTempToCharts();
             }
@@ -344,7 +350,7 @@ namespace ABBDataManagerSystem.Pages
                 SelectedSlotChange = false;
                 tempCharts = new TempChartsNew(plotView, SelectedSlots);
                 tempCharts.InitChart();
-                if (IsAFWF)
+                if (TempTestMode == TempMode.AFWF)
                 {
                     AddCoolTempToCharts();
                 }
@@ -542,7 +548,7 @@ namespace ABBDataManagerSystem.Pages
                 MinWidth = 60
             });
 
-            if (!IsAFWF)
+            if (TempTestMode == TempMode.COMMON)
             {
                 dgTempRecord.Columns.Add(new DataGridTextColumn()
                 {
@@ -660,7 +666,7 @@ namespace ABBDataManagerSystem.Pages
                 MinWidth = 40
             });
 
-            if (!IsAFWF)
+            if (TempTestMode == TempMode.COMMON)
             {
                 dgTempRecord.Columns.Add(new DataGridTextColumn()
                 {
@@ -717,27 +723,30 @@ namespace ABBDataManagerSystem.Pages
                     Binding = new Binding(Configs.Configs.TopTemperature),
                     Width = 40
                 });
-                Dictionary<string, string> maps = new Dictionary<string, string>()
+                if (TempTestMode == TempMode.AFWF)
                 {
-                    { "出水口温度", "Outletwater"},
-                    { "回水口温度", "Inletwater"},
-                    { "外循环出风口1", "OutletAir1"},
-                    { "外循环出风口2", "OutletAir2"},
-                    { "外循环出风口3", "OutletAir3"},
-                    { "外循环出风口4", "OutletAir4"},
-                    { "外循环环境温度1", "Ambient1"},
-                    { "外循环环境温度2", "Ambient2"},
-                    { "流量", "Flow"},
-                };
-                foreach (var item in maps)
-                {
-                    dgTempRecord.Columns.Add(new DataGridTextColumn()
+                    Dictionary<string, string> maps = new Dictionary<string, string>()
                     {
-                        Header = item.Key,
-                        Binding = new Binding(item.Value),
-                        Width = item.Key.IndexOf("外循环环境温度") >= 0 ? 48 : 44
-                    });
-                    Table.Columns.Add(item.Value, typeof(float));
+                        { "出水口温度", "Outletwater"},
+                        { "回水口温度", "Inletwater"},
+                        { "外循环出风口1", "OutletAir1"},
+                        { "外循环出风口2", "OutletAir2"},
+                        { "外循环出风口3", "OutletAir3"},
+                        { "外循环出风口4", "OutletAir4"},
+                        { "外循环环境温度1", "Ambient1"},
+                        { "外循环环境温度2", "Ambient2"},
+                        { "流量", "Flow"},
+                    };
+                    foreach (var item in maps)
+                    {
+                        dgTempRecord.Columns.Add(new DataGridTextColumn()
+                        {
+                            Header = item.Key,
+                            Binding = new Binding(item.Value),
+                            Width = item.Key.IndexOf("外循环环境温度") >= 0 ? 48 : 44
+                        });
+                        Table.Columns.Add(item.Value, typeof(float));
+                    }
                 }
             }
 
@@ -773,7 +782,7 @@ namespace ABBDataManagerSystem.Pages
                 var slot = SelectedSlots[i];
                 newRow[$"Slot-{slot}"] = values[i];
             }
-            if (IsAFWF)
+            if (TempTestMode == TempMode.AFWF)
             {
                 newRow["Ambient1"] = CurrentCoolDeviceInfo.AmbientTemperature1;
                 newRow["Ambient2"] = CurrentCoolDeviceInfo.AmbientTemperature2;
@@ -942,7 +951,7 @@ namespace ABBDataManagerSystem.Pages
                 Dispatcher.Invoke(() =>
                 {
                     float[]? coolTemp = null;
-                    if (IsAFWF && CurrentCoolDeviceInfo != null)
+                    if (TempTestMode == TempMode.AFWF && CurrentCoolDeviceInfo != null)
                     {
                         coolTemp = new float[]
                         {
@@ -1095,32 +1104,36 @@ namespace ABBDataManagerSystem.Pages
         #region 温度槽位选择
         private void cbCoolingMode_SelectionChanged(object sender, RoutedEventArgs e)
         {
-            bool _IsAFWF = cbCoolingMode.SelectedIndex == 2 || (cbCoolingMode.SelectedIndex == 1 && cbRelatedTo.SelectedIndex == 2) ;
-            if (_IsAFWF != IsAFWF)
+            var oldMode = TempTestMode;
+            bool _IsAFWF = cbCoolingMode.SelectedIndex == 2;
+            bool _IsAF_Air = cbCoolingMode.SelectedIndex == 1 && cbRelatedTo.SelectedIndex == 2;
+            TempTestMode = _IsAFWF ? TempMode.AFWF : (_IsAF_Air ? TempMode.AF_AIR : TempMode.COMMON);
+            if (TempTestMode != oldMode)
             {
-                IsAFWF = _IsAFWF;
                 UpdateSlotShieldState();
                 SelectedSlots_SelectionChanged();
-            }
-            panelCoolDevice.Visibility = IsAFWF ? Visibility.Visible : Visibility.Collapsed;
+            } 
+            panelCoolDevice.Visibility = TempTestMode == TempMode.AFWF ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void UpdateSlotShieldState()
         {
-            shEnvA.Visibility = IsAFWF ? Visibility.Collapsed : Visibility.Visible;
-            shEnvB.Visibility = IsAFWF ? Visibility.Collapsed : Visibility.Visible;
-            shEnvC.Visibility = IsAFWF ? Visibility.Collapsed : Visibility.Visible;
-            shEnvD.Visibility = IsAFWF ? Visibility.Collapsed : Visibility.Visible;
-            shOut1.Visibility = !IsAFWF ? Visibility.Collapsed : Visibility.Visible;
-            shOut2.Visibility = !IsAFWF ? Visibility.Collapsed : Visibility.Visible;
-            shOut3.Visibility = !IsAFWF ? Visibility.Collapsed : Visibility.Visible;
-            shOut4.Visibility = !IsAFWF ? Visibility.Collapsed : Visibility.Visible;
-            shOut5.Visibility = !IsAFWF ? Visibility.Collapsed : Visibility.Visible;
-            shOut6.Visibility = !IsAFWF ? Visibility.Collapsed : Visibility.Visible;
-            shIn1.Visibility = !IsAFWF ? Visibility.Collapsed : Visibility.Visible;
-            shIn2.Visibility = !IsAFWF ? Visibility.Collapsed : Visibility.Visible;
-            shIn3.Visibility = !IsAFWF ? Visibility.Collapsed : Visibility.Visible;
-            shTop.Visibility = !IsAFWF ? Visibility.Collapsed : Visibility.Visible;
+            bool needEnv = TempTestMode == TempMode.COMMON;
+            bool needAir = TempTestMode == TempMode.AF_AIR || TempTestMode == TempMode.AFWF;
+            shEnvA.Visibility = !needEnv ? Visibility.Collapsed : Visibility.Visible;
+            shEnvB.Visibility = !needEnv ? Visibility.Collapsed : Visibility.Visible;
+            shEnvC.Visibility = !needEnv ? Visibility.Collapsed : Visibility.Visible;
+            shEnvD.Visibility = !needEnv ? Visibility.Collapsed : Visibility.Visible;
+            shOut1.Visibility = !needAir ? Visibility.Collapsed : Visibility.Visible;
+            shOut2.Visibility = !needAir ? Visibility.Collapsed : Visibility.Visible;
+            shOut3.Visibility = !needAir ? Visibility.Collapsed : Visibility.Visible;
+            shOut4.Visibility = !needAir ? Visibility.Collapsed : Visibility.Visible;
+            shOut5.Visibility = !needAir ? Visibility.Collapsed : Visibility.Visible;
+            shOut6.Visibility = !needAir ? Visibility.Collapsed : Visibility.Visible;
+            shIn1.Visibility = !needAir ? Visibility.Collapsed : Visibility.Visible;
+            shIn2.Visibility = !needAir ? Visibility.Collapsed : Visibility.Visible;
+            shIn3.Visibility = !needAir ? Visibility.Collapsed : Visibility.Visible;
+            shTop.Visibility = !needAir ? Visibility.Collapsed : Visibility.Visible;
         }
 
         private void SelectedSlots_SelectionChanged()
@@ -1138,7 +1151,7 @@ namespace ABBDataManagerSystem.Pages
             slots.Add(Configs.Configs.WindingB);
             slots.Add(Configs.Configs.WindingC);
             slots.Add(Configs.Configs.Core);
-            if (!IsAFWF)
+            if (TempTestMode == TempMode.COMMON)
             {
                 slots.Add(Configs.Configs.EnvA);
                 slots.Add(Configs.Configs.EnvB);
@@ -1194,7 +1207,7 @@ namespace ABBDataManagerSystem.Pages
 
         private void btSelectSlots_Click(object sender, RoutedEventArgs e)
         {
-            var selectDialog = new TempSlotSelectView(MaxSlotCount, IsAFWF) { WindowStartupLocation = WindowStartupLocation.CenterScreen };
+            var selectDialog = new TempSlotSelectView(MaxSlotCount, TempTestMode != TempMode.AFWF) { WindowStartupLocation = WindowStartupLocation.CenterScreen };
             if (selectDialog.ShowDialog() == true)
             {
                 SelectedSlots_SelectionChanged();
@@ -1339,10 +1352,10 @@ namespace ABBDataManagerSystem.Pages
                     WindingTempA = item.Field<float?>(Configs.Configs.WindingA) ?? 0,
                     WindingTempB = item.Field<float?>(Configs.Configs.WindingB) ?? 0,
                     WindingTempC = item.Field<float?>(Configs.Configs.WindingC) ?? 0,
-                    IsAFWF = IsAFWF,
+                    IsAFWF = TempTestMode == TempMode.AFWF,
                     WorkflowID = Configs.Configs.WorkflowID
                 };
-                if (!IsAFWF)
+                if (TempTestMode == TempMode.COMMON)
                 {
                     record.EnvTempA = item.Field<float?>(Configs.Configs.EnvA) ?? 0;
                     record.EnvTempB = item.Field<float?>(Configs.Configs.EnvB) ?? 0;
@@ -1364,15 +1377,18 @@ namespace ABBDataManagerSystem.Pages
                     record.Inlet2 = item.Field<float?>(inlets[1]) ?? 0;
                     record.Inlet3 = item.Field<float?>(inlets[2]) ?? 0;
                     record.TopTemp = item.Field<float?>(Configs.Configs.TopTemperature) ?? 0;
-                    record.OutletWaterTemperature = item.Field<float?>("Outletwater") ?? 0;
-                    record.InletWaterTemperature = item.Field<float?>("Inletwater") ?? 0;
-                    record.AmbientTemperature1 = item.Field<float?>("Ambient1") ?? 0;
-                    record.AmbientTemperature2 = item.Field<float?>("Ambient2") ?? 0;
-                    record.OutletAirTemperature1 = item.Field<float?>("OutletAir1") ?? 0;
-                    record.OutletAirTemperature2 = item.Field<float?>("OutletAir2") ?? 0;
-                    record.OutletAirTemperature3 = item.Field<float?>("OutletAir3") ?? 0;
-                    record.OutletAirTemperature4 = item.Field<float?>("OutletAir4") ?? 0;
-                    record.WaterFlowRate = item.Field<float?>("Flow") ?? 0;
+                    if (TempTestMode == TempMode.AFWF)
+                    {
+                        record.OutletWaterTemperature = item.Field<float?>("Outletwater") ?? 0;
+                        record.InletWaterTemperature = item.Field<float?>("Inletwater") ?? 0;
+                        record.AmbientTemperature1 = item.Field<float?>("Ambient1") ?? 0;
+                        record.AmbientTemperature2 = item.Field<float?>("Ambient2") ?? 0;
+                        record.OutletAirTemperature1 = item.Field<float?>("OutletAir1") ?? 0;
+                        record.OutletAirTemperature2 = item.Field<float?>("OutletAir2") ?? 0;
+                        record.OutletAirTemperature3 = item.Field<float?>("OutletAir3") ?? 0;
+                        record.OutletAirTemperature4 = item.Field<float?>("OutletAir4") ?? 0;
+                        record.WaterFlowRate = item.Field<float?>("Flow") ?? 0;
+                    }
                 }
                 list.Add(record);
             }
@@ -1502,7 +1518,7 @@ namespace ABBDataManagerSystem.Pages
                 IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Any, 0);
                 while (isListening)
                 {
-                    if (udpClient.Available > 0 && IsAFWF)
+                    if (udpClient.Available > 0 && TempTestMode == TempMode.AFWF)
                     {
                         byte[] receiveBytes = udpClient.Receive(ref remoteEndPoint);
                         string receiveString = Encoding.ASCII.GetString(receiveBytes);
