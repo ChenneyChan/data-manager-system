@@ -181,6 +181,7 @@ namespace ABBDataManagerSystem.Pages
             UpdateInterval();
             UpdateSlotShieldState();
             cbCoolingMode.SelectionChanged += cbCoolingMode_SelectionChanged;
+            cbRelatedTo.SelectionChanged += cbCoolingMode_SelectionChanged;
             panelCoolDevice.Visibility = IsAFWF ? Visibility.Visible : Visibility.Collapsed;
         }
 
@@ -209,6 +210,7 @@ namespace ABBDataManagerSystem.Pages
             cbTestStatus.IsEnabled = !IsCollecting;
             btSelectSlots.IsEnabled = !IsCollecting;
             cbCoolingMode.IsEnabled = !IsCollecting;
+            cbRelatedTo.IsEnabled = !IsCollecting;
 
             if (IsCollecting)
             {
@@ -309,6 +311,11 @@ namespace ABBDataManagerSystem.Pages
             if (SelectedSlots.Count == 0)
             {
                 MessageBox.Show("请至少选择一个通道", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+            if (cbCoolingMode.Text == "AF" && cbRelatedTo.Text == "进水口温度")
+            {
+                MessageBox.Show("冷却方式是“AF”时，相对于不可以是“进水口温度”！", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
             LastRecordTime = DateTime.Parse("1990-10-10");
@@ -1088,7 +1095,7 @@ namespace ABBDataManagerSystem.Pages
         #region 温度槽位选择
         private void cbCoolingMode_SelectionChanged(object sender, RoutedEventArgs e)
         {
-            bool _IsAFWF = cbCoolingMode.SelectedIndex == 2;
+            bool _IsAFWF = cbCoolingMode.SelectedIndex == 2 || (cbCoolingMode.SelectedIndex == 1 && cbRelatedTo.SelectedIndex == 2) ;
             if (_IsAFWF != IsAFWF)
             {
                 IsAFWF = _IsAFWF;
@@ -1373,6 +1380,7 @@ namespace ABBDataManagerSystem.Pages
             if (ret)
             {
                 MessageBox.Show($"数据上传成功，共{Table.Rows.Count}条数据!", "上传结果", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                SetWorkflowInfo(false);
                 return;
             }
             else
@@ -1389,15 +1397,19 @@ namespace ABBDataManagerSystem.Pages
 
         private void btSetWorkflow_Click(object sender, RoutedEventArgs e)
         {
-            var vs = WorkflowInfo.ReadFromDB(Configs.Configs.WorkflowID);
-            if (vs == null || vs.Count == 0)
+            SetWorkflowInfo(true);
+        }
+
+        private void SetWorkflowInfo(bool needMessageBox)
+        {
+            var workflowInfo = Configs.Configs.WorkflowInfo;
+            if (workflowInfo == null)
             {
                 MessageBox.Show("工作令错误，请检查！", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
             float voltage = Utils.ParseFloat(tbTestingVoltage.Text);
             float current = Utils.ParseFloat(tbTestingCurrent.Text);
-            WorkflowInfo workflowInfo = vs[0];
             workflowInfo.TempRiseHVCorrectionFactor = Utils.ParseFloatNull(cbHVCorrectionFact.Text);
             workflowInfo.TempRiseLVCorrectionFactor = Utils.ParseFloatNull(cbLVCorrectionFact.Text);
             workflowInfo.TempRiseRelativeTo = cbRelatedTo.Text;
@@ -1405,6 +1417,7 @@ namespace ABBDataManagerSystem.Pages
             workflowInfo.TempRiseTestingCurrent = current;
 
             bool ret = workflowInfo.UpdateTempRiseFields();
+            if (!needMessageBox) { return; }
             if (!ret)
             {
                 MessageBox.Show("设置失败，请检查工作令和服务器连接！", "错误", MessageBoxButton.OK, MessageBoxImage.Error);

@@ -974,6 +974,11 @@ namespace ABBDataManagerSystem.Pages
             {
                 return;
             }
+            if (Configs.Configs.WorkflowInfo != null && Configs.Configs.WorkflowInfo.WorkflowType == "三绕组")
+            {
+                new TempRiseResistanceDialog().ShowDialog();
+                return;
+            }
             CommonTempRiseTestInfo configItem;
             int testIndex = Utils.ParseInt(cbTestCount.Text);
             var items = CommonTempRiseTestInfo.ReadFromDB(Configs.Configs.WorkflowID, cbTestPhase.Text, cbTestStatus.Text, cbCoolingMode.Text, testIndex, 2);
