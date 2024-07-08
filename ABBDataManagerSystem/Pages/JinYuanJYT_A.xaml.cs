@@ -498,8 +498,8 @@ namespace ABBDataManagerSystem.Pages
                 {
                     for (int i = 1; i <= tappings.Count && i <= MAX_HV_COUNT; i++)
                     {
-                        RatioValueFields[i.ToString()].TappingVoltage = tappings[tappings.Count - i];
-                        RatioValueFields[i.ToString()].CalculatedRatio = tappings[tappings.Count - i] / workflow.RatedVoltageLv;
+                        RatioValueFields[i.ToString()].TappingVoltage = tappings[i - 1];
+                        RatioValueFields[i.ToString()].CalculatedRatio = tappings[i - 1] / workflow.RatedVoltageLv;
                     }
                     if (workflow.WorkflowType == "三绕组")
                     {

@@ -456,7 +456,7 @@ namespace ABBDataManagerSystem.Pages
             {
                 return null;
             }
-            return (maxMin[0] - maxMin[1]) / sum;
+            return ((maxMin[0] - maxMin[1]) / sum) * 100;
         }
         #endregion
 
