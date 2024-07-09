@@ -110,6 +110,7 @@
             <Views:ToggleButton Width="100" GridMargin="0" Margin="5,0" CheckedChange="TestTypeSelectedTappingChange" ButtonContent="温升30''" x:Name="tbTestTypeTempRise30s"/>
             <Views:ToggleButton Width="100" GridMargin="0" Margin="5,0" CheckedChange="TestTypeSelectedTappingChange" ButtonContent="温升60''" x:Name="tbTestTypeTempRise60s"/>
             <Views:ToggleButton Width="100" GridMargin="0" Margin="5,0" CheckedChange="TestTypeSelectedTappingChange" ButtonContent="温升冷电阻" x:Name="tbTestTypeTempRiseCool"/>
+            <Button Content="清空试验数据" Margin="20, 0, 0, 0" Name="btClear" Click="btClear_Click"/>
         </StackPanel>
         <Grid Grid.Row="3" Margin="10">
             <Grid.ColumnDefinitions>

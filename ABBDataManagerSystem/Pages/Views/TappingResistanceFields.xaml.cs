@@ -89,6 +89,13 @@ namespace ABBDataManagerSystem.Pages.Views
             }
         }
 
+        public void ClearValue()
+        {
+            ValueAB = null;
+            ValueBC = null;
+            ValueCA = null;
+        }
+
         public float[] GetValues()
         {
             return new float[] { _ValueAB ?? 0, _ValueBC ?? 0, _ValueCA ?? 0 };

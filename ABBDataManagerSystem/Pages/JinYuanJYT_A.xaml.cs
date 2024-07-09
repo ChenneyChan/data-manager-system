@@ -667,5 +667,20 @@ namespace ABBDataManagerSystem.Pages
             Utils.ShowUploadTips(ret);
         }
         #endregion
+
+        private void btClear_Click(object sender, RoutedEventArgs e)
+        {
+            if (ControlUtils.ShowClearMessage())
+            {
+                foreach(var item in RatioValueFields)
+                {
+                    item.Value.ValueAB = 0;
+                    item.Value.ValueBC = 0;
+                    item.Value.ValueCA = 0;
+                }
+                tbConnectionGroup1.Text = "";
+                tbConnectionGroup2.Text = "";
+            }
+        }
     }
 }

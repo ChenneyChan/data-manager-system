@@ -1189,6 +1189,31 @@ namespace ABBDataManagerSystem.Pages
                 }
             });
         }
+
+        private void btClear_Click(object sender, RoutedEventArgs e)
+        {
+            if (ControlUtils.ShowClearMessage())
+            {
+                dataItems.Clear();
+                lvUsers.Items.Refresh();
+
+                foreach (var item in tappingResistanceFields)
+                {
+                    item.Value.ClearValue();
+                }
+
+                foreach (var item in tempRiseCoolTbs)
+                {
+                    item.Value.Text = "";
+                }
+
+                tbHVMaxUnbalanceDiff.Text = "";
+                tbLVMaxUnbalanceDiff11.Text = "";
+                tbLVMaxUnbalanceDiff12.Text = "";
+                tbLVMaxUnbalanceDiff21.Text = "";
+                tbLVMaxUnbalanceDiff22.Text = "";
+            }
+        }
     }
 
 }
