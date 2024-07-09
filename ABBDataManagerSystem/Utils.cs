@@ -1,4 +1,5 @@
 ﻿using ABBDataManagerSystem.Configs;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -420,6 +421,57 @@ namespace ABBDataManagerSystem
                     Monitor.Exit(obj);
                 }
             }
+        }
+
+
+        public static string FormatFloat(float number, int noneZoreBits = 4)
+        {
+            // 如果数字为0，直接返回 "0"
+            if (number == 0)
+            {
+                return "0";
+            }
+
+            // 将 float 转换为字符串，确保不使用科学计数法
+            string numberString = number.ToString("0.#############################", CultureInfo.InvariantCulture);
+            if (numberString.IndexOf("E") >= 0)
+            {
+                return numberString;
+            }
+
+            // 找到小数点的位置
+            int decimalPointIndex = numberString.IndexOf('.');
+
+            // 如果没有小数点，直接返回原数字
+            if (decimalPointIndex == -1)
+            {
+                return numberString;
+            }
+
+            // 获取小数点前后的部分
+            string integerPart = numberString.Substring(0, decimalPointIndex);
+            string fractionalPart = numberString.Substring(decimalPointIndex + 1);
+
+            // 拼接结果，确保至少4个非零数字
+            string result = integerPart + "." + GetSignificantDigits(fractionalPart, noneZoreBits);
+
+            // 去掉多余的0
+            return result.TrimEnd('0').TrimEnd('.');
+        }
+
+        private static string GetSignificantDigits(string fractionalPart, int significantDigits)
+        {
+            int count = 0;
+            StringBuilder sb = new StringBuilder();
+
+            foreach (char c in fractionalPart)
+            {
+                sb.Append(c);
+                if (c != '0') count++;
+                if (count >= significantDigits) break;
+            }
+
+            return sb.ToString();
         }
     }
 }
