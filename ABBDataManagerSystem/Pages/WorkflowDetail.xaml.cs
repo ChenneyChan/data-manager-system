@@ -1,6 +1,7 @@
 ﻿using ABBDataManagerSystem.Bean.Base;
 using ABBDataManagerSystem.Pages.Views;
 using ABBDataManagerSystem.Tools;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using EventManager = ABBDataManagerSystem.Tools.EventManager;
@@ -93,7 +94,7 @@ namespace ABBDataManagerSystem.Pages
                 {
                     if (field.Key.IndexOf("Resistance") >= 0)
                     {
-                        labelTextControl.Text = ((float)fieldValue).ToString();
+                        labelTextControl.Text = ((float)fieldValue).ToString("0.#############################", CultureInfo.InvariantCulture);
                     }
                     else
                     {

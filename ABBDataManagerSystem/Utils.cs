@@ -1,4 +1,5 @@
 ﻿using ABBDataManagerSystem.Configs;
+using ABBDataManagerSystem.Pages;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
@@ -316,6 +317,10 @@ namespace ABBDataManagerSystem
 
         public static bool CheckWorkflowBeforeUpload()
         {
+            if (!ControlUtils.ShowUploadConfirm())
+            {
+                return false;
+            }
             if (Configs.Configs.WorkflowID.Length == 0)
             {
                 MessageBox.Show("请先选择工作令！", "提示", MessageBoxButton.OK, MessageBoxImage.Warning);
