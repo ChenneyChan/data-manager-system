@@ -58,6 +58,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Pages\JinYuan50E.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Pages\JinYuan20E.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

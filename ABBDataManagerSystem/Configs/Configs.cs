@@ -83,6 +83,12 @@ namespace ABBDataManagerSystem.Configs
         public static string Current20E { set; get; } = string.Empty;
         #endregion
 
+        #region 50E设置
+        public static string SerialPort50E { set; get; } = string.Empty;
+        public static string SerialBoundRate50E { set; get; } = string.Empty;
+        public static string Current50E { set; get; } = string.Empty;
+        #endregion
+
         #region JYT-A设置
         public static string SerialPortJYTA { set; get; } = string.Empty;
         public static string SerialBoundRateJYTA { set; get; } = string.Empty;
@@ -102,6 +108,7 @@ namespace ABBDataManagerSystem.Configs
         static string INICommon = "Common";
         static string INIJinYuan20W = "JinYuan20W";
         static string INIJinYuan20E = "JinYuan20E";
+        static string INIJinYuan50E = "JinYuan50E";
         static string INIJinYuanJYTA = "JinYuanJYTA";
 
         [DllImport("kernel32.dll", EntryPoint = "GetPrivateProfileString")]
@@ -226,6 +233,13 @@ namespace ABBDataManagerSystem.Configs
             SerialBoundRate20E = buff.ToString();
             #endregion
 
+            #region JinYuan50E
+            GetPrivateProfileString(INIJinYuan50E, "SerialPort", "", buff, 32, INIPATH);
+            SerialPort50E = buff.ToString();
+            GetPrivateProfileString(INIJinYuan50E, "BoundRate", "", buff, 32, INIPATH);
+            SerialBoundRate50E = buff.ToString();
+            #endregion
+
             #region JinYuanJYTA
             GetPrivateProfileString(INIJinYuanJYTA, "SerialPort", "", buff, 32, INIPATH);
             SerialPortJYTA = buff.ToString();
@@ -291,6 +305,12 @@ namespace ABBDataManagerSystem.Configs
             WritePrivateProfileString(INIJinYuan20E, "SerialPort", SerialPort20E, INIPATH);
             WritePrivateProfileString(INIJinYuan20E, "BoundRate", SerialBoundRate20E, INIPATH);
             WritePrivateProfileString(INIJinYuan20E, "Current", Current20E, INIPATH);
+            #endregion
+
+            #region JinaYuan50E
+            WritePrivateProfileString(INIJinYuan50E, "SerialPort", SerialPort50E, INIPATH);
+            WritePrivateProfileString(INIJinYuan50E, "BoundRate", SerialBoundRate50E, INIPATH);
+            WritePrivateProfileString(INIJinYuan50E, "Current", Current50E, INIPATH);
             #endregion
 
             #region JinaYuanJYTA

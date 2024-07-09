@@ -91,7 +91,14 @@ namespace ABBDataManagerSystem.Pages
                 }
                 else if (fieldValue.GetType() == typeof(float) || fieldValue.GetType() == typeof(float?))
                 {
-                    labelTextControl.Text = Utils.FloatFormat(((float)fieldValue));
+                    if (field.Key.IndexOf("Resistance") >= 0)
+                    {
+                        labelTextControl.Text = ((float)fieldValue).ToString();
+                    }
+                    else
+                    {
+                        labelTextControl.Text = Utils.FloatFormat(((float)fieldValue));
+                    }
                 }
                 else if (fieldValue.GetType() == typeof(string))
                 {

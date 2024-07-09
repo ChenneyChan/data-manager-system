@@ -102,6 +102,12 @@ namespace ABBDataManagerSystem
             StartTabItem<JinYuan20E>(title);
         }
 
+        private void JnYuan50ETest_Click(object sender, RoutedEventArgs e)
+        {
+            string title = "金源50E测试仪";
+            StartTabItem<JinYuan50E>(title);
+        }
+
         private void btHarmonicTest_Click(object sender, RoutedEventArgs e)
         {
             new HarmonicInfo()
