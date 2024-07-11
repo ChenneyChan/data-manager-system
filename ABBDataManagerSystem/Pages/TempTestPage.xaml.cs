@@ -186,9 +186,49 @@ namespace ABBDataManagerSystem.Pages
             UpdateByConfig();
             UpdateInterval();
             UpdateSlotShieldState();
+            cbTestCount.SelectionChanged += CbTestCount_SelectionChanged;
             cbCoolingMode.SelectionChanged += cbCoolingMode_SelectionChanged;
             cbRelatedTo.SelectionChanged += cbCoolingMode_SelectionChanged;
             panelCoolDevice.Visibility = TempTestMode == TempMode.AFWF ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void UpdateCommonInfo()
+        {
+            int Index = Utils.ParseInt(((ComboBoxItem)cbTestCount.SelectedItem).Content.ToString());
+            string workflowId = Configs.Configs.WorkflowID;
+            string CoolingMode = ((ComboBoxItem)cbCoolingMode.SelectedItem).Content.ToString();
+            Task.Run(() =>
+            {
+                var datas = TempRiseCommonInfo.ReadFromDB(workflowId, Index, CoolingMode);
+                if (datas.Count > 0)
+                {
+                    var data = datas[0];
+                    Dispatcher.Invoke(() =>
+                    {
+                        tbTestingVoltage.Text = data.TempRiseTestingVoltage.ToString();
+                        tbTestingCurrent.Text = data.TempRiseTestingCurrent.ToString();
+                        cbHVCorrectionFact.Text = data.TempRiseHVCorrectionFactor.ToString();
+                        cbLVCorrectionFact.Text = data.TempRiseLVCorrectionFactor.ToString();
+                        cbRelatedTo.Text = data.TempRiseRelativeTo.ToString();
+                    });
+                } 
+                else
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        tbTestingVoltage.Text = "";
+                        tbTestingCurrent.Text = "";
+                        cbHVCorrectionFact.SelectedIndex = 0;
+                        cbLVCorrectionFact.SelectedIndex = 0;
+                        cbRelatedTo.SelectedIndex = 0;
+                    });
+                }
+            });
+        }
+
+        private void CbTestCount_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            UpdateCommonInfo();
         }
 
         private void RbSerialPort_Checked(object sender, RoutedEventArgs e)
@@ -250,6 +290,7 @@ namespace ABBDataManagerSystem.Pages
             Tools.EventManager.Instance.Subscribe("WorkflowSelected", WorkflowUpdateEvent);
             Tools.EventManager.Instance.Subscribe("PowerAnalyzer", EventHandler);
             StartListening();
+            UpdateCommonInfo();
         }
 
         private void UserControl_Unloaded(object sender, RoutedEventArgs e)
@@ -756,7 +797,7 @@ namespace ABBDataManagerSystem.Pages
                 Table.Columns.Add($"Slot-{slot}", typeof(float));
             }
 
-            foreach(var extensionItem in ExtensionSlotMaps)
+            foreach (var extensionItem in ExtensionSlotMaps)
             {
                 dgTempRecord.Columns.Add(new DataGridTextColumn()
                 {
@@ -1112,8 +1153,12 @@ namespace ABBDataManagerSystem.Pages
             {
                 UpdateSlotShieldState();
                 SelectedSlots_SelectionChanged();
-            } 
+            }
             panelCoolDevice.Visibility = TempTestMode == TempMode.AFWF ? Visibility.Visible : Visibility.Collapsed;
+            if (sender == cbCoolingMode)
+            {
+                UpdateCommonInfo();
+            }
         }
 
         private void UpdateSlotShieldState()
@@ -1177,7 +1222,7 @@ namespace ABBDataManagerSystem.Pages
                 ExtensionSlotMaps.Clear();
                 var _extensionSlots = Configs.Configs.ExtensionSlots.Split(',');
                 int index = 0;
-                foreach (var _extensionSlot in _extensionSlots) 
+                foreach (var _extensionSlot in _extensionSlots)
                 {
                     index++;
                     if (_extensionSlot.Trim().Length == 0)
@@ -1280,7 +1325,7 @@ namespace ABBDataManagerSystem.Pages
             {
                 sh.Visibility = Visibility.Visible;
                 sh.Status = ExtensionSlotMaps[key];
-            } 
+            }
             else
             {
                 sh.Visibility = Visibility.Collapsed;
@@ -1396,7 +1441,7 @@ namespace ABBDataManagerSystem.Pages
             if (ret)
             {
                 MessageBox.Show($"数据上传成功，共{Table.Rows.Count}条数据!", "上传结果", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                SetWorkflowInfo(false);
+                SetCommonInfo(false);
                 return;
             }
             else
@@ -1411,28 +1456,38 @@ namespace ABBDataManagerSystem.Pages
             UploadData();
         }
 
-        private void btSetWorkflow_Click(object sender, RoutedEventArgs e)
-        {
-            SetWorkflowInfo(true);
-        }
 
-        private void SetWorkflowInfo(bool needMessageBox)
+        private void SetCommonInfo(bool needMessageBox)
         {
-            var workflowInfo = Configs.Configs.WorkflowInfo;
-            if (workflowInfo == null)
+            int Index = Utils.ParseInt(cbTestCount.Text);
+            string workflowId = Configs.Configs.WorkflowID;
+            string CoolingMode = cbCoolingMode.Text;
+
+            var data = new TempRiseCommonInfo()
             {
-                MessageBox.Show("工作令错误，请检查！", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-            float voltage = Utils.ParseFloat(tbTestingVoltage.Text);
-            float current = Utils.ParseFloat(tbTestingCurrent.Text);
-            workflowInfo.TempRiseHVCorrectionFactor = Utils.ParseFloatNull(cbHVCorrectionFact.Text);
-            workflowInfo.TempRiseLVCorrectionFactor = Utils.ParseFloatNull(cbLVCorrectionFact.Text);
-            workflowInfo.TempRiseRelativeTo = cbRelatedTo.Text;
-            workflowInfo.TempRiseTestingVoltage = voltage;
-            workflowInfo.TempRiseTestingCurrent = current;
+                WorkflowID = workflowId,
+                CoolingMode = CoolingMode,
+                TestIndex = Index
+            };
+            float? voltage = Utils.ParseFloatNull(tbTestingVoltage.Text);
+            float? current = Utils.ParseFloatNull(tbTestingCurrent.Text);
+            data.TempRiseHVCorrectionFactor = Utils.ParseFloatNull(cbHVCorrectionFact.Text);
+            data.TempRiseLVCorrectionFactor = Utils.ParseFloatNull(cbLVCorrectionFact.Text);
+            data.TempRiseRelativeTo = cbRelatedTo.Text;
+            data.TempRiseTestingVoltage = voltage;
+            data.TempRiseTestingCurrent = current;
 
-            bool ret = workflowInfo.UpdateTempRiseFields();
+            bool ret;
+            var datas = TempRiseCommonInfo.ReadFromDB(workflowId, Index, CoolingMode);
+            if (datas.Count > 0)
+            {
+                ret = data.UpdateData();
+            }
+            else
+            {
+                ret = data.InsertDB();
+            }
+
             if (!needMessageBox) { return; }
             if (!ret)
             {
@@ -1457,21 +1512,8 @@ namespace ABBDataManagerSystem.Pages
                 WorkflowInfo? workflowInfo = Configs.Configs.WorkflowInfo;
                 Dispatcher.Invoke(() =>
                 {
-                    if (workflowInfo == null)
+                    if (workflowInfo != null)
                     {
-                        cbHVCorrectionFact.SelectedIndex = 0;
-                        cbLVCorrectionFact.SelectedIndex = 0;
-                        cbRelatedTo.SelectedIndex = 0;
-                        tbTestingVoltage.Text = "";
-                        tbTestingCurrent.Text = "";
-                    }
-                    else
-                    {
-                        cbHVCorrectionFact.Text = workflowInfo.TempRiseHVCorrectionFactor.ToString();
-                        cbLVCorrectionFact.Text = workflowInfo.TempRiseLVCorrectionFactor.ToString();
-                        cbRelatedTo.Text = workflowInfo.TempRiseRelativeTo;
-                        tbTestingVoltage.Text = workflowInfo.TempRiseTestingVoltage.ToString();
-                        tbTestingCurrent.Text = workflowInfo.TempRiseTestingCurrent.ToString();
                         bool isCommon = true;
                         if (workflowInfo.WorkflowType == "三绕组")
                         {
