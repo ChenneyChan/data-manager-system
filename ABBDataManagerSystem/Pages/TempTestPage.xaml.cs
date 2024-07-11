@@ -1339,55 +1339,55 @@ namespace ABBDataManagerSystem.Pages
                 {
                     ID = configItem.ID,
                     Timestamp = item.Field<DateTime>("时间"),
-                    Ua = item.Field<float?>("ua") ?? 0,
-                    Ub = item.Field<float?>("ub") ?? 0,
-                    Uc = item.Field<float?>("uc") ?? 0,
-                    U3 = item.Field<float?>("u3") ?? 0,
-                    Ia = item.Field<float?>("ia") ?? 0,
-                    Ib = item.Field<float?>("ib") ?? 0,
-                    Ic = item.Field<float?>("ic") ?? 0,
-                    I3 = item.Field<float?>("i3") ?? 0,
-                    P3 = item.Field<float?>("p3") ?? 0,
-                    CoreTemp = item.Field<float?>(Configs.Configs.Core) ?? 0,
-                    WindingTempA = item.Field<float?>(Configs.Configs.WindingA) ?? 0,
-                    WindingTempB = item.Field<float?>(Configs.Configs.WindingB) ?? 0,
-                    WindingTempC = item.Field<float?>(Configs.Configs.WindingC) ?? 0,
+                    Ua = item.Field<float?>("ua") ?? null,
+                    Ub = item.Field<float?>("ub") ?? null,
+                    Uc = item.Field<float?>("uc") ?? null,
+                    U3 = item.Field<float?>("u3") ?? null,
+                    Ia = item.Field<float?>("ia") ?? null,
+                    Ib = item.Field<float?>("ib") ?? null,
+                    Ic = item.Field<float?>("ic") ?? null,
+                    I3 = item.Field<float?>("i3") ?? null,
+                    P3 = item.Field<float?>("p3") ?? null,
+                    CoreTemp = item.Field<float?>(Configs.Configs.Core) ?? null,
+                    WindingTempA = item.Field<float?>(Configs.Configs.WindingA) ?? null,
+                    WindingTempB = item.Field<float?>(Configs.Configs.WindingB) ?? null,
+                    WindingTempC = item.Field<float?>(Configs.Configs.WindingC) ?? null,
                     IsAFWF = TempTestMode == TempMode.AFWF,
                     WorkflowID = Configs.Configs.WorkflowID
                 };
                 if (TempTestMode == TempMode.COMMON)
                 {
-                    record.EnvTempA = item.Field<float?>(Configs.Configs.EnvA) ?? 0;
-                    record.EnvTempB = item.Field<float?>(Configs.Configs.EnvB) ?? 0;
-                    record.EnvTempC = item.Field<float?>(Configs.Configs.EnvC) ?? 0;
-                    record.EnvTempD = item.Field<float?>(Configs.Configs.EnvD) ?? 0;
+                    record.EnvTempA = item.Field<float?>(Configs.Configs.EnvA) ?? null;
+                    record.EnvTempB = item.Field<float?>(Configs.Configs.EnvB) ?? null;
+                    record.EnvTempC = item.Field<float?>(Configs.Configs.EnvC) ?? null;
+                    record.EnvTempD = item.Field<float?>(Configs.Configs.EnvD) ?? null;
                 }
                 else
                 {
                     var outlets = Configs.Configs.OutletTemperature.Split(",");
                     var inlets = Configs.Configs.InletTemperature.Split(",");
 
-                    record.Outlet1 = item.Field<float?>(outlets[0]) ?? 0;
-                    record.Outlet2 = item.Field<float?>(outlets[1]) ?? 0;
-                    record.Outlet3 = item.Field<float?>(outlets[2]) ?? 0;
-                    record.Outlet4 = item.Field<float?>(outlets[3]) ?? 0;
-                    record.Outlet5 = item.Field<float?>(outlets[4]) ?? 0;
-                    record.Outlet6 = item.Field<float?>(outlets[5]) ?? 0;
-                    record.Inlet1 = item.Field<float?>(inlets[0]) ?? 0;
-                    record.Inlet2 = item.Field<float?>(inlets[1]) ?? 0;
-                    record.Inlet3 = item.Field<float?>(inlets[2]) ?? 0;
-                    record.TopTemp = item.Field<float?>(Configs.Configs.TopTemperature) ?? 0;
+                    record.Outlet1 = item.Field<float?>(outlets[0]) ?? null;
+                    record.Outlet2 = item.Field<float?>(outlets[1]) ?? null;
+                    record.Outlet3 = item.Field<float?>(outlets[2]) ?? null;
+                    record.Outlet4 = item.Field<float?>(outlets[3]) ?? null;
+                    record.Outlet5 = item.Field<float?>(outlets[4]) ?? null;
+                    record.Outlet6 = item.Field<float?>(outlets[5]) ?? null;
+                    record.Inlet1 = item.Field<float?>(inlets[0]) ?? null;
+                    record.Inlet2 = item.Field<float?>(inlets[1]) ?? null;
+                    record.Inlet3 = item.Field<float?>(inlets[2]) ?? null;
+                    record.TopTemp = item.Field<float?>(Configs.Configs.TopTemperature) ?? null;
                     if (TempTestMode == TempMode.AFWF)
                     {
-                        record.OutletWaterTemperature = item.Field<float?>("Outletwater") ?? 0;
-                        record.InletWaterTemperature = item.Field<float?>("Inletwater") ?? 0;
-                        record.AmbientTemperature1 = item.Field<float?>("Ambient1") ?? 0;
-                        record.AmbientTemperature2 = item.Field<float?>("Ambient2") ?? 0;
-                        record.OutletAirTemperature1 = item.Field<float?>("OutletAir1") ?? 0;
-                        record.OutletAirTemperature2 = item.Field<float?>("OutletAir2") ?? 0;
-                        record.OutletAirTemperature3 = item.Field<float?>("OutletAir3") ?? 0;
-                        record.OutletAirTemperature4 = item.Field<float?>("OutletAir4") ?? 0;
-                        record.WaterFlowRate = item.Field<float?>("Flow") ?? 0;
+                        record.OutletWaterTemperature = item.Field<float?>("Outletwater") ?? null;
+                        record.InletWaterTemperature = item.Field<float?>("Inletwater") ?? null;
+                        record.AmbientTemperature1 = item.Field<float?>("Ambient1") ?? null;
+                        record.AmbientTemperature2 = item.Field<float?>("Ambient2") ?? null;
+                        record.OutletAirTemperature1 = item.Field<float?>("OutletAir1") ?? null;
+                        record.OutletAirTemperature2 = item.Field<float?>("OutletAir2") ?? null;
+                        record.OutletAirTemperature3 = item.Field<float?>("OutletAir3") ?? null;
+                        record.OutletAirTemperature4 = item.Field<float?>("OutletAir4") ?? null;
+                        record.WaterFlowRate = item.Field<float?>("Flow") ?? null;
                     }
                 }
                 list.Add(record);

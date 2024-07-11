@@ -587,6 +587,7 @@ namespace ABBDataManagerSystem.Pages
             cbCoolingMode.IsEnabled = false;
             dataItems.Clear();
             lvUsers.Items.Refresh();
+            CurrentIndex = 0;
         }
         #endregion
 
