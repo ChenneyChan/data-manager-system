@@ -11,6 +11,7 @@ using System.Windows.Threading;
 using Yokogawa.Tm.WT1800CommSample.cs;
 using ABBDataManagerSystem.Tools;
 using EventManager = ABBDataManagerSystem.Tools.EventManager;
+using ABBDataManagerSystem.Pages;
 
 namespace ABBDataManagerSystem.PowerAnalyzer
 {
@@ -2979,7 +2980,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
         private void btUploadNoLoad_Click(object sender, EventArgs e)
         {
-            if (!Utils.CheckWorkflowBeforeUpload())
+            if (!ControlUtils.CheckWorkflowBeforeUpload())
             {
                 return;
             }
@@ -2993,7 +2994,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 ret = NoLoadInfo110.WriteToDB();
                 if (!ret)
                 {
-                    Utils.ShowUploadTips(ret);
+                    ControlUtils.ShowUploadTips(ret);
                     return;
                 }
             }
@@ -3006,17 +3007,17 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 ret = NoLoadInfo100.WriteToDB();
                 if (!ret)
                 {
-                    Utils.ShowUploadTips(ret);
+                    ControlUtils.ShowUploadTips(ret);
                     return;
                 }
             }
             if (ret)
-                Utils.ShowUploadTips(ret);
+                ControlUtils.ShowUploadTips(ret);
         }
 
         private void btUploadLoad_Click(object sender, EventArgs e)
         {
-            if (!Utils.CheckWorkflowBeforeUpload())
+            if (!ControlUtils.CheckWorkflowBeforeUpload())
             {
                 return;
             }
@@ -3030,7 +3031,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 ret = LoadInfoMax.WriteToDB();
                 if (!ret)
                 {
-                    Utils.ShowUploadTips(ret);
+                    ControlUtils.ShowUploadTips(ret);
                     return;
                 }
             }
@@ -3043,7 +3044,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 ret = LoadInfoMin.WriteToDB();
                 if (!ret)
                 {
-                    Utils.ShowUploadTips(ret);
+                    ControlUtils.ShowUploadTips(ret);
                     return;
                 }
             }
@@ -3056,17 +3057,17 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 VoltageCurrentLossDataInfo.DeleteData(Configs.Configs.WorkflowID, "负载", LoadInfoRated.TappingPosition);
                 ret = LoadInfoRated.WriteToDB(); if (!ret)
                 {
-                    Utils.ShowUploadTips(ret);
+                    ControlUtils.ShowUploadTips(ret);
                     return;
                 }
             }
             if (ret)
-                Utils.ShowUploadTips(ret);
+                ControlUtils.ShowUploadTips(ret);
         }
 
         private void btUploadSense_Click(object sender, EventArgs e)
         {
-            if (!Utils.CheckWorkflowBeforeUpload())
+            if (!ControlUtils.CheckWorkflowBeforeUpload())
             {
                 return;
             }
@@ -3075,12 +3076,12 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             SenseInfo.TappingPosition = "感应";
             SenseInfo.WorkflowId = Configs.Configs.WorkflowID;
             bool ret = SenseInfo.WriteToDB();
-            Utils.ShowUploadTips(ret);
+            ControlUtils.ShowUploadTips(ret);
         }
 
         private void btUploadPartialDischange_Click(object sender, EventArgs e)
         {
-            if (!Utils.CheckWorkflowBeforeUpload())
+            if (!ControlUtils.CheckWorkflowBeforeUpload())
             {
                 return;
             }
@@ -3096,7 +3097,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 DischargeC13 = Utils.ParseFloatNull(tbC13.Text),
             };
             bool ret = pd.InsertData();
-            Utils.ShowUploadTips(ret);
+            ControlUtils.ShowUploadTips(ret);
         }
         #endregion
 

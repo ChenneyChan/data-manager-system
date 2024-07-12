@@ -944,7 +944,7 @@ namespace ABBDataManagerSystem.Pages
         #region 数据上传
         private void btUpdateCoolingResistance_Click(object sender, RoutedEventArgs e)
         {
-            if (!Utils.CheckWorkflowBeforeUpload())
+            if (!ControlUtils.CheckWorkflowBeforeUpload())
             {
                 return;
             }
@@ -965,7 +965,7 @@ namespace ABBDataManagerSystem.Pages
                 LowVoltageCurrent1 = current,
             };
             bool ret = value.WriteToDB();
-            Utils.ShowUploadTips(ret);
+            ControlUtils.ShowUploadTips(ret);
         }
 
         // 温升电阻持续采集数据上传
@@ -973,7 +973,7 @@ namespace ABBDataManagerSystem.Pages
         {
             int? slot1Type = null, slot2Type = null;
             bool isSanRaoZu = false;
-            if (!Utils.CheckWorkflowBeforeUpload())
+            if (!ControlUtils.CheckWorkflowBeforeUpload())
             {
                 return;
             }
@@ -1088,7 +1088,7 @@ namespace ABBDataManagerSystem.Pages
 
         private void btUpdateResistanceRecords_Click(object sender, RoutedEventArgs e)
         {
-            if (!Utils.CheckWorkflowBeforeUpload())
+            if (!ControlUtils.CheckWorkflowBeforeUpload())
             {
                 return;
             }
@@ -1176,7 +1176,7 @@ namespace ABBDataManagerSystem.Pages
             list.Add(item);
 
             var ret = DCResistanceInfo.BatchInsertData(list);
-            Utils.ShowUploadTips(ret);
+            ControlUtils.ShowUploadTips(ret);
         }
         #endregion
 

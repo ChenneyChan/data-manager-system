@@ -76,54 +76,6 @@ namespace ABBDataManagerSystem
             }
         }
 
-        public static Dictionary<string, TestingType> GetTestingTypes()
-        {
-            var dic = new Dictionary<string, TestingType>
-            {
-                { "干式消弧线圈试验", TestingType.ArcSuppressionCoilTesting },
-                { "干式变压器试验", TestingType.DryTypeTransformerTesting },
-                { "干式变压器试验-300", TestingType.DryTypeTransformerTestingWT300 },
-                { "干式串联试验", TestingType.DrySeriesConnectionTesting },
-                { "高阻抗试验", TestingType.HighImpedanceTesting },
-                { "接地变试验", TestingType.GroudingTesting }
-            };
-
-            return dic;
-        }
-
-        public static string GetTestingNameByType(TestingType testingType)
-        {
-            var types = GetTestingTypes();
-            foreach (var item in types.Keys)
-            {
-                bool ret = types.TryGetValue(item, out TestingType _testingType);
-                if (ret && testingType == _testingType)
-                {
-                    return item;
-                }
-            }
-            return "";
-        }
-
-
-        public static void ParseCurrentGearValues(in List<float> values, string[] gears)
-        {
-            string gearStrs = "";
-            string gearValues = "";
-            values.Clear();
-            foreach (string gear in gears)
-            {
-                var v = gear.Split('A')[0];
-                var vv = ParseFloat(v) / 5;
-                values.Add(vv);
-                gearStrs += gear + " \\ ";
-                gearValues += vv.ToString() + " \\ ";
-            }
-            Log.Info("ParseCurrentGearValues:");
-            Log.Info($"GearStrings: {gearStrs}");
-            Log.Info($"GearValues: {gearValues}");
-        }
-
         public static object? GetFieldValue(object obj, string fieldName)
         {
             // 使用反射获取对象的类型  
@@ -312,33 +264,6 @@ namespace ABBDataManagerSystem
         internal static byte[] FloatToBigEndianBytes(float? v)
         {
             throw new NotImplementedException();
-        }
-
-
-        public static bool CheckWorkflowBeforeUpload()
-        {
-            if (!ControlUtils.ShowUploadConfirm())
-            {
-                return false;
-            }
-            if (Configs.Configs.WorkflowID.Length == 0)
-            {
-                MessageBox.Show("请先选择工作令！", "提示", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return false;
-            }
-            return true;
-        }
-
-        public static void ShowUploadTips(bool uploadRet)
-        {
-            if (uploadRet)
-            {
-                MessageBox.Show("数据上传成功！", "上传结果", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-            else
-            {
-                MessageBox.Show("数据上传失败，请检查数据和服务器连接情况后重试！", "上传结果", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
         }
 
         public static int? GetInt32(string str)

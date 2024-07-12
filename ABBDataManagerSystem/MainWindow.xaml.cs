@@ -31,6 +31,10 @@ namespace ABBDataManagerSystem
             tbCurrentWorkflow.Text = "当前工作令：" + Configs.Configs.WorkflowID;
             Loaded += MainWindow_Loaded;
             Closed += MainWindow_Closed;
+            if (Configs.Configs.IsEnableVerboseDebug)
+            {
+                btPowerAnalyzerDebug.Visibility = Visibility.Visible;
+            }
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)

@@ -49,7 +49,7 @@
             <Separator></Separator>
             <Button Content="功率分析仪" Click="PowerAnalyzeTest_Click"></Button>
             <Separator></Separator>
-            <Button Content="功率分析仪-不搜索" Click="PowerAnalyze2Test_Click" Visibility="Visible"></Button>
+            <Button Content="功率分析仪-不搜索" Click="PowerAnalyze2Test_Click" Visibility="Collapsed" Name="btPowerAnalyzerDebug"></Button>
             <Separator></Separator>
             <Button Content="金源JYT-A 变比测试仪" Click="JinYuanJYT_A_Click"/>
             <Separator></Separator>

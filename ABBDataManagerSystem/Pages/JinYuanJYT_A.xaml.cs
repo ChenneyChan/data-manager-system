@@ -637,7 +637,7 @@ namespace ABBDataManagerSystem.Pages
         #region 数据上传
         private void btUpload_Click(object sender, System.EventArgs e)
         {
-            if (!Utils.CheckWorkflowBeforeUpload())
+            if (!ControlUtils.CheckWorkflowBeforeUpload())
             {
                 return;
             }
@@ -664,7 +664,7 @@ namespace ABBDataManagerSystem.Pages
                 list.Add(value);
             }
             var ret = VoltageRatioInfo.BatchInsertData(list);
-            Utils.ShowUploadTips(ret);
+            ControlUtils.ShowUploadTips(ret);
         }
         #endregion
 
