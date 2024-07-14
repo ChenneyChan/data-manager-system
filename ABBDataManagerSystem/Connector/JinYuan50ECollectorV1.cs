@@ -74,7 +74,8 @@ namespace ABBDataManagerSystem.Connector
             Stopping = 0x33,        // 33H — 正在停止
             Stopped = 0x34,         // 34H — 测试停止
             OverRange = 0x35,       // 35H — 超出量程
-            Discharging = 0x36      // 36H — 正在放电
+            Discharging = 0x36,     // 36H — 正在放电
+            Other
         }
 
 
@@ -108,21 +109,8 @@ namespace ABBDataManagerSystem.Connector
             DoubleChannel = 0x31,
         }
 
-        // 绕组枚举
-        public enum TestWindingType : byte
-        {
-            Rx = 0x30,
-            Rx1_Rx2 = 0x31,
-            Rab_RBO = 0x32,
-            Rbc_RCO = 0x33,
-            Rca_RAO = 0x34,
-            Rab = 0x35,
-            Rbc = 0x36,
-            Rca = 0x37,
-            RAO = 0x38,
-            RBO = 0x39,
-            RCO = 0x3A
-        }
+        public InstrumentStatus DeviceStatus { get; set; } = InstrumentStatus.Other;
+        public TestStatus DeviceTestStatus { get; set; } = TestStatus.Other;
 
         #region 枚举值转换
         public static class EnumHelper
@@ -260,29 +248,45 @@ namespace ABBDataManagerSystem.Connector
 
 
         //常规测试命令，复位状态下可用
-        public void SendCommonTest()
+        public bool SendCommonTest()
         {
+            if (DeviceStatus != InstrumentStatus.Reset)
+            {
+                Log.Error("Set Test Command only can be executed on RESET STATUS, Now is " + DeviceStatus + " " + DeviceTestStatus);
+                return false;
+            }
             actions.Enqueue(() =>
             {
                 byte[] command = new byte[] { 0x51, 0x30 };
                 Collector.SendCommand(command);
             });
+            return true;
         }
 
         //温升测试命令，复位状态下可用
-        public void SendTempRiseTest()
+        public bool SendTempRiseTest()
         {
+            if (DeviceStatus != InstrumentStatus.Reset)
+            {
+                Log.Error("Set Temperature Rise Test Command only can be executed on RESET STATUS, Now is " + DeviceStatus + " " + DeviceTestStatus);
+                return false;
+            }
             actions.Enqueue(() =>
             {
                 byte[] command = new byte[] { 0x51, 0x31 };
                 Collector.SendCommand(command);
             });
+            return true;
         }
 
-
         //参数设置命令 常规参数状态/温升参数状态 下可用
-        public void SendParameterSetCommand()
+        public bool SendParameterSetCommand()
         {
+            if (DeviceStatus != InstrumentStatus.GeneralParameter && DeviceStatus != InstrumentStatus.TemperatureRiseParameter)
+            {
+                Log.Error("SendParameterSetCommand only can be executed on GeneralParameter/TemperatureRiseParameter STATUS, Now is " + DeviceStatus + " " + DeviceTestStatus);
+                return false;
+            }
             actions.Enqueue(() =>
             {
                 byte[] tempRiseIntervalBytes = new byte[] { 0x20, 0x20 };
@@ -308,6 +312,7 @@ namespace ABBDataManagerSystem.Connector
                 byte[] command = new byte[] { 0x52, mode, (byte)CurrentMode, (byte)PatternMode, 0x20, tempRiseIntervalBytes[0], tempRiseIntervalBytes[1] };
                 Collector.SendCommand(command);
             });
+            return true;
         }
 
         //复位命令 测试过程中不可用
@@ -338,12 +343,33 @@ namespace ABBDataManagerSystem.Connector
             });
         }
 
-        //退出命令 (需要检测仪器的测试状态为测试停止时，才能发送退出命令。)
-        public void SendExitCommandAtNormal()
+        public void SendResetAtNormal()
         {
             actions.Enqueue(() =>
             {
-                Collector.SendCommand(new byte[] { 0x64, 0x32 });
+                Collector.SendCommand(new byte[] { 0x54, 0x33 });
+            });
+        }
+        
+        public void SendCommond(byte[] command)
+        {
+            actions.Enqueue(() =>
+            {
+                Collector.SendCommand(command);
+            });
+        }
+
+        //退出命令 (需要检测仪器的测试状态为测试停止时，才能发送退出命令。)
+        public void SendExitCommandAtNormal()
+        {
+            if (DeviceTestStatus != TestStatus.Stopped)
+            {
+                Log.Error("SendExitCommandAtNormal Need TestStatus.Stopped, Now is " + DeviceTestStatus);
+                //return;
+            }
+            actions.Enqueue(() =>
+            {
+                Collector.SendCommand(new byte[] { 0x54, 0x32 });
             });
         }
 
@@ -374,6 +400,10 @@ namespace ABBDataManagerSystem.Connector
         //定时命令
         public void SendTempRiseTestStartTiming()
         {
+            if (DeviceStatus != InstrumentStatus.TemperatureRiseParameter)
+            {
+                Log.Error("SendTempRiseTestStartTiming need TemperatureRiseParameter, Now is " + DeviceStatus + " " + DeviceTestStatus);
+            }
             actions.Enqueue(() =>
             {
                 Collector.SendCommand(new byte[] { 0x53, 0x2F });
@@ -383,6 +413,10 @@ namespace ABBDataManagerSystem.Connector
         //测试命令
         public void SendTempRiseStartTest()
         {
+            if (DeviceStatus != InstrumentStatus.TemperatureRiseTiming)
+            {
+                Log.Error("SendTempRiseStartTest need TemperatureRiseTiming, Now is " + DeviceStatus + " " + DeviceTestStatus);
+            }
             actions.Enqueue(() =>
             {
                 Collector.SendCommand(new byte[] { 0x53, 0x30, 0x20, 0x20 }); // 联结方式 测试的相
@@ -392,6 +426,10 @@ namespace ABBDataManagerSystem.Connector
         //停止命令
         public void SendTempRiseStopCommand()
         {
+            if (DeviceStatus != InstrumentStatus.TemperatureRiseTiming && DeviceStatus != InstrumentStatus.TemperatureRiseTest)
+            {
+                Log.Error("SendTempRiseStopCommand need TemperatureRiseTiming/TemperatureRiseTest, Now is " + DeviceStatus + " " + DeviceTestStatus);
+            }
             actions.Enqueue(() =>
             {
                 Collector.SendCommand(new byte[] { 0x53, 0x31 });
@@ -401,13 +439,16 @@ namespace ABBDataManagerSystem.Connector
         //退出命令
         public void SendTempRiseExitCommand()
         {
+            if (DeviceTestStatus != TestStatus.Stopped)
+            {
+                Log.Error("SendTempRiseStopCommand need TestStatus.Stopped, Now is " + DeviceStatus + " " + DeviceTestStatus);
+            }
             actions.Enqueue(() =>
             {
                 Collector.SendCommand(new byte[] { 0x53, 0x32 });
             });
         }
         #endregion
-
 
         //请求数据命令
         public void SendRequestDataCommand()
@@ -459,6 +500,7 @@ namespace ABBDataManagerSystem.Connector
             {
                 Status = GetInstrumentStatusDescription(Status)
             };
+            DeviceStatus = Status;
             if (Status == InstrumentStatus.Reset || Status == InstrumentStatus.GeneralParameter
                 || Status == InstrumentStatus.TemperatureRiseParameter || Status == InstrumentStatus.Other)
             {
@@ -475,20 +517,21 @@ namespace ABBDataManagerSystem.Connector
                 commonPacket.current = (TestCurrentType)packet[1];
                 var testMode = (TestPattern)packet[2];
                 var testStatus = (TestStatus)packet[4];
+                DeviceTestStatus = testStatus;
                 commonPacket.pattern = testMode;
                 commonPacket.Status = EnumHelper.GetTestStatusDescription(testStatus);
                 int offset = 5;
-                commonPacket.strRealTimeCurrent = Encoding.ASCII.GetString(packet, offset, 6);
+                commonPacket.strRealTimeCurrent = Encoding.ASCII.GetString(packet, offset, 6).TrimEnd('A');
                 offset += 6;
                 if (testMode == TestPattern.SingleChannel
                     || testMode == TestPattern.DoubleChannel)
                 {
-                    commonPacket.strRealTimeResistance1 = Encoding.ASCII.GetString(packet, offset + 2, 9);
+                    commonPacket.strRealTimeResistance1 = Encoding.ASCII.GetString(packet, offset + 2, 9).TrimEnd('?');
                     offset += (2 + 9);
                 }
                 if (testMode == TestPattern.DoubleChannel)
                 {
-                    commonPacket.strRealTimeResistance2 = Encoding.ASCII.GetString(packet, offset + 2, 9);
+                    commonPacket.strRealTimeResistance2 = Encoding.ASCII.GetString(packet, offset + 2, 9).TrimEnd('?');
                     offset += (2 + 9);
                 }
             }
@@ -512,21 +555,22 @@ namespace ABBDataManagerSystem.Connector
                 commonPacket.strRealTime = Encoding.ASCII.GetString(packet, offset, 5);
                 offset += 5;
                 var testStatus = (TestStatus)packet[offset];
+                DeviceTestStatus = testStatus;
                 commonPacket.Status = EnumHelper.GetTestStatusDescription(testStatus);
                 offset += 1;
-                commonPacket.strRealTimeCurrent = Encoding.ASCII.GetString(packet, offset, 6);
+                commonPacket.strRealTimeCurrent = Encoding.ASCII.GetString(packet, offset, 6).TrimEnd('A');
                 offset += 6;
                 offset += 2;
-                commonPacket.strRealTimeResistance1 = Encoding.ASCII.GetString(packet, offset, 9);
+                commonPacket.strRealTimeResistance1 = Encoding.ASCII.GetString(packet, offset, 9).TrimEnd('?');
                 offset += 9;
                 offset += 2;
-                commonPacket.strRealTimeResistance2 = Encoding.ASCII.GetString(packet, offset, 9);
+                commonPacket.strRealTimeResistance2 = Encoding.ASCII.GetString(packet, offset, 9).TrimEnd('?');
                 offset += 9;
                 commonPacket.strSecTime = Encoding.ASCII.GetString(packet, offset, 5);
                 offset += 5;
-                commonPacket.strSecResistance1 = Encoding.ASCII.GetString(packet, offset, 9);
+                commonPacket.strSecResistance1 = Encoding.ASCII.GetString(packet, offset, 9).TrimEnd('?');
                 offset += 9;
-                commonPacket.strSecResistance2 = Encoding.ASCII.GetString(packet, offset, 9);
+                commonPacket.strSecResistance2 = Encoding.ASCII.GetString(packet, offset, 9).TrimEnd('?');
                 offset += 9;
             }
 

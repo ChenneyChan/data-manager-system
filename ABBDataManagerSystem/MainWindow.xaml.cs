@@ -556,5 +556,10 @@ namespace ABBDataManagerSystem
             }).Start();
         }
         #endregion
+
+        private void Button50ETestDemo_Click(object sender, RoutedEventArgs e)
+        {
+            new Window50ETestDemo().Show();
+        }
     }
 }

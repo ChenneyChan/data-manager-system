@@ -1,0 +1,58 @@
+﻿<Window x:Class="ABBDataManagerSystem.Pages.Window50ETestDemo"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ABBDataManagerSystem.Pages"
+        mc:Ignorable="d"
+        Title="Window50ETestDemo" Height="450" Width="800">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0, 5">
+            <TextBlock Text="串口" VerticalAlignment="Center"/>
+            <ComboBox Name="cbPorts" Margin="0, 0, 10, 0"/>
+            <Button Content="连接" Name="btStartConnect" Click="btStartConnect_Click"/>
+            <TextBlock Text="电流选择" VerticalAlignment="Center"/>
+            <ComboBox Name="cbCurrents" Margin="0, 0, 10, 0"/>
+            <TextBlock Text="测试方式选择" VerticalAlignment="Center"/>
+            <ComboBox Name="cbTestMode" Margin="0, 0, 10, 0"/>
+            <TextBox Name="tbCommandBytes" Width="120"/>
+            <Button Content="发送指令" Name="btSendCommand" Click="btSendCommand_Click"/>
+        </StackPanel>
+        <StackPanel Grid.Row="1"  Orientation="Horizontal" Margin="0, 5">
+            <Button Content="常规试验" Name="btGotoCommon" Click="btGotoCommon_Click"/>
+            <Button Content="常规参数设置" Name="btSetCommonParams" Click="btSetCommonParams_Click"/>
+            <Button Content="开始测试" Name="btStartCommonTest" Click="btStartCommonTest_Click"/>
+            <Button Content="停止测试" Name="btStopCommonTest" Click="btStopCommonTest_Click"/>
+            <Button Content="退出" Name="btExitCommonTest" Click="btExitCommonTest_Click"/>
+            <Button Content="复位" Name="btResetAtCommon" Click="btResetAtCommon_Click"/>
+        </StackPanel>
+        <StackPanel Grid.Row="2"  Orientation="Horizontal" Margin="0, 5">
+            <Button Content="温升试验" Name="btGotoTempRise" Click="btGotoTempRise_Click"/>
+            <Button Content="温升参数设置10'" Name="btSetTempRiseParams10s" Click="btSetTempRiseParams10s_Click"/>
+            <Button Content="温升参数设置30'" Name="btSetTempRiseParams30s" Click="btSetTempRiseParams30s_Click"/>
+            <Button Content="温升参数设置30'" Name="btSetTempRiseParams60s" Click="btSetTempRiseParams60s_Click"/>
+            <Button Content="温升定时" Name="btStartTempRiseTiming" Click="btStartTempRiseTiming_Click"/>
+            <Button Content="开始测试" Name="btStartTempRiseTest" Click="btStartTempRiseTest_Click"/>
+            <Button Content="停止测试" Name="btStopTempRiseTest" Click="btStopTempRiseTest_Click"/>
+            <Button Content="退出" Name="btExitTempRiseTest" Click="btExitTempRiseTest_Click"/>
+        </StackPanel>        
+        <Grid Grid.Row="3" Margin="0, 10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <ScrollViewer>
+                <TextBox Name="btStatus" TextWrapping="Wrap"/>
+            </ScrollViewer>
+            <ScrollViewer Grid.Row="0" Grid.Column="1">
+                <TextBox Name="btPacketDebug" TextWrapping="Wrap"/>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+</Window>

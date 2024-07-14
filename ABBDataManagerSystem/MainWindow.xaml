@@ -55,6 +55,7 @@
             <Separator></Separator>
             <Button Content="选择工作令" Click="btShowWorkflowView_Click"/>
             <TextBlock Name="tbCurrentWorkflow" Text="当前工作令：XXX001" VerticalAlignment="Center" Foreground="Blue" Margin="5, 0"/>
+            <Button Content="50E测试" Click="Button50ETestDemo_Click" Visibility="Collapsed"/>
         </ToolBar>
         <Grid Grid.Row="2">
             <dz:DockControl Name="dockControl" ActiveItemChanged="dockControl_ActiveItemChanged">

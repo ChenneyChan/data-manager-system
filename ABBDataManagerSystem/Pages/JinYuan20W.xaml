@@ -213,10 +213,10 @@
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="次数" Width="80"  Binding="{Binding SortIndex}"  IsReadOnly="True"/>
                         <DataGridTextColumn Header="采集时间" Width="120" Binding="{Binding CurrentTime}"  IsReadOnly="True"/>
-                        <DataGridTextColumn Header="高压电流" Width="120" Binding="{Binding CurrentHV}"    IsReadOnly="True"/>
-                        <DataGridTextColumn Header="高压电阻" Width="120" Binding="{Binding ResistanceHV}" IsReadOnly="True"/>
-                        <DataGridTextColumn Header="低压电流" Width="120" Binding="{Binding CurrentLV}"    IsReadOnly="True"/>
-                        <DataGridTextColumn Header="低压电阻" Width="120" Binding="{Binding ResistanceLV}" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="高压电流" Width="120" Binding="{Binding CurrentHV, StringFormat='F5'}"    IsReadOnly="True"/>
+                        <DataGridTextColumn Header="高压电阻" Width="120" Binding="{Binding ResistanceHV, StringFormat='F5'}" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="低压电流" Width="120" Binding="{Binding CurrentLV, StringFormat='F5'}"    IsReadOnly="True"/>
+                        <DataGridTextColumn Header="低压电阻" Width="120" Binding="{Binding ResistanceLV, StringFormat='F5'}" IsReadOnly="True"/>
                     </DataGrid.Columns>
                 </DataGrid>
             </Grid>
