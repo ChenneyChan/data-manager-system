@@ -3,6 +3,7 @@ using System.Net.Sockets;
 using System.Net;
 using System.Text;
 using System.IO.Ports;
+using System.Globalization;
 
 class Program
 {
@@ -609,7 +610,7 @@ class ProgramShuileng
         catch (Exception ex) { Console.WriteLine(ex.ToString()); }
     }
 
-    static async Task Main(string[] args)
+    static async Task MainXX(string[] args)
     {
         Console.WriteLine("请输入端口号：");
         var port = Console.ReadLine();
@@ -643,6 +644,101 @@ class ProgramShuileng
         {
             udpClient.Close();
         }
+    }
+
+    public static void Main()
+    {
+        float number1 = 0.000023232323f;
+        float number2 = 2.52f;
+        float number3 = 0.0000000345f;
+        float number4 = 345.6789f;
+
+        Console.WriteLine(FormatFloat(number1)); // 输出: 0.00002323
+        Console.WriteLine(FormatFloat(number2)); // 输出: 2.52
+        Console.WriteLine(FormatFloat(number3)); // 输出: 0.0000000345
+        Console.WriteLine(FormatFloat(number4)); // 输出: 345.7
+    }
+
+    public static string FormatFloat2(float number)
+    {
+        // 如果数字为0，直接返回 "0"
+        if (number == 0)
+        {
+            return "0";
+        }
+
+        // 将 float 转换为 string
+        string numberString = number.ToString("0.#############################", CultureInfo.InvariantCulture);
+
+        // 检查数字是否包含小数点
+        if (numberString.Contains("."))
+        {
+            // 获取小数点后面的部分
+            string[] parts = numberString.Split('.');
+            string integerPart = parts[0];
+            string fractionalPart = parts[1];
+
+            // 拼接结果，确保至少4个非零数字
+            string result = integerPart + "." + new string(fractionalPart.Take(4).ToArray());
+
+            // 去掉多余的0
+            return result.TrimEnd('0').TrimEnd('.');
+        }
+        else
+        {
+            // 如果没有小数点，直接返回原数字
+            return numberString;
+        }
+    }
+
+    public static string FormatFloat(float number)
+    {
+        // 如果数字为0，直接返回 "0"
+        if (number == 0)
+        {
+            return "0";
+        }
+
+        // 将 float 转换为字符串，确保不使用科学计数法
+        string numberString = number.ToString("0.#############################", CultureInfo.InvariantCulture);
+        if (numberString.IndexOf("E") >= 0)
+        {
+            return numberString;
+        }
+
+        // 找到小数点的位置
+        int decimalPointIndex = numberString.IndexOf('.');
+
+        // 如果没有小数点，直接返回原数字
+        if (decimalPointIndex == -1)
+        {
+            return numberString;
+        }
+
+        // 获取小数点前后的部分
+        string integerPart = numberString.Substring(0, decimalPointIndex);
+        string fractionalPart = numberString.Substring(decimalPointIndex + 1);
+
+        // 拼接结果，确保至少4个非零数字
+        string result = integerPart + "." + GetSignificantDigits(fractionalPart, 4);
+
+        // 去掉多余的0
+        return result.TrimEnd('0').TrimEnd('.');
+    }
+
+    private static string GetSignificantDigits(string fractionalPart, int significantDigits)
+    {
+        int count = 0;
+        StringBuilder sb = new StringBuilder();
+
+        foreach (char c in fractionalPart)
+        {
+            sb.Append(c);
+            if (c != '0') count++;
+            if (count >= significantDigits) break;
+        }
+
+        return sb.ToString();
     }
 }
 #endregion
