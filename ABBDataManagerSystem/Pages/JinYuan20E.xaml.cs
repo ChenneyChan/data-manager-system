@@ -950,7 +950,6 @@ namespace ABBDataManagerSystem.Pages
             }
             bool isMill = cb20ECurrents.Text.IndexOf("m") >= 0;
             float current = Utils.GetFloat(cb20ECurrents.Text) ?? 0 * (isMill ? 0.001f : 1f);
-            CommonTempRiseCoolResistanceInfo.DeleteData(Configs.Configs.WorkflowID);
             var value = new CommonTempRiseCoolResistanceInfo()
             {
                 WorkflowID = Configs.Configs.WorkflowID,
@@ -961,10 +960,21 @@ namespace ABBDataManagerSystem.Pages
                 LowVoltageResistance12 = Utils.ParseFloatNull(tbTempCoolLV12.Text),
                 LowVoltageResistance21 = Utils.ParseFloatNull(tbTempCoolLV21.Text),
                 LowVoltageResistance22 = Utils.ParseFloatNull(tbTempCoolLV22.Text),
-                HighVoltageCurrent = current,
-                LowVoltageCurrent1 = current,
             };
-            bool ret = value.WriteToDB();
+            if (value.HighVoltageResistance1 != null || value.HighVoltageResistance2 != null)
+            {
+                value.HighVoltageCurrent = current;
+            }
+            if (value.LowVoltageResistance11 != null || value.LowVoltageResistance12 != null)
+            {
+                value.LowVoltageCurrent1 = current;
+            }
+            if (value.LowVoltageResistance21 != null || value.LowVoltageResistance22 != null)
+            {
+                value.LowVoltageCurrent2 = current;
+            }
+
+            bool ret = value.UpdateWithNotNullFieldsOrInsert();
             ControlUtils.ShowUploadTips(ret);
         }
 

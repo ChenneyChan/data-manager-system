@@ -1,4 +1,5 @@
 ﻿using ABBDataManagerSystem.Database;
+using MySql.Data.MySqlClient;
 using System.Data;
 
 namespace ABBDataManagerSystem.Bean.Base
@@ -43,8 +44,8 @@ namespace ABBDataManagerSystem.Bean.Base
                 connection.Open();
 
                 using (SQLCommond command = new SQLCommond($"INSERT INTO {TABLE_NAME} (workflow_id, highVoltageResistance1, lowVoltageResistance11, lowVoltageResistance12, " +
-                    "highVoltageResistance2, lowVoltageResistance21, lowVoltageResistance22, highVoltageCurrent, lowVoltageCurrent1, lowVoltageCurrent2, " + 
-                    "temperature) VALUES (@workflow_id, @highVoltageResistance1, @lowVoltageResistance11, @lowVoltageResistance12, @highVoltageResistance2, " + 
+                    "highVoltageResistance2, lowVoltageResistance21, lowVoltageResistance22, highVoltageCurrent, lowVoltageCurrent1, lowVoltageCurrent2, " +
+                    "temperature) VALUES (@workflow_id, @highVoltageResistance1, @lowVoltageResistance11, @lowVoltageResistance12, @highVoltageResistance2, " +
                     "@lowVoltageResistance21, @lowVoltageResistance22, @highVoltageCurrent, @lowVoltageCurrent1, @lowVoltageCurrent2, @temperature)", connection))
                 {
                     command.Parameters.AddWithValue("@workflow_id", WorkflowID);
@@ -62,6 +63,98 @@ namespace ABBDataManagerSystem.Bean.Base
                     return count > 0;
                 }
             }
+        }
+
+        public bool UpdateWithNotNullFieldsOrInsert()
+        {
+            // 创建 SQLite 连接对象
+            using (SQLConnection connection = new SQLConnection(DBConnector.GetConnectionString()))
+            {
+                // 打开数据库连接
+                connection.Open();
+
+                using (var command = new SQLCommond())
+                {
+                    command.Connection = connection;
+
+                    // Check if the record exists
+                    command.CommandText = $"SELECT COUNT(*) FROM {TABLE_NAME} WHERE workflow_id = @WorkflowID";
+                    command.Parameters.AddWithValue("@WorkflowID", WorkflowID);
+
+                    int recordCount = Convert.ToInt32(command.ExecuteScalar());
+
+                    if (recordCount > 0)
+                    {
+                        // Record exists, update non-null fields
+                        command.CommandText = BuildUpdateQuery();
+                    }
+                    else
+                    {
+                        // Record does not exist, insert new record
+                        command.CommandText = BuildInsertQuery();
+                    }
+
+                    // Add parameters for non-null fields
+                    AddParameters(command);
+
+                    return command.ExecuteNonQuery() > 0;
+                }
+            }
+        }
+
+        private string BuildUpdateQuery()
+        {
+            string query = $"UPDATE {TABLE_NAME} SET ";
+            if (HighVoltageResistance1.HasValue) query += "HighVoltageResistance1 = @HighVoltageResistance1, ";
+            if (LowVoltageResistance11.HasValue) query += "LowVoltageResistance11 = @LowVoltageResistance11, ";
+            if (LowVoltageResistance12.HasValue) query += "LowVoltageResistance12 = @LowVoltageResistance12, ";
+            if (HighVoltageResistance2.HasValue) query += "HighVoltageResistance2 = @HighVoltageResistance2, ";
+            if (LowVoltageResistance21.HasValue) query += "LowVoltageResistance21 = @LowVoltageResistance21, ";
+            if (LowVoltageResistance22.HasValue) query += "LowVoltageResistance22 = @LowVoltageResistance22, ";
+            if (HighVoltageCurrent.HasValue) query += "HighVoltageCurrent = @HighVoltageCurrent, ";
+            if (LowVoltageCurrent1.HasValue) query += "LowVoltageCurrent1 = @LowVoltageCurrent1, ";
+            if (LowVoltageCurrent2.HasValue) query += "LowVoltageCurrent2 = @LowVoltageCurrent2, ";
+            if (Temperature.HasValue) query += "Temperature = @Temperature, ";
+
+            // Remove the trailing comma and space
+            query = query.TrimEnd(',', ' ');
+
+            query += " WHERE workflow_id = @WorkflowID";
+            return query;
+        }
+
+        private string BuildInsertQuery()
+        {
+            string fields = "workflow_id";
+            string values = "@WorkflowID";
+
+            if (HighVoltageResistance1.HasValue) { fields += ", HighVoltageResistance1"; values += ", @HighVoltageResistance1"; }
+            if (LowVoltageResistance11.HasValue) { fields += ", LowVoltageResistance11"; values += ", @LowVoltageResistance11"; }
+            if (LowVoltageResistance12.HasValue) { fields += ", LowVoltageResistance12"; values += ", @LowVoltageResistance12"; }
+            if (HighVoltageResistance2.HasValue) { fields += ", HighVoltageResistance2"; values += ", @HighVoltageResistance2"; }
+            if (LowVoltageResistance21.HasValue) { fields += ", LowVoltageResistance21"; values += ", @LowVoltageResistance21"; }
+            if (LowVoltageResistance22.HasValue) { fields += ", LowVoltageResistance22"; values += ", @LowVoltageResistance22"; }
+            if (HighVoltageCurrent.HasValue) { fields += ", HighVoltageCurrent"; values += ", @HighVoltageCurrent"; }
+            if (LowVoltageCurrent1.HasValue) { fields += ", LowVoltageCurrent1"; values += ", @LowVoltageCurrent1"; }
+            if (LowVoltageCurrent2.HasValue) { fields += ", LowVoltageCurrent2"; values += ", @LowVoltageCurrent2"; }
+            if (Temperature.HasValue) { fields += ", Temperature"; values += ", @Temperature"; }
+
+            string query = $"INSERT INTO {TABLE_NAME} ({fields}) VALUES ({values})";
+            return query;
+        }
+
+        private void AddParameters(SQLCommond command)
+        {
+            if (HighVoltageResistance1.HasValue) command.Parameters.AddWithValue("@HighVoltageResistance1", HighVoltageResistance1.Value);
+            if (LowVoltageResistance11.HasValue) command.Parameters.AddWithValue("@LowVoltageResistance11", LowVoltageResistance11.Value);
+            if (LowVoltageResistance12.HasValue) command.Parameters.AddWithValue("@LowVoltageResistance12", LowVoltageResistance12.Value);
+            if (HighVoltageResistance2.HasValue) command.Parameters.AddWithValue("@HighVoltageResistance2", HighVoltageResistance2.Value);
+            if (LowVoltageResistance21.HasValue) command.Parameters.AddWithValue("@LowVoltageResistance21", LowVoltageResistance21.Value);
+            if (LowVoltageResistance22.HasValue) command.Parameters.AddWithValue("@LowVoltageResistance22", LowVoltageResistance22.Value);
+            if (HighVoltageCurrent.HasValue) command.Parameters.AddWithValue("@HighVoltageCurrent", HighVoltageCurrent.Value);
+            if (LowVoltageCurrent1.HasValue) command.Parameters.AddWithValue("@LowVoltageCurrent1", LowVoltageCurrent1.Value);
+            if (LowVoltageCurrent2.HasValue) command.Parameters.AddWithValue("@LowVoltageCurrent2", LowVoltageCurrent2.Value);
+            if (Temperature.HasValue) command.Parameters.AddWithValue("@Temperature", Temperature.Value);
         }
 
         public static List<CommonTempRiseCoolResistanceInfo> ReadFromDB(string sequence = "")

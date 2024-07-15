@@ -983,7 +983,6 @@ namespace ABBDataManagerSystem.Pages
             {
                 return;
             }
-            CommonTempRiseCoolResistanceInfo.DeleteData(Configs.Configs.WorkflowID);
             var value = new CommonTempRiseCoolResistanceInfo()
             {
                 WorkflowID = Configs.Configs.WorkflowID,
@@ -997,7 +996,8 @@ namespace ABBDataManagerSystem.Pages
                 HighVoltageCurrent = Utils.ParseFloat(cbHVCurrents.Text.Replace("A", "")),
                 LowVoltageCurrent1 = Utils.ParseFloat(cbLVCurrents.Text.Replace("A", "")),
             };
-            bool ret = value.WriteToDB();
+
+            bool ret = value.UpdateWithNotNullFieldsOrInsert();
             ControlUtils.ShowUploadTips(ret);
         }
 

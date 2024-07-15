@@ -11,12 +11,12 @@ namespace ABBDataManagerSystem
 {
     public class Utils
     {
-        public static int ParseInt(string? valule, int defaultValue = 0)
+        public static int ParseInt(string? value, int defaultValue = 0)
         {
-            if (valule == null) { return defaultValue; }
+            if (value == null) { return defaultValue; }
             try
             {
-                return int.Parse(valule);
+                return int.Parse(value);
             }
             catch
             {
@@ -24,12 +24,12 @@ namespace ABBDataManagerSystem
             }
         }
 
-        public static int? ParseIntNull(string? valule)
+        public static int? ParseIntNull(string? value)
         {
-            if (valule == null) { return null; }
+            if (value == null) { return null; }
             try
             {
-                return int.Parse(valule);
+                return int.Parse(value);
             }
             catch
             {
@@ -37,12 +37,12 @@ namespace ABBDataManagerSystem
             }
         }
 
-        public static float ParseFloat(string? valule, float defaultValue = 0)
+        public static float ParseFloat(string? value, float defaultValue = 0)
         {
-            if (valule == null) { return defaultValue; }
+            if (value == null) { return defaultValue; }
             try
             {
-                return float.Parse(valule);
+                return float.Parse(value);
             }
             catch
             {
@@ -50,12 +50,12 @@ namespace ABBDataManagerSystem
             }
         }
 
-        public static float? ParseFloatNull(string? valule)
+        public static float? ParseFloatNull(string? value)
         {
-            if (valule == null) { return null; }
+            if (value == null || value == "") { return null; }
             try
             {
-                return float.Parse(valule);
+                return float.Parse(value);
             }
             catch
             {
@@ -63,12 +63,12 @@ namespace ABBDataManagerSystem
             }
         }
 
-        public static DateTime? ParseDateTimeNull(string? valule)
+        public static DateTime? ParseDateTimeNull(string? value)
         {
-            if (valule == null) { return null; }
+            if (value == null) { return null; }
             try
             {
-                return DateTime.Parse(valule);
+                return DateTime.Parse(value);
             }
             catch
             {
