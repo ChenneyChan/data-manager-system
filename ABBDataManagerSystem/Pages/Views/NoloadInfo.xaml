@@ -38,6 +38,7 @@
             <RowDefinition/>
             <RowDefinition/>
             <RowDefinition/>
+            <RowDefinition/>
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Text="采集" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="4" Text="电压有效值（V）" VerticalAlignment="Center" HorizontalAlignment="Center"/>
@@ -105,23 +106,42 @@
         <Border Grid.Row="2" Grid.Column="16" BorderThickness="1, 1, 0, 0" />
         <Border Grid.Row="2" Grid.Column="17" BorderThickness="1, 1, 1, 0" />
 
-        <Border Grid.Row="3" Grid.Column="0" BorderThickness="1, 1, 0, 1" />
-        <Border Grid.Row="3" Grid.Column="1" BorderThickness="1, 1, 0, 1" />
-        <Border Grid.Row="3" Grid.Column="2" BorderThickness="1, 1, 0, 1" />
-        <Border Grid.Row="3" Grid.Column="3" BorderThickness="1, 1, 0, 1" />
-        <Border Grid.Row="3" Grid.Column="4" BorderThickness="1, 1, 0, 1" />
-        <Border Grid.Row="3" Grid.Column="5" BorderThickness="1, 1, 0, 1" />
-        <Border Grid.Row="3" Grid.Column="6" BorderThickness="1, 1, 0, 1" />
-        <Border Grid.Row="3" Grid.Column="7" BorderThickness="1, 1, 0, 1" />
-        <Border Grid.Row="3" Grid.Column="8" BorderThickness="1, 1, 0, 1" />
-        <Border Grid.Row="3" Grid.Column="9" BorderThickness="1, 1, 0, 1" />
-        <Border Grid.Row="3" Grid.Column="10" BorderThickness="1, 1, 0, 1" />
-        <Border Grid.Row="3" Grid.Column="11" BorderThickness="1, 1, 0, 1" />
-        <Border Grid.Row="3" Grid.Column="12" BorderThickness="1, 1, 0, 1" />
-        <Border Grid.Row="3" Grid.Column="13" BorderThickness="1, 1, 0, 1" />
-        <Border Grid.Row="3" Grid.Column="14" BorderThickness="1, 1, 0, 1" />
-        <Border Grid.Row="3" Grid.Column="15" BorderThickness="1, 1, 0, 1" />
-        <Border Grid.Row="3" Grid.Column="16" BorderThickness="1, 1, 0, 1" />
-        <Border Grid.Row="3" Grid.Column="17" BorderThickness="1, 1, 1, 1" />
+        <Border Grid.Row="3" Grid.Column="0" BorderThickness="1, 1, 0, 0" />
+        <Border Grid.Row="3" Grid.Column="1" BorderThickness="1, 1, 0, 0" />
+        <Border Grid.Row="3" Grid.Column="2" BorderThickness="1, 1, 0, 0" />
+        <Border Grid.Row="3" Grid.Column="3" BorderThickness="1, 1, 0, 0" />
+        <Border Grid.Row="3" Grid.Column="4" BorderThickness="1, 1, 0, 0" />
+        <Border Grid.Row="3" Grid.Column="5" BorderThickness="1, 1, 0, 0" />
+        <Border Grid.Row="3" Grid.Column="6" BorderThickness="1, 1, 0, 0" />
+        <Border Grid.Row="3" Grid.Column="7" BorderThickness="1, 1, 0, 0" />
+        <Border Grid.Row="3" Grid.Column="8" BorderThickness="1, 1, 0, 0" />
+        <Border Grid.Row="3" Grid.Column="9" BorderThickness="1, 1, 0, 0" />
+        <Border Grid.Row="3" Grid.Column="10" BorderThickness="1, 1, 0, 0" />
+        <Border Grid.Row="3" Grid.Column="11" BorderThickness="1, 1, 0, 0" />
+        <Border Grid.Row="3" Grid.Column="12" BorderThickness="1, 1, 0, 0" />
+        <Border Grid.Row="3" Grid.Column="13" BorderThickness="1, 1, 0, 0" />
+        <Border Grid.Row="3" Grid.Column="14" BorderThickness="1, 1, 0, 0" />
+        <Border Grid.Row="3" Grid.Column="15" BorderThickness="1, 1, 0, 0" />
+        <Border Grid.Row="3" Grid.Column="16" BorderThickness="1, 1, 0, 0" />
+        <Border Grid.Row="3" Grid.Column="17" BorderThickness="1, 1, 1, 0" />
+        
+        <Border Grid.Row="4" Grid.Column="0" BorderThickness="1, 1, 0, 1" />
+        <Border Grid.Row="4" Grid.Column="1" BorderThickness="1, 1, 0, 1" />
+        <Border Grid.Row="4" Grid.Column="2" BorderThickness="1, 1, 0, 1" />
+        <Border Grid.Row="4" Grid.Column="3" BorderThickness="1, 1, 0, 1" />
+        <Border Grid.Row="4" Grid.Column="4" BorderThickness="1, 1, 0, 1" />
+        <Border Grid.Row="4" Grid.Column="5" BorderThickness="1, 1, 0, 1" />
+        <Border Grid.Row="4" Grid.Column="6" BorderThickness="1, 1, 0, 1" />
+        <Border Grid.Row="4" Grid.Column="7" BorderThickness="1, 1, 0, 1" />
+        <Border Grid.Row="4" Grid.Column="8" BorderThickness="1, 1, 0, 1" />
+        <Border Grid.Row="4" Grid.Column="9" BorderThickness="1, 1, 0, 1" />
+        <Border Grid.Row="4" Grid.Column="10" BorderThickness="1, 1, 0, 1" />
+        <Border Grid.Row="4" Grid.Column="11" BorderThickness="1, 1, 0, 1" />
+        <Border Grid.Row="4" Grid.Column="12" BorderThickness="1, 1, 0, 1" />
+        <Border Grid.Row="4" Grid.Column="13" BorderThickness="1, 1, 0, 1" />
+        <Border Grid.Row="4" Grid.Column="14" BorderThickness="1, 1, 0, 1" />
+        <Border Grid.Row="4" Grid.Column="15" BorderThickness="1, 1, 0, 1" />
+        <Border Grid.Row="4" Grid.Column="16" BorderThickness="1, 1, 0, 1" />
+        <Border Grid.Row="4" Grid.Column="17" BorderThickness="1, 1, 1, 1" />
     </Grid>
 </UserControl>

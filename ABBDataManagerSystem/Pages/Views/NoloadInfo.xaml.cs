@@ -31,7 +31,7 @@ namespace ABBDataManagerSystem.Pages.Views
         public NoloadInfo()
         {
             InitializeComponent();
-            InitFields(2);
+            InitFields(3);
         }
 
         private void InitFields(int count)

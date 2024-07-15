@@ -49,6 +49,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         private VoltageCurrentLossDataInfo LoadInfoMax = new();
         private VoltageCurrentLossDataInfo LoadInfoMin = new();
         private VoltageCurrentLossDataInfo LoadInfoRated = new();
+        private VoltageCurrentLossDataInfo NoLoadInfo90 = new();
         private VoltageCurrentLossDataInfo NoLoadInfo100 = new();
         private VoltageCurrentLossDataInfo NoLoadInfo110 = new();
         private VoltageCurrentLossDataInfo SenseInfo = new();
@@ -2825,7 +2826,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         #region 结果数据展示
         private void InitDataShow()
         {
-            NoLoadView.Headers = new string[] { "100%", "110%" };
+            NoLoadView.Headers = new string[] { "90%", "100%", "110%" };
             LoadView.Headers = new string[] { "最大", "最小", "额定" };
             SenseView.Headers = new string[] { "感应" };
         }
@@ -2842,11 +2843,17 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                     NoLoadInfo100.LoadType = "空载";
                     NoLoadInfo100.TappingPosition = "100%";
                 }
-                else
+                else if (rbNoLoad110Percent.IsChecked == true)
                 {
                     VoltageCurrentLossDataInfo.Clone(CurrentData, NoLoadInfo110);
                     NoLoadInfo110.LoadType = "空载";
                     NoLoadInfo110.TappingPosition = "110%";
+                }
+                else if (rbNoLoad90Percent.IsChecked == true)
+                {
+                    VoltageCurrentLossDataInfo.Clone(CurrentData, NoLoadInfo90);
+                    NoLoadInfo90.LoadType = "空载";
+                    NoLoadInfo90.TappingPosition = "90%";
                 }
             }
             else if (tbLoad.IsSelected)
@@ -2881,7 +2888,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
         private void UpdateDateShow()
         {
-            NoLoadView.LossDataInfoList = new List<VoltageCurrentLossDataInfo>() { NoLoadInfo100, NoLoadInfo110 };
+            NoLoadView.LossDataInfoList = new List<VoltageCurrentLossDataInfo>() { NoLoadInfo90, NoLoadInfo100, NoLoadInfo110 };
             LoadView.LossDataInfoList = new List<VoltageCurrentLossDataInfo>() { LoadInfoMax, LoadInfoMin, LoadInfoRated };
             SenseView.LossDataInfoList = new List<VoltageCurrentLossDataInfo>() { SenseInfo };
         }
@@ -2985,6 +2992,19 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 return;
             }
             bool ret = false;
+            if (cbNoLoad90.IsChecked == true)
+            {
+                VoltageCurrentLossDataInfo.DeleteData(Configs.Configs.WorkflowID, "空载", "90%");
+                NoLoadInfo90.LoadType = "空载";
+                NoLoadInfo90.TappingPosition = "90%";
+                NoLoadInfo90.WorkflowId = Configs.Configs.WorkflowID;
+                ret = NoLoadInfo90.WriteToDB();
+                if (!ret)
+                {
+                    ControlUtils.ShowUploadTips(ret);
+                    return;
+                }
+            }
             if (cbNoLoad100.IsChecked == true)
             {
                 VoltageCurrentLossDataInfo.DeleteData(Configs.Configs.WorkflowID, "空载", "110%");
