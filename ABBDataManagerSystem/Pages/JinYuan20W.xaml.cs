@@ -993,9 +993,34 @@ namespace ABBDataManagerSystem.Pages
                 LowVoltageResistance12 = Utils.ParseFloatNull(tbTempCoolLV12.Text),
                 LowVoltageResistance21 = Utils.ParseFloatNull(tbTempCoolLV21.Text),
                 LowVoltageResistance22 = Utils.ParseFloatNull(tbTempCoolLV22.Text),
-                HighVoltageCurrent = Utils.ParseFloat(cbHVCurrents.Text.Replace("A", "")),
-                LowVoltageCurrent1 = Utils.ParseFloat(cbLVCurrents.Text.Replace("A", "")),
             };
+            var slot1Current = Utils.ParseFloat(cbHVCurrents.Text.Replace("A", ""));
+            var slot2Current = Utils.ParseFloat(cbLVCurrents.Text.Replace("A", ""));
+            if (cbTempRiseCoolCH1.Text == "高压")
+            {
+                value.HighVoltageCurrent = slot1Current;
+            }
+            else if (cbTempRiseCoolCH1.Text == "低压1")
+            {
+                value.LowVoltageCurrent1 = slot1Current;
+            }
+            else if (cbTempRiseCoolCH1.Text == "低压2")
+            {
+                value.LowVoltageCurrent2 = slot1Current;
+            }
+
+            if (cbTempRiseCoolCH2.Text == "高压")
+            {
+                value.HighVoltageCurrent = slot2Current;
+            }
+            else if (cbTempRiseCoolCH2.Text == "低压1")
+            {
+                value.LowVoltageCurrent1 = slot2Current;
+            }
+            else if (cbTempRiseCoolCH2.Text == "低压2")
+            {
+                value.LowVoltageCurrent2 = slot2Current;
+            }
 
             bool ret = value.UpdateWithNotNullFieldsOrInsert();
             ControlUtils.ShowUploadTips(ret);
@@ -1075,7 +1100,7 @@ namespace ABBDataManagerSystem.Pages
                 if (slot1Type != null && slot1Type >= 0)
                 {
                     CommonTempRiseTestResistanceInfo.DeleteData(configItem.ID, slot1Type + 1);
-                    foreach(var item in dataItems)
+                    foreach (var item in dataItems)
                     {
                         dataList.Add(new CommonTempRiseTestResistanceInfo()
                         {
