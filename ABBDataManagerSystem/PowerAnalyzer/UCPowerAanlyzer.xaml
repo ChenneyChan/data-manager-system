@@ -188,7 +188,8 @@
                     <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="20">
                         <TextBlock Text="到计时：" FontSize="24" VerticalAlignment="Center"/>
                         <hc:NumericUpDown Value="30" Width="80" Name="tbCountDown"/>
-                        <Button Content="停止" Background="#FFE0A219" BorderBrush="#FF585555" Width="80" Height="40" Margin="10, 0" Name="btStopCountDown" Click="btStopCountDown_Click"/>
+                        <Button Content="开始" Background="#FFE0A219" BorderBrush="#FF585555" Width="80" Height="40" Margin="10, 0" Name="btStartCountDown" Click="btStartCountDown_Click"/>
+                        <Button Content="停止" Background="#FFE0A219" BorderBrush="#FF585555" Width="80" Height="40" Margin="0" Name="btStopCountDown" Click="btStopCountDown_Click"/>
                         <Button Content="上传感应数据" Margin="20, 0, 0, 0" Background="#FF95E019" BorderBrush="#FF585555" Width="120" Height="40" Click="btUploadSense_Click"/>
                     </StackPanel>
                 </Grid>

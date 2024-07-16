@@ -123,8 +123,11 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             Timer1.AutoReset = true;
 
             OneSecTimer = new();
+            OneSecTimer.Interval = 1000;
             OneSecTimer.Elapsed += OneSecTimer_Elapsed; ;
             OneSecTimer.Enabled = true;
+            OneSecTimer.AutoReset = true;
+            OneSecTimer.Start();
 
             DataTableSource.Columns.Add("表头", typeof(string));
             DataTableSource.Columns.Add("有效电压", typeof(float));
@@ -3154,9 +3157,20 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         // 1s定时器
         private void OneSecTimer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
         {
-            if (IsSenseCountDowning && tbCountDown.Value > 0)
+            if (IsSenseCountDowning)
             {
-                tbCountDown.Value -= 1;
+                Dispatcher.Invoke(() =>
+                {
+                    if (tbCountDown.Value > 0)
+                    {
+                        tbCountDown.Value -= 1;
+                        if (tbCountDown.Value == 0)
+                        {
+                            IsSenseCountDowning = false;
+                            tbCountDown.IsEnabled = true;
+                        }
+                    }
+                });
             }
         }
         private bool IsSenseCountDowning = false;
@@ -3170,13 +3184,20 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             if (CurrentData.u3 > RatedCurrent * 2 && RatedCurrent != 0)
             {
                 IsSenseCountDowning = true;
+                tbCountDown.IsEnabled = false;
             }
         }
 
+        private void btStartCountDown_Click(object sender, RoutedEventArgs e)
+        {
+            IsSenseCountDowning = true;
+            tbCountDown.IsEnabled = false;
+        }
 
         private void btStopCountDown_Click(object sender, RoutedEventArgs e)
         {
             IsSenseCountDowning = false;
+            tbCountDown.IsEnabled = true;
         }
         #endregion
 
