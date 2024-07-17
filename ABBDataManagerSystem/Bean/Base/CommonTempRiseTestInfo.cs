@@ -14,6 +14,7 @@ namespace ABBDataManagerSystem.Bean.Base
         public string CoolingMode = string.Empty;
         public int TestingMode = 1; // 1、电压电流功率；2、电阻
         public int TestingIndex = 1;
+        public string TestingUser = string.Empty;
         public string? Remark = null;
         public DateTime? DateTime = null;
 
@@ -28,6 +29,7 @@ namespace ABBDataManagerSystem.Bean.Base
             {"CoolingMode", "冷却方式"},
             {"Remark", "备注"},
             {"DateTime", "试验时间"},
+            {"TestingUser", "试验人员"},
         };
 
         public CommonTempRiseTestInfo()
@@ -43,8 +45,8 @@ namespace ABBDataManagerSystem.Bean.Base
                 // 打开数据库连接
                 connection.Open();
 
-                using (SQLCommond command = new SQLCommond($"INSERT INTO {TABLE_NAME} (ID, workflow_id, testing_phase, testing_status, testing_index, cooling_mode, testing_mode, " +
-                    $"datetime, remark) VALUES (@ID, @WorkflowId, @TestingPhase, @TestingStatus, @TestingIndex, @CoolingMode, @TestingMode, " +
+                using (SQLCommond command = new SQLCommond($"INSERT INTO {TABLE_NAME} (ID, workflow_id, testing_phase, testing_status, testing_index, cooling_mode, testing_mode, testing_user, " +
+                    $"datetime, remark) VALUES (@ID, @WorkflowId, @TestingPhase, @TestingStatus, @TestingIndex, @CoolingMode, @TestingMode, @TestingUser, " +
                     $"@DateTime, @Remark)", connection))
                 {
                     command.Parameters.AddWithValue("@ID", ID);
@@ -54,6 +56,7 @@ namespace ABBDataManagerSystem.Bean.Base
                     command.Parameters.AddWithValue("@TestingIndex", TestingIndex);
                     command.Parameters.AddWithValue("@CoolingMode", CoolingMode);
                     command.Parameters.AddWithValue("@TestingMode", TestingMode);
+                    command.Parameters.AddWithValue("@TestingUser", TestingUser);
                     command.Parameters.AddWithValue("@Remark", Remark);
                     command.Parameters.AddWithValue("@DateTime", DateTime??System.DateTime.Now);
                     int count = command.ExecuteNonQuery();
@@ -105,6 +108,7 @@ namespace ABBDataManagerSystem.Bean.Base
                     TestingIndex = reader.GetInt32("testing_index"),
                     CoolingMode = reader.GetString("cooling_mode"),
                     TestingMode = reader.GetInt32("testing_mode"),
+                    TestingUser = !reader.IsDBNull("testing_user") ? reader.GetString("testing_user") : string.Empty,
                     Remark = !reader.IsDBNull("remark") ? reader.GetString("remark") : string.Empty,
                     DateTime = !reader.IsDBNull("datetime") ? reader.GetDateTime("datetime") : System.DateTime.Now,
                 };

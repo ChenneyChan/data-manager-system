@@ -10,13 +10,35 @@ namespace ABBDataManagerSystem.Pages
         public int? Slot1VoltageType { get; set; } = null;
         public int? Slot2VoltageType { get; set; } = null;
 
-        public TempRiseResistanceDialog()
+        public string TestUserName { get; set; } = string.Empty;
+
+        public TempRiseResistanceDialog(bool isSanRaoZu)
         {
             InitializeComponent();
+
+            if (isSanRaoZu)
+            {
+                comboBox1.Items.Add("高压");
+                comboBox1.Items.Add("低压1");
+                comboBox1.Items.Add("低压2");
+
+                comboBox2.Items.Add("高压");
+                comboBox2.Items.Add("低压1");
+                comboBox2.Items.Add("低压2");
+            }
+            else
+            {
+                comboBox1.Items.Add("高压");
+                comboBox1.Items.Add("低压");
+
+                comboBox2.Items.Add("高压");
+                comboBox2.Items.Add("低压");
+            }
         }
 
         private void btConfirm_Click(object sender, RoutedEventArgs e)
         {
+            TestUserName = tbTestUserName.Text;
             this.DialogResult = true;
             this.Close();
         }

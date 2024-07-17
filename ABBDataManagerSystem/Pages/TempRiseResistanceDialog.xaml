@@ -6,30 +6,34 @@
         xmlns:local="clr-namespace:ABBDataManagerSystem.Pages"
         xmlns:hc="https://handyorg.github.io/handycontrol"
         mc:Ignorable="d" Background="#FFDDDDDD" 
-        Title="三绕组温升热电阻数据上传确认" Height="300" Width="600" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
+        Title="温升热电阻数据上传确认" Height="300" Width="600" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
     <Window.Resources>
         <Style TargetType="hc:ComboBox" BasedOn="{StaticResource GlobalComboBoxStyle}">
+        </Style>
+        <Style TargetType="hc:TextBox" BasedOn="{StaticResource GlobalTextBoxStyle}">
         </Style>
     </Window.Resources>
     <Grid>
         <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
             <TextBlock Text="请选择本次温升热电阻数据测量位置：" FontSize="20"/>
-            <WrapPanel Height="40"/>
+            <WrapPanel Height="20"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" >
                 <TextBlock Text="通道1" FontSize="20" VerticalAlignment="Center" Margin="10, 0"/>
                 <hc:ComboBox Name="comboBox1" Width="120" FontSize="20" Height="40" hc:InfoElement.ShowClearButton="True" SelectionChanged="ComboBox1_SelectionChanged">
-                    <ComboBoxItem Content="高压"/>
-                    <ComboBoxItem Content="低压1"/>
-                    <ComboBoxItem Content="低压2"/>
                 </hc:ComboBox>
                 <Label Width="20" Visibility="Hidden"/>
                 <TextBlock Text="通道2" FontSize="20" VerticalAlignment="Center" Margin="10, 0"/>
                 <hc:ComboBox Name="comboBox2" Width="120" FontSize="20" Height="40" hc:InfoElement.ShowClearButton="True" SelectionChanged="ComboBox2_SelectionChanged">
-                    <ComboBoxItem Content="高压"/>
-                    <ComboBoxItem Content="低压1"/>
-                    <ComboBoxItem Content="低压2"/>
                 </hc:ComboBox>
             </StackPanel>
+            <Grid Margin="0, 20, 0, 0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="测试人员" FontSize="20" VerticalAlignment="Center" Margin="10, 0"/>
+                <hc:TextBox Grid.Column="1" Height="40" Name="tbTestUserName" FontSize="20"/>
+            </Grid>
             <StackPanel Orientation="Horizontal" Margin="0,40,0,10">
                 <Button Style="{StaticResource ButtonPrimary}" FontSize="20" Height="40" Width="140" Content="确认" Name="btConfirm" Click="btConfirm_Click"/>
                 <Button Width="124" Visibility="Hidden"/>

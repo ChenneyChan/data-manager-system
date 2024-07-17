@@ -1030,23 +1030,24 @@ namespace ABBDataManagerSystem.Pages
         private void btUpdateTempRiseRecords_Click(object sender, RoutedEventArgs e)
         {
             int? slot1Type = null, slot2Type = null;
-            bool isSanRaoZu = false;
             if (!ControlUtils.CheckWorkflowBeforeUpload())
             {
                 return;
             }
             // 三绕组场景，需要获取判断具体通道选择
-            if (Configs.Configs.WorkflowInfo != null && Configs.Configs.WorkflowInfo.WorkflowType == "三绕组")
+            bool isSanRaoZu = (Configs.Configs.WorkflowInfo != null && Configs.Configs.WorkflowInfo.WorkflowType == "三绕组");
+            var dialog = new TempRiseResistanceDialog(isSanRaoZu);
+            var result = dialog.ShowDialog();
+            slot1Type = dialog.Slot1VoltageType;
+            slot2Type = dialog.Slot2VoltageType;
+            if (result != true || ((slot1Type == null || slot1Type < 0) && (slot2Type == null || slot2Type < 0)))
             {
-                isSanRaoZu = true;
-                var dialog = new TempRiseResistanceDialog();
-                var result = dialog.ShowDialog();
-                slot1Type = dialog.Slot1VoltageType;
-                slot2Type = dialog.Slot2VoltageType;
-                if (result != true || ((slot1Type == null || slot1Type < 0) && (slot2Type == null || slot2Type < 0)))
-                {
-                    return;
-                }
+                return;
+            }
+            if (dataItems.Count == 0)
+            {
+                MessageBox.Show("暂无数据可以上传，请先采集数据!", "上传结果", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
             }
             CommonTempRiseTestInfo configItem;
             int testIndex = Utils.ParseInt(cbTestCount.Text);
@@ -1062,6 +1063,7 @@ namespace ABBDataManagerSystem.Pages
                     CoolingMode = cbCoolingMode.Text,
                     DateTime = DateTime.Now,
                     TestingMode = 2,
+                    TestingUser = dialog.TestUserName,
                 };
                 if (!configItem.WriteToDB())
                 {
@@ -1074,12 +1076,6 @@ namespace ABBDataManagerSystem.Pages
                 configItem = items[0];
             }
 
-            if (dataItems.Count == 0)
-            {
-                MessageBox.Show("暂无数据可以上传，请先采集数据!", "上传结果", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-
             bool ret = false;
             if (!isSanRaoZu)
             {
@@ -1087,11 +1083,45 @@ namespace ABBDataManagerSystem.Pages
                 CommonTempRiseTestResistanceInfo.DeleteData(configItem.ID);
 
                 // 将DataTable中的数据转成试验数据格式并且一条条上传
+                List<CommonTempRiseTestResistanceInfo> itemsToUpload = new List<CommonTempRiseTestResistanceInfo>();
                 foreach (var item in dataItems)
                 {
-                    item.ID = configItem.ID;
+                    var data = new CommonTempRiseTestResistanceInfo()
+                    {
+                        ID = configItem.ID,
+                        VoltageType = 0,
+                        SortIndex = item.SortIndex,
+                        CurrentTime = item.CurrentTime
+                    };
+                    if (slot1Type != null)
+                    {
+                        if (slot1Type == 0)
+                        {
+                            data.CurrentHV = item.CurrentHV;
+                            data.ResistanceHV = item.ResistanceHV;
+                        } 
+                        else if (slot1Type == 1)
+                        {
+                            data.CurrentLV = item.CurrentHV;
+                            data.ResistanceLV = item.ResistanceHV;
+                        }
+                    }
+                    if (slot2Type != null)
+                    {
+                        if (slot2Type == 0)
+                        {
+                            data.CurrentHV = item.CurrentLV;
+                            data.ResistanceHV = item.ResistanceLV;
+                        }
+                        else if (slot2Type == 1)
+                        {
+                            data.CurrentLV = item.CurrentLV;
+                            data.ResistanceLV = item.ResistanceLV;
+                        }
+                    }
+                    itemsToUpload.Add(data);
                 }
-                ret = CommonTempRiseTestResistanceInfo.BatchInsertData(dataItems);
+                ret = CommonTempRiseTestResistanceInfo.BatchInsertData(itemsToUpload);
             }
             else
             {
