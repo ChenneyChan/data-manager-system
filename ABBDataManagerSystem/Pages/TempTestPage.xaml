@@ -206,8 +206,8 @@
                     <TextBlock Text="相对于" Width="50" Margin="10,0" VerticalAlignment="Center"/>
                     <hc:ComboBox Width="110" VerticalAlignment="Center" Name="cbRelatedTo">
                         <ComboBoxItem Content="环境温度" IsSelected="True"/>
-                        <ComboBoxItem Content="进水口温度"/>
-                        <ComboBoxItem Content="进风口温度"/>
+                        <ComboBoxItem Content="进水口"/>
+                        <ComboBoxItem Content="进风口"/>
                     </hc:ComboBox>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0, 0, 0, 10">
