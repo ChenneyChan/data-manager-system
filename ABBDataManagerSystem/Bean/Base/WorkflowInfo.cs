@@ -38,6 +38,7 @@ namespace ABBDataManagerSystem.Bean.Base
         public float? CoreTempRise;
         public float? HWTempRise;
         public float? LWTempRise;
+        public float? YWTempRise;
         public string SoundLevel = string.Empty;
         public string TecnicalStandard = string.Empty;
         public float? ResistanceAO;
@@ -119,6 +120,7 @@ namespace ABBDataManagerSystem.Bean.Base
             {"CoreTempRise", "铁芯温升(K)"},
             {"HWTempRise", "高压线圈温升(K)"},
             {"LWTempRise", "低压线圈温升(K)"},
+            {"YWTempRise", "低压线圈温升2(K)"},
             {"SoundLevel", "变压器噪声(dB)"},
             {"TecnicalStandard", "参考标准"},
             {"ResistanceAO", "AO结构电阻"},
@@ -332,6 +334,7 @@ namespace ABBDataManagerSystem.Bean.Base
                     CoreTempRise = !reader.IsDBNull("CoreTempRise") ? reader.GetFloat("CoreTempRise") : null,
                     HWTempRise = !reader.IsDBNull("HWTempRise") ? reader.GetFloat("HWTempRise") : null,
                     LWTempRise = !reader.IsDBNull("LWTempRise") ? reader.GetFloat("LWTempRise") : null,
+                    YWTempRise = !reader.IsDBNull("YWTempRise") ? reader.GetFloat("YWTempRise") : null,
                     SoundLevel = !reader.IsDBNull("SoundLevel") ? reader.GetString("SoundLevel") : "",
                     TecnicalStandard = !reader.IsDBNull("TecnicalStandard") ? reader.GetString("TecnicalStandard") : "",
                     ResistanceAO = !reader.IsDBNull("ResistanceAO") ? reader.GetFloat("ResistanceAO") : null,
