@@ -1059,7 +1059,7 @@ namespace ABBDataManagerSystem.Pages
                             ID = configItem.ID,
                             SortIndex = item.SortIndex,
                             CurrentTime = item.CurrentTime,
-                            VoltageType = slot1Type ?? 0 + 1,
+                            VoltageType = (slot1Type ?? 0) + 1,
                             CurrentHV = item.CurrentHV,
                             ResistanceHV = item.ResistanceHV
                         });
@@ -1075,7 +1075,7 @@ namespace ABBDataManagerSystem.Pages
                             ID = configItem.ID,
                             SortIndex = item.SortIndex,
                             CurrentTime = item.CurrentTime,
-                            VoltageType = slot2Type ?? 0 + 1,
+                            VoltageType = (slot2Type ?? 0) + 1,
                             CurrentHV = item.CurrentLV,
                             ResistanceHV = item.ResistanceLV
                         });
