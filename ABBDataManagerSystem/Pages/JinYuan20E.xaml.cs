@@ -502,15 +502,15 @@ namespace ABBDataManagerSystem.Pages
             if (lastPacket != null)
             {
                 valueCh1 = Utils.GetValueWithMill(lastPacket.strRealTimeResistance1, false);
-                valueCh2 = Utils.GetValueWithMill(lastPacket.strRealTimeResistance2, true);
+                valueCh2 = Utils.GetValueWithMill(lastPacket.strRealTimeResistance2, false);
             }
             else if (IsSimulate)
             {
                 valueCh1 = (float)random.Next() % 1000 + (float)random.NextDouble();
                 valueCh2 = (float)random.Next() % 1000 + (float)random.NextDouble();
             }
-            string? ch1 = valueCh1.ToString();
-            string? ch2 = valueCh2.ToString();
+            string? ch1 = valueCh1 == null ? "" : Utils.FormatFloat((float)valueCh1, 4);
+            string? ch2 = valueCh2 == null ? "" : Utils.FormatFloat((float)valueCh2, 4);
 
             TextBox hv = TempRiseCoolSelectedLevel == "第一次" ? tbTempCoolHV1 : tbTempCoolHV2;
             TextBox lv1 = TempRiseCoolSelectedLevel == "第一次" ? tbTempCoolLV11 : tbTempCoolLV21;

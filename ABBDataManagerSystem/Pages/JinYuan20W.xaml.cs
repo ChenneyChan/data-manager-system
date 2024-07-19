@@ -553,13 +553,13 @@ namespace ABBDataManagerSystem.Pages
                 switch (TempRiseCoolSelectedCh1)
                 {
                     case "高压":
-                        hv.Text = valueCh1.ToString();
+                        hv.Text = Utils.FormatFloat(valueCh1 ?? 0, 4);
                         break;
                     case "低压1":
-                        lv1.Text = (valueCh1 * 1000).ToString();
+                        lv1.Text = Utils.FormatFloat(valueCh1 ?? 0, 4);
                         break;
                     case "低压2":
-                        lv2.Text = (valueCh1 * 1000).ToString();
+                        lv2.Text = Utils.FormatFloat(valueCh1 ?? 0, 4);
                         break;
                 }
             }
@@ -569,13 +569,13 @@ namespace ABBDataManagerSystem.Pages
                 switch (TempRiseCoolSelectedCh2)
                 {
                     case "高压":
-                        hv.Text = valueCh2.ToString();
+                        hv.Text = Utils.FormatFloat(valueCh2 ?? 0, 4);
                         break;
                     case "低压1":
-                        lv1.Text = (valueCh2 * 1000).ToString();
+                        lv1.Text = Utils.FormatFloat(valueCh2 ?? 0, 4);
                         break;
                     case "低压2":
-                        lv2.Text = (valueCh2 * 1000).ToString();
+                        lv2.Text = Utils.FormatFloat(valueCh2 ?? 0, 4);
                         break;
                 }
             }
