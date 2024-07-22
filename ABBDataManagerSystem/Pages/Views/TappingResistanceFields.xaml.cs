@@ -65,6 +65,9 @@ namespace ABBDataManagerSystem.Pages.Views
         {
             InitializeComponent();
             UpdateDisplay();
+            tbResistanceAB.TextChanged += tbResistance_TextChanged;
+            tbResistanceBC.TextChanged += tbResistance_TextChanged;
+            tbResistanceCA.TextChanged += tbResistance_TextChanged;
         }
 
         public void ResetSelection()
@@ -138,6 +141,22 @@ namespace ABBDataManagerSystem.Pages.Views
             if (needNotify && ActiveEventCallback != null)
             {
                 ActiveEventCallback(this, SelectedIndex);
+            }
+        }
+
+        private void tbResistance_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (sender == tbResistanceAB)
+            {
+                _ValueAB = Utils.ParseFloatNull(tbResistanceAB.Text);
+            }
+            else if (sender == tbResistanceBC)
+            {
+                _ValueBC = Utils.ParseFloatNull(tbResistanceBC.Text);
+            }
+            else if (sender == tbResistanceCA)
+            {
+                _ValueCA = Utils.ParseFloatNull(tbResistanceCA.Text);
             }
         }
     }

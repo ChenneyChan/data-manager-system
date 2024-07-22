@@ -9,7 +9,7 @@ namespace ABBDataManagerSystem.Pages.Views
     /// </summary>
     public partial class NoloadInfo : UserControl
     {
-        private Dictionary<string, TextBlock> _fields = new Dictionary<string, TextBlock>();
+        private Dictionary<string, TextBox> _fields = new Dictionary<string, TextBox>();
 
         private List<VoltageCurrentLossDataInfo>? _currentLossDataInfoList = null;
 
@@ -39,7 +39,7 @@ namespace ABBDataManagerSystem.Pages.Views
             for (int i = 1; i <= count; i++)
             {
                 int r = i + 1;
-                AddField(r, 0, $"id_{i}");
+                AddField(r, 0, $"id_{i}").IsReadOnly = true;
 
                 AddField(r, 1, $"ua_{i}");
                 AddField(r, 2, $"ub_{i}");
@@ -61,23 +61,33 @@ namespace ABBDataManagerSystem.Pages.Views
                 AddField(r, 15, $"pc_{i}");
                 AddField(r, 16, $"p3_{i}");
 
-                AddField(r, 17, $"fu_{i}");
+                AddField(r, 17, $"fU_{i}");
             }
         }
 
-        private void AddField(int r, int c, string key)
+        private TextBox AddField(int r, int c, string key)
         {
-            var tb = new TextBlock()
+            var tb = new TextBox()
             {
                 Text = "2233.00",
                 VerticalAlignment = System.Windows.VerticalAlignment.Center,
                 HorizontalAlignment = System.Windows.HorizontalAlignment.Center,
+                BorderThickness = new System.Windows.Thickness(0),
+                MinWidth = 60,
+                TextAlignment = System.Windows.TextAlignment.Center,
             };
             tb.SetValue(Grid.ColumnProperty, c);
             tb.SetValue(Grid.RowProperty, r);
+            tb.TextChanged += Tb_TextChanged;
             mainGrid.Children.Add(tb);
 
             _fields.Add(key, tb);
+            return tb;
+        }
+
+        private void Tb_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            ControlUtils.HandleVoltageCurrentTextChange(sender, _fields, _currentLossDataInfoList);
         }
 
         private void UpdateValue()
@@ -91,7 +101,7 @@ namespace ABBDataManagerSystem.Pages.Views
                 var item = _currentLossDataInfoList[i];
                 if (item == null)
                 {
-                    continue; 
+                    continue;
                 }
                 _fields[$"ua_{i + 1}"].Text = Utils.FloatFormat(item.ua ?? 0);
                 _fields[$"ub_{i + 1}"].Text = Utils.FloatFormat(item.ub ?? 0);
@@ -113,7 +123,7 @@ namespace ABBDataManagerSystem.Pages.Views
                 _fields[$"pc_{i + 1}"].Text = Utils.FloatFormat(item.pc ?? 0);
                 _fields[$"p3_{i + 1}"].Text = Utils.FloatFormat(item.p3 ?? 0);
 
-                _fields[$"fu_{i + 1}"].Text = Utils.FloatFormat(item.fU ?? 0);
+                _fields[$"fU_{i + 1}"].Text = Utils.FloatFormat(item.fU ?? 0);
             }
         }
 

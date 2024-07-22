@@ -16,25 +16,25 @@ namespace ABBDataManagerSystem.Pages.Views
             set { _TappingIndex = value; UpdateDisplay(); }
         }
 
-        private float _ValueAB;
+        private float? _ValueAB;
 
-        public float ValueAB
+        public float? ValueAB
         {
             get { return _ValueAB; }
             set { _ValueAB = value; UpdateDisplay(); }
         }
 
-        private float _ValueBC;
+        private float? _ValueBC;
 
-        public float ValueBC
+        public float? ValueBC
         {
             get { return _ValueBC; }
             set { _ValueBC = value; UpdateDisplay(); }
         }
 
-        private float _ValueCA;
+        private float? _ValueCA;
 
-        public float ValueCA
+        public float? ValueCA
         {
             get { return _ValueCA; }
             set { _ValueCA = value; UpdateDisplay(); }
@@ -71,14 +71,33 @@ namespace ABBDataManagerSystem.Pages.Views
             InitializeComponent();
             OriginBackGroud = Background;
             UpdateDisplay();
+            tbErrorAB.TextChanged += TbError_TextChanged;
+            tbErrorBC.TextChanged += TbError_TextChanged;
+            tbErrorCA.TextChanged += TbError_TextChanged;
+        }
+
+        private void TbError_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (sender == tbErrorAB)
+            {
+                _ValueAB = Utils.ParseFloatNull(tbErrorAB.Text);
+            }
+            else if (sender == tbErrorBC)
+            {
+                _ValueBC = Utils.ParseFloatNull(tbErrorBC.Text);
+            } 
+            else if (sender == tbErrorCA)
+            {
+                _ValueCA = Utils.ParseFloatNull(tbErrorCA.Text);
+            }
         }
 
         private void UpdateDisplay()
         {
             tbTappingIndex.Text = _TappingIndex;
-            tbErrorAB.Text = ZeroIsNull(Utils.FloatFormat(ValueAB));
-            tbErrorBC.Text = ZeroIsNull(Utils.FloatFormat(ValueBC));
-            tbErrorCA.Text = ZeroIsNull(Utils.FloatFormat(ValueCA));
+            tbErrorAB.Text = ValueAB == null ? "" : ZeroIsNull(Utils.FloatFormat((float)ValueAB));
+            tbErrorBC.Text = ValueBC == null ? "" : ZeroIsNull(Utils.FloatFormat((float)ValueBC));
+            tbErrorCA.Text = ValueCA == null ? "" : ZeroIsNull(Utils.FloatFormat((float)ValueCA));
             tbCalculatedRatio.Text = ZeroIsNull(Utils.FloatFormat(CalculatedRatio));
             tbTappingVoltage.Text = ZeroIsNull(Utils.FloatFormat(TappingVoltage));
 

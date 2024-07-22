@@ -11,7 +11,7 @@
         <Style TargetType="hc:TextBox" BasedOn="{StaticResource GlobalTextBoxStyle}">
             <Setter Property="TextAlignment" Value="Center"/>
             <Setter Property="FontSize" Value="16"/>
-            <Setter Property="IsReadOnly" Value="True"/>
+            <Setter Property="IsReadOnly" Value="False"/>
             <Setter Property="Text" Value="123.23"/>
         </Style>
     </UserControl.Resources>
@@ -25,8 +25,8 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <TextBlock Text="1" Name="tbTappingIndex" Grid.Row="6" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-        <hc:TextBox Name="tbTappingVoltage" Grid.Row="6" Grid.Column="1" HorizontalAlignment="Center" MinWidth="80" Height="36"  />
-        <hc:TextBox Name="tbCalculatedRatio" Grid.Row="6" Grid.Column="2" HorizontalAlignment="Center" MinWidth="80" Height="36"  />
+        <hc:TextBox Name="tbTappingVoltage" Grid.Row="6" Grid.Column="1" HorizontalAlignment="Center" MinWidth="80" Height="36" IsReadOnly="True" />
+        <hc:TextBox Name="tbCalculatedRatio" Grid.Row="6" Grid.Column="2" HorizontalAlignment="Center" MinWidth="80" Height="36" IsReadOnly="True" />
         <hc:TextBox Name="tbErrorAB" Grid.Row="6" Grid.Column="3" HorizontalAlignment="Center" MinWidth="80" Height="36"  />
         <hc:TextBox Name="tbErrorBC" Grid.Row="6" Grid.Column="4" HorizontalAlignment="Center" MinWidth="80" Height="36"  />
         <hc:TextBox Name="tbErrorCA" Grid.Row="6" Grid.Column="5" HorizontalAlignment="Center" MinWidth="80" Height="36"  />
