@@ -781,14 +781,17 @@ namespace ABBDataManagerSystem.Pages
                 {
                     panelTempRiseCoolTestResult.Visibility = Visibility.Visible;
                     panelCommonTestResult.Visibility = Visibility.Collapsed;
+                    dataGridPanel.Visibility = Visibility.Visible;
+                    lvUsers.Visibility = Visibility.Collapsed;
+                    panelStatus.Visibility = Visibility.Collapsed;
+                    btUpdateTempRiseRecords.Visibility = Visibility.Collapsed;
                 }
                 else
                 {
                     panelTempRiseCoolTestResult.Visibility = Visibility.Collapsed;
                     panelCommonTestResult.Visibility = Visibility.Visible;
+                    dataGridPanel.Visibility = Visibility.Collapsed;
                 }
-
-                dataGridPanel.Visibility = Visibility.Collapsed;
             }
             else
             {
@@ -804,6 +807,9 @@ namespace ABBDataManagerSystem.Pages
                 panelCommonTestResult.Visibility = Visibility.Collapsed;
                 panelTempRiseCoolTestResult.Visibility = Visibility.Collapsed;
                 dataGridPanel.Visibility = Visibility.Visible;
+                lvUsers.Visibility = Visibility.Visible;
+                panelStatus.Visibility = Visibility.Visible;
+                btUpdateTempRiseRecords.Visibility = Visibility.Visible;
             }
 
             if (Collector != null)
@@ -993,6 +999,9 @@ namespace ABBDataManagerSystem.Pages
                 LowVoltageResistance12 = Utils.ParseFloatNull(tbTempCoolLV12.Text),
                 LowVoltageResistance21 = Utils.ParseFloatNull(tbTempCoolLV21.Text),
                 LowVoltageResistance22 = Utils.ParseFloatNull(tbTempCoolLV22.Text),
+                TestingIndex = Utils.ParseInt(cbTestCount.Text),
+                TestingStatus = cbTestStatus.Text,
+                CoolingMode = cbCoolingMode.Text
             };
             var slot1Current = Utils.ParseFloat(cbHVCurrents.Text.Replace("A", ""));
             var slot2Current = Utils.ParseFloat(cbLVCurrents.Text.Replace("A", ""));

@@ -1,5 +1,4 @@
 ﻿using ABBDataManagerSystem.Database;
-using MySql.Data.MySqlClient;
 using System.Data;
 
 namespace ABBDataManagerSystem.Bean.Base
@@ -9,6 +8,9 @@ namespace ABBDataManagerSystem.Bean.Base
         public static string TABLE_NAME = "temprisecoolresistance";
 
         public string WorkflowID = String.Empty;
+        public string TestingStatus = String.Empty;
+        public string CoolingMode = string.Empty;
+        public int TestingIndex = 1;
         public float? HighVoltageResistance1;
         public float? LowVoltageResistance11;
         public float? LowVoltageResistance12;
@@ -43,12 +45,15 @@ namespace ABBDataManagerSystem.Bean.Base
                 // 打开数据库连接
                 connection.Open();
 
-                using (SQLCommond command = new SQLCommond($"INSERT INTO {TABLE_NAME} (workflow_id, highVoltageResistance1, lowVoltageResistance11, lowVoltageResistance12, " +
+                using (SQLCommond command = new SQLCommond($"INSERT INTO {TABLE_NAME} (workflow_id, testing_status, cooling_mode, testing_index, highVoltageResistance1, lowVoltageResistance11, lowVoltageResistance12, " +
                     "highVoltageResistance2, lowVoltageResistance21, lowVoltageResistance22, highVoltageCurrent, lowVoltageCurrent1, lowVoltageCurrent2, " +
-                    "temperature) VALUES (@workflow_id, @highVoltageResistance1, @lowVoltageResistance11, @lowVoltageResistance12, @highVoltageResistance2, " +
+                    "temperature) VALUES (@workflow_id, @TestingStatus, @CoolingMode, @TestingIndex, @highVoltageResistance1, @lowVoltageResistance11, @lowVoltageResistance12, @highVoltageResistance2, " +
                     "@lowVoltageResistance21, @lowVoltageResistance22, @highVoltageCurrent, @lowVoltageCurrent1, @lowVoltageCurrent2, @temperature)", connection))
                 {
                     command.Parameters.AddWithValue("@workflow_id", WorkflowID);
+                    command.Parameters.AddWithValue("@TestingStatus", TestingStatus);
+                    command.Parameters.AddWithValue("@CoolingMode", CoolingMode);
+                    command.Parameters.AddWithValue("@TestingIndex", TestingIndex);
                     command.Parameters.AddWithValue("@highVoltageResistance1", HighVoltageResistance1);
                     command.Parameters.AddWithValue("@lowVoltageResistance11", LowVoltageResistance11);
                     command.Parameters.AddWithValue("@lowVoltageResistance12", LowVoltageResistance12);
@@ -78,8 +83,11 @@ namespace ABBDataManagerSystem.Bean.Base
                     command.Connection = connection;
 
                     // Check if the record exists
-                    command.CommandText = $"SELECT COUNT(*) FROM {TABLE_NAME} WHERE workflow_id = @WorkflowID";
+                    command.CommandText = $"SELECT COUNT(*) FROM {TABLE_NAME} WHERE workflow_id = @WorkflowID AND testing_status = @TestingStatus AND cooling_mode = @CoolingMode AND testing_index = @TestingIndex";
                     command.Parameters.AddWithValue("@WorkflowID", WorkflowID);
+                    command.Parameters.AddWithValue("@TestingStatus", TestingStatus);
+                    command.Parameters.AddWithValue("@CoolingMode", CoolingMode);
+                    command.Parameters.AddWithValue("@TestingIndex", TestingIndex);
 
                     int recordCount = Convert.ToInt32(command.ExecuteScalar());
 
@@ -119,14 +127,14 @@ namespace ABBDataManagerSystem.Bean.Base
             // Remove the trailing comma and space
             query = query.TrimEnd(',', ' ');
 
-            query += " WHERE workflow_id = @WorkflowID";
+            query += " WHERE workflow_id = @WorkflowID AND testing_status = @TestingStatus AND cooling_mode = @CoolingMode AND testing_index = @TestingIndex";
             return query;
         }
 
         private string BuildInsertQuery()
         {
-            string fields = "workflow_id";
-            string values = "@WorkflowID";
+            string fields = "workflow_id, testing_status, cooling_mode, testing_index";
+            string values = "@WorkflowID, @TestingStatus, @CoolingMode, @TestingIndex";
 
             if (HighVoltageResistance1.HasValue) { fields += ", HighVoltageResistance1"; values += ", @HighVoltageResistance1"; }
             if (LowVoltageResistance11.HasValue) { fields += ", LowVoltageResistance11"; values += ", @LowVoltageResistance11"; }
