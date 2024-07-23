@@ -1152,6 +1152,7 @@ namespace ABBDataManagerSystem.Pages
 
         private void btUpdateResistanceRecords_Click(object sender, RoutedEventArgs e)
         {
+            UpdateMaxUnBalance();
             if (!ControlUtils.CheckWorkflowBeforeUpload())
             {
                 return;
