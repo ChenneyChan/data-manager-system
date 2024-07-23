@@ -30,24 +30,24 @@ namespace ABBDataManagerSystem.Pages
 
         private void InitView()
         {
-            InitComboBox(cbWindingA);
-            InitComboBox(cbWindingB);
-            InitComboBox(cbWindingC);
-            InitComboBox(cbCore);
-            InitComboBox(cbEnvA);
-            InitComboBox(cbEnvB);
-            InitComboBox(cbEnvC);
-            InitComboBox(cbEnvD);
-            InitComboBox(cbOutlet1);
-            InitComboBox(cbOutlet2);
-            InitComboBox(cbOutlet3);
-            InitComboBox(cbOutlet4);
-            InitComboBox(cbOutlet5);
-            InitComboBox(cbOutlet6);
-            InitComboBox(cbInlet1);
-            InitComboBox(cbInlet2);
-            InitComboBox(cbInlet3);
-            InitComboBox(cbTop);
+            InitComboBox(cbWindingA, true);
+            InitComboBox(cbWindingB, true);
+            InitComboBox(cbWindingC, true);
+            InitComboBox(cbCore, true);
+            InitComboBox(cbEnvA, true);
+            InitComboBox(cbEnvB, true);
+            InitComboBox(cbEnvC, true);
+            InitComboBox(cbEnvD, true);
+            InitComboBox(cbOutlet1, true);
+            InitComboBox(cbOutlet2, true);
+            InitComboBox(cbOutlet3, true);
+            InitComboBox(cbOutlet4, true);
+            InitComboBox(cbOutlet5, true);
+            InitComboBox(cbOutlet6, true);
+            InitComboBox(cbInlet1, true);
+            InitComboBox(cbInlet2, true);
+            InitComboBox(cbInlet3, true);
+            InitComboBox(cbTop, true);
             InitComboBox(cbExtension1, true);
             InitComboBox(cbExtension2, true);
             InitComboBox(cbExtension3, true);

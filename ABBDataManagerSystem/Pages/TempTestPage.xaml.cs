@@ -565,6 +565,11 @@ namespace ABBDataManagerSystem.Pages
         #endregion
 
         #region 记录表格相关操作
+        private static string GetBindingPath(string path)
+        {
+            if (path == "") return "None";
+            return path;
+        }
         private void InitDataGrid()
         {
             Index = 0;
@@ -572,6 +577,7 @@ namespace ABBDataManagerSystem.Pages
             dgTempRecord.Columns.Clear();
             Table.Rows.Clear();
             Table.Columns.Clear();
+            Table.Columns.Add("None", typeof(float)); // 一个默认的空字段
 
             dgTempRecord.Columns.Add(new DataGridTextColumn
             {
@@ -685,25 +691,25 @@ namespace ABBDataManagerSystem.Pages
             dgTempRecord.Columns.Add(new DataGridTextColumn()
             {
                 Header = $"绕组A",
-                Binding = new Binding(Configs.Configs.WindingA),
+                Binding = new Binding(GetBindingPath(Configs.Configs.WindingA)),
                 MinWidth = 40
             });
             dgTempRecord.Columns.Add(new DataGridTextColumn()
             {
                 Header = $"绕组B",
-                Binding = new Binding(Configs.Configs.WindingB),
+                Binding = new Binding(GetBindingPath(Configs.Configs.WindingB)),
                 MinWidth = 40
             });
             dgTempRecord.Columns.Add(new DataGridTextColumn()
             {
                 Header = $"绕组C",
-                Binding = new Binding(Configs.Configs.WindingC),
+                Binding = new Binding(GetBindingPath(Configs.Configs.WindingC)),
                 MinWidth = 40
             });
             dgTempRecord.Columns.Add(new DataGridTextColumn()
             {
                 Header = $"铁心",
-                Binding = new Binding(Configs.Configs.Core),
+                Binding = new Binding(GetBindingPath(Configs.Configs.Core)),
                 MinWidth = 40
             });
 
@@ -712,25 +718,25 @@ namespace ABBDataManagerSystem.Pages
                 dgTempRecord.Columns.Add(new DataGridTextColumn()
                 {
                     Header = $"环境A",
-                    Binding = new Binding(Configs.Configs.EnvA),
+                    Binding = new Binding(GetBindingPath(Configs.Configs.EnvA)),
                     MinWidth = 40
                 });
                 dgTempRecord.Columns.Add(new DataGridTextColumn()
                 {
                     Header = $"环境B",
-                    Binding = new Binding(Configs.Configs.EnvB),
+                    Binding = new Binding(GetBindingPath(Configs.Configs.EnvB)),
                     MinWidth = 40
                 });
                 dgTempRecord.Columns.Add(new DataGridTextColumn()
                 {
                     Header = $"环境C",
-                    Binding = new Binding(Configs.Configs.EnvC),
+                    Binding = new Binding(GetBindingPath(Configs.Configs.EnvC)),
                     MinWidth = 40
                 });
                 dgTempRecord.Columns.Add(new DataGridTextColumn()
                 {
                     Header = $"环境D",
-                    Binding = new Binding(Configs.Configs.EnvD),
+                    Binding = new Binding(GetBindingPath(Configs.Configs.EnvD)),
                     MinWidth = 40
                 });
             }
@@ -744,7 +750,7 @@ namespace ABBDataManagerSystem.Pages
                     dgTempRecord.Columns.Add(new DataGridTextColumn()
                     {
                         Header = $"出风口温度{i}",
-                        Binding = new Binding(binding),
+                        Binding = new Binding(GetBindingPath(binding)),
                         Width = 40
                     });
                 }
@@ -754,14 +760,14 @@ namespace ABBDataManagerSystem.Pages
                     dgTempRecord.Columns.Add(new DataGridTextColumn()
                     {
                         Header = $"进风口温度{i}",
-                        Binding = new Binding(binding),
+                        Binding = new Binding(GetBindingPath(binding)),
                         Width = 40
                     });
                 }
                 dgTempRecord.Columns.Add(new DataGridTextColumn()
                 {
                     Header = $"顶部温度",
-                    Binding = new Binding(Configs.Configs.TopTemperature),
+                    Binding = new Binding(GetBindingPath(Configs.Configs.TopTemperature)),
                     Width = 40
                 });
                 if (TempTestMode == TempMode.AFWF)
@@ -802,7 +808,7 @@ namespace ABBDataManagerSystem.Pages
                 dgTempRecord.Columns.Add(new DataGridTextColumn()
                 {
                     Header = $"其他{extensionItem.Key}",
-                    Binding = new Binding(extensionItem.Value),
+                    Binding = new Binding(GetBindingPath(extensionItem.Value)),
                     Width = 40
                 });
             }
@@ -1393,35 +1399,35 @@ namespace ABBDataManagerSystem.Pages
                     Ic = item.Field<float?>("ic") ?? null,
                     I3 = item.Field<float?>("i3") ?? null,
                     P3 = item.Field<float?>("p3") ?? null,
-                    CoreTemp = item.Field<float?>(Configs.Configs.Core) ?? null,
-                    WindingTempA = item.Field<float?>(Configs.Configs.WindingA) ?? null,
-                    WindingTempB = item.Field<float?>(Configs.Configs.WindingB) ?? null,
-                    WindingTempC = item.Field<float?>(Configs.Configs.WindingC) ?? null,
+                    CoreTemp = item.Field<float?>(GetBindingPath(Configs.Configs.Core)) ?? null,
+                    WindingTempA = item.Field<float?>(GetBindingPath(Configs.Configs.WindingA)) ?? null,
+                    WindingTempB = item.Field<float?>(GetBindingPath(Configs.Configs.WindingB)) ?? null,
+                    WindingTempC = item.Field<float?>(GetBindingPath(Configs.Configs.WindingC)) ?? null,
                     IsAFWF = TempTestMode == TempMode.AFWF,
                     WorkflowID = Configs.Configs.WorkflowID
                 };
                 if (TempTestMode == TempMode.COMMON)
                 {
-                    record.EnvTempA = item.Field<float?>(Configs.Configs.EnvA) ?? null;
-                    record.EnvTempB = item.Field<float?>(Configs.Configs.EnvB) ?? null;
-                    record.EnvTempC = item.Field<float?>(Configs.Configs.EnvC) ?? null;
-                    record.EnvTempD = item.Field<float?>(Configs.Configs.EnvD) ?? null;
+                    record.EnvTempA = item.Field<float?>(GetBindingPath(Configs.Configs.EnvA)) ?? null;
+                    record.EnvTempB = item.Field<float?>(GetBindingPath(Configs.Configs.EnvB)) ?? null;
+                    record.EnvTempC = item.Field<float?>(GetBindingPath(Configs.Configs.EnvC)) ?? null;
+                    record.EnvTempD = item.Field<float?>(GetBindingPath(Configs.Configs.EnvD)) ?? null;
                 }
                 else
                 {
                     var outlets = Configs.Configs.OutletTemperature.Split(",");
                     var inlets = Configs.Configs.InletTemperature.Split(",");
 
-                    record.Outlet1 = item.Field<float?>(outlets[0]) ?? null;
-                    record.Outlet2 = item.Field<float?>(outlets[1]) ?? null;
-                    record.Outlet3 = item.Field<float?>(outlets[2]) ?? null;
-                    record.Outlet4 = item.Field<float?>(outlets[3]) ?? null;
-                    record.Outlet5 = item.Field<float?>(outlets[4]) ?? null;
-                    record.Outlet6 = item.Field<float?>(outlets[5]) ?? null;
-                    record.Inlet1 = item.Field<float?>(inlets[0]) ?? null;
-                    record.Inlet2 = item.Field<float?>(inlets[1]) ?? null;
-                    record.Inlet3 = item.Field<float?>(inlets[2]) ?? null;
-                    record.TopTemp = item.Field<float?>(Configs.Configs.TopTemperature) ?? null;
+                    record.Outlet1 = item.Field<float?>(GetBindingPath(outlets[0])) ?? null;
+                    record.Outlet2 = item.Field<float?>(GetBindingPath(outlets[1])) ?? null;
+                    record.Outlet3 = item.Field<float?>(GetBindingPath(outlets[2])) ?? null;
+                    record.Outlet4 = item.Field<float?>(GetBindingPath(outlets[3])) ?? null;
+                    record.Outlet5 = item.Field<float?>(GetBindingPath(outlets[4])) ?? null;
+                    record.Outlet6 = item.Field<float?>(GetBindingPath(outlets[5])) ?? null;
+                    record.Inlet1 = item.Field<float?>(GetBindingPath(inlets[0])) ?? null;
+                    record.Inlet2 = item.Field<float?>(GetBindingPath(inlets[1])) ?? null;
+                    record.Inlet3 = item.Field<float?>(GetBindingPath(inlets[2])) ?? null;
+                    record.TopTemp = item.Field<float?>(GetBindingPath(Configs.Configs.TopTemperature)) ?? null;
                     if (TempTestMode == TempMode.AFWF)
                     {
                         record.OutletWaterTemperature = item.Field<float?>("Outletwater") ?? null;

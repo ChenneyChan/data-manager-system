@@ -133,14 +133,14 @@
         <TextBlock Grid.Row="1" Grid.Column="6"  Text="c" VerticalAlignment="Center" FontSize="16" HorizontalAlignment="Center"/>
         <TextBlock Grid.Row="1" Grid.Column="7"  Text="d" VerticalAlignment="Center" FontSize="16" HorizontalAlignment="Center"/>
 
-        <hc:ComboBox Grid.Row="2" Grid.Column="0"  Name="cbWindingA" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-        <hc:ComboBox Grid.Row="2" Grid.Column="1"  Name="cbWindingB" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-        <hc:ComboBox Grid.Row="2" Grid.Column="2"  Name="cbWindingC" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-        <hc:ComboBox Grid.Row="2" Grid.Column="3"  Name="cbCore" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-        <hc:ComboBox Grid.Row="2" Grid.Column="4"  Name="cbEnvA" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-        <hc:ComboBox Grid.Row="2" Grid.Column="5"  Name="cbEnvB" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-        <hc:ComboBox Grid.Row="2" Grid.Column="6"  Name="cbEnvC" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-        <hc:ComboBox Grid.Row="2" Grid.Column="7"  Name="cbEnvD" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+        <hc:ComboBox Grid.Row="2" Grid.Column="0"  hc:InfoElement.ShowClearButton="True" Name="cbWindingA" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+        <hc:ComboBox Grid.Row="2" Grid.Column="1"  hc:InfoElement.ShowClearButton="True" Name="cbWindingB" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+        <hc:ComboBox Grid.Row="2" Grid.Column="2"  hc:InfoElement.ShowClearButton="True" Name="cbWindingC" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+        <hc:ComboBox Grid.Row="2" Grid.Column="3"  hc:InfoElement.ShowClearButton="True" Name="cbCore" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+        <hc:ComboBox Grid.Row="2" Grid.Column="4"  hc:InfoElement.ShowClearButton="True" Name="cbEnvA" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+        <hc:ComboBox Grid.Row="2" Grid.Column="5"  hc:InfoElement.ShowClearButton="True" Name="cbEnvB" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+        <hc:ComboBox Grid.Row="2" Grid.Column="6"  hc:InfoElement.ShowClearButton="True" Name="cbEnvC" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+        <hc:ComboBox Grid.Row="2" Grid.Column="7"  hc:InfoElement.ShowClearButton="True" Name="cbEnvD" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
 
         <TextBlock Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="6" Text="罩壳出风口温度" FontSize="18" FontWeight="bold" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0, 5, 0, 0"/>
         <TextBlock Grid.Row="3" Grid.Column="6" Grid.ColumnSpan="3" Text="罩壳进风口温度" FontSize="18" FontWeight="bold" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0, 5, 0, 0"/>
@@ -155,16 +155,16 @@
         <TextBlock Grid.Row="4" Grid.Column="7"  Text="2" VerticalAlignment="Center" FontSize="16" HorizontalAlignment="Center"/>
         <TextBlock Grid.Row="4" Grid.Column="8"  Text="3" VerticalAlignment="Center" FontSize="16" HorizontalAlignment="Center"/>
 
-        <hc:ComboBox Grid.Row="5" Grid.Column="0"  Name="cbOutlet1" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-        <hc:ComboBox Grid.Row="5" Grid.Column="1"  Name="cbOutlet2" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-        <hc:ComboBox Grid.Row="5" Grid.Column="2"  Name="cbOutlet3" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-        <hc:ComboBox Grid.Row="5" Grid.Column="3"  Name="cbOutlet4" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-        <hc:ComboBox Grid.Row="5" Grid.Column="4"  Name="cbOutlet5" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-        <hc:ComboBox Grid.Row="5" Grid.Column="5"  Name="cbOutlet6" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-        <hc:ComboBox Grid.Row="5" Grid.Column="6"  Name="cbInlet1" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-        <hc:ComboBox Grid.Row="5" Grid.Column="7"  Name="cbInlet2" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-        <hc:ComboBox Grid.Row="5" Grid.Column="8"  Name="cbInlet3" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-        <hc:ComboBox Grid.Row="2" Grid.Column="8"  Name="cbTop" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+        <hc:ComboBox Grid.Row="5" Grid.Column="0" hc:InfoElement.ShowClearButton="True" Name="cbOutlet1" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+        <hc:ComboBox Grid.Row="5" Grid.Column="1" hc:InfoElement.ShowClearButton="True" Name="cbOutlet2" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+        <hc:ComboBox Grid.Row="5" Grid.Column="2" hc:InfoElement.ShowClearButton="True" Name="cbOutlet3" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+        <hc:ComboBox Grid.Row="5" Grid.Column="3" hc:InfoElement.ShowClearButton="True" Name="cbOutlet4" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+        <hc:ComboBox Grid.Row="5" Grid.Column="4" hc:InfoElement.ShowClearButton="True" Name="cbOutlet5" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+        <hc:ComboBox Grid.Row="5" Grid.Column="5" hc:InfoElement.ShowClearButton="True" Name="cbOutlet6" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+        <hc:ComboBox Grid.Row="5" Grid.Column="6" hc:InfoElement.ShowClearButton="True" Name="cbInlet1" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+        <hc:ComboBox Grid.Row="5" Grid.Column="7" hc:InfoElement.ShowClearButton="True" Name="cbInlet2" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+        <hc:ComboBox Grid.Row="5" Grid.Column="8" hc:InfoElement.ShowClearButton="True" Name="cbInlet3" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+        <hc:ComboBox Grid.Row="2" Grid.Column="8" hc:InfoElement.ShowClearButton="True" Name="cbTop" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
 
         <TextBlock Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="9" Text="额外温度记录" FontSize="18" FontWeight="bold" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0, 5, 0, 0"/>
         <TextBlock Grid.Row="7" Grid.Column="0"  Text="1" VerticalAlignment="Center" FontSize="16" HorizontalAlignment="Center"/>
