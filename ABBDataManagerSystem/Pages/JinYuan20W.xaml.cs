@@ -699,7 +699,7 @@ namespace ABBDataManagerSystem.Pages
             bool needRecordTempRise = false;
             if (SelectedTesting != TestType20W.CommonTest && lastPacket != null && packet.tempRaiseTime.Length > 0)
             {
-                needRecordTempRise = packet.tempRaiseTime != lastPacket.tempRaiseTime;
+                needRecordTempRise = packet.tempRaiseTime != lastPacket.tempRaiseTime && packet.tempRaiseTime != ":";
             }
             lastPacket = packet;
             if (needRecordTempRise)
