@@ -2916,7 +2916,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                     // 发送数据  
                     while (IsCollecting)
                     {
-                        if (IsDataUpdated)
+                        if (IsDataUpdated || IsShowHarmonic)
                         {
                             //ua ub uc uabc ia ib ic iabc pa pb pc p3 frequence
                             float?[] floatsToSend = new float?[] {
