@@ -2675,11 +2675,11 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             rowElement3[INDEX_P] = p3;
             if (SelectedWiringSystem == "3V3A")
             {
-                rowMean[INDEX_P] = (p1 + p2);
+                rowMean[INDEX_P] = Math.Abs((float)(p1 + p2));
             }
             else
             {
-                rowMean[INDEX_P] = (p1 + p2 + p3);
+                rowMean[INDEX_P] = Math.Abs((float)(p1 + p2 + p3));
             }
 
             rowElement1[INDEX_FU] = fu;
@@ -2701,6 +2701,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             CurrentData.pb = p2;
             CurrentData.pc = p3;
             CurrentData.p3 = (SelectedWiringSystem == "3V3A") ? (p1 + p2) : (p1 + p2 + p3);
+            CurrentData.p3 = Math.Abs((float)CurrentData.p3);
             CurrentData.fU = fu;
             IsDataUpdated = true;
             #endregion
