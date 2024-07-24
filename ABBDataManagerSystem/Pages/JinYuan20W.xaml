@@ -5,9 +5,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ABBDataManagerSystem.Pages" 
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
-             xmlns:hc="https://handyorg.github.io/handycontrol"
+             xmlns:hc="https://handyorg.github.io/handycontrol" 
+             xmlns:local1="clr-namespace:ABBDataManagerSystem.Pages.Converter"
              mc:Ignorable="d" Background="#FFDDDDDD" Loaded="UserControl_Loaded" Unloaded="UserControl_Unloaded" d:DesignHeight="895.5" d:DesignWidth="1661.356" MinWidth="1560" MinHeight="900">
     <UserControl.Resources>
+        <local1:NumberFormatter x:Key="NumberFormatter"/>
         <sys:Double x:Key="tableCellFontSize">18</sys:Double>
         <sys:Double x:Key="tableHeaderFontSize">22</sys:Double>
         <sys:Double x:Key="tbContentHeight">40</sys:Double>
@@ -216,9 +218,9 @@
                         <DataGridTextColumn Header="次数" Width="80"  Binding="{Binding SortIndex}"  IsReadOnly="True"/>
                         <DataGridTextColumn Header="采集时间" Width="120" Binding="{Binding CurrentTime}"  IsReadOnly="True"/>
                         <DataGridTextColumn Header="通道1电流(A)" Width="130" Binding="{Binding CurrentHV, StringFormat='F5'}"    IsReadOnly="True"/>
-                        <DataGridTextColumn Header="通道1电阻(Ω)" Width="134" Binding="{Binding ResistanceHV, StringFormat='F5'}" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="通道1电阻(Ω)" Width="134" Binding="{Binding ResistanceHV, Converter={StaticResource NumberFormatter}}" IsReadOnly="True"/>
                         <DataGridTextColumn Header="通道2电流(A)" Width="130" Binding="{Binding CurrentLV, StringFormat='F5'}"    IsReadOnly="True"/>
-                        <DataGridTextColumn Header="通道2电阻(Ω)" Width="134" Binding="{Binding ResistanceLV, StringFormat='F5'}" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="通道2电阻(Ω)" Width="134" Binding="{Binding ResistanceLV, Converter={StaticResource NumberFormatter}}" IsReadOnly="True"/>
                     </DataGrid.Columns>
                 </DataGrid>
                 <Grid Grid.Row="1" Width="580" Height="340" Name="panelTempRiseCoolTestResult" VerticalAlignment="Top" HorizontalAlignment="Left" Visibility="Collapsed">
@@ -446,7 +448,7 @@
                     <hc:TextBox Grid.Column="5" Grid.Row="16" Grid.RowSpan="2" Height="30" Width="80" BorderThickness="0" IsReadOnly="True" Name="tbLVMaxUnbalanceDiff12"/>
                     <hc:TextBox Grid.Column="5" Grid.Row="18" Grid.RowSpan="2" Height="30" Width="80" BorderThickness="0" IsReadOnly="True" Name="tbLVMaxUnbalanceDiff21"/>
                     <hc:TextBox Grid.Column="5" Grid.Row="20" Grid.RowSpan="2" Height="30" Width="80" BorderThickness="0" IsReadOnly="True" Name="tbLVMaxUnbalanceDiff22"/>
-                    
+
                 </Grid>
             </ScrollViewer>
 
