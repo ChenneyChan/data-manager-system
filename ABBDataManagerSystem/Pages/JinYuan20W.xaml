@@ -217,9 +217,9 @@
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="次数" Width="80"  Binding="{Binding SortIndex}"  IsReadOnly="True"/>
                         <DataGridTextColumn Header="采集时间" Width="120" Binding="{Binding CurrentTime}"  IsReadOnly="True"/>
-                        <DataGridTextColumn Header="通道1电流(A)" Width="130" Binding="{Binding CurrentHV, StringFormat='F5'}"    IsReadOnly="True"/>
+                        <DataGridTextColumn Header="通道1电流(A)" Width="130" Binding="{Binding CurrentHV, StringFormat='F2'}"    IsReadOnly="True"/>
                         <DataGridTextColumn Header="通道1电阻(Ω)" Width="134" Binding="{Binding ResistanceHV, Converter={StaticResource NumberFormatter}}" IsReadOnly="True"/>
-                        <DataGridTextColumn Header="通道2电流(A)" Width="130" Binding="{Binding CurrentLV, StringFormat='F5'}"    IsReadOnly="True"/>
+                        <DataGridTextColumn Header="通道2电流(A)" Width="130" Binding="{Binding CurrentLV, StringFormat='F2'}"    IsReadOnly="True"/>
                         <DataGridTextColumn Header="通道2电阻(Ω)" Width="134" Binding="{Binding ResistanceLV, Converter={StaticResource NumberFormatter}}" IsReadOnly="True"/>
                     </DataGrid.Columns>
                 </DataGrid>
