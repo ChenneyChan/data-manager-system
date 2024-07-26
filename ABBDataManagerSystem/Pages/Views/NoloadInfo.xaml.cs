@@ -103,27 +103,27 @@ namespace ABBDataManagerSystem.Pages.Views
                 {
                     continue;
                 }
-                _fields[$"ua_{i + 1}"].Text = Utils.FloatFormat(item.ua ?? 0);
-                _fields[$"ub_{i + 1}"].Text = Utils.FloatFormat(item.ub ?? 0);
-                _fields[$"uc_{i + 1}"].Text = Utils.FloatFormat(item.uc ?? 0);
-                _fields[$"u3_{i + 1}"].Text = Utils.FloatFormat(item.u3 ?? 0);
+                _fields[$"ua_{i + 1}"].Text = Utils.FloatFormatZeroIsNull(item.ua);
+                _fields[$"ub_{i + 1}"].Text = Utils.FloatFormatZeroIsNull(item.ub);
+                _fields[$"uc_{i + 1}"].Text = Utils.FloatFormatZeroIsNull(item.uc);
+                _fields[$"u3_{i + 1}"].Text = Utils.FloatFormatZeroIsNull(item.u3);
 
-                _fields[$"pua_{i + 1}"].Text = Utils.FloatFormat(item.pua ?? 0);
-                _fields[$"pub_{i + 1}"].Text = Utils.FloatFormat(item.pub ?? 0);
-                _fields[$"puc_{i + 1}"].Text = Utils.FloatFormat(item.puc ?? 0);
-                _fields[$"pu3_{i + 1}"].Text = Utils.FloatFormat(item.pu3 ?? 0);
+                _fields[$"pua_{i + 1}"].Text = Utils.FloatFormatZeroIsNull(item.pua);
+                _fields[$"pub_{i + 1}"].Text = Utils.FloatFormatZeroIsNull(item.pub);
+                _fields[$"puc_{i + 1}"].Text = Utils.FloatFormatZeroIsNull(item.puc);
+                _fields[$"pu3_{i + 1}"].Text = Utils.FloatFormatZeroIsNull(item.pu3);
 
-                _fields[$"ia_{i + 1}"].Text = Utils.FloatFormat(item.ia ?? 0);
-                _fields[$"ib_{i + 1}"].Text = Utils.FloatFormat(item.ib ?? 0);
-                _fields[$"ic_{i + 1}"].Text = Utils.FloatFormat(item.ic ?? 0);
-                _fields[$"i3_{i + 1}"].Text = Utils.FloatFormat(item.i3 ?? 0);
+                _fields[$"ia_{i + 1}"].Text = Utils.FloatFormatZeroIsNull(item.ia);
+                _fields[$"ib_{i + 1}"].Text = Utils.FloatFormatZeroIsNull(item.ib);
+                _fields[$"ic_{i + 1}"].Text = Utils.FloatFormatZeroIsNull(item.ic);
+                _fields[$"i3_{i + 1}"].Text = Utils.FloatFormatZeroIsNull(item.i3);
 
-                _fields[$"pa_{i + 1}"].Text = Utils.FloatFormat(item.pa ?? 0);
-                _fields[$"pb_{i + 1}"].Text = Utils.FloatFormat(item.pb ?? 0);
-                _fields[$"pc_{i + 1}"].Text = Utils.FloatFormat(item.pc ?? 0);
-                _fields[$"p3_{i + 1}"].Text = Utils.FloatFormat(item.p3 ?? 0);
+                _fields[$"pa_{i + 1}"].Text = Utils.FloatFormatZeroIsNull(item.pa);
+                _fields[$"pb_{i + 1}"].Text = Utils.FloatFormatZeroIsNull(item.pb);
+                _fields[$"pc_{i + 1}"].Text = Utils.FloatFormatZeroIsNull(item.pc);
+                _fields[$"p3_{i + 1}"].Text = Utils.FloatFormatZeroIsNull(item.p3);
 
-                _fields[$"fU_{i + 1}"].Text = Utils.FloatFormat(item.fU ?? 0);
+                _fields[$"fU_{i + 1}"].Text = Utils.FloatFormatZeroIsNull(item.fU);
             }
         }
 

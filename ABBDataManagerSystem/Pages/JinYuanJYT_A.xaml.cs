@@ -503,8 +503,8 @@ namespace ABBDataManagerSystem.Pages
                     }
                     if (workflow.WorkflowType == "三绕组")
                     {
-                        RatioValueFields["21"].TappingVoltage = tappings[tappings.Count - 1];
-                        RatioValueFields["21"].CalculatedRatio = tappings[tappings.Count - 1] / workflow.RatedVoltageYv;
+                        RatioValueFields["21"].TappingVoltage = tappings[0];
+                        RatioValueFields["21"].CalculatedRatio = tappings[0] / workflow.RatedVoltageYv;
                         tbRatedLowVoltage2.Visibility = Visibility.Visible;
                     }
                     else

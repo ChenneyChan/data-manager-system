@@ -421,10 +421,10 @@
                     <Views:TappingResistanceFields Grid.Row="13" Grid.Column="2"  Grid.ColumnSpan="3" x:Name="trTap10" TappingIndex="10" ActiveEventCallback="Trf_ActiveEvent"/>
                     <TextBlock Grid.Row="14" Grid.Column="0" Grid.RowSpan="4" Text="低压一" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap"/>
                     <TextBlock Grid.Row="18" Grid.Column="0" Grid.RowSpan="4" Text="低压二" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap"/>
-                    <TextBlock Grid.Row="14" Grid.Column="1" Grid.RowSpan="2" Text="线电压" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap"/>
-                    <TextBlock Grid.Row="16" Grid.Column="1" Grid.RowSpan="2" Text="相电压" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap"/>
-                    <TextBlock Grid.Row="18" Grid.Column="1" Grid.RowSpan="2" Text="线电压" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap"/>
-                    <TextBlock Grid.Row="20" Grid.Column="1" Grid.RowSpan="2" Text="相电压" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap"/>
+                    <TextBlock Grid.Row="14" Grid.Column="1" Grid.RowSpan="2" Text="线电阻" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap"/>
+                    <TextBlock Grid.Row="16" Grid.Column="1" Grid.RowSpan="2" Text="相电阻" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap"/>
+                    <TextBlock Grid.Row="18" Grid.Column="1" Grid.RowSpan="2" Text="线电阻" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap"/>
+                    <TextBlock Grid.Row="20" Grid.Column="1" Grid.RowSpan="2" Text="相电阻" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap"/>
                     <TextBlock Grid.Row="14" Grid.Column="2" Text="a~b" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     <TextBlock Grid.Row="14" Grid.Column="3" Text="b~c" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     <TextBlock Grid.Row="14" Grid.Column="4" Text="c~a" VerticalAlignment="Center" HorizontalAlignment="Center"/>

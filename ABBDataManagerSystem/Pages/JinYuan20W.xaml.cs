@@ -1219,7 +1219,7 @@ namespace ABBDataManagerSystem.Pages
             {
                 ProductSequence = Configs.Configs.WorkflowID,
                 Winding = "高压",
-                Tapping = "额定分接",
+                Tapping = "额定分接相电阻",
                 AB = tpr1.ValueAB,
                 BC = tpr1.ValueBC,
                 CA = tpr1.ValueCA,
@@ -1231,7 +1231,7 @@ namespace ABBDataManagerSystem.Pages
             {
                 ProductSequence = Configs.Configs.WorkflowID,
                 Winding = "低压一",
-                Tapping = "线电压",
+                Tapping = "线电阻",
                 AB = tpr1.ValueAB,
                 BC = tpr1.ValueBC,
                 CA = tpr1.ValueCA,
@@ -1243,7 +1243,7 @@ namespace ABBDataManagerSystem.Pages
             {
                 ProductSequence = Configs.Configs.WorkflowID,
                 Winding = "低压一",
-                Tapping = "相电压",
+                Tapping = "相电阻",
                 AB = tpr1.ValueAB,
                 BC = tpr1.ValueBC,
                 CA = tpr1.ValueCA,
@@ -1255,7 +1255,7 @@ namespace ABBDataManagerSystem.Pages
             {
                 ProductSequence = Configs.Configs.WorkflowID,
                 Winding = "低压二",
-                Tapping = "线电压",
+                Tapping = "线电阻",
                 AB = tpr1.ValueAB,
                 BC = tpr1.ValueBC,
                 CA = tpr1.ValueCA,
@@ -1267,7 +1267,7 @@ namespace ABBDataManagerSystem.Pages
             {
                 ProductSequence = Configs.Configs.WorkflowID,
                 Winding = "低压二",
-                Tapping = "相电压",
+                Tapping = "相电阻",
                 AB = tpr1.ValueAB,
                 BC = tpr1.ValueBC,
                 CA = tpr1.ValueCA,
