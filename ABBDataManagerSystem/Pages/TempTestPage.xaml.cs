@@ -197,9 +197,10 @@ namespace ABBDataManagerSystem.Pages
             int Index = Utils.ParseInt(((ComboBoxItem)cbTestCount.SelectedItem).Content.ToString());
             string workflowId = Configs.Configs.WorkflowID;
             string CoolingMode = ((ComboBoxItem)cbCoolingMode.SelectedItem).Content.ToString();
+            string TestingPhase = ((ComboBoxItem)cbTestPhase.SelectedItem).Content.ToString();
             Task.Run(() =>
             {
-                var datas = TempRiseCommonInfo.ReadFromDB(workflowId, Index, CoolingMode);
+                var datas = TempRiseCommonInfo.ReadFromDB(workflowId, TestingPhase, Index, CoolingMode);
                 if (datas.Count > 0)
                 {
                     var data = datas[0];
@@ -1468,12 +1469,14 @@ namespace ABBDataManagerSystem.Pages
             int Index = Utils.ParseInt(cbTestCount.Text);
             string workflowId = Configs.Configs.WorkflowID;
             string CoolingMode = cbCoolingMode.Text;
+            string TestingPhase = cbTestPhase.Text;
 
             var data = new TempRiseCommonInfo()
             {
                 WorkflowID = workflowId,
                 CoolingMode = CoolingMode,
-                TestIndex = Index
+                TestIndex = Index,
+                TestingPhase = TestingPhase,
             };
             float? voltage = Utils.ParseFloatNull(tbTestingVoltage.Text);
             float? current = Utils.ParseFloatNull(tbTestingCurrent.Text);
@@ -1484,7 +1487,7 @@ namespace ABBDataManagerSystem.Pages
             data.TempRiseTestingCurrent = current;
 
             bool ret;
-            var datas = TempRiseCommonInfo.ReadFromDB(workflowId, Index, CoolingMode);
+            var datas = TempRiseCommonInfo.ReadFromDB(workflowId, TestingPhase, Index, CoolingMode);
             if (datas.Count > 0)
             {
                 ret = data.UpdateData();

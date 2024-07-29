@@ -15,6 +15,7 @@ namespace ABBDataManagerSystem.Bean.Base
         public string WorkflowID = string.Empty;
         public int TestIndex = 0;
         public string CoolingMode = string.Empty;
+        public string TestingPhase = string.Empty;
         public float? TempRiseTestingVoltage = null;
         public float? TempRiseTestingCurrent = null;
         public float? TempRiseHVCorrectionFactor = null;
@@ -37,7 +38,7 @@ namespace ABBDataManagerSystem.Bean.Base
         {
             string updateSql = $"UPDATE {TABLE_NAME} SET TempRiseTestingVoltage = @TempRiseTestingVoltage, TempRiseTestingCurrent = @TempRiseTestingCurrent, " +
                 "TempRiseHVCorrectionFactor = @TempRiseHVCorrectionFactor, TempRiseLVCorrectionFactor = @TempRiseLVCorrectionFactor, TempRiseRelativeTo = @TempRiseRelativeTo " +
-                "WHERE workflow_id = @WorkflowID AND TestIndex = @TestIndex AND CoolingMode = @CoolingMode";
+                "WHERE workflow_id = @WorkflowID AND TestIndex = @TestIndex AND CoolingMode = @CoolingMode AND TestingPhase = @TestingPhase";
 
             // 创建 SQLite 连接对象
             using (SQLConnection connection = new SQLConnection(DBConnector.GetConnectionString()))
@@ -48,6 +49,7 @@ namespace ABBDataManagerSystem.Bean.Base
                     command.Parameters.AddWithValue("@WorkflowID", WorkflowID);
                     command.Parameters.AddWithValue("@TestIndex", TestIndex);
                     command.Parameters.AddWithValue("@CoolingMode", CoolingMode);
+                    command.Parameters.AddWithValue("@TestingPhase", TestingPhase);
                     command.Parameters.AddWithValue("@TempRiseTestingVoltage", TempRiseTestingVoltage);
                     command.Parameters.AddWithValue("@TempRiseTestingCurrent", TempRiseTestingCurrent);
                     command.Parameters.AddWithValue("@TempRiseHVCorrectionFactor", TempRiseHVCorrectionFactor);
@@ -61,8 +63,8 @@ namespace ABBDataManagerSystem.Bean.Base
 
         public bool InsertDB()
         {
-            string updateSql = $"INSERT INTO {TABLE_NAME} (workflow_id, TestIndex, CoolingMode, TempRiseTestingVoltage, TempRiseTestingCurrent, TempRiseHVCorrectionFactor, TempRiseLVCorrectionFactor, TempRiseRelativeTo) VALUES " +
-                " (@WorkflowID, @TestIndex, @CoolingMode, @TempRiseTestingVoltage, @TempRiseTestingCurrent, @TempRiseHVCorrectionFactor, @TempRiseLVCorrectionFactor, @TempRiseRelativeTo)";
+            string updateSql = $"INSERT INTO {TABLE_NAME} (workflow_id, TestingPhase, TestIndex, CoolingMode, TempRiseTestingVoltage, TempRiseTestingCurrent, TempRiseHVCorrectionFactor, TempRiseLVCorrectionFactor, TempRiseRelativeTo) VALUES " +
+                " (@WorkflowID, @TestingPhase, @TestIndex, @CoolingMode, @TempRiseTestingVoltage, @TempRiseTestingCurrent, @TempRiseHVCorrectionFactor, @TempRiseLVCorrectionFactor, @TempRiseRelativeTo)";
 
             // 创建 SQLite 连接对象
             using (SQLConnection connection = new SQLConnection(DBConnector.GetConnectionString()))
@@ -72,6 +74,7 @@ namespace ABBDataManagerSystem.Bean.Base
                 {
                     command.Parameters.AddWithValue("@WorkflowID", WorkflowID);
                     command.Parameters.AddWithValue("@TestIndex", TestIndex);
+                    command.Parameters.AddWithValue("@TestingPhase", TestingPhase);
                     command.Parameters.AddWithValue("@CoolingMode", CoolingMode);
                     command.Parameters.AddWithValue("@TempRiseTestingVoltage", TempRiseTestingVoltage);
                     command.Parameters.AddWithValue("@TempRiseTestingCurrent", TempRiseTestingCurrent);
@@ -84,11 +87,11 @@ namespace ABBDataManagerSystem.Bean.Base
             }
         }
 
-        public static List<TempRiseCommonInfo> ReadFromDB(string ID, int sortIndex, string coolingMode)
+        public static List<TempRiseCommonInfo> ReadFromDB(string ID, string testingPhase, int sortIndex, string coolingMode)
         {
             // 查询数据
             string queryDataSql = $"SELECT * FROM {TABLE_NAME}";
-            queryDataSql += $" WHERE workflow_id = '{ID}' AND TestIndex = {sortIndex} AND CoolingMode = '{coolingMode}'";
+            queryDataSql += $" WHERE workflow_id = '{ID}' AND TestingPhase = '{testingPhase}' AND TestIndex = {sortIndex} AND CoolingMode = '{coolingMode}'";
             List<TempRiseCommonInfo>? records = DBConnector.QueryFromDB<TempRiseCommonInfo>(queryDataSql, (reader) =>
             {
                 if (reader == null)
@@ -99,6 +102,7 @@ namespace ABBDataManagerSystem.Bean.Base
                 {
                     WorkflowID = reader.GetString("workflow_id"),
                     CoolingMode = reader.GetString("CoolingMode"),
+                    TestingPhase = reader.GetString("TestingPhase"),
                     TestIndex = reader.GetInt32("TestIndex"),
                     TempRiseRelativeTo = !reader.IsDBNull("TempRiseRelativeTo") ? reader.GetString("TempRiseRelativeTo") : "",
                     TempRiseTestingVoltage = !reader.IsDBNull("TempRiseTestingVoltage") ? reader.GetFloat("TempRiseTestingVoltage") : null,
