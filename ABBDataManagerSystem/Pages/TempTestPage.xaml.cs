@@ -197,7 +197,7 @@ namespace ABBDataManagerSystem.Pages
             int Index = Utils.ParseInt(((ComboBoxItem)cbTestCount.SelectedItem).Content.ToString());
             string workflowId = Configs.Configs.WorkflowID;
             string CoolingMode = ((ComboBoxItem)cbCoolingMode.SelectedItem).Content.ToString();
-            string TestingPhase = ((ComboBoxItem)cbTestPhase.SelectedItem).Content.ToString();
+            string TestingPhase = cbTestPhase.SelectedItem.ToString();
             Task.Run(() =>
             {
                 var datas = TempRiseCommonInfo.ReadFromDB(workflowId, TestingPhase, Index, CoolingMode);
