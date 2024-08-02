@@ -320,7 +320,7 @@ namespace ABBDataManagerSystem.Connector
         {
             actions.Enqueue(() =>
             {
-                Collector.SendCommand(new byte[] { 0x6B, 0x20, 0x20, 0x20, 0x20 });
+                Collector.SendCommand(new byte[] { 0x55 });
             });
         }
 
@@ -369,7 +369,7 @@ namespace ABBDataManagerSystem.Connector
             }
             actions.Enqueue(() =>
             {
-                Collector.SendCommand(new byte[] { 0x54, 0x32 });
+                Collector.SendCommand(new byte[] { 0x54, 0x33 });
             });
         }
 
@@ -378,16 +378,24 @@ namespace ABBDataManagerSystem.Connector
         {
             actions.Enqueue(() =>
             {
-                Collector.SendCommand(new byte[] { 0x54, 0x31 });
+                Collector.SendCommand(new byte[] { 0x54, 0x32 });
             });
         }
 
         //测试命令
+        public void SendEnterCommonTest()
+        {
+            actions.Enqueue(() =>
+            {
+                Collector.SendCommand(new byte[] { 0x54, 0x30 }); // 测试的相
+            });
+        }
+
         public void SendStartCommonTest()
         {
             actions.Enqueue(() =>
             {
-                Collector.SendCommand(new byte[] { 0x54, 0x30, 0x20 }); // 测试的相
+                Collector.SendCommand(new byte[] { 0x54, 0x31, 0x20, 0x20 }); // 测试的相
             });
         }
         #endregion
@@ -406,7 +414,15 @@ namespace ABBDataManagerSystem.Connector
             }
             actions.Enqueue(() =>
             {
-                Collector.SendCommand(new byte[] { 0x53, 0x2F });
+                Collector.SendCommand(new byte[] { 0x53, 0x31, 0x20, 0x20 });
+            });
+        }
+
+        public void SendEnterTempRiseTest()
+        {
+            actions.Enqueue(() =>
+            {
+                Collector.SendCommand(new byte[] { 0x53, 0x30 }); // 测试的相
             });
         }
 
@@ -419,7 +435,7 @@ namespace ABBDataManagerSystem.Connector
             }
             actions.Enqueue(() =>
             {
-                Collector.SendCommand(new byte[] { 0x53, 0x30, 0x20, 0x20 }); // 联结方式 测试的相
+                Collector.SendCommand(new byte[] { 0x53, 0x32 }); // 联结方式 测试的相
             });
         }
 
@@ -432,7 +448,7 @@ namespace ABBDataManagerSystem.Connector
             }
             actions.Enqueue(() =>
             {
-                Collector.SendCommand(new byte[] { 0x53, 0x31 });
+                Collector.SendCommand(new byte[] { 0x53, 0x33 });
             });
         }
 
@@ -445,7 +461,7 @@ namespace ABBDataManagerSystem.Connector
             }
             actions.Enqueue(() =>
             {
-                Collector.SendCommand(new byte[] { 0x53, 0x32 });
+                Collector.SendCommand(new byte[] { 0x53, 0x34 });
             });
         }
         #endregion

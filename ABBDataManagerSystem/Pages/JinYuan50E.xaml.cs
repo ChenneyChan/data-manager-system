@@ -391,6 +391,7 @@ namespace ABBDataManagerSystem.Pages
             TimerSecond.Start();
 
             Collector?.SendParameterSetCommand();
+            Collector?.SendEnterCommonTest();
             Collector?.SendStartCommonTest();
             IsCommonTesting = true;
 
@@ -400,11 +401,13 @@ namespace ABBDataManagerSystem.Pages
         #endregion
 
         bool needExit = false;
+        bool isCommonExit = false;
         #region 常规测试结束，填写数据
         private void btQuitTest_Click(object sender, RoutedEventArgs e)
         {
             Collector?.SendStopCommandAtNormal();
             needExit = true;
+            isCommonExit = true;
             panelConfig.IsEnabled = true;
             panelTestChoice.IsEnabled = true;
             TimerSecond.Stop();
@@ -578,7 +581,8 @@ namespace ABBDataManagerSystem.Pages
         private void btTempRiseTest_Click(object sender, RoutedEventArgs e)
         {
             btTempRiseTest.IsEnabled = false;
-            Collector?.SendTempRiseStartTest();
+            Collector?.SendParameterSetCommand();
+            Collector?.SendEnterTempRiseTest();
             IsTempRiseTesting = true;
 
             cbTestPhase.IsEnabled = false;
@@ -594,7 +598,9 @@ namespace ABBDataManagerSystem.Pages
         #region 退出温升测试
         private void btQuitTestTempRise_Click(object sender, RoutedEventArgs e)
         {
-            Collector?.SendTempRiseExitCommand();
+            needExit = true;
+            isCommonExit = false;
+            Collector?.SendTempRiseStopCommand();
             panelConfig.IsEnabled = true;
             panelTestChoice.IsEnabled = true;
             TimerSecond.Stop();
@@ -676,7 +682,27 @@ namespace ABBDataManagerSystem.Pages
             if (needExit && lastPacket.Status.IndexOf("测试停止") >= 0)
             {
                 needExit = false;
-                Collector?.SendExitCommandAtNormal();
+                if (isCommonExit)
+                {
+                    Collector?.SendExitCommandAtNormal();
+                } 
+                else
+                {
+                    Collector?.SendTempRiseExitCommand();
+                }
+            }
+            if (needSelectTestType && lastPacket.Status.IndexOf("复位") >= 0 && Collector != null)
+            {
+                needSelectTestType = false;
+                Collector.Mode = SelectedTesting ?? TestType50E.Normal;
+                if (Collector.Mode == TestType50E.Normal)
+                {
+                    Collector.SendCommonTest();
+                }
+                else
+                {
+                    Collector.SendTempRiseTest();
+                }
             }
             DumpPacekt();
         }
@@ -690,6 +716,7 @@ namespace ABBDataManagerSystem.Pages
         #endregion
 
         #region 试验和分接选择
+        bool needSelectTestType = false;
         private void TestTypeSelectedTappingChange(object sender, RoutedEventArgs e)
         {
             ToggleButton? b = sender as ToggleButton;
@@ -730,23 +757,14 @@ namespace ABBDataManagerSystem.Pages
                 Collector.Mode = SelectedTesting ?? TestType50E.Normal;
                 if (Collector.Mode == TestType50E.Normal)
                 {
-                    Collector.SendTempRiseExitCommand();
-                    Task.Run(() =>
-                    {
-                        Thread.Sleep(200);
-                        Collector.SendCommonTest();
-                    });
+                    Collector.SendResetCommand();
                 }
                 else
                 {
-                    Collector.SendExitCommandAtNormal();
-                    Task.Run(() =>
-                    {
-                        Thread.Sleep(200);
-                        Collector.SendTempRiseTest();
-                    });
+                    Collector.SendResetCommand();
                 }
-                Collector.SendParameterSetCommand();
+                needSelectTestType = true;
+                //Collector.SendParameterSetCommand();
             }
             DumpSelectedTapping();
 
