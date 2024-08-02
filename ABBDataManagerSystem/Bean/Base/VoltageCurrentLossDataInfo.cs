@@ -65,6 +65,7 @@ namespace ABBDataManagerSystem.Bean.Base
 
         public float? fU = 0;
         public float? Temperature = 0;
+        public float? InductionTime = 0;
 
 
         public static Dictionary<string, string> FieldComments = new Dictionary<string, string>
@@ -90,6 +91,7 @@ namespace ABBDataManagerSystem.Bean.Base
             {"p3", "功率(总和)"},
             {"fU", "频率"},
             {"Temperature", "温度"},
+            {"InductionTime", "感应时间"},
         };
 
         public static string KeyField = "WorkflowId";
@@ -106,11 +108,11 @@ namespace ABBDataManagerSystem.Bean.Base
                     $"uab, ubc, uca, uabc, " +
                     $"puab, pubc, puca, puabc, " +
                     $"ia, ib, ic, iabc, " +
-                    $"pa, pb, pc, p, temperature, fu) VALUES (@WorkflowId, @LoadType, @TappingPosition, " +
+                    $"pa, pb, pc, p, temperature, fu, induction_time) VALUES (@WorkflowId, @LoadType, @TappingPosition, " +
                     $"@ua, @ub, @uc, @u3, " +
                     $"@pua, @pub, @puc, @pu3, " +
                     $"@ia, @ib, @ic, @i3, " +
-                    $"@pa, @pb, @pc, @p3, @Temperature, @fU)", connection))
+                    $"@pa, @pb, @pc, @p3, @Temperature, @fU, @InductionTime)", connection))
                 {
                     command.Parameters.AddWithValue("@WorkflowId", WorkflowId);
                     command.Parameters.AddWithValue("@LoadType", LoadType);
@@ -133,6 +135,7 @@ namespace ABBDataManagerSystem.Bean.Base
                     command.Parameters.AddWithValue("@p3", p3);
                     command.Parameters.AddWithValue("@fU", fU);
                     command.Parameters.AddWithValue("@Temperature", Temperature);
+                    command.Parameters.AddWithValue("@InductionTime", InductionTime);
                     //command.Parameters.AddWithValue("@DateTime", DateTime.Now);
                     int count = command.ExecuteNonQuery();
                     return count > 0;
@@ -145,7 +148,7 @@ namespace ABBDataManagerSystem.Bean.Base
             string updateSql = $"UPDATE {TABLE_NAME} SET ia = @ia, ib = @ib, ic = @ic, iabc = @i3, " +
                 $"uab = @ua, ubc = @ub, uca = @uc, uabc = @u3, " +
                 $"puab = @pua, pubc = @pub, puca = @puc, puabc = @pu3, " +
-                $"pa = @pa, pb = @pb, pc = @pc, p = @p3, temperature = @Temperature, fu = @fU WHERE workflow_id = @WorkflowId AND load_type = @LoadType " +
+                $"pa = @pa, pb = @pb, pc = @pc, p = @p3, temperature = @Temperature, fu = @fU, induction_time = @InductionTime WHERE workflow_id = @WorkflowId AND load_type = @LoadType " +
                 "AND tapping_position = @TappingPosition";
 
             // 创建 SQLite 连接对象
@@ -175,6 +178,7 @@ namespace ABBDataManagerSystem.Bean.Base
                     command.Parameters.AddWithValue("@pu3", pu3);
                     command.Parameters.AddWithValue("@fU", fU);
                     command.Parameters.AddWithValue("@Temperature", Temperature);
+                    command.Parameters.AddWithValue("@InductionTime", InductionTime);
                     //command.Parameters.AddWithValue("@DateTime", DateTime.Now);
 
                     return command.ExecuteNonQuery() > 0;
@@ -226,6 +230,7 @@ namespace ABBDataManagerSystem.Bean.Base
                     pc = !reader.IsDBNull("pc") ? (float)reader.GetDouble("pc") : 0,
                     p3 = !reader.IsDBNull("p") ? (float)reader.GetDouble("p") : 0,
                     fU = !reader.IsDBNull("fU") ? (float)reader.GetFloat("fU") : 0,
+                    InductionTime = !reader.IsDBNull("induction_time") ? (float)reader.GetFloat("induction_time") : null,
                     Temperature = !reader.IsDBNull("temperature") ? (float)reader.GetFloat("temperature") : 0,
                     //DateTime = !reader.IsDBNull("DateTime") ? reader.GetDateTime("DateTime") : DateTime.Now,
                 };
@@ -336,6 +341,7 @@ namespace ABBDataManagerSystem.Bean.Base
             dst.fU = src.fU;
             dst.Temperature = src.Temperature;
             dst.DateTime = src.DateTime;
+            dst.InductionTime = src.InductionTime;
         }
 
         public static CheckIsKeyField GetCheckIsKeyFieldDelegate()
