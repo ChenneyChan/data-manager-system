@@ -178,7 +178,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             tbCT.Value = vt ?? 0;
             voltageRatioSelectedIndex = cbVoltageRatio.SelectedIndex;
             currentRatioSelectedIndex = cbCurrentRatio.SelectedIndex;
-            if (IsWorkstationOne)
+            if (true)
             {
                 StartListeningRatio();
             }
@@ -3250,6 +3250,24 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                                 cbCurrentRatio.SelectedIndex = ct;
                                 RatioSetCommand();
                             }
+                        });
+                    }
+                    int IsEnable = 0;
+                    if (IsWorkstationOne && receivedData.Length >= 3)
+                    {
+                        IsEnable = (int)receivedData[2];
+                    } 
+                    else if (!IsWorkstationOne && receivedData.Length >= 1)
+                    {
+                        IsEnable = (int)receivedData[0];
+                    }
+                    bool enable = IsEnable == 0;
+                    if (Configs.Configs.IsEnableTesting != enable)
+                    {
+                        Configs.Configs.IsEnableTesting = enable;
+                        Dispatcher.Invoke(() =>
+                        {
+                            tbEnableStatus.Text = Configs.Configs.IsEnableTesting ? "允许" : "禁止";
                         });
                     }
                     Thread.Sleep(10);

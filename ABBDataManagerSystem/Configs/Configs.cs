@@ -16,6 +16,7 @@ namespace ABBDataManagerSystem.Configs
         public static string WorkflowID = "";
         public static string ProductUserName = "";
         public static string ProductFigureNo = "";
+        public static bool IsEnableTesting = false;
 
         #region DB设置
         public static string Host { get; set; } = string.Empty;
