@@ -145,6 +145,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             this.DataContext = new { DataTableSource };
 
             EventManager.Instance.Subscribe("WorkflowSelected", WorkflowEventHandler);
+            EventManager.Instance.Subscribe("RatioAndStatusInfo", RatioStatusEventHandler);
             HandleWorkflowChange();
             if (IsWorkstationOne)
             {
@@ -178,10 +179,6 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             tbCT.Value = vt ?? 0;
             voltageRatioSelectedIndex = cbVoltageRatio.SelectedIndex;
             currentRatioSelectedIndex = cbCurrentRatio.SelectedIndex;
-            if (true)
-            {
-                StartListeningRatio();
-            }
             cbVoltageRatio.SelectionChanged += Ratio_SelectionChanged;
             cbCurrentRatio.SelectionChanged += Ratio_SelectionChanged;
         }
@@ -1192,7 +1189,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             Configs.Configs.cbVT = cbVoltageRatio.Text;
             Configs.Configs.cbCT = cbCurrentRatio.Text;
             EventManager.Instance.Unsubscribe("WorkflowSelected", WorkflowEventHandler);
-            StopListeningRatio();
+            EventManager.Instance.Unsubscribe("RatioAndStatusInfo", RatioStatusEventHandler);
         }
         #endregion
 
@@ -3203,84 +3200,37 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         #endregion
 
         #region 读取电流电压比值
-        private Thread listenerThread;
-        private UdpClient udpClient;
-        private bool isListening;
-
-
-        private void StartListeningRatio()
+        private void RatioStatusEventHandler(object sender, TestEventArgs e)
         {
-            isListening = true;
-            listenerThread = new Thread(ListenForUdpPackets);
-            listenerThread.IsBackground = true; // Make sure the thread doesn't block the application from exiting
-            listenerThread.Start();
-        }
-
-        private void StopListeningRatio()
-        {
-            isListening = false;
-            udpClient?.Close();
-            listenerThread?.Join(); // Wait for the listener thread to finish
-        }
-
-        private void ListenForUdpPackets()
-        {
-            udpClient = new UdpClient(8855);
-            IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, 8855);
-
-            while (isListening)
+            var values = e.obj as object?[];
+            if (values == null || values.Length != 3)
             {
-                try
-                {
-                    byte[] receivedData = udpClient.Receive(ref endPoint);
-                    if (receivedData.Length >= 2 && IsAutoRatio)
-                    {
-                        int ct = (int)receivedData[0];
-                        int vt = (int)receivedData[1];
-                        Dispatcher.Invoke(() =>
-                        {
-                            if (!IsCollecting)
-                            {
-                                if (vt == cbVoltageRatio.SelectedIndex && ct == cbCurrentRatio.SelectedIndex)
-                                {
-                                    return;
-                                }
-                                Log.Info($"Update CT_VT: {ct}, {vt}");
-                                cbVoltageRatio.SelectedIndex = vt;
-                                cbCurrentRatio.SelectedIndex = ct;
-                                RatioSetCommand();
-                            }
-                        });
-                    }
-                    int IsEnable = 0;
-                    if (IsWorkstationOne && receivedData.Length >= 3)
-                    {
-                        IsEnable = (int)receivedData[2];
-                    } 
-                    else if (!IsWorkstationOne && receivedData.Length >= 1)
-                    {
-                        IsEnable = (int)receivedData[0];
-                    }
-                    bool enable = IsEnable == 0;
-                    if (Configs.Configs.IsEnableTesting != enable)
-                    {
-                        Configs.Configs.IsEnableTesting = enable;
-                        Dispatcher.Invoke(() =>
-                        {
-                            tbEnableStatus.Text = Configs.Configs.IsEnableTesting ? "允许" : "禁止";
-                        });
-                    }
-                    Thread.Sleep(10);
-                }
-                catch (ObjectDisposedException)
-                {
-                    // This exception is expected when the UdpClient is closed
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error receiving UDP packet: {ex.Message}");
-                }
+                return;
             }
+            if (IsAutoRatio)
+            {
+                int ct = (int?)values[0] ?? 0;
+                int vt = (int?)values[1] ?? 0;
+                Dispatcher.Invoke(() =>
+                {
+                    if (!IsCollecting)
+                    {
+                        if (vt == cbVoltageRatio.SelectedIndex && ct == cbCurrentRatio.SelectedIndex)
+                        {
+                            return;
+                        }
+                        Log.Info($"Update CT_VT: {ct}, {vt}");
+                        cbVoltageRatio.SelectedIndex = vt;
+                        cbCurrentRatio.SelectedIndex = ct;
+                        RatioSetCommand();
+                    }
+                });
+            }
+
+            Dispatcher.Invoke(() =>
+            {
+                tbEnableStatus.Text = Configs.Configs.IsEnableTesting ? "允许" : "禁止";
+            });
         }
         #endregion
 

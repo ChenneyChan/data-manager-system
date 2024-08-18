@@ -42,6 +42,7 @@ namespace ABBDataManagerSystem
             dockBottom.Close();
             Task.Run(() => { UpdateWorkflow(); });
             StartBroadCastWorkflowInfo();
+            StartListeningRatio();
             StartTabItem<WorkflowDetail>("工作令信息");
         }
 
@@ -153,6 +154,7 @@ namespace ABBDataManagerSystem
             }
             Configs.Configs.SaveToFile();
             EventManager.Instance.Unsubscribe("WorkflowSelected", EventHandler);
+            StopListeningRatio();
         }
 
         private void Window_Closed(object sender, EventArgs e)
@@ -465,7 +467,7 @@ namespace ABBDataManagerSystem
             Dispatcher.Invoke(() =>
             {
                 tbCurrentWorkflow.Text = "当前工作令：" + Configs.Configs.WorkflowID;
-           });
+            });
         }
 
         public static void UpdateWorkflow()
@@ -561,5 +563,72 @@ namespace ABBDataManagerSystem
         {
             new Window50ETestDemo().Show();
         }
+
+        #region 读取电流电压比值
+        private Thread listenerThread;
+        private UdpClient udpClient;
+        private bool isListening;
+
+        private void StartListeningRatio()
+        {
+            isListening = true;
+            listenerThread = new Thread(ListenForUdpPackets);
+            listenerThread.IsBackground = true; // Make sure the thread doesn't block the application from exiting
+            listenerThread.Start();
+        }
+
+        private void StopListeningRatio()
+        {
+            isListening = false;
+            udpClient?.Close();
+            listenerThread?.Join(); // Wait for the listener thread to finish
+        }
+
+        private void ListenForUdpPackets()
+        {
+            udpClient = new UdpClient(8855);
+            IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, 8855);
+
+            while (isListening)
+            {
+                try
+                {
+                    bool IsWorkstationOne = Configs.Configs.WorkStationNo == 1;
+                    byte[] receivedData = udpClient.Receive(ref endPoint);
+                    int? ct = null;
+                    int? vt = null;
+                    if (receivedData.Length >= 2)
+                    {
+                        ct = (int)receivedData[0];
+                        vt = (int)receivedData[1];
+                    }
+                    int IsEnable = 0;
+                    if (IsWorkstationOne && receivedData.Length >= 3)
+                    {
+                        IsEnable = (int)receivedData[2];
+                    }
+                    else if (!IsWorkstationOne && receivedData.Length >= 1)
+                    {
+                        IsEnable = (int)receivedData[0];
+                    }
+                    bool enable = IsEnable == 0;
+                    if (Configs.Configs.IsEnableTesting != enable)
+                    {
+                        Configs.Configs.IsEnableTesting = enable;
+                    }
+                    EventManager.Instance.TriggerEvent("RatioAndStatusInfo", this, new TestEventArgs() { obj = new object?[] { ct, vt, enable } });
+                    Thread.Sleep(10);
+                }
+                catch (ObjectDisposedException)
+                {
+                    // This exception is expected when the UdpClient is closed
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error receiving UDP packet: {ex.Message}");
+                }
+            }
+        }
+        #endregion
     }
 }
