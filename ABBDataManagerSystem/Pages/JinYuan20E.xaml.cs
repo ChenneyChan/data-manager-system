@@ -1,6 +1,7 @@
 ﻿using ABBDataManagerSystem.Bean.Base;
 using ABBDataManagerSystem.Connector;
 using ABBDataManagerSystem.Pages.Views;
+using ABBDataManagerSystem.Tools;
 using System.IO.Ports;
 using System.Windows;
 using System.Windows.Controls;
@@ -82,6 +83,9 @@ namespace ABBDataManagerSystem.Pages
 
             // 开关调试信息
             panelDebug.Visibility = Configs.Configs.IsEnableVerboseDebug ? Visibility.Visible: Visibility.Collapsed;
+
+            Tools.EventManager.Instance.Subscribe("TestingEnableStatusChange", TestingEnableStatusEventHandler);
+            ToolgeTestingStatus();
         }
 
         private void InitToggleButtons()
@@ -267,6 +271,8 @@ namespace ABBDataManagerSystem.Pages
             {
                 TimerSecond.Stop();
             }
+
+            Tools.EventManager.Instance.Unsubscribe("TestingEnableStatusChange", TestingEnableStatusEventHandler);
         }
 
         #region 采集数据
@@ -1263,6 +1269,23 @@ namespace ABBDataManagerSystem.Pages
                 tbLVMaxUnbalanceDiff12.Text = "";
                 tbLVMaxUnbalanceDiff21.Text = "";
                 tbLVMaxUnbalanceDiff22.Text = "";
+            }
+        }
+
+        private void TestingEnableStatusEventHandler(object sender, TestEventArgs e)
+        {
+            ToolgeTestingStatus();
+        }
+
+        private void ToolgeTestingStatus()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                panelCommonTestControl.IsEnabled = Configs.Configs.IsEnableTesting;
+            });
+            if (Collector != null && !Configs.Configs.IsEnableTesting)
+            {
+                Collector.SendResetCommand();
             }
         }
     }

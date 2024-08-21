@@ -45,7 +45,9 @@ namespace ABBDataManagerSystem.Pages
             cbSerialPort.SelectedIndex = selectedIndex;
             InitDeviceConfigs();
             Tools.EventManager.Instance.Subscribe("WorkflowSelected", WorkflowEventHandler);
+            Tools.EventManager.Instance.Subscribe("TestingEnableStatusChange", TestingEnableStatusEventHandler);
             HandleWorkflowChange();
+            ToolgeTestingStatus();
         }
 
         #region 初始化一些配置和值
@@ -266,6 +268,7 @@ namespace ABBDataManagerSystem.Pages
             }
             IsTesting = false;
             Tools.EventManager.Instance.Unsubscribe("WorkflowSelected", WorkflowEventHandler);
+            Tools.EventManager.Instance.Unsubscribe("TestingEnableStatusChange", TestingEnableStatusEventHandler);
         }
 
         private void cbTestMode_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -680,6 +683,23 @@ namespace ABBDataManagerSystem.Pages
                 }
                 tbConnectionGroup1.Text = "";
                 tbConnectionGroup2.Text = "";
+            }
+        }
+
+        private void TestingEnableStatusEventHandler(object sender, TestEventArgs e)
+        {
+            ToolgeTestingStatus();
+        }
+
+        private void ToolgeTestingStatus()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                panelControl.IsEnabled = Configs.Configs.IsEnableTesting;
+            });
+            if (Collector != null && !Configs.Configs.IsEnableTesting)
+            {
+                Collector.SetResetCommand();
             }
         }
     }

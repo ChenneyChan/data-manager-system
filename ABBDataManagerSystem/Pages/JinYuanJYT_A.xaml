@@ -308,7 +308,7 @@
                             </TabControl>
                             <Border Grid.Column="0" BorderBrush="#FF1F1F1F" BorderThickness="1.5" Width="730" Height="626" VerticalAlignment="Top" HorizontalAlignment="Left"/>
 
-                            <StackPanel Orientation="Horizontal" Grid.Row="1" MaxWidth="800" Margin="0, 10, 0, 0">
+                            <StackPanel Orientation="Horizontal" Grid.Row="1" MaxWidth="800" Margin="0, 10, 0, 0" Name="panelControl">
                                 <StackPanel Orientation="Horizontal" Margin="0, 0, 10, 0" VerticalAlignment="Center">
                                     <TextBlock Text="分接选择" Width="80" Margin="0,0,10,0" FontWeight="Bold"/>
                                     <hc:ComboBox  Width="120" Name="cbTestTapping" SelectionChanged="cbTestTapping_SelectionChanged"/>

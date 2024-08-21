@@ -615,6 +615,7 @@ namespace ABBDataManagerSystem
                     if (Configs.Configs.IsEnableTesting != enable)
                     {
                         Configs.Configs.IsEnableTesting = enable;
+                        EventManager.Instance.TriggerEvent("TestingEnableStatusChange", this, new TestEventArgs() { obj = enable });
                     }
                     EventManager.Instance.TriggerEvent("RatioAndStatusInfo", this, new TestEventArgs() { obj = new object?[] { ct, vt, enable } });
                     Thread.Sleep(10);
