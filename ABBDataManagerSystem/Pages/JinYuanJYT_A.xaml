@@ -69,7 +69,7 @@
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0">
-            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" TextAlignment="Center" TextWrapping="Wrap" Text="金源JYT-A变比测量仪" FontSize="24" FontWeight="Bold"/>
+            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" TextAlignment="Center" TextWrapping="Wrap" Text="电压比及联结组别测量(JYT-A)" FontSize="24" FontWeight="Bold"/>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="0, 10">
             <TextBlock Text="连接" Margin="0, 0, 10, 0" FontWeight="Bold"/>

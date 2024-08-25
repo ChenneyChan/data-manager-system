@@ -52,7 +52,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Orientation="Horizontal">
-            <TextBlock HorizontalAlignment="Left" Margin="0,10" TextAlignment="Center" TextWrapping="Wrap" Text="横河功率分析仪" FontSize="24" FontWeight="Bold"/>
+            <TextBlock HorizontalAlignment="Left" Margin="0,10" TextAlignment="Center" TextWrapping="Wrap" Text="产品特性测量" FontSize="24" FontWeight="Bold"/>
             <TextBlock HorizontalAlignment="Left" Margin="20,10" TextAlignment="Center" TextWrapping="Wrap" Text="禁止" FontSize="24" FontWeight="Bold" Name="tbEnableStatus" Visibility="Collapsed"/>
         </StackPanel>
         <StackPanel Grid.Row="1" Orientation="Horizontal" Grid.ColumnSpan="2" Name="panelConfig1">
@@ -114,11 +114,11 @@
           CanUserResizeRows="False" AutoGenerateColumns="False">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="" Binding="{Binding Path=表头}" CellStyle="{StaticResource DataGridCellStyle}" />
-                    <DataGridTextColumn Header="有效电压(V)" Width="200" Binding="{Binding Path=有效电压 , StringFormat='F2'}" CellStyle="{StaticResource DataGridCellStyle}" />
-                    <DataGridTextColumn Header="平均电压(V)" Width="200" Binding="{Binding Path=平均电压 , StringFormat='F2'}" IsReadOnly="True" CellStyle="{StaticResource DataGridCellStyle}" x:Name="dgColumnMeanValue"/>
-                    <DataGridTextColumn Header="有效电流(A)" Width="200" Binding="{Binding Path=有效电流 , StringFormat='F2'}" IsReadOnly="True" CellStyle="{StaticResource DataGridCellStyle}"/>
+                    <DataGridTextColumn Header="电压有效值(V)" Width="200" Binding="{Binding Path=有效电压 , StringFormat='F2'}" CellStyle="{StaticResource DataGridCellStyle}" />
+                    <DataGridTextColumn Header="电压平均值(V)" Width="200" Binding="{Binding Path=平均电压 , StringFormat='F2'}" IsReadOnly="True" CellStyle="{StaticResource DataGridCellStyle}" x:Name="dgColumnMeanValue"/>
+                    <DataGridTextColumn Header="电流有效值(A)" Width="200" Binding="{Binding Path=有效电流 , StringFormat='F2'}" IsReadOnly="True" CellStyle="{StaticResource DataGridCellStyle}"/>
                     <DataGridTextColumn Header="损耗(W)" Width="200" Binding="{Binding Path=损耗 , StringFormat='F2'}" CellStyle="{StaticResource DataGridCellStyle}"/>
-                    <DataGridTextColumn Header="电压频率(Hz)" Width="200" Binding="{Binding Path=电压频率, StringFormat='F2'}" IsReadOnly="True" CellStyle="{StaticResource DataGridCellStyle}"/>
+                    <DataGridTextColumn Header="频率(Hz)" Width="200" Binding="{Binding Path=电压频率, StringFormat='F2'}" IsReadOnly="True" CellStyle="{StaticResource DataGridCellStyle}"/>
                 </DataGrid.Columns>
             </DataGrid>
             <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="10, 10, 0, 10" VerticalAlignment="Top">
@@ -131,34 +131,34 @@
             </StackPanel>
         </Grid>
         <TabControl Grid.Row="5" Margin="10" Background="#FFFBFBFB" FontSize="20" Visibility="Visible" SelectionChanged="TabControl_SelectionChanged">
-            <TabItem Name="tbNoLoad" Header="空载">
+            <TabItem Name="tbNoLoad" Header="空载损耗及空载电流测量">
                 <Grid Width="1800" Height="300" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="20">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="110"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <StackPanel Orientation="Vertical" VerticalAlignment="Center">
-                        <RadioButton Name="rbNoLoad90Percent" Content="90%" IsChecked="True"/>
-                        <RadioButton Name="rbNoLoad100Percent" Content="100%" Margin="0, 10"/>
-                        <RadioButton Name="rbNoLoad110Percent" Content="110%" Margin="0, 10"/>
+                        <RadioButton Name="rbNoLoad90Percent" Content="90%Un" IsChecked="True"/>
+                        <RadioButton Name="rbNoLoad100Percent" Content="100%Un" Margin="0, 10"/>
+                        <RadioButton Name="rbNoLoad110Percent" Content="110%Un" Margin="0, 10"/>
                     </StackPanel>
                     <Views:NoloadInfo Grid.Column="1" x:Name="NoLoadView" FontSize="16"/>
                     <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal">
                         <Button Content="上传空载数据" Margin="0,10,10,10" Background="#FF95E019" BorderBrush="#FF585555" Width="120" Height="40" Click="btUploadNoLoad_Click"/>
-                        <CheckBox Content="90%" IsChecked="True" FontSize="16" Name="cbNoLoad90"/>
-                        <CheckBox Content="100%" IsChecked="True" FontSize="16" Name="cbNoLoad100" Margin="5"/>
-                        <CheckBox Content="110%" IsChecked="True" FontSize="16" Name="cbNoLoad110" Margin="5"/>
+                        <CheckBox Content="90%Un" IsChecked="True" FontSize="16" Name="cbNoLoad90"/>
+                        <CheckBox Content="100%Un" IsChecked="True" FontSize="16" Name="cbNoLoad100" Margin="5"/>
+                        <CheckBox Content="110%Un" IsChecked="True" FontSize="16" Name="cbNoLoad110" Margin="5"/>
                     </StackPanel>
                 </Grid>
             </TabItem>
-            <TabItem Name="tbLoad" Header="负载">
+            <TabItem Name="tbLoad" Header="负载损耗及阻抗电压测量">
                 <Grid Width="1420" Height="300" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="20">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="130"/>
+                        <ColumnDefinition Width="190"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
@@ -166,9 +166,9 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <StackPanel Orientation="Vertical" VerticalAlignment="Center">
-                        <RadioButton Name="rbLoadMax" Content="最大(高-低)" IsChecked="True" HorizontalAlignment="Left"/>
-                        <RadioButton Name="rbLoadMin" Content="最小(高-低1)" Margin="0, 10" HorizontalAlignment="Left"/>
-                        <RadioButton Name="rbLoadRated" Content="额定(高-低2)" HorizontalAlignment="Left"/>
+                        <RadioButton Name="rbLoadMax" Content="最大分接(高压-低压)" IsChecked="True" HorizontalAlignment="Left"/>
+                        <RadioButton Name="rbLoadMin" Content="最小分接(高压-低压1)" Margin="0, 10" HorizontalAlignment="Left"/>
+                        <RadioButton Name="rbLoadRated" Content="额定分接(高压-低压2)" HorizontalAlignment="Left"/>
                     </StackPanel>
                     <Views:LoadInfo Grid.Column="1" x:Name="LoadView" FontSize="16" />
                     <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal">
@@ -179,15 +179,15 @@
                     </StackPanel>
                 </Grid>
             </TabItem>
-            <TabItem Name="tbSense" Header="感应">
-                <Grid Width="860" Height="300" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="20">
+            <TabItem Name="tbSense" Header="感应耐压试验">
+                <Grid Width="1200" Height="300" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="20">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <Views:SenseInfo x:Name="SenseView"/>
                     <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="20">
-                        <TextBlock Text="到计时：" FontSize="24" VerticalAlignment="Center"/>
+                        <TextBlock Text="倒计时(s)：" FontSize="24" VerticalAlignment="Center"/>
                         <hc:NumericUpDown Value="30" Width="80" Name="tbCountDown"/>
                         <Button Content="开始" Background="#FFE0A219" BorderBrush="#FF585555" Width="80" Height="40" Margin="10, 0" Name="btStartCountDown" Click="btStartCountDown_Click"/>
                         <Button Content="停止" Background="#FFE0A219" BorderBrush="#FF585555" Width="80" Height="40" Margin="0" Name="btStopCountDown" Click="btStopCountDown_Click"/>
@@ -195,12 +195,12 @@
                     </StackPanel>
                 </Grid>
             </TabItem>
-            <TabItem Name="tbPartialDischarge" Header="局放">
+            <TabItem Name="tbPartialDischarge" Header="局部放电试验">
                 <Grid Width="800" Height="300" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
                         <ColumnDefinition/>
-                        <ColumnDefinition/>
+                        <ColumnDefinition Width="1.2*"/>
                         <ColumnDefinition/>
                         <ColumnDefinition/>
                         <ColumnDefinition/>
@@ -238,9 +238,9 @@
                     <Border Grid.Row="3" Grid.Column="6" BorderThickness="1, 1, 0, 1"/>
                     <Border Grid.Row="3" Grid.Column="7" BorderThickness="1, 1, 1, 1"/>
                     <TextBlock Text="接线" FontSize="18" Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    <TextBlock Text="电压" FontSize="18" Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    <TextBlock Text="时间" FontSize="18" Grid.Column="2" Grid.Row="0" Grid.RowSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    <TextBlock Text="电流（A）" FontSize="18" Grid.Column="3" Grid.Row="0" Grid.ColumnSpan="4" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Text="电压(V)" FontSize="18" Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Text="试验持续时间(s)" FontSize="18" Grid.Column="2" Grid.Row="0" Grid.RowSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Text="实测局放值(pC)" FontSize="18" Grid.Column="3" Grid.Row="0" Grid.ColumnSpan="4" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     <TextBlock Text="A相" FontSize="18" Grid.Column="3" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     <TextBlock Text="B相" FontSize="18" Grid.Column="4" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     <TextBlock Text="C相" FontSize="18" Grid.Column="5" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center"/>

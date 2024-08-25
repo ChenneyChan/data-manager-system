@@ -135,9 +135,9 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             DataTableSource.Columns.Add("有效电流", typeof(float));
             DataTableSource.Columns.Add("损耗", typeof(float));
             DataTableSource.Columns.Add("电压频率", typeof(string));
-            DataTableSource.Rows.Add("A", 0, 0, 0, 0, "50");
-            DataTableSource.Rows.Add("B", 0, 0, 0, 0, "");
-            DataTableSource.Rows.Add("C", 0, 0, 0, 0, "");
+            DataTableSource.Rows.Add("1", 0, 0, 0, 0, "50");
+            DataTableSource.Rows.Add("2", 0, 0, 0, 0, "");
+            DataTableSource.Rows.Add("3", 0, 0, 0, 0, "");
             DataTableSource.Rows.Add("Σ", 0, 0, 0, 0, "");
             InitDataShow();
             UpdateDateShow();

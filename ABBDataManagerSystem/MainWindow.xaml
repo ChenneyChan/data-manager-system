@@ -41,19 +41,19 @@
                 <Separator></Separator>
                 <Button Content="FileExplorer"></Button>
                 <Separator></Separator>-->
-            <Button Content="盘古温度测量仪" Click="TemperatureTest_Click" Visibility="Visible"></Button>
+            <Button Content="温升试验测量" Click="TemperatureTest_Click" Visibility="Visible"></Button>
             <Separator></Separator>
-            <Button Content="金源20W 直流电阻" Click="JnYuan20WTest_Click" Visibility="Visible"></Button>
-            <Button Content="金源20E 直流电阻" Click="JnYuan20ETest_Click" Visibility="Visible"></Button>
-            <Button Content="金源50E 直流电阻" Click="JnYuan50ETest_Click" Visibility="Visible"></Button>
+            <Button Content="线圈直流电阻测量(20W)" Click="JnYuan20WTest_Click" Visibility="Visible"></Button>
+            <Button Content="线圈直流电阻测量(20E)" Click="JnYuan20ETest_Click" Visibility="Visible"></Button>
+            <Button Content="线圈直流电阻测量(50E)" Click="JnYuan50ETest_Click" Visibility="Visible"></Button>
             <Separator></Separator>
-            <Button Content="功率分析仪" Click="PowerAnalyzeTest_Click"></Button>
+            <Button Content="产品特性测量" Click="PowerAnalyzeTest_Click"></Button>
             <Separator></Separator>
             <Button Content="功率分析仪-不搜索" Click="PowerAnalyze2Test_Click" Visibility="Collapsed" Name="btPowerAnalyzerDebug"></Button>
             <Separator></Separator>
-            <Button Content="金源JYT-A 变比测试仪" Click="JinYuanJYT_A_Click"/>
+            <Button Content="电压比及联结组别测量(JYT-A)" Click="JinYuanJYT_A_Click"/>
             <Separator></Separator>
-            <Button Content="选择工作令" Click="btShowWorkflowView_Click"/>
+            <Button Content="试品信息选择导入" Click="btShowWorkflowView_Click"/>
             <TextBlock Name="tbCurrentWorkflow" Text="当前工作令：XXX001" VerticalAlignment="Center" Foreground="Blue" Margin="5, 0"/>
             <Button Content="50E测试" Click="Button50ETestDemo_Click" Visibility="Collapsed"/>
         </ToolBar>

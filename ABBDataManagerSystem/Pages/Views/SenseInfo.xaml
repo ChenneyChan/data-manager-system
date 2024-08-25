@@ -24,29 +24,32 @@
             <ColumnDefinition/>
             <ColumnDefinition/>
             <ColumnDefinition/>
+            <ColumnDefinition Width="1.3*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <TextBlock Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Text="采集" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="4" Text="电压有效值（V）" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="0" Grid.Column="5" Grid.ColumnSpan="4" Text="电流有效值（A）" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="0" Grid.Column="9" Grid.RowSpan="2" Text="频率" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="1" Grid.Column="1" Text="A相" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="1" Grid.Column="2" Text="B相" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="1" Grid.Column="3" Text="C相" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="1" Grid.Column="4" Text="平均" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="1" Grid.Column="5" Text="A相" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="1" Grid.Column="6" Text="B相" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="1" Grid.Column="7" Text="C相" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="1" Grid.Column="8" Text="平均" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Text="测量" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="4" Text="施加电压有效值(V)" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="0" Grid.Column="5" Grid.ColumnSpan="4" Text="测量电流有效值(A)" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="0" Grid.Column="9" Grid.RowSpan="2" Text="频率(Hz)" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="0" Grid.Column="10" Grid.RowSpan="2" Text="验持续时间(s)" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="1" Grid.Column="1" Text="Uab" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="1" Grid.Column="2" Text="Ubc" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="1" Grid.Column="3" Text="Uca" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="1" Grid.Column="4" Text="U平均" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="1" Grid.Column="5" Text="Ia" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="1" Grid.Column="6" Text="Ib" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="1" Grid.Column="7" Text="Ic" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="1" Grid.Column="8" Text="I平均" VerticalAlignment="Center" HorizontalAlignment="Center"/>
 
         <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" BorderThickness="1, 1 ,0, 0" />
         <Border Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="4" BorderThickness="1, 1, 0, 0" />
         <Border Grid.Row="0" Grid.Column="5" Grid.ColumnSpan="4" BorderThickness="1, 1, 0, 0" />
-        <Border Grid.Row="0" Grid.Column="9" Grid.ColumnSpan="4" BorderThickness="1, 1, 1, 0" />
+        <Border Grid.Row="0" Grid.Column="9" Grid.ColumnSpan="4" BorderThickness="1, 1, 0, 0" />
+        <Border Grid.Row="0" Grid.Column="10" Grid.ColumnSpan="4" BorderThickness="1, 1, 1, 0" />
         <Border Grid.Row="1" Grid.Column="1" BorderThickness="1, 1, 0, 0" />
         <Border Grid.Row="1" Grid.Column="2" BorderThickness="1, 1, 0, 0" />
         <Border Grid.Row="1" Grid.Column="3" BorderThickness="1, 1, 0, 0" />
@@ -55,7 +58,8 @@
         <Border Grid.Row="1" Grid.Column="6" BorderThickness="1, 1, 0, 0" />
         <Border Grid.Row="1" Grid.Column="7" BorderThickness="1, 1, 0, 0" />
         <Border Grid.Row="1" Grid.Column="8" BorderThickness="1, 1, 0, 0" />
-        <Border Grid.Row="1" Grid.Column="9" BorderThickness="1, 0, 1, 0" />
+        <Border Grid.Row="1" Grid.Column="9" BorderThickness="1, 0, 0, 0" />
+        <Border Grid.Row="1" Grid.Column="10" BorderThickness="1, 0, 1, 0" />
 
         <Border Grid.Row="2" Grid.Column="0" BorderThickness="1, 1, 0, 1" />
         <Border Grid.Row="2" Grid.Column="1" BorderThickness="1, 1, 0, 1" />
@@ -66,6 +70,7 @@
         <Border Grid.Row="2" Grid.Column="6" BorderThickness="1, 1, 0, 1" />
         <Border Grid.Row="2" Grid.Column="7" BorderThickness="1, 1, 0, 1" />
         <Border Grid.Row="2" Grid.Column="8" BorderThickness="1, 1, 0, 1" />
-        <Border Grid.Row="2" Grid.Column="9" BorderThickness="1, 1, 1, 1" />
+        <Border Grid.Row="2" Grid.Column="9" BorderThickness="1, 1, 0, 1" />
+        <Border Grid.Row="2" Grid.Column="10" BorderThickness="1, 1, 1, 1" />
     </Grid>
 </UserControl>

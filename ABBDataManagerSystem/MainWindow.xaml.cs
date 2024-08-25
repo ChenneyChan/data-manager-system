@@ -43,7 +43,7 @@ namespace ABBDataManagerSystem
             Task.Run(() => { UpdateWorkflow(); });
             StartBroadCastWorkflowInfo();
             StartListeningRatio();
-            StartTabItem<WorkflowDetail>("工作令信息");
+            StartTabItem<WorkflowDetail>("试品基本参数表");
         }
 
         private void MainWindow_Closed(object? sender, EventArgs e)
@@ -59,17 +59,17 @@ namespace ABBDataManagerSystem
         #region 试验页面加载
         private void PowerAnalyzeTest_Click(object sender, RoutedEventArgs e)
         {
-            string title = "功率分析仪";
+            string title = "产品特性测量";
             if (GetTabItemAndActive(title) != null || GetDockItemAndActive(title) != null)
             {
                 return;
             }
             var window = new PageDeviceSearch(() =>
             {
-                StartTabItem<UCPowerAanlyzer>("功率分析仪");
+                StartTabItem<UCPowerAanlyzer>("产品特性测量");
             })
             {
-                Title = "功率分析仪",
+                Title = "产品特性测量",
                 Width = 500,
                 Height = 300,
                 WindowStartupLocation = WindowStartupLocation.CenterScreen,
@@ -85,31 +85,31 @@ namespace ABBDataManagerSystem
 
         private void JinYuanJYT_A_Click(object sender, RoutedEventArgs e)
         {
-            string title = "金源JYT-A变比测试仪";
+            string title = "电压比及联结组别测量(JYT-A)";
             StartTabItem<JinYuanJYT_A>(title);
         }
 
         private void TemperatureTest_Click(object sender, RoutedEventArgs e)
         {
-            string title = "盘古温度测试仪";
+            string title = "温升试验测量";
             StartTabItem<TempTestPage>(title);
         }
 
         private void JnYuan20WTest_Click(object sender, RoutedEventArgs e)
         {
-            string title = "金源20W测试仪";
+            string title = "线圈直流电阻测量(20W)";
             StartTabItem<JinYuan20W>(title);
         }
 
         private void JnYuan20ETest_Click(object sender, RoutedEventArgs e)
         {
-            string title = "金源20E测试仪";
+            string title = "线圈直流电阻测量(20E)";
             StartTabItem<JinYuan20E>(title);
         }
 
         private void JnYuan50ETest_Click(object sender, RoutedEventArgs e)
         {
-            string title = "金源50E测试仪";
+            string title = "线圈直流电阻测量(50E)";
             StartTabItem<JinYuan50E>(title);
         }
 

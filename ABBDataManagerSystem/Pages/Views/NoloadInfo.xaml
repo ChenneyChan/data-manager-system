@@ -40,28 +40,28 @@
             <RowDefinition/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <TextBlock Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Text="采集" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="4" Text="电压有效值（V）" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="0" Grid.Column="5" Grid.ColumnSpan="4" Text="电压平均值（V）" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="0" Grid.Column="9" Grid.ColumnSpan="4" Text="电流有效值（A）" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="0" Grid.Column="13" Grid.ColumnSpan="4" Text="损耗（V）" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="0" Grid.Column="17" Grid.RowSpan="2" Text="频率" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="1" Grid.Column="1" Text="A相" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="1" Grid.Column="2" Text="B相" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="1" Grid.Column="3" Text="C相" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="1" Grid.Column="4" Text="平均" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="1" Grid.Column="5" Text="A相" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="1" Grid.Column="6" Text="B相" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="1" Grid.Column="7" Text="C相" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="1" Grid.Column="8" Text="平均" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="1" Grid.Column="9" Text="A相" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="1" Grid.Column="10" Text="B相" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="1" Grid.Column="11" Text="C相" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="1" Grid.Column="12" Text="平均" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="1" Grid.Column="13" Text="A相" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="1" Grid.Column="14" Text="B相" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="1" Grid.Column="15" Text="C相" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="1" Grid.Column="16" Text="总" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Text="测量" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="4" Text="施加电压有效值(V)" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="0" Grid.Column="5" Grid.ColumnSpan="4" Text="施加电压平均值(V)" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="0" Grid.Column="9" Grid.ColumnSpan="4" Text="测量电流有效值(A)" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="0" Grid.Column="13" Grid.ColumnSpan="4" Text="损耗(W)" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="0" Grid.Column="17" Grid.RowSpan="2" Text="频率(Hz)" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="1" Grid.Column="1" Text="Uab" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="1" Grid.Column="2" Text="Ubc" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="1" Grid.Column="3" Text="Uca" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="1" Grid.Column="4" Text="U平均" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="1" Grid.Column="5" Text="Uab" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="1" Grid.Column="6" Text="Ubc" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="1" Grid.Column="7" Text="Uca" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="1" Grid.Column="8" Text="U平均" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="1" Grid.Column="9" Text="Ia" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="1" Grid.Column="10" Text="Ib" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="1" Grid.Column="11" Text="Ic" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="1" Grid.Column="12" Text="I平均" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="1" Grid.Column="13" Text="P1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="1" Grid.Column="14" Text="P2" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="1" Grid.Column="15" Text="P3" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="1" Grid.Column="16" Text="P总" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         
         <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" BorderThickness="1, 1 ,0, 0" />
         <Border Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="4" BorderThickness="1, 1, 0, 0" />
