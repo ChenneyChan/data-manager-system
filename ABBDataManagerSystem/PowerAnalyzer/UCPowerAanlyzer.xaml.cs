@@ -3207,7 +3207,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             {
                 return;
             }
-            if (IsAutoRatio)
+            if (IsAutoRatio && Configs.Configs.WorkStationNo == 1)
             {
                 int ct = (int?)values[0] ?? 0;
                 int vt = (int?)values[1] ?? 0;
