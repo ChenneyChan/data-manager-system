@@ -1286,6 +1286,22 @@ namespace ABBDataManagerSystem.Pages
             if (Collector != null && !Configs.Configs.IsEnableTesting)
             {
                 Collector.SendResetCommand();
+
+                Dispatcher.Invoke(() =>
+                {
+                    if (SelectedTesting == TestType20E.Normal) //常规测试
+                    {
+                        panelConfig.IsEnabled = true;
+                        panelTestChoice.IsEnabled = true;
+                        TimerSecond.Stop();
+                        IsCommonTesting = false;
+                        btCommonTest.IsEnabled = true;
+                    }
+                    else // 温升测试
+                    {
+                        btQuitTestTempRise_Click(new object(), new RoutedEventArgs());
+                    }
+                });
             }
         }
     }
