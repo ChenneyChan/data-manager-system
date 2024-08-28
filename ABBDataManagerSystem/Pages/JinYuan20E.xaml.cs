@@ -437,35 +437,6 @@ namespace ABBDataManagerSystem.Pages
             }
         }
 
-        #region 计算最大不平衡差
-        private float[]? GetMaxMin(TappingResistanceFields tpr)
-        {
-            if (tpr.ValueAB == null || tpr.ValueBC == null || tpr.ValueCA == null)
-            {
-                return null;
-            }
-            float max = Math.Max((float)tpr.ValueAB, Math.Max((float)tpr.ValueBC, (float)tpr.ValueCA));
-            float min = Math.Min((float)tpr.ValueAB, Math.Min((float)tpr.ValueBC, (float)tpr.ValueCA));
-
-            return new float[] { max, min };
-        }
-
-        private float? CalculateMaxUnbalanceDiff(TappingResistanceFields tpr)
-        {
-            var maxMin = GetMaxMin(tpr);
-            if (maxMin == null || maxMin.Length != 2)
-            {
-                return null;
-            }
-            float sum = ((float)tpr.ValueAB + (float)tpr.ValueBC + (float)tpr.ValueCA);
-            if (sum == 0)
-            {
-                return null;
-            }
-            return ((maxMin[0] - maxMin[1]) / sum) * 100;
-        }
-        #endregion
-
         private void UpdateMaxUnBalance()
         {
             // 高压
@@ -477,7 +448,7 @@ namespace ABBDataManagerSystem.Pages
                 {
                     continue;
                 }
-                var v = CalculateMaxUnbalanceDiff(tpr);
+                var v = JinYuanUtils.CalculateMaxUnbalanceDiff(tpr);
                 if (v == null)
                 {
                     continue;
@@ -495,10 +466,10 @@ namespace ABBDataManagerSystem.Pages
             }
 
             // 低压
-            tbLVMaxUnbalanceDiff11.Text = Utils.FloatFormatZeroIsNull(CalculateMaxUnbalanceDiff(tappingResistanceFields["11"]));
-            tbLVMaxUnbalanceDiff12.Text = Utils.FloatFormatZeroIsNull(CalculateMaxUnbalanceDiff(tappingResistanceFields["12"]));
-            tbLVMaxUnbalanceDiff21.Text = Utils.FloatFormatZeroIsNull(CalculateMaxUnbalanceDiff(tappingResistanceFields["21"]));
-            tbLVMaxUnbalanceDiff22.Text = Utils.FloatFormatZeroIsNull(CalculateMaxUnbalanceDiff(tappingResistanceFields["22"]));
+            tbLVMaxUnbalanceDiff11.Text = Utils.FloatFormatZeroIsNull(JinYuanUtils.CalculateMaxUnbalanceDiff(tappingResistanceFields["11"]));
+            tbLVMaxUnbalanceDiff12.Text = Utils.FloatFormatZeroIsNull(JinYuanUtils.CalculateMaxUnbalanceDiff(tappingResistanceFields["12"]));
+            tbLVMaxUnbalanceDiff21.Text = Utils.FloatFormatZeroIsNull(JinYuanUtils.CalculateMaxUnbalanceDiff(tappingResistanceFields["21"]));
+            tbLVMaxUnbalanceDiff22.Text = Utils.FloatFormatZeroIsNull(JinYuanUtils.CalculateMaxUnbalanceDiff(tappingResistanceFields["22"]));
         }
 
         private void UpdateTempRiseCoolValue()

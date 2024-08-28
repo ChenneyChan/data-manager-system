@@ -3006,7 +3006,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                     return;
                 }
             }
-            if (cbNoLoad100.IsChecked == true)
+            if (cbNoLoad110.IsChecked == true)
             {
                 VoltageCurrentLossDataInfo.DeleteData(Configs.Configs.WorkflowID, "空载", "110%");
                 NoLoadInfo110.LoadType = "空载";
@@ -3019,7 +3019,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                     return;
                 }
             }
-            if (cbNoLoad110.IsChecked == true)
+            if (cbNoLoad100.IsChecked == true)
             {
                 VoltageCurrentLossDataInfo.DeleteData(Configs.Configs.WorkflowID, "空载", "100%");
                 NoLoadInfo100.LoadType = "空载";
