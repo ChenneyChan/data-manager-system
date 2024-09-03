@@ -125,7 +125,7 @@ namespace ABBDataManagerSystem.Connector
                 { 0x34, "3A" },
                 { 0x33, "10A" },
                 { 0x32, "20A" },
-                { 0x31, "40A" },
+                //{ 0x31, "40A" },
                 { 0x30, "50A" },
             };
 
@@ -279,6 +279,17 @@ namespace ABBDataManagerSystem.Connector
             return true;
         }
 
+        public void ChangeTest()
+        {
+            if (Mode == TestType50E.Normal)
+            {
+                SendCommonTest();
+            } else
+            {
+                SendTempRiseTest();
+            }
+        }
+
         //参数设置命令 常规参数状态/温升参数状态 下可用
         public bool SendParameterSetCommand()
         {
@@ -340,14 +351,6 @@ namespace ABBDataManagerSystem.Connector
             actions.Enqueue(() =>
             {
                 Collector.SendCommand(new byte[] { 0x54, 0x34 });
-            });
-        }
-
-        public void SendResetAtNormal()
-        {
-            actions.Enqueue(() =>
-            {
-                Collector.SendCommand(new byte[] { 0x54, 0x33 });
             });
         }
         
@@ -470,6 +473,41 @@ namespace ABBDataManagerSystem.Connector
         public void SendRequestDataCommand()
         {
             Collector.SendCommand(new byte[] { 0x50 });
+        }
+
+        public void ResetDevice()
+        {
+            switch (DeviceStatus)
+            {
+                case InstrumentStatus.Reset:
+                    break;
+                case InstrumentStatus.GeneralParameter:
+                    SendResetCommand();
+                    break;
+                case InstrumentStatus.TemperatureRiseParameter:
+                    SendResetCommand();
+                    break;
+                case InstrumentStatus.GeneralTest:
+                    SendStopCommandAtNormal();
+                    SendExitCommandAtNormal();
+                    SendResetCommand();
+                    break;
+                case InstrumentStatus.TemperatureRiseTiming:
+                    SendResetCommand();
+                    break;
+                case InstrumentStatus.TemperatureRiseTest:
+                    SendTempRiseStopCommand();
+                    SendTempRiseExitCommand();
+                    SendResetCommand();
+                    break;
+                case InstrumentStatus.Other:
+                    SendResetCommand();
+                    break;
+                default:
+                    SendResetCommand();
+                    break;
+            }
+            return;
         }
 
         public CommonPacket? ReadPacket()
@@ -598,7 +636,7 @@ namespace ABBDataManagerSystem.Connector
             public TestCurrentType current;
             public TestType50E mode;
             public TestPattern pattern;
-            public string? Status = string.Empty;
+            public string Status = string.Empty;
 
             public string? strRealTime = string.Empty;
             public string? strRealTimeCurrent = string.Empty;

@@ -230,6 +230,8 @@ namespace ABBDataManagerSystem.Pages
                     else
                     {
                         StartSyncState();
+                        Collector.ResetDevice();
+                        needSelectTestType = true;
                     }
                 }).Start();
             }
@@ -238,6 +240,7 @@ namespace ABBDataManagerSystem.Pages
                 StopSyncState();
                 if (Collector != null)
                 {
+                    Collector.ResetDevice();
                     Collector.Disconnect();
                     Collector = null;
                 }
@@ -365,7 +368,10 @@ namespace ABBDataManagerSystem.Pages
                 Collector.CurrentMode = JinYuan50ECollectorV1.EnumHelper.GetCurrentEnum(cb20ECurrents.SelectedItem.ToString());
                 Collector.Mode = SelectedTesting ?? TestType50E.Normal;
                 Collector.PatternMode = JinYuan50ECollectorV1.EnumHelper.GetPatternEnum(cb20EPatterns.SelectedItem.ToString());
-                Collector.SendParameterSetCommand();
+                Collector.ResetDevice();
+                needSelectTestType = true;
+                //Collector.ChangeTest();
+                //Collector.SendParameterSetCommand();
             }
         }
         #endregion
@@ -545,6 +551,8 @@ namespace ABBDataManagerSystem.Pages
             UpdateClockDisplay();
             TimerSecond.Start();
 
+            Collector?.SendParameterSetCommand();
+            Collector?.SendEnterTempRiseTest();
             Collector?.SendTempRiseTestStartTiming();
 
             UpdatePanelTestConfigDisplay();
@@ -557,8 +565,7 @@ namespace ABBDataManagerSystem.Pages
         private void btTempRiseTest_Click(object sender, RoutedEventArgs e)
         {
             btTempRiseTest.IsEnabled = false;
-            Collector?.SendParameterSetCommand();
-            Collector?.SendEnterTempRiseTest();
+            Collector?.SendTempRiseStartTest();
             IsTempRiseTesting = true;
 
             cbTestPhase.IsEnabled = false;
@@ -671,14 +678,8 @@ namespace ABBDataManagerSystem.Pages
             {
                 needSelectTestType = false;
                 Collector.Mode = SelectedTesting ?? TestType50E.Normal;
-                if (Collector.Mode == TestType50E.Normal)
-                {
-                    Collector.SendCommonTest();
-                }
-                else
-                {
-                    Collector.SendTempRiseTest();
-                }
+                Collector.ChangeTest();
+                Collector.SendParameterSetCommand();
             }
             DumpPacekt();
         }
@@ -731,16 +732,10 @@ namespace ABBDataManagerSystem.Pages
             if (Collector != null)
             {
                 Collector.Mode = SelectedTesting ?? TestType50E.Normal;
-                if (Collector.Mode == TestType50E.Normal)
-                {
-                    Collector.SendResetCommand();
-                }
-                else
-                {
-                    Collector.SendResetCommand();
-                }
-                needSelectTestType = true;
+                Collector.ResetDevice();
+                //Collector.ChangeTest();
                 //Collector.SendParameterSetCommand();
+                needSelectTestType = true;
             }
             DumpSelectedTapping();
 

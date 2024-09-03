@@ -116,7 +116,7 @@ namespace ABBDataManagerSystem.Pages
         private void btResetAtCommon_Click(object sender, RoutedEventArgs e)
         {
             if (Collector == null) { return; }
-            Collector.SendResetAtNormal();
+            Collector.ResetDevice();
         }
 
         private void btGotoTempRise_Click(object sender, RoutedEventArgs e)
