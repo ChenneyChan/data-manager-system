@@ -52,6 +52,7 @@ namespace ABBDataManagerSystem.Pages.Views
                 AddField(r, 8, $"i3_{i}");
 
                 AddField(r, 9, $"fU_{i}");
+                AddField(r, 10, $"InductionTime_{i}");
             }
         }
 
@@ -104,6 +105,7 @@ namespace ABBDataManagerSystem.Pages.Views
                 _fields[$"i3_{i + 1}"].Text = Utils.FloatFormatZeroIsNull(item.i3);
 
                 _fields[$"fU_{i + 1}"].Text = Utils.FloatFormatZeroIsNull(item.fU);
+                _fields[$"InductionTime_{i + 1}"].Text = Utils.FloatFormatZeroIsNull(item.InductionTime);
             }
         }
 
@@ -117,6 +119,11 @@ namespace ABBDataManagerSystem.Pages.Views
                     _fields[key].Text = _headers[i];
                 }
             }
+        }
+
+        public void UpdateInductionTime()
+        {
+            UpdateValue();
         }
     }
 }

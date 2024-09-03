@@ -35,7 +35,7 @@
         <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="4" Text="施加电压有效值(V)" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         <TextBlock Grid.Row="0" Grid.Column="5" Grid.ColumnSpan="4" Text="测量电流有效值(A)" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         <TextBlock Grid.Row="0" Grid.Column="9" Grid.RowSpan="2" Text="频率(Hz)" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="0" Grid.Column="10" Grid.RowSpan="2" Text="验持续时间(s)" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="0" Grid.Column="10" Grid.RowSpan="2" Text="试验持续时间(s)" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         <TextBlock Grid.Row="1" Grid.Column="1" Text="Uab" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         <TextBlock Grid.Row="1" Grid.Column="2" Text="Ubc" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         <TextBlock Grid.Row="1" Grid.Column="3" Text="Uca" VerticalAlignment="Center" HorizontalAlignment="Center"/>

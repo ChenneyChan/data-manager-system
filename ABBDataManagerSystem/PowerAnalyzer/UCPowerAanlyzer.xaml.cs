@@ -3196,6 +3196,8 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         {
             IsSenseCountDowning = false;
             tbCountDown.IsEnabled = true;
+            SenseInfo.InductionTime = (float?)tbCountDown.Value;
+            SenseView.UpdateInductionTime();
         }
         #endregion
 

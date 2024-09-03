@@ -180,7 +180,7 @@
                 </Grid>
             </TabItem>
             <TabItem Name="tbSense" Header="感应耐压试验">
-                <Grid Width="1200" Height="300" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="20">
+                <Grid Width="1400" Height="300" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="20">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="Auto"/>
