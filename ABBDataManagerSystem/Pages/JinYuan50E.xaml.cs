@@ -571,6 +571,7 @@ namespace ABBDataManagerSystem.Pages
             cbTestPhase.IsEnabled = false;
             cbTestStatus.IsEnabled = false;
             cbTestCount.IsEnabled = false;
+            tbTestCount.IsEnabled = false;
             cbCoolingMode.IsEnabled = false;
             dataItems.Clear();
             lvUsers.Items.Refresh();
@@ -593,7 +594,7 @@ namespace ABBDataManagerSystem.Pages
 
             cbTestPhase.IsEnabled = true;
             cbTestStatus.IsEnabled = true;
-            cbTestCount.IsEnabled = true;
+            tbTestCount.IsEnabled = true;
             cbCoolingMode.IsEnabled = true;
         }
         #endregion
@@ -979,7 +980,7 @@ namespace ABBDataManagerSystem.Pages
                 LowVoltageResistance12 = Utils.ParseFloatNull(tbTempCoolLV12.Text),
                 LowVoltageResistance21 = Utils.ParseFloatNull(tbTempCoolLV21.Text),
                 LowVoltageResistance22 = Utils.ParseFloatNull(tbTempCoolLV22.Text),
-                TestingIndex = Utils.ParseInt(cbTestCount.Text),
+                TestingIndex = (int)tbTestCount.Value,
                 TestingStatus = cbTestStatus.Text,
                 CoolingMode = cbCoolingMode.Text
             };
@@ -1024,7 +1025,7 @@ namespace ABBDataManagerSystem.Pages
                 return;
             }
             CommonTempRiseTestInfo configItem;
-            int testIndex = Utils.ParseInt(cbTestCount.Text);
+            int testIndex = (int)tbTestCount.Value;
             var items = CommonTempRiseTestInfo.ReadFromDB(Configs.Configs.WorkflowID, cbTestPhase.Text, cbTestStatus.Text, cbCoolingMode.Text, testIndex, 2);
             if (items == null || items.Count == 0)
             {
