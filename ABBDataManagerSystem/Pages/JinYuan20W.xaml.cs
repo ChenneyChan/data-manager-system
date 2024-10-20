@@ -590,7 +590,6 @@ namespace ABBDataManagerSystem.Pages
 
             cbTestPhase.IsEnabled = false;
             cbTestStatus.IsEnabled = false;
-            cbTestCount.IsEnabled = false;
             tbTestCount.IsEnabled = false;
             cbCoolingMode.IsEnabled = false;
             dataItems.Clear();
@@ -612,7 +611,6 @@ namespace ABBDataManagerSystem.Pages
 
             cbTestPhase.IsEnabled = true;
             cbTestStatus.IsEnabled = true;
-            cbTestCount.IsEnabled = true;
             tbTestCount.IsEnabled = true;
             cbCoolingMode.IsEnabled = true;
         }

@@ -570,7 +570,6 @@ namespace ABBDataManagerSystem.Pages
 
             cbTestPhase.IsEnabled = false;
             cbTestStatus.IsEnabled = false;
-            cbTestCount.IsEnabled = false;
             tbTestCount.IsEnabled = false;
             cbCoolingMode.IsEnabled = false;
             dataItems.Clear();

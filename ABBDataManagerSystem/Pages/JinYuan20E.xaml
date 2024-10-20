@@ -195,18 +195,6 @@
                     </hc:ComboBox>
                     <TextBlock Text="次数" Width="32" Margin="10,0" VerticalAlignment="Center"/>
                     <hc:NumericUpDown Width="80" Minimum="1" Name="tbTestCount"/>
-                    <hc:ComboBox Width="80" VerticalAlignment="Center" Name="cbTestCount" Visibility="Collapsed">
-                        <ComboBoxItem Content="1" IsSelected="True"/>
-                        <ComboBoxItem Content="2"/>
-                        <ComboBoxItem Content="3"/>
-                        <ComboBoxItem Content="4"/>
-                        <ComboBoxItem Content="5"/>
-                        <ComboBoxItem Content="6"/>
-                        <ComboBoxItem Content="7"/>
-                        <ComboBoxItem Content="8"/>
-                        <ComboBoxItem Content="9"/>
-                        <ComboBoxItem Content="10"/>
-                    </hc:ComboBox>
                     <TextBlock Text="冷却方式" Width="64" Margin="10,0" VerticalAlignment="Center"/>
                     <hc:ComboBox Width="80" VerticalAlignment="Center" Name="cbCoolingMode">
                         <ComboBoxItem Content="AN" IsSelected="True"/>
