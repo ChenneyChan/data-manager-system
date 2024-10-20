@@ -186,6 +186,7 @@ namespace ABBDataManagerSystem.Pages
             UpdateByConfig();
             UpdateInterval();
             UpdateSlotShieldState();
+            tbTestCount.ValueChanged += tbTestCount_ValueChanged;
             cbTestCount.SelectionChanged += CbTestCount_SelectionChanged;
             cbCoolingMode.SelectionChanged += cbCoolingMode_SelectionChanged;
             cbRelatedTo.SelectionChanged += cbCoolingMode_SelectionChanged;
@@ -194,7 +195,7 @@ namespace ABBDataManagerSystem.Pages
 
         private void UpdateCommonInfo()
         {
-            int Index = Utils.ParseInt(((ComboBoxItem)cbTestCount.SelectedItem).Content.ToString());
+            int Index = (int)tbTestCount.Value;
             string workflowId = Configs.Configs.WorkflowID;
             string CoolingMode = ((ComboBoxItem)cbCoolingMode.SelectedItem).Content.ToString();
             string TestingPhase = cbTestPhase.SelectedItem.ToString();
@@ -225,6 +226,11 @@ namespace ABBDataManagerSystem.Pages
                     });
                 }
             });
+        }
+
+        private void tbTestCount_ValueChanged(object sender, HandyControl.Data.FunctionEventArgs<double> e)
+        {
+            UpdateCommonInfo();
         }
 
         private void CbTestCount_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -1345,7 +1351,7 @@ namespace ABBDataManagerSystem.Pages
         private void UploadData()
         {
             CommonTempRiseTestInfo configItem;
-            int testIndex = Utils.ParseInt(cbTestCount.Text);
+            int testIndex = (int)tbTestCount.Value;
             var items = CommonTempRiseTestInfo.ReadFromDB(Configs.Configs.WorkflowID, cbTestPhase.Text, cbTestStatus.Text, cbCoolingMode.Text, testIndex, 1);
             if (items == null || items.Count == 0)
             {
@@ -1466,7 +1472,7 @@ namespace ABBDataManagerSystem.Pages
 
         private void SetCommonInfo(bool needMessageBox)
         {
-            int Index = Utils.ParseInt(cbTestCount.Text);
+            int Index = (int)tbTestCount.Value;
             string workflowId = Configs.Configs.WorkflowID;
             string CoolingMode = cbCoolingMode.Text;
             string TestingPhase = cbTestPhase.Text;

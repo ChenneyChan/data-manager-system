@@ -608,7 +608,7 @@ namespace ABBDataManagerSystem.Pages
             float current = Utils.GetValueWithMill(lastPacket.strRealTimeCurrent, false) ?? 0;
             float resistance1 = Utils.GetValueWithMill(lastPacket.strSecResistance1, false) ?? 0;
             float resistance2 = Utils.GetValueWithMill(lastPacket.strSecResistance2, false) ?? 0;
-            string time = (lastPacket.strSecTime != null && lastPacket.strSecTime.Length == 4) ? lastPacket.strSecTime.Substring(0, 2) + ":" + lastPacket.strSecTime.Substring(2, 2) : "";
+            string time = (lastPacket.strSecTime != null && lastPacket.strSecTime.Length == 5) ? lastPacket.strSecTime : "";
 
             CurrentIndex += 1;
             // 定时记录数据
@@ -654,7 +654,7 @@ namespace ABBDataManagerSystem.Pages
             if (SelectedTesting != TestType50E.Normal && lastPacket != null && packet.strSecTime.Length > 0)
             {
                 // 记录一次温升数据
-                needRecordTempRise = packet.strSecTime != lastPacket.strSecTime && packet.strSecTime != "0000";
+                needRecordTempRise = packet.strSecTime != lastPacket.strSecTime && packet.strSecTime.Trim().Length != 0;
                 Log.Info($"lastTime = {lastPacket.strSecTime} currentTime = {packet.strSecTime} needRecord = {needRecordTempRise}");
             }
             lastPacket = packet;
