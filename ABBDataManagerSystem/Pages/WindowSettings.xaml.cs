@@ -1,16 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Buffers;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace ABBDataManagerSystem.Pages
 {
@@ -57,6 +46,25 @@ namespace ABBDataManagerSystem.Pages
         {
             DialogResult = false;
             Close();
+        }
+
+        private void btPing_Click(object sender, RoutedEventArgs e)
+        {
+            if (tbDatabaseIp.Text.Trim().Length == 0)
+            {
+                MessageBox.Show("IP地址错误！", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            if (Utils.IsPingable(tbDatabaseIp.Text))
+            {
+                MessageBox.Show("服务器地址网络检测通过！", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+            else
+            {
+                MessageBox.Show("服务器地址网络检测失败，请检查网络配置！", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
         }
     }
 }

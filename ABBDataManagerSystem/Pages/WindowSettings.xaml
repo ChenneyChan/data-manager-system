@@ -67,6 +67,7 @@
                         <TextBlock Text="数据库密码：" Width="120" Style="{StaticResource Label}" Margin="0,0,10,0"/>
                         <hc:PasswordBox Name="tbDatabasePassword" Width="220" ShowEyeButton="True" FontSize="16" Height="36"/>
                     </StackPanel>
+                    <Button Name="btPing" Style="{StaticResource ButtonPrimary}" Margin="420,0, 0, 0" Content="测试" Click="btPing_Click"/>
                 </Grid>
             </TabItem>
             <TabItem Header="常规设置">

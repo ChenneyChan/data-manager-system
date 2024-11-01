@@ -2,6 +2,7 @@
 using ABBDataManagerSystem.Pages;
 using System.Globalization;
 using System.IO;
+using System.Net.NetworkInformation;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -402,6 +403,23 @@ namespace ABBDataManagerSystem
             }
 
             return sb.ToString();
+        }
+
+        public static bool IsPingable(string ipAddress)
+        {
+            try
+            {
+                using (Ping ping = new Ping())
+                {
+                    PingReply reply = ping.Send(ipAddress, 1000); // 设置超时时间为 1000 毫秒
+                    return reply.Status == IPStatus.Success;
+                }
+            }
+            catch (PingException)
+            {
+                // 捕获 PingException 以防 IP 地址不可达或其他网络错误
+                return false;
+            }
         }
     }
 }
