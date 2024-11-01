@@ -23,7 +23,7 @@
         </Grid.RowDefinitions>
         <!--停靠布局，让菜单栏和工具栏位于窗口顶部-->
         <Menu Grid.Row="0">
-            <MenuItem Header="试验" IsEnabled="False">
+            <MenuItem Header="试验" IsEnabled="False" Visibility="Collapsed">
                 <MenuItem Header="功率分析仪" Click="PowerAnalyzeTest_Click" Name="PowerAnalyzeTest"/>
                 <MenuItem Header="温度检测仪" Click="TemperatureTest_Click"  Name="TemperatureTest"/>
                 <MenuItem Header="金源20W测试仪" Click="JnYuan20WTest_Click"  Name="JnYuan20WTest"/>
