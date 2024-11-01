@@ -213,7 +213,7 @@ namespace ABBDataManagerSystem.Pages
                         cbLVCorrectionFact.Text = data.TempRiseLVCorrectionFactor.ToString();
                         cbRelatedTo.Text = data.TempRiseRelativeTo.ToString();
                     });
-                } 
+                }
                 else
                 {
                     Dispatcher.Invoke(() =>
@@ -1670,6 +1670,14 @@ namespace ABBDataManagerSystem.Pages
         private void MenuItemCloseEdit_Click(object sender, RoutedEventArgs e)
         {
             dgTempRecord.IsReadOnly = true;
+        }
+
+        private void btToggleRealTimeTemp_Click(object sender, RoutedEventArgs e)
+        {
+            if (SlotWrapPanel.Visibility == Visibility.Visible)
+                SlotWrapPanel.Visibility = Visibility.Collapsed;
+            else
+                SlotWrapPanel.Visibility = Visibility.Visible;
         }
     }
 }

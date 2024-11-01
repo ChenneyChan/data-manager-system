@@ -158,6 +158,7 @@
                     <hc:ComboBox Width="100" VerticalAlignment="Center" Name="cbSerialBoudRate"/>
                     <TextBlock Text="采集周期" Width="70" Margin="10,0" VerticalAlignment="Center"/>
                     <hc:ComboBox Width="100" VerticalAlignment="Center" Name="cbInterval"/>
+                    <Button Margin="10, 0" Content="切换实时温度显示" Width="180" Name="btToggleRealTimeTemp" Click="btToggleRealTimeTemp_Click" Style="{StaticResource plotButton}" Height="34" BorderThickness="1" BorderBrush="Gray"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0, 10">
                     <TextBlock Text="阶段" Width="32" Margin="0, 0, 10,0" VerticalAlignment="Center"/>

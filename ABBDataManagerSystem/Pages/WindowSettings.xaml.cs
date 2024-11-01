@@ -1,4 +1,4 @@
-﻿using System.Buffers;
+﻿using MySql.Data.MySqlClient;
 using System.Windows;
 
 namespace ABBDataManagerSystem.Pages
@@ -64,6 +64,40 @@ namespace ABBDataManagerSystem.Pages
             {
                 MessageBox.Show("服务器地址网络检测失败，请检查网络配置！", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
+            }
+        }
+
+        private void btDBTest_Click(object sender, RoutedEventArgs e)
+        {
+            string sqlConnectStr = "server=" + tbDatabaseIp.Text.Trim() + ";user=" + tbDatabaseUserName.Text.Trim()
+                    + ";database=" + tbDatabaseName.Text.Trim() + ";port=" + Utils.ParseInt(tbDatabasePort.Text) + ";password=" + tbDatabasePassword.Password;
+
+            if (CheckMySqlConnection(sqlConnectStr))
+            {
+                MessageBox.Show("数据库服务器连接检测通过！", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+            else
+            {
+                MessageBox.Show("数据库服务器连接检测失败，请检查数据库配置！", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+        }
+
+        public static bool CheckMySqlConnection(string connectionString)
+        {
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open(); // 尝试打开连接
+                    connection.Close();
+                    return true; // 连接成功
+                }
+                catch (MySqlException)
+                {
+                    return false; // 连接失败
+                }
             }
         }
     }

@@ -68,6 +68,7 @@
                         <hc:PasswordBox Name="tbDatabasePassword" Width="220" ShowEyeButton="True" FontSize="16" Height="36"/>
                     </StackPanel>
                     <Button Name="btPing" Style="{StaticResource ButtonPrimary}" Margin="420,0, 0, 0" Content="测试" Click="btPing_Click"/>
+                    <Button Name="btDBTest" Style="{StaticResource ButtonPrimary}" Margin="420, 0, 0, 0" Content="测试" Click="btDBTest_Click" Grid.Row="1"/>
                 </Grid>
             </TabItem>
             <TabItem Header="常规设置">
