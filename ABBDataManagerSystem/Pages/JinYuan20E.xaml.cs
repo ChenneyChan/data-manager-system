@@ -593,8 +593,8 @@ namespace ABBDataManagerSystem.Pages
                 return;
             }
             float current = Utils.GetValueWithMill(lastPacket.strRealTimeCurrent, false) ?? 0;
-            float resistance1 = Utils.GetValueWithMill(lastPacket.strSecResistance1, false) ?? 0;
-            float resistance2 = Utils.GetValueWithMill(lastPacket.strSecResistance2, false) ?? 0;
+            float resistance1 = Utils.GetValueWithMill(lastPacket.strRealTimeResistance1, false) ?? 0;
+            float resistance2 = Utils.GetValueWithMill(lastPacket.strRealTimeResistance2, false) ?? 0;
             string time = (lastPacket.strSecTime != null && lastPacket.strSecTime.Length == 4) ? lastPacket.strSecTime.Substring(0, 2) + ":" + lastPacket.strSecTime.Substring(2, 2) : "";
 
             CurrentIndex += 1;
