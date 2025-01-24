@@ -95,6 +95,7 @@
             <hc:ComboBox Margin="2,0,6,0" Name="cbAutoChangeRatio" SelectionChanged="ComboBox_Selected">
                 <ComboBoxItem Content="自动" IsSelected="True"/>
                 <ComboBoxItem Content="手动"/>
+                <ComboBoxItem Content="输入" Name="cbiInputMode"/>
             </hc:ComboBox>
             <Button Name="btRatioSet" Width="60" Content="设置" Click="btRatioSet_Click" BorderBrush="DarkGray"/>
             <Button Name="btRatioGet" Width="60" Content="读取" Click="btRatioGet_Click" BorderBrush="DarkGray" Margin="5, 0" Visibility="Collapsed"/>

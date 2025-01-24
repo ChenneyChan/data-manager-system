@@ -1,4 +1,5 @@
-﻿using MySql.Data.MySqlClient;
+﻿using ABBDataManagerSystem.Tools;
+using MySql.Data.MySqlClient;
 using System.Windows;
 
 namespace ABBDataManagerSystem.Pages
@@ -23,6 +24,7 @@ namespace ABBDataManagerSystem.Pages
             tbDatabaseIp.Text = Configs.Configs.Host;
 
             cbWorkStation.SelectedIndex = Configs.Configs.WorkStationNo - 1;
+            cbEnableRatioInputMode.IsChecked = Configs.Configs.IsEnableRatioInputMode;
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -38,7 +40,10 @@ namespace ABBDataManagerSystem.Pages
             Configs.Configs.Password = tbDatabasePassword.Password;
             Configs.Configs.Host = tbDatabaseIp.Text;
             Configs.Configs.WorkStationNo = cbWorkStation.SelectedIndex + 1;
+            Configs.Configs.IsEnableRatioInputMode = cbEnableRatioInputMode.IsChecked ?? false;
             DialogResult = true;
+
+            Tools.EventManager.Instance.TriggerEvent("RatioInputModeChanged", this, new TestEventArgs() { obj = Configs.Configs.IsEnableRatioInputMode });
             Close();
         }
 

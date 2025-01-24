@@ -98,6 +98,7 @@ namespace ABBDataManagerSystem.Configs
         #region 常规设置
         public static int WorkStationNo = 1;
         public static bool IsEnableVerboseDebug = false;
+        public static bool IsEnableRatioInputMode = false;
         #endregion
 
         #region 读写配置

@@ -73,12 +73,20 @@
             </TabItem>
             <TabItem Header="常规设置">
                 <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
                     <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                         <TextBlock Text="工位选择：" Width="120" Style="{StaticResource Label}" Margin="0,0,10,0"/>
                         <ComboBox Name="cbWorkStation" Width="220">
                             <ComboBoxItem Content="工位一" IsSelected="True"/>
                             <ComboBoxItem Content="工位二"/>
                         </ComboBox>
+                    </StackPanel>
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock Text="变比手动模式：" Width="120" Style="{StaticResource Label}" Margin="0,0,10,0"/>
+                        <CheckBox Name="cbEnableRatioInputMode" IsChecked="False" Width="220"/>
                     </StackPanel>
                 </Grid>
             </TabItem>

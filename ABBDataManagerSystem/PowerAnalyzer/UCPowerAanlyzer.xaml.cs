@@ -102,6 +102,8 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         private string WorkflowType = "双绕组";
         private string SelectedTab = "空载";
         private bool IsAutoRatio = true;
+        private bool IsInputRatio = false;
+        private bool IsEnableInputMode = false;
 
         #endregion
 
@@ -146,6 +148,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
             EventManager.Instance.Subscribe("WorkflowSelected", WorkflowEventHandler);
             EventManager.Instance.Subscribe("RatioAndStatusInfo", RatioStatusEventHandler);
+            EventManager.Instance.Subscribe("RatioInputModeChanged", RatioInputModeChangedEventHandler);
             HandleWorkflowChange();
             if (IsWorkstationOne)
             {
@@ -181,6 +184,8 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             currentRatioSelectedIndex = cbCurrentRatio.SelectedIndex;
             cbVoltageRatio.SelectionChanged += Ratio_SelectionChanged;
             cbCurrentRatio.SelectionChanged += Ratio_SelectionChanged;
+            IsEnableInputMode = Configs.Configs.IsEnableRatioInputMode;
+            cbiInputMode.Visibility = IsEnableInputMode ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void Ratio_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -272,6 +277,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         {
             UpdateSelectedConfigs();
             RatioSetCommand();
+            //HandyControl.Controls.MessageBox.Success($"输入内容为 {cbCurrentRatio.Text} - {cbVoltageRatio.Text}");
         }
 
         private void btRatioGet_Click(object sender, RoutedEventArgs e)
@@ -1190,6 +1196,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             Configs.Configs.cbCT = cbCurrentRatio.Text;
             EventManager.Instance.Unsubscribe("WorkflowSelected", WorkflowEventHandler);
             EventManager.Instance.Unsubscribe("RatioAndStatusInfo", RatioStatusEventHandler);
+            EventManager.Instance.Unsubscribe("RatioInputModeChanged", RatioInputModeChangedEventHandler);
         }
         #endregion
 
@@ -3236,9 +3243,36 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         }
         #endregion
 
+        private void RatioInputModeChangedEventHandler(object sender, TestEventArgs e)
+        {
+            if (IsEnableInputMode == Configs.Configs.IsEnableRatioInputMode)
+            {
+                return;
+            }
+            IsEnableInputMode = Configs.Configs.IsEnableRatioInputMode;
+            Dispatcher.Invoke(() =>
+            {
+                if (cbiInputMode.Visibility == Visibility.Visible)
+                {
+                    cbAutoChangeRatio.SelectedIndex = 0;
+                }
+                cbiInputMode.Visibility = IsEnableInputMode ? Visibility.Visible : Visibility.Collapsed;
+            });
+        }
+
         private void ComboBox_Selected(object sender, RoutedEventArgs e)
         {
             IsAutoRatio = cbAutoChangeRatio.SelectedIndex == 0;
+            IsInputRatio = cbAutoChangeRatio.SelectedIndex == 2;
+            if (cbVoltageRatio.IsEditable != IsInputRatio || cbCurrentRatio.IsEditable != IsInputRatio)
+            {
+                cbVoltageRatio.SelectedIndex = -1;
+                cbVoltageRatio.Text = "";
+                cbCurrentRatio.SelectedIndex = -1;
+                cbCurrentRatio.Text = "";
+            }
+            cbVoltageRatio.IsEditable = IsInputRatio;
+            cbCurrentRatio.IsEditable = IsInputRatio;
         }
     }
 }
