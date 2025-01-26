@@ -2739,6 +2739,13 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
         private void CalculateVTCT(out float? ct, out float? vt)
         {
+            // 手动输入模式下，不看SelectedItem，看Text
+            if (IsInputRatio)
+            {
+                vt = (float)(Utils.GetFloat(cbVoltageRatio.Text) ?? 0) * 10f;
+                ct = (float)(Utils.GetFloat(cbCurrentRatio.Text) ?? 0) / 5.0f;
+                return;
+            }
             if (cbVoltageRatio.SelectedItem != null)
             {
                 var _vt = cbVoltageRatio.SelectedItem.ToString();
