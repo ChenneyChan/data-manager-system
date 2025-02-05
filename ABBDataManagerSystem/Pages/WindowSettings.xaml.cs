@@ -25,6 +25,7 @@ namespace ABBDataManagerSystem.Pages
 
             cbWorkStation.SelectedIndex = Configs.Configs.WorkStationNo - 1;
             cbEnableRatioInputMode.IsChecked = Configs.Configs.IsEnableRatioInputMode;
+            cbShowRatioInputControls.IsChecked = Configs.Configs.IsShowRatioInputControls;
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -41,9 +42,11 @@ namespace ABBDataManagerSystem.Pages
             Configs.Configs.Host = tbDatabaseIp.Text;
             Configs.Configs.WorkStationNo = cbWorkStation.SelectedIndex + 1;
             Configs.Configs.IsEnableRatioInputMode = cbEnableRatioInputMode.IsChecked ?? false;
+            Configs.Configs.IsShowRatioInputControls = cbShowRatioInputControls.IsChecked ?? false;
             DialogResult = true;
 
-            Tools.EventManager.Instance.TriggerEvent("RatioInputModeChanged", this, new TestEventArgs() { obj = Configs.Configs.IsEnableRatioInputMode });
+            Tools.EventManager.Instance.TriggerEvent("RatioInputModeChanged", this,
+                new TestEventArgs() { obj = new bool[] { Configs.Configs.IsEnableRatioInputMode, Configs.Configs.IsShowRatioInputControls } });
             Close();
         }
 

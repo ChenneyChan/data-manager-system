@@ -76,6 +76,7 @@
                     <Grid.RowDefinitions>
                         <RowDefinition/>
                         <RowDefinition/>
+                        <RowDefinition/>
                     </Grid.RowDefinitions>
                     <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                         <TextBlock Text="工位选择：" Width="120" Style="{StaticResource Label}" Margin="0,0,10,0"/>
@@ -87,6 +88,10 @@
                     <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                         <TextBlock Text="变比手动模式：" Width="120" Style="{StaticResource Label}" Margin="0,0,10,0"/>
                         <CheckBox Name="cbEnableRatioInputMode" IsChecked="False" Width="220"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock Text="显示变比输入框：" Width="120" Style="{StaticResource Label}" Margin="0,0,10,0"/>
+                        <CheckBox Name="cbShowRatioInputControls" IsChecked="False" Width="220"/>
                     </StackPanel>
                 </Grid>
             </TabItem>

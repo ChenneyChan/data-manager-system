@@ -102,7 +102,6 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         private string WorkflowType = "双绕组";
         private string SelectedTab = "空载";
         private bool IsAutoRatio = true;
-        private bool IsInputRatio = false;
         private bool IsEnableInputMode = false;
 
         #endregion
@@ -171,8 +170,8 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             }
             cbVoltageRatio.Visibility = Visibility.Visible;
             cbCurrentRatio.Visibility = Visibility.Visible;
-            tbVT.Visibility = Visibility.Collapsed;
-            tbCT.Visibility = Visibility.Collapsed;
+            tbVT.Visibility = Configs.Configs.IsShowRatioInputControls ? Visibility.Visible : Visibility.Collapsed;
+            tbCT.Visibility = Configs.Configs.IsShowRatioInputControls ? Visibility.Visible : Visibility.Collapsed;
             cbVoltageRatio.Text = Configs.Configs.cbVT;
             cbCurrentRatio.Text = Configs.Configs.cbCT;
             cbAutoChangeRatio.Visibility = IsWorkstationOne ? Visibility.Visible : Visibility.Collapsed;
@@ -185,7 +184,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             cbVoltageRatio.SelectionChanged += Ratio_SelectionChanged;
             cbCurrentRatio.SelectionChanged += Ratio_SelectionChanged;
             IsEnableInputMode = Configs.Configs.IsEnableRatioInputMode;
-            cbiInputMode.Visibility = IsEnableInputMode ? Visibility.Visible : Visibility.Collapsed;
+            //cbiInputMode.Visibility = IsEnableInputMode ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void Ratio_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -2740,10 +2739,10 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         private void CalculateVTCT(out float? ct, out float? vt)
         {
             // 手动输入模式下，不看SelectedItem，看Text
-            if (IsInputRatio)
+            if (IsEnableInputMode)
             {
-                vt = (float)(Utils.GetFloat(cbVoltageRatio.Text) ?? 0) * 10f;
-                ct = (float)(Utils.GetFloat(cbCurrentRatio.Text) ?? 0) / 5.0f;
+                vt = (float?)tbVT.Value;
+                ct = (float?)tbCT.Value;
                 return;
             }
             if (cbVoltageRatio.SelectedItem != null)
@@ -2781,6 +2780,8 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             #region 互感器比值计算
             {
                 CalculateVTCT(out SelectedCT, out SelectedVT);
+                tbVT.Value = SelectedVT ?? 0;
+                tbCT.Value = SelectedCT ?? 0;
             }
             #endregion
 
@@ -3252,34 +3253,23 @@ namespace ABBDataManagerSystem.PowerAnalyzer
 
         private void RatioInputModeChangedEventHandler(object sender, TestEventArgs e)
         {
-            if (IsEnableInputMode == Configs.Configs.IsEnableRatioInputMode)
-            {
-                return;
-            }
             IsEnableInputMode = Configs.Configs.IsEnableRatioInputMode;
             Dispatcher.Invoke(() =>
             {
-                if (cbiInputMode.Visibility == Visibility.Visible)
-                {
-                    cbAutoChangeRatio.SelectedIndex = 0;
-                }
-                cbiInputMode.Visibility = IsEnableInputMode ? Visibility.Visible : Visibility.Collapsed;
+                //if (cbiInputMode.Visibility == Visibility.Visible)
+                //{
+                //    cbAutoChangeRatio.SelectedIndex = 0;
+                //}
+                //cbiInputMode.Visibility = IsEnableInputMode ? Visibility.Visible : Visibility.Collapsed;
+
+                tbVT.Visibility = Configs.Configs.IsShowRatioInputControls ? Visibility.Visible : Visibility.Collapsed;
+                tbCT.Visibility = Configs.Configs.IsShowRatioInputControls ? Visibility.Visible : Visibility.Collapsed;
             });
         }
 
         private void ComboBox_Selected(object sender, RoutedEventArgs e)
         {
             IsAutoRatio = cbAutoChangeRatio.SelectedIndex == 0;
-            IsInputRatio = cbAutoChangeRatio.SelectedIndex == 2;
-            if (cbVoltageRatio.IsEditable != IsInputRatio || cbCurrentRatio.IsEditable != IsInputRatio)
-            {
-                cbVoltageRatio.SelectedIndex = -1;
-                cbVoltageRatio.Text = "";
-                cbCurrentRatio.SelectedIndex = -1;
-                cbCurrentRatio.Text = "";
-            }
-            cbVoltageRatio.IsEditable = IsInputRatio;
-            cbCurrentRatio.IsEditable = IsInputRatio;
         }
     }
 }
