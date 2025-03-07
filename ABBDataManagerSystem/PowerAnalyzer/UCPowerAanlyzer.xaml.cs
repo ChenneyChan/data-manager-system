@@ -3115,7 +3115,7 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             ControlUtils.ShowUploadTips(ret);
         }
 
-        private void btUploadPartialDischange_Click(object sender, EventArgs e)
+        private void btUploadPartialDischarge_Click(object sender, EventArgs e)
         {
             if (!ControlUtils.CheckWorkflowBeforeUpload())
             {
@@ -3134,6 +3134,60 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             };
             bool ret = pd.InsertData();
             ControlUtils.ShowUploadTips(ret);
+        }
+        #endregion
+
+        #region 清空数据
+        private void btClearNoLoad_Click(object sender, EventArgs e)
+        {
+            var ret = System.Windows.MessageBox.Show("清空数据？", "提示", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            if (MessageBoxResult.Yes != ret)
+            {
+                return;
+            }
+            NoLoadInfo90 = new();
+            NoLoadInfo100 = new();
+            NoLoadInfo110 = new();
+            UpdateDateShow();
+        }
+
+        private void btClearLoad_Click(object sender, EventArgs e)
+        {
+            var ret = System.Windows.MessageBox.Show("清空数据？", "提示", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            if (MessageBoxResult.Yes != ret)
+            {
+                return;
+            }
+            LoadInfoMax = new();
+            LoadInfoMin = new();
+            LoadInfoRated = new();
+            UpdateDateShow();
+        }
+
+        private void btClearSense_Click(object sender, EventArgs e)
+        {
+            var ret = System.Windows.MessageBox.Show("清空数据？", "提示", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            if (MessageBoxResult.Yes != ret)
+            {
+                return;
+            }
+            SenseInfo = new();
+            UpdateDateShow();
+        }
+
+        private void btClearPartialDischarge_Click(object sender, EventArgs e)
+        {
+            var ret = System.Windows.MessageBox.Show("清空数据？", "提示", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            if (MessageBoxResult.Yes != ret)
+            {
+                return;
+            }
+            tbA18.Clear();
+            tbB18.Clear();
+            tbC18.Clear();
+            tbA13.Clear();
+            tbB13.Clear();
+            tbC13.Clear();
         }
         #endregion
 
