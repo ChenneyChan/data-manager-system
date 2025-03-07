@@ -12,6 +12,7 @@
         <ContextMenu x:Key="DataGridContextMenu">
             <MenuItem Header="开启编辑" Click="MenuItemEnableEdit_Click"/>
             <MenuItem Header="关闭编辑" Click="MenuItemCloseEdit_Click"/>
+            <MenuItem Header="切换自动下滑" Click="MenuItemToggleAutoScroll_Click"/>
         </ContextMenu>
         <local1:AlternationConverter x:Key="AlternationConverter"/>
         <Style TargetType="RadioButton" BasedOn="{StaticResource {x:Type RadioButton}}">

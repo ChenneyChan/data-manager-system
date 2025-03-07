@@ -141,6 +141,7 @@ namespace ABBDataManagerSystem.Pages
         private Object objLock = new object();
         private int Index = 0;
         private TempMode TempTestMode = TempMode.COMMON;
+        private bool IsAutoScroll = true;
 
         public TempTestPage()
         {
@@ -867,7 +868,23 @@ namespace ABBDataManagerSystem.Pages
             Dispatcher.Invoke(() =>
             {
                 Table.Rows.Add(newRow);
+                if (IsAutoScroll)
+                {
+                    ScrollToEnd(dgTempRecord);
+                }
             });
+        }
+
+        private static void ScrollToEnd(Control control)
+        {
+            // 获取DataGrid的ScrollViewer
+            var scrollViewer = control.Template.FindName("DG_ScrollViewer", control) as System.Windows.Controls.ScrollViewer;
+
+            if (scrollViewer != null)
+            {
+                // 可以在这里操作ScrollViewer，例如滚动到底部
+                scrollViewer.ScrollToEnd();
+            }
         }
 
         private void AddSlotRow()
@@ -1670,6 +1687,11 @@ namespace ABBDataManagerSystem.Pages
         private void MenuItemCloseEdit_Click(object sender, RoutedEventArgs e)
         {
             dgTempRecord.IsReadOnly = true;
+        }
+
+        private void MenuItemToggleAutoScroll_Click(object sender, RoutedEventArgs e)
+        {
+            IsAutoScroll = !IsAutoScroll;
         }
 
         private void btToggleRealTimeTemp_Click(object sender, RoutedEventArgs e)
