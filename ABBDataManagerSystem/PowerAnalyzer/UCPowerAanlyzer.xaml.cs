@@ -3236,6 +3236,8 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                             IsSenseCountDowning = false;
                             tbCountDown.IsEnabled = true;
                         }
+                        SenseInfo.InductionTime = (float?)tbCountDown.Value;
+                        SenseView.UpdateInductionTime();
                     }
                 });
             }
@@ -3259,6 +3261,8 @@ namespace ABBDataManagerSystem.PowerAnalyzer
         {
             IsSenseCountDowning = true;
             tbCountDown.IsEnabled = false;
+            SenseInfo.InductionTime = (float?)tbCountDown.Value;
+            SenseView.UpdateInductionTime();
         }
 
         private void btStopCountDown_Click(object sender, RoutedEventArgs e)
