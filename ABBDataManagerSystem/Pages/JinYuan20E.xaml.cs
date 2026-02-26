@@ -203,7 +203,50 @@ namespace ABBDataManagerSystem.Pages
             cbSerialPort.SelectedIndex = selectedIndex;
 
             UpdateControlEnableState();
+
+            GetWorkflowBaseInfo();
+            Tools.EventManager.Instance.Subscribe("WorkflowSelected", WorkflowUpdateEvent);
         }
+
+        #region 获取工作令信息
+
+        private void WorkflowUpdateEvent(object sender, TestEventArgs e)
+        {
+            GetWorkflowBaseInfo();
+        }
+
+        private void GetWorkflowBaseInfo()
+        {
+            Task.Run(() =>
+            {
+                WorkflowInfo? workflowInfo = Configs.Configs.WorkflowInfo;
+                Dispatcher.Invoke(() =>
+                {
+                    if (workflowInfo != null)
+                    {
+                        bool isCommon = true;
+                        if (workflowInfo.WorkflowType == "三绕组")
+                        {
+                            isCommon = workflowInfo.RatedPower1 == workflowInfo.RatedPower2;
+                        }
+                        cbTestPhase.Items.Clear();
+                        if (isCommon)
+                        {
+                            cbTestPhase.Items.Add("空载");
+                            cbTestPhase.Items.Add("负载");
+                        }
+                        else
+                        {
+                            cbTestPhase.Items.Add("空载");
+                            cbTestPhase.Items.Add("负载（大容量）");
+                            cbTestPhase.Items.Add("负载（小容量）");
+                        }
+                        cbTestPhase.SelectedIndex = 0;
+                    }
+                });
+            });
+        }
+        #endregion
 
         private void swConnect_CheckedChange(object sender, RoutedEventArgs e)
         {
