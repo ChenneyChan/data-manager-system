@@ -10,6 +10,7 @@
              d:DesignHeight="1080" d:DesignWidth="1920" Loaded="UserControl_Loaded" Unloaded="UserControl_Unloaded" MinHeight="800" MinWidth="800">
     <UserControl.Resources>
         <ContextMenu x:Key="DataGridContextMenu">
+            <MenuItem Header="手动添加一行" Click="MenuItemAddRow_Click"/>
             <MenuItem Header="开启编辑" Click="MenuItemEnableEdit_Click"/>
             <MenuItem Header="关闭编辑" Click="MenuItemCloseEdit_Click"/>
             <MenuItem Header="切换自动下滑" Click="MenuItemToggleAutoScroll_Click"/>

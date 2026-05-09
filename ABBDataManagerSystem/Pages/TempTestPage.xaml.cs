@@ -1796,6 +1796,25 @@ namespace ABBDataManagerSystem.Pages
         }
         #endregion
 
+        private void MenuItemAddRow_Click(object sender, RoutedEventArgs e)
+        {
+            if (IsCollecting)
+            {
+                MessageBox.Show("采集过程中无法手动添加行，请先停止采集！", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+            if (Table.Columns.Count == 0)
+            {
+                MessageBox.Show("请先点击启动采集以初始化表格！", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+            DataRow newRow = Table.NewRow();
+            newRow["序号"] = ++Index;
+            newRow["时间"] = DateTime.Now;
+            Table.Rows.Add(newRow);
+            ScrollToEnd(dgTempRecord);
+        }
+
         private void MenuItemEditor_Click(object sender, RoutedEventArgs e)
         {
             // 获取右键菜单所在的行
