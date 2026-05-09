@@ -161,6 +161,7 @@
                     <TextBlock Text="采集周期" Width="70" Margin="10,0" VerticalAlignment="Center"/>
                     <hc:ComboBox Width="100" VerticalAlignment="Center" Name="cbInterval"/>
                     <Button Margin="10, 0" Content="切换实时温度显示" Width="180" Name="btToggleRealTimeTemp" Click="btToggleRealTimeTemp_Click" Style="{StaticResource plotButton}" Height="34" BorderThickness="1" BorderBrush="Gray"/>
+                    <Button Margin="10, 0" Content="隐藏折线图" Width="140" Name="btToggleChart" Click="btToggleChart_Click" Style="{StaticResource plotButton}" Height="34" BorderThickness="1" BorderBrush="Gray"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0, 10">
                     <TextBlock Text="阶段" Width="32" Margin="0, 0, 10,0" VerticalAlignment="Center"/>
@@ -303,10 +304,10 @@
         </WrapPanel>
         <Grid Grid.Column="0" Grid.Row="3" Margin="0,5">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition x:Name="colDataGrid" Width="Auto"/>
+                <ColumnDefinition x:Name="colChart" Width="*"/>
             </Grid.ColumnDefinitions>
-            <Grid Margin="0,0,5,0" Grid.Column="1">
+            <Grid x:Name="chartPanel" Margin="0,0,5,0" Grid.Column="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>

@@ -1886,5 +1886,28 @@ namespace ABBDataManagerSystem.Pages
             else
                 SlotWrapPanel.Visibility = Visibility.Visible;
         }
+
+        private bool IsChartVisible = true;
+
+        private void btToggleChart_Click(object sender, RoutedEventArgs e)
+        {
+            IsChartVisible = !IsChartVisible;
+            if (IsChartVisible)
+            {
+                chartPanel.Visibility = Visibility.Visible;
+                colDataGrid.Width = new GridLength(0, GridUnitType.Auto);
+                colChart.Width = new GridLength(1, GridUnitType.Star);
+                btToggleChart.Content = "隐藏折线图";
+                dgTempRecord.MinWidth = 600;
+            }
+            else
+            {
+                chartPanel.Visibility = Visibility.Collapsed;
+                colDataGrid.Width = new GridLength(1, GridUnitType.Star);
+                colChart.Width = new GridLength(0, GridUnitType.Auto);
+                btToggleChart.Content = "显示折线图";
+                dgTempRecord.MinWidth = 0;
+            }
+        }
     }
 }
