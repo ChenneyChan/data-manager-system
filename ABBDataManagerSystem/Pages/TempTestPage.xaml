@@ -272,26 +272,30 @@
                     <hc:TextBox hc:InfoElement.Title="P3" Name="tbP3" hc:InfoElement.TitlePlacement="left" Width="90" FontSize="16" Margin="2"/>
                     <hc:TextBox hc:InfoElement.Title="Fu" Name="tbFu" hc:InfoElement.TitlePlacement="left" Width="90" FontSize="16" Margin="2"/>
                 </WrapPanel>
-    
+
             </StackPanel>
         </Grid>
-        <WrapPanel Grid.Column="0" Grid.Row="1" Name="panelCoolDeviceSelector" Visibility="Collapsed">
-            <TextBlock Text="水冷设备" VerticalAlignment="Center" Margin="0,0,5,0" FontSize="14"/>
+        <WrapPanel Grid.Column="0" Grid.Row="1"  Name="panelCoolDevice" MaxWidth="1920" HorizontalAlignment="Left">
+            <TextBlock Text="水冷设备" VerticalAlignment="Center" Margin="0,0,5,0" FontSize="16"/>
             <hc:ComboBox Name="cbCoolDeviceSource" Width="120" VerticalAlignment="Center" SelectionChanged="cbCoolDeviceSource_SelectionChanged">
                 <ComboBoxItem Content="水冷设备 1" IsSelected="True"/>
                 <ComboBoxItem Content="水冷设备 2"/>
             </hc:ComboBox>
-        </WrapPanel>
-        <WrapPanel Grid.Column="0" Grid.Row="1"  Name="panelCoolDevice" IsEnabled="False">
-            <hc:TextBox IsReadOnly="True" Name="tbOutletWater" hc:InfoElement.Title="出水温度" hc:InfoElement.TitlePlacement="left"  Width="160" FontSize="16" Margin="0, 2, 4, 2"/>
-            <hc:TextBox IsReadOnly="True" Name="tbInletWater" hc:InfoElement.Title="回水温度" hc:InfoElement.TitlePlacement="left"  Width="160" FontSize="16" Margin="0, 2, 4, 2"/>
-            <hc:TextBox IsReadOnly="True" Name="tbOutletAir1" hc:InfoElement.Title="出风温度1" hc:InfoElement.TitlePlacement="left"  Width="160" FontSize="16" Margin="0, 2, 4, 2"/>
-            <hc:TextBox IsReadOnly="True" Name="tbOutletAir2" hc:InfoElement.Title="出风温度2" hc:InfoElement.TitlePlacement="left"  Width="160" FontSize="16" Margin="0, 2, 4, 2"/>
-            <hc:TextBox IsReadOnly="True" Name="tbOutletAir3" hc:InfoElement.Title="出风温度3" hc:InfoElement.TitlePlacement="left"  Width="160" FontSize="16" Margin="0, 2, 4, 2"/>
-            <hc:TextBox IsReadOnly="True" Name="tbOutletAir4" hc:InfoElement.Title="出风温度4" hc:InfoElement.TitlePlacement="left"  Width="160" FontSize="16" Margin="0, 2, 4, 2"/>
-            <hc:TextBox IsReadOnly="True" Name="tbEnvTemp1" hc:InfoElement.Title="环境温度1" hc:InfoElement.TitlePlacement="left"  Width="160" FontSize="16" Margin="0, 2, 4, 2"/>
-            <hc:TextBox IsReadOnly="True" Name="tbEnvTemp2" hc:InfoElement.Title="环境温度2" hc:InfoElement.TitlePlacement="left"  Width="160" FontSize="16" Margin="0, 2, 4, 2"/>
-            <hc:TextBox IsReadOnly="True" Name="tbFlow" hc:InfoElement.Title="流量" hc:InfoElement.TitlePlacement="left"  Width="120" FontSize="16" Margin="0, 2, 2, 5"/>
+            <hc:TextBox IsReadOnly="True" IsEnabled="False"  Name="tbOutletWater" hc:InfoElement.Title="出水温度" hc:InfoElement.TitlePlacement="left"  Width="160" FontSize="16" Margin="0, 2, 4, 2"/>
+            <hc:TextBox IsReadOnly="True" IsEnabled="False"  Name="tbInletWater" hc:InfoElement.Title="回水温度" hc:InfoElement.TitlePlacement="left"  Width="160" FontSize="16" Margin="0, 2, 4, 2"/>
+            <hc:TextBox IsReadOnly="True" IsEnabled="False"  Name="tbOutletAir1" hc:InfoElement.Title="出风温度1" hc:InfoElement.TitlePlacement="left"  Width="160" FontSize="16" Margin="0, 2, 4, 2"/>
+            <hc:TextBox IsReadOnly="True" IsEnabled="False"  Name="tbOutletAir2" hc:InfoElement.Title="出风温度2" hc:InfoElement.TitlePlacement="left"  Width="160" FontSize="16" Margin="0, 2, 4, 2"/>
+            <hc:TextBox IsReadOnly="True" IsEnabled="False"  Name="tbOutletAir3" hc:InfoElement.Title="出风温度3" hc:InfoElement.TitlePlacement="left"  Width="160" FontSize="16" Margin="0, 2, 4, 2"/>
+            <hc:TextBox IsReadOnly="True" IsEnabled="False"  Name="tbOutletAir4" hc:InfoElement.Title="出风温度4" hc:InfoElement.TitlePlacement="left"  Width="160" FontSize="16" Margin="0, 2, 4, 2"/>
+            <WrapPanel Margin="0" Name="panelCoolDeviceExpandInfo">
+                <hc:TextBox IsReadOnly="True" IsEnabled="False"  Name="tbOutletAir5" hc:InfoElement.Title="出风温度5" hc:InfoElement.TitlePlacement="left"  Width="160" FontSize="16" Margin="0, 2, 4, 2"/>
+                <hc:TextBox IsReadOnly="True" IsEnabled="False"  Name="tbOutletAir6" hc:InfoElement.Title="出风温度6" hc:InfoElement.TitlePlacement="left"  Width="160" FontSize="16" Margin="0, 2, 4, 2"/>
+                <hc:TextBox IsReadOnly="True" IsEnabled="False"  Name="tbOutletAir7" hc:InfoElement.Title="出风温度7" hc:InfoElement.TitlePlacement="left"  Width="160" FontSize="16" Margin="0, 2, 4, 2"/>
+                <hc:TextBox IsReadOnly="True" IsEnabled="False"  Name="tbOutletAir8" hc:InfoElement.Title="出风温度8" hc:InfoElement.TitlePlacement="left"  Width="160" FontSize="16" Margin="0, 2, 4, 2"/>
+            </WrapPanel>
+            <hc:TextBox IsReadOnly="True" IsEnabled="False"  Name="tbEnvTemp1" hc:InfoElement.Title="环境温度1" hc:InfoElement.TitlePlacement="left"  Width="160" FontSize="16" Margin="0, 2, 4, 2"/>
+            <hc:TextBox IsReadOnly="True" IsEnabled="False"  Name="tbEnvTemp2" hc:InfoElement.Title="环境温度2" hc:InfoElement.TitlePlacement="left"  Width="160" FontSize="16" Margin="0, 2, 4, 2"/>
+            <hc:TextBox IsReadOnly="True" IsEnabled="False"  Name="tbFlow" hc:InfoElement.Title="流量" hc:InfoElement.TitlePlacement="left"  Width="120" FontSize="16" Margin="0, 2, 2, 5"/>
         </WrapPanel>
         <WrapPanel Grid.Column="0" Grid.Row="2" Name="SlotWrapPanel" Background="#FFD1D4D6" Grid.ColumnSpan="2" Margin="0,10,0,0">
             <!--<local:ProductInfo Width="50" Height="50"/>-->

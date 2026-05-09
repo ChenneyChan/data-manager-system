@@ -515,6 +515,12 @@ class ProgramC
 #region 水冷设备数据采集
 class ProgramShuileng
 {
+    static void Main()
+    {
+        SimulateCoolDevice();
+    }
+
+
     static void MainX()
     {
         Console.WriteLine("请输入串口端口：");
@@ -646,7 +652,7 @@ class ProgramShuileng
         }
     }
 
-    public static void Main()
+    public static void MainA()
     {
         float number1 = 0.000023232323f;
         float number2 = 2.52f;
@@ -739,6 +745,72 @@ class ProgramShuileng
         }
 
         return sb.ToString();
+    }
+
+    /// <summary>
+    /// 模拟水冷设备，通过UDP发送温度流量数据
+    /// 协议：ASCII文本，分号分隔
+    /// 设备1(9字段)：出水温度;回水温度;流量;环境温度1;环境温度2;出风温度1~4
+    /// 设备2(13字段)：出水温度;回水温度;流量;环境温度1;环境温度2;出风温度1~8
+    /// </summary>
+    public static void SimulateCoolDevice()
+    {
+        Console.WriteLine("请输入UDP目标端口（默认8877）：");
+        var input = Console.ReadLine();
+        int port = string.IsNullOrWhiteSpace(input) ? 8877 : int.Parse(input);
+
+        Console.WriteLine("请选择模拟设备类型（1=设备1-4出风，2=设备2-8出风，默认1）：");
+        input = Console.ReadLine();
+        bool isDevice2 = input?.Trim() == "2";
+        int outletCount = isDevice2 ? 8 : 4;
+
+        Console.WriteLine("请输入发送间隔毫秒（默认1000）：");
+        input = Console.ReadLine();
+        int interval = string.IsNullOrWhiteSpace(input) ? 1000 : int.Parse(input);
+
+        Console.WriteLine($"开始向 127.0.0.1:{port} 模拟发送水冷数据（设备{(isDevice2 ? 2 : 1)}，{outletCount}个出风），间隔 {interval}ms");
+        Console.WriteLine("字段顺序：出水温度;回水温度;流量;环境温度1;环境温度2;出风温度1~" + outletCount);
+        Console.WriteLine("按 Ctrl+C 停止\n");
+
+        var random = new Random();
+        using var udpClient = new UdpClient();
+        var endPoint = new IPEndPoint(IPAddress.Loopback, port);
+
+        // 基准值，模拟缓慢漂移
+        float outletWater = 25.0f;
+        float inletWater = 22.0f;
+        float flow = 12.5f;
+        float ambient1 = 28.0f;
+        float ambient2 = 27.5f;
+        float[] outletAir = { 30.0f, 29.5f, 30.5f, 29.0f, 31.0f, 28.5f, 30.0f, 29.8f };
+
+        int count = 0;
+        while (true)
+        {
+            outletWater += (float)(random.NextDouble() - 0.5) * 0.3f;
+            inletWater += (float)(random.NextDouble() - 0.5) * 0.3f;
+            flow = Math.Max(0, flow + (float)(random.NextDouble() - 0.5) * 0.5f);
+            ambient1 += (float)(random.NextDouble() - 0.5) * 0.2f;
+            ambient2 += (float)(random.NextDouble() - 0.5) * 0.2f;
+            for (int i = 0; i < outletCount; i++)
+            {
+                outletAir[i] += (float)(random.NextDouble() - 0.5) * 0.4f;
+            }
+
+            string msg = $"{outletWater:F1};{inletWater:F1};{flow:F1};{ambient1:F1};{ambient2:F1}";
+            for (int i = 0; i < outletCount; i++)
+            {
+                msg += $";{outletAir[i]:F1}";
+            }
+
+            byte[] data = Encoding.ASCII.GetBytes(msg);
+            udpClient.Send(data, data.Length, endPoint);
+
+            count++;
+            Console.WriteLine($"[{count}] -> {msg}");
+
+            Thread.Sleep(interval);
+        }
     }
 }
 #endregion

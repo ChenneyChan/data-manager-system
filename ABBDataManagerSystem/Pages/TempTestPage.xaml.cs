@@ -80,6 +80,26 @@ namespace ABBDataManagerSystem.Pages
         public float OutletAirTemperature4 { get; set; }
 
         /// <summary>
+        /// 出风口温度5
+        /// </summary>
+        public float OutletAirTemperature5 { get; set; }
+
+        /// <summary>
+        /// 出风口温度6
+        /// </summary>
+        public float OutletAirTemperature6 { get; set; }
+
+        /// <summary>
+        /// 出风口温度7
+        /// </summary>
+        public float OutletAirTemperature7 { get; set; }
+
+        /// <summary>
+        /// 出风口温度8
+        /// </summary>
+        public float OutletAirTemperature8 { get; set; }
+
+        /// <summary>
         /// 水流量
         /// </summary>
         public float WaterFlowRate { get; set; }
@@ -92,6 +112,8 @@ namespace ABBDataManagerSystem.Pages
                    $"AmbientTemperature1: {AmbientTemperature1}, AmbientTemperature2: {AmbientTemperature2}, " +
                    $"OutletAirTemperature1: {OutletAirTemperature1}, OutletAirTemperature2: {OutletAirTemperature2}, " +
                    $"OutletAirTemperature3: {OutletAirTemperature3}, OutletAirTemperature4: {OutletAirTemperature4}, " +
+                   $"OutletAirTemperature5: {OutletAirTemperature5}, OutletAirTemperature6: {OutletAirTemperature6}, " +
+                   $"OutletAirTemperature7: {OutletAirTemperature7}, OutletAirTemperature8: {OutletAirTemperature8}, " +
                    $"WaterFlowRate: {WaterFlowRate}";
         }
     }
@@ -194,7 +216,6 @@ namespace ABBDataManagerSystem.Pages
             cbCoolingMode.SelectionChanged += cbCoolingMode_SelectionChanged;
             cbRelatedTo.SelectionChanged += cbCoolingMode_SelectionChanged;
             panelCoolDevice.Visibility = TempTestMode == TempMode.AFWF ? Visibility.Visible : Visibility.Collapsed;
-            panelCoolDeviceSelector.Visibility = TempTestMode == TempMode.AFWF ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void UpdateCommonInfo()
@@ -268,6 +289,7 @@ namespace ABBDataManagerSystem.Pages
             btSelectSlots.IsEnabled = !IsCollecting;
             cbCoolingMode.IsEnabled = !IsCollecting;
             cbRelatedTo.IsEnabled = !IsCollecting;
+            cbCoolDeviceSource.IsEnabled = !IsCollecting;
 
             if (IsCollecting)
             {
@@ -469,6 +491,10 @@ namespace ABBDataManagerSystem.Pages
                 "外循环出风口2",
                 "外循环出风口3",
                 "外循环出风口4",
+                "外循环出风口5",
+                "外循环出风口6",
+                "外循环出风口7",
+                "外循环出风口8",
                 "外循环环境温度1",
                 "外循环环境温度2",
             });
@@ -794,6 +820,10 @@ namespace ABBDataManagerSystem.Pages
                         { "外循环出风口2", "OutletAir2"},
                         { "外循环出风口3", "OutletAir3"},
                         { "外循环出风口4", "OutletAir4"},
+                        { "外循环出风口5", "OutletAir5"},
+                        { "外循环出风口6", "OutletAir6"},
+                        { "外循环出风口7", "OutletAir7"},
+                        { "外循环出风口8", "OutletAir8"},
                         { "外循环环境温度1", "Ambient1"},
                         { "外循环环境温度2", "Ambient2"},
                         { "流量", "Flow"},
@@ -853,6 +883,10 @@ namespace ABBDataManagerSystem.Pages
                 newRow["OutletAir2"] = CurrentCoolDeviceInfo.OutletAirTemperature2;
                 newRow["OutletAir3"] = CurrentCoolDeviceInfo.OutletAirTemperature3;
                 newRow["OutletAir4"] = CurrentCoolDeviceInfo.OutletAirTemperature4;
+                newRow["OutletAir5"] = CurrentCoolDeviceInfo.OutletAirTemperature5;
+                newRow["OutletAir6"] = CurrentCoolDeviceInfo.OutletAirTemperature6;
+                newRow["OutletAir7"] = CurrentCoolDeviceInfo.OutletAirTemperature7;
+                newRow["OutletAir8"] = CurrentCoolDeviceInfo.OutletAirTemperature8;
                 newRow["Flow"] = CurrentCoolDeviceInfo.WaterFlowRate;
             }
             lock (objLock)
@@ -1038,6 +1072,10 @@ namespace ABBDataManagerSystem.Pages
                             CurrentCoolDeviceInfo.OutletAirTemperature2,
                             CurrentCoolDeviceInfo.OutletAirTemperature3,
                             CurrentCoolDeviceInfo.OutletAirTemperature4,
+                            CurrentCoolDeviceInfo.OutletAirTemperature5,
+                            CurrentCoolDeviceInfo.OutletAirTemperature6,
+                            CurrentCoolDeviceInfo.OutletAirTemperature7,
+                            CurrentCoolDeviceInfo.OutletAirTemperature8,
                             CurrentCoolDeviceInfo.AmbientTemperature1,
                             CurrentCoolDeviceInfo.AmbientTemperature2
                         };
@@ -1191,7 +1229,6 @@ namespace ABBDataManagerSystem.Pages
                 SelectedSlots_SelectionChanged();
             }
             panelCoolDevice.Visibility = TempTestMode == TempMode.AFWF ? Visibility.Visible : Visibility.Collapsed;
-            panelCoolDeviceSelector.Visibility = TempTestMode == TempMode.AFWF ? Visibility.Visible : Visibility.Collapsed;
             if (sender == cbCoolingMode)
             {
                 UpdateCommonInfo();
@@ -1469,6 +1506,10 @@ namespace ABBDataManagerSystem.Pages
                         record.OutletAirTemperature2 = item.Field<float?>("OutletAir2") ?? null;
                         record.OutletAirTemperature3 = item.Field<float?>("OutletAir3") ?? null;
                         record.OutletAirTemperature4 = item.Field<float?>("OutletAir4") ?? null;
+                        record.OutletAirTemperature5 = item.Field<float?>("OutletAir5") ?? null;
+                        record.OutletAirTemperature6 = item.Field<float?>("OutletAir6") ?? null;
+                        record.OutletAirTemperature7 = item.Field<float?>("OutletAir7") ?? null;
+                        record.OutletAirTemperature8 = item.Field<float?>("OutletAir8") ?? null;
                         record.WaterFlowRate = item.Field<float?>("Flow") ?? null;
                     }
                 }
@@ -1652,6 +1693,11 @@ namespace ABBDataManagerSystem.Pages
                             targetInfo.OutletAirTemperature2 = Utils.ParseFloat(values[6]);
                             targetInfo.OutletAirTemperature3 = Utils.ParseFloat(values[7]);
                             targetInfo.OutletAirTemperature4 = Utils.ParseFloat(values[8]);
+                            // 设备2有8个出风温度（13个字段），设备1有4个出风温度（9个字段）
+                            targetInfo.OutletAirTemperature5 = values.Length >= 10 ? Utils.ParseFloat(values[9]) : 0;
+                            targetInfo.OutletAirTemperature6 = values.Length >= 11 ? Utils.ParseFloat(values[10]) : 0;
+                            targetInfo.OutletAirTemperature7 = values.Length >= 12 ? Utils.ParseFloat(values[11]) : 0;
+                            targetInfo.OutletAirTemperature8 = values.Length >= 13 ? Utils.ParseFloat(values[12]) : 0;
                             Log.Info($"Device {deviceIndex + 1}: {targetInfo}");
 
                             // Only update UI when this device is the currently selected source
@@ -1668,6 +1714,10 @@ namespace ABBDataManagerSystem.Pages
                                     tbOutletAir2.Text = targetInfo.OutletAirTemperature2 + "";
                                     tbOutletAir3.Text = targetInfo.OutletAirTemperature3 + "";
                                     tbOutletAir4.Text = targetInfo.OutletAirTemperature4 + "";
+                                    tbOutletAir5.Text = targetInfo.OutletAirTemperature5 + "";
+                                    tbOutletAir6.Text = targetInfo.OutletAirTemperature6 + "";
+                                    tbOutletAir7.Text = targetInfo.OutletAirTemperature7 + "";
+                                    tbOutletAir8.Text = targetInfo.OutletAirTemperature8 + "";
                                 });
                             }
                         }
@@ -1715,6 +1765,10 @@ namespace ABBDataManagerSystem.Pages
             int index = Configs.Configs.CoolDeviceSelectedIndex;
             CurrentCoolDeviceInfo = index == 0 ? CoolDeviceInfo1 : CoolDeviceInfo2;
             Log.Info($"Cool device source switched to device {index + 1}");
+            Dispatcher.Invoke(() =>
+            {
+                panelCoolDeviceExpandInfo.Visibility = index == 0 ? Visibility.Collapsed : Visibility.Visible; 
+            });
         }
 
         private void cbCoolDeviceSource_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
@@ -1734,6 +1788,10 @@ namespace ABBDataManagerSystem.Pages
                 tbOutletAir2.Text = CurrentCoolDeviceInfo.OutletAirTemperature2 + "";
                 tbOutletAir3.Text = CurrentCoolDeviceInfo.OutletAirTemperature3 + "";
                 tbOutletAir4.Text = CurrentCoolDeviceInfo.OutletAirTemperature4 + "";
+                tbOutletAir5.Text = CurrentCoolDeviceInfo.OutletAirTemperature5 + "";
+                tbOutletAir6.Text = CurrentCoolDeviceInfo.OutletAirTemperature6 + "";
+                tbOutletAir7.Text = CurrentCoolDeviceInfo.OutletAirTemperature7 + "";
+                tbOutletAir8.Text = CurrentCoolDeviceInfo.OutletAirTemperature8 + "";
             });
         }
         #endregion
