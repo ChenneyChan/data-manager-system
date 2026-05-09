@@ -138,6 +138,8 @@ namespace ABBDataManagerSystem.Pages
         private DataTable Table = new DataTable();
         private VoltageInfo CurrentVoltageInfo = new();
         private CoolDeviceInfo CurrentCoolDeviceInfo = new();
+        private CoolDeviceInfo CoolDeviceInfo1 = new();
+        private CoolDeviceInfo CoolDeviceInfo2 = new();
         private Object objLock = new object();
         private int Index = 0;
         private TempMode TempTestMode = TempMode.COMMON;
@@ -192,6 +194,7 @@ namespace ABBDataManagerSystem.Pages
             cbCoolingMode.SelectionChanged += cbCoolingMode_SelectionChanged;
             cbRelatedTo.SelectionChanged += cbCoolingMode_SelectionChanged;
             panelCoolDevice.Visibility = TempTestMode == TempMode.AFWF ? Visibility.Visible : Visibility.Collapsed;
+            panelCoolDeviceSelector.Visibility = TempTestMode == TempMode.AFWF ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void UpdateCommonInfo()
@@ -297,6 +300,9 @@ namespace ABBDataManagerSystem.Pages
             GetWorkflowBaseInfo();
             Tools.EventManager.Instance.Subscribe("WorkflowSelected", WorkflowUpdateEvent);
             Tools.EventManager.Instance.Subscribe("PowerAnalyzer", EventHandler);
+            // Set cool device selection from config
+            cbCoolDeviceSource.SelectedIndex = Configs.Configs.CoolDeviceSelectedIndex;
+            UpdateCurrentCoolDevice();
             StartListening();
             UpdateCommonInfo();
         }
@@ -1185,6 +1191,7 @@ namespace ABBDataManagerSystem.Pages
                 SelectedSlots_SelectionChanged();
             }
             panelCoolDevice.Visibility = TempTestMode == TempMode.AFWF ? Visibility.Visible : Visibility.Collapsed;
+            panelCoolDeviceSelector.Visibility = TempTestMode == TempMode.AFWF ? Visibility.Visible : Visibility.Collapsed;
             if (sender == cbCoolingMode)
             {
                 UpdateCommonInfo();
@@ -1572,64 +1579,102 @@ namespace ABBDataManagerSystem.Pages
 
         #region 监听水冷温度流量数据
 
-        private UdpClient udpClient;
-        private Thread listenThread;
+        private UdpClient udpClient1;
+        private UdpClient udpClient2;
+        private Thread listenThread1;
+        private Thread listenThread2;
         private bool isListening;
 
         private void StartListening()
         {
-            udpClient = new UdpClient(8877);
+            int port1 = Configs.Configs.CoolDevice1Port;
+            int port2 = Configs.Configs.CoolDevice2Port;
+            try
+            {
+                udpClient1 = new UdpClient(port1);
+                Log.Info($"Cool device 1 listening on UDP port {port1}");
+            }
+            catch (Exception ex)
+            {
+                Log.Info($"Failed to bind UDP port {port1}: {ex.Message}");
+                udpClient1 = null;
+            }
+            try
+            {
+                udpClient2 = new UdpClient(port2);
+                Log.Info($"Cool device 2 listening on UDP port {port2}");
+            }
+            catch (Exception ex)
+            {
+                Log.Info($"Failed to bind UDP port {port2}: {ex.Message}");
+                udpClient2 = null;
+            }
+
             isListening = true;
 
-            listenThread = new Thread(ListenForMessages);
-            listenThread.Start();
+            if (udpClient1 != null)
+            {
+                listenThread1 = new Thread(() => ListenForMessages(udpClient1, 0));
+                listenThread1.Start();
+            }
+            if (udpClient2 != null)
+            {
+                listenThread2 = new Thread(() => ListenForMessages(udpClient2, 1));
+                listenThread2.Start();
+            }
         }
 
-        private void ListenForMessages()
+        private void ListenForMessages(UdpClient client, int deviceIndex)
         {
             try
             {
                 IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Any, 0);
+                CoolDeviceInfo targetInfo = deviceIndex == 0 ? CoolDeviceInfo1 : CoolDeviceInfo2;
                 while (isListening)
                 {
-                    if (udpClient.Available > 0 && TempTestMode == TempMode.AFWF)
+                    if (client.Available > 0 && TempTestMode == TempMode.AFWF)
                     {
-                        byte[] receiveBytes = udpClient.Receive(ref remoteEndPoint);
+                        byte[] receiveBytes = client.Receive(ref remoteEndPoint);
                         string receiveString = Encoding.ASCII.GetString(receiveBytes);
                         string[] values = receiveString.Split(';');
                         if (Configs.Configs.IsEnableVerboseDebug)
                         {
-                            Log.Info($"Received: {receiveString}");
+                            Log.Info($"Received from device {deviceIndex + 1}: {receiveString}");
                         }
                         if (values.Length >= 9)
                         {
-                            CurrentCoolDeviceInfo.OutletWaterTemperature = Utils.ParseFloat(values[0]);
-                            CurrentCoolDeviceInfo.InletWaterTemperature = Utils.ParseFloat(values[1]);
-                            CurrentCoolDeviceInfo.WaterFlowRate = Utils.ParseFloat(values[2]);
-                            CurrentCoolDeviceInfo.AmbientTemperature1 = Utils.ParseFloat(values[3]);
-                            CurrentCoolDeviceInfo.AmbientTemperature2 = Utils.ParseFloat(values[4]);
-                            CurrentCoolDeviceInfo.OutletAirTemperature1 = Utils.ParseFloat(values[5]);
-                            CurrentCoolDeviceInfo.OutletAirTemperature2 = Utils.ParseFloat(values[6]);
-                            CurrentCoolDeviceInfo.OutletAirTemperature3 = Utils.ParseFloat(values[7]);
-                            CurrentCoolDeviceInfo.OutletAirTemperature4 = Utils.ParseFloat(values[8]);
-                            Log.Info(CurrentCoolDeviceInfo.ToString());
-                            Dispatcher.Invoke(() =>
+                            targetInfo.OutletWaterTemperature = Utils.ParseFloat(values[0]);
+                            targetInfo.InletWaterTemperature = Utils.ParseFloat(values[1]);
+                            targetInfo.WaterFlowRate = Utils.ParseFloat(values[2]);
+                            targetInfo.AmbientTemperature1 = Utils.ParseFloat(values[3]);
+                            targetInfo.AmbientTemperature2 = Utils.ParseFloat(values[4]);
+                            targetInfo.OutletAirTemperature1 = Utils.ParseFloat(values[5]);
+                            targetInfo.OutletAirTemperature2 = Utils.ParseFloat(values[6]);
+                            targetInfo.OutletAirTemperature3 = Utils.ParseFloat(values[7]);
+                            targetInfo.OutletAirTemperature4 = Utils.ParseFloat(values[8]);
+                            Log.Info($"Device {deviceIndex + 1}: {targetInfo}");
+
+                            // Only update UI when this device is the currently selected source
+                            if (deviceIndex == Configs.Configs.CoolDeviceSelectedIndex)
                             {
-                                tbOutletWater.Text = CurrentCoolDeviceInfo.OutletWaterTemperature + "";
-                                tbInletWater.Text = CurrentCoolDeviceInfo.InletWaterTemperature + "";
-                                tbFlow.Text = CurrentCoolDeviceInfo.WaterFlowRate + "";
-                                tbEnvTemp1.Text = CurrentCoolDeviceInfo.AmbientTemperature1 + "";
-                                tbEnvTemp2.Text = CurrentCoolDeviceInfo.AmbientTemperature2 + "";
-                                tbOutletAir1.Text = CurrentCoolDeviceInfo.OutletAirTemperature1 + "";
-                                tbOutletAir2.Text = CurrentCoolDeviceInfo.OutletAirTemperature2 + "";
-                                tbOutletAir3.Text = CurrentCoolDeviceInfo.OutletAirTemperature3 + "";
-                                tbOutletAir4.Text = CurrentCoolDeviceInfo.OutletAirTemperature4 + "";
-                            });
+                                Dispatcher.Invoke(() =>
+                                {
+                                    tbOutletWater.Text = targetInfo.OutletWaterTemperature + "";
+                                    tbInletWater.Text = targetInfo.InletWaterTemperature + "";
+                                    tbFlow.Text = targetInfo.WaterFlowRate + "";
+                                    tbEnvTemp1.Text = targetInfo.AmbientTemperature1 + "";
+                                    tbEnvTemp2.Text = targetInfo.AmbientTemperature2 + "";
+                                    tbOutletAir1.Text = targetInfo.OutletAirTemperature1 + "";
+                                    tbOutletAir2.Text = targetInfo.OutletAirTemperature2 + "";
+                                    tbOutletAir3.Text = targetInfo.OutletAirTemperature3 + "";
+                                    tbOutletAir4.Text = targetInfo.OutletAirTemperature4 + "";
+                                });
+                            }
                         }
                     }
                     else
                     {
-                        Thread.Sleep(100); // Reduce CPU usage
+                        Thread.Sleep(100);
                     }
                 }
             }
@@ -1637,7 +1682,7 @@ namespace ABBDataManagerSystem.Pages
             {
                 if (ex.SocketErrorCode != SocketError.Interrupted)
                 {
-                    Log.Info($"Socket exception: {ex.Message}");
+                    Log.Info($"Socket exception (device {deviceIndex + 1}): {ex.Message}");
                 }
             }
             catch (ObjectDisposedException)
@@ -1650,16 +1695,46 @@ namespace ABBDataManagerSystem.Pages
         {
             isListening = false;
 
-            // Close the UdpClient to stop the blocking Receive call.
-            udpClient.Close();
+            udpClient1?.Close();
+            udpClient2?.Close();
 
-            // Wait for the listening thread to finish.
-            if (listenThread != null && listenThread.IsAlive)
+            if (listenThread1 != null && listenThread1.IsAlive)
             {
-                listenThread.Join();
+                listenThread1.Join();
+            }
+            if (listenThread2 != null && listenThread2.IsAlive)
+            {
+                listenThread2.Join();
             }
 
             Log.Info("Stopped listening.");
+        }
+
+        private void UpdateCurrentCoolDevice()
+        {
+            int index = Configs.Configs.CoolDeviceSelectedIndex;
+            CurrentCoolDeviceInfo = index == 0 ? CoolDeviceInfo1 : CoolDeviceInfo2;
+            Log.Info($"Cool device source switched to device {index + 1}");
+        }
+
+        private void cbCoolDeviceSource_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            if (!IsLoaded) return;
+            Configs.Configs.CoolDeviceSelectedIndex = cbCoolDeviceSource.SelectedIndex;
+            UpdateCurrentCoolDevice();
+            // Immediately refresh UI with the newly selected device's data
+            Dispatcher.Invoke(() =>
+            {
+                tbOutletWater.Text = CurrentCoolDeviceInfo.OutletWaterTemperature + "";
+                tbInletWater.Text = CurrentCoolDeviceInfo.InletWaterTemperature + "";
+                tbFlow.Text = CurrentCoolDeviceInfo.WaterFlowRate + "";
+                tbEnvTemp1.Text = CurrentCoolDeviceInfo.AmbientTemperature1 + "";
+                tbEnvTemp2.Text = CurrentCoolDeviceInfo.AmbientTemperature2 + "";
+                tbOutletAir1.Text = CurrentCoolDeviceInfo.OutletAirTemperature1 + "";
+                tbOutletAir2.Text = CurrentCoolDeviceInfo.OutletAirTemperature2 + "";
+                tbOutletAir3.Text = CurrentCoolDeviceInfo.OutletAirTemperature3 + "";
+                tbOutletAir4.Text = CurrentCoolDeviceInfo.OutletAirTemperature4 + "";
+            });
         }
         #endregion
 

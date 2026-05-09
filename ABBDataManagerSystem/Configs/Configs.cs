@@ -95,6 +95,12 @@ namespace ABBDataManagerSystem.Configs
         public static string SerialBoundRateJYTA { set; get; } = string.Empty;
         #endregion
 
+        #region 水冷设备设置
+        public static int CoolDevice1Port { set; get; } = 8877;
+        public static int CoolDevice2Port { set; get; } = 8878;
+        public static int CoolDeviceSelectedIndex { set; get; } = 0;
+        #endregion
+
         #region 常规设置
         public static int WorkStationNo = 1;
         public static bool IsEnableVerboseDebug = false;
@@ -113,6 +119,7 @@ namespace ABBDataManagerSystem.Configs
         static string INIJinYuan20E = "JinYuan20E";
         static string INIJinYuan50E = "JinYuan50E";
         static string INIJinYuanJYTA = "JinYuanJYTA";
+        static string INICoolDevice = "CoolDevice";
 
         [DllImport("kernel32.dll", EntryPoint = "GetPrivateProfileString")]
         private static extern uint GetPrivateProfileString(
@@ -251,6 +258,15 @@ namespace ABBDataManagerSystem.Configs
             GetPrivateProfileString(INIJinYuanJYTA, "Current", "", buff, 32, INIPATH);
             Current20E = buff.ToString();
             #endregion
+
+            #region 水冷设备
+            GetPrivateProfileString(INICoolDevice, "Port1", "8877", buff, 16, INIPATH);
+            CoolDevice1Port = Utils.ParseInt(buff.ToString(), 8877);
+            GetPrivateProfileString(INICoolDevice, "Port2", "8878", buff, 16, INIPATH);
+            CoolDevice2Port = Utils.ParseInt(buff.ToString(), 8878);
+            GetPrivateProfileString(INICoolDevice, "SelectedIndex", "0", buff, 16, INIPATH);
+            CoolDeviceSelectedIndex = Utils.ParseInt(buff.ToString(), 0);
+            #endregion
         }
 
         public static void SaveToFile()
@@ -319,6 +335,12 @@ namespace ABBDataManagerSystem.Configs
             #region JinaYuanJYTA
             WritePrivateProfileString(INIJinYuanJYTA, "SerialPort", SerialPortJYTA, INIPATH);
             WritePrivateProfileString(INIJinYuanJYTA, "BoundRate", SerialBoundRateJYTA, INIPATH);
+            #endregion
+
+            #region 水冷设备
+            WritePrivateProfileString(INICoolDevice, "Port1", CoolDevice1Port.ToString(), INIPATH);
+            WritePrivateProfileString(INICoolDevice, "Port2", CoolDevice2Port.ToString(), INIPATH);
+            WritePrivateProfileString(INICoolDevice, "SelectedIndex", CoolDeviceSelectedIndex.ToString(), INIPATH);
             #endregion
         }
 
