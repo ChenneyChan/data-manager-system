@@ -19,7 +19,8 @@ namespace ABBDataManagerSystem.Database
                 return "Data Source=mydatabase.db;Version=3;";
             }
             return "server=" + Configs.Configs.Host + ";user=" + Configs.Configs.Username
-                    + ";database=" + Configs.Configs.DatabaseName + ";port=" + Configs.Configs.Port + ";password=" + Configs.Configs.Password;
+                    + ";database=" + Configs.Configs.DatabaseName + ";port=" + Configs.Configs.Port + ";password=" + Configs.Configs.Password
+                    + ";DefaultCommandTimeout=300";
         }
 
         public static SQLConnection? GetConnection()

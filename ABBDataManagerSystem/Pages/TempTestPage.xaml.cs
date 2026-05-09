@@ -7,6 +7,7 @@ using Microsoft.Win32;
 using System.Data;
 using System.IO;
 using System.IO.Ports;
+using System.Linq;
 using System.Net.Sockets;
 using System.Net;
 using System.Text;
@@ -1409,27 +1410,26 @@ namespace ABBDataManagerSystem.Pages
 
         #region 数据上传
 
-        private void UploadData()
+        private void UploadDataAsync(int testIndex, string testPhase, string testStatus, string coolingMode, string workflowId, string remark, TempMode tempMode, DataRow[] rows)
         {
             CommonTempRiseTestInfo configItem;
-            int testIndex = (int)tbTestCount.Value;
-            var items = CommonTempRiseTestInfo.ReadFromDB(Configs.Configs.WorkflowID, cbTestPhase.Text, cbTestStatus.Text, cbCoolingMode.Text, testIndex, 1);
+            var items = CommonTempRiseTestInfo.ReadFromDB(workflowId, testPhase, testStatus, coolingMode, testIndex, 1);
             if (items == null || items.Count == 0)
             {
                 configItem = new CommonTempRiseTestInfo()
                 {
-                    TestingPhase = cbTestPhase.Text,
-                    TestingStatus = cbTestStatus.Text,
-                    WorkflowId = Configs.Configs.WorkflowID,
+                    TestingPhase = testPhase,
+                    TestingStatus = testStatus,
+                    WorkflowId = workflowId,
                     TestingIndex = testIndex,
-                    CoolingMode = cbCoolingMode.Text,
+                    CoolingMode = coolingMode,
                     DateTime = DateTime.Now,
                     TestingMode = 1,
-                    Remark = tbRemark.Text.Length > 0 ? tbRemark.Text : null,
+                    Remark = remark.Length > 0 ? remark : null,
                 };
                 if (!configItem.WriteToDB())
                 {
-                    MessageBox.Show("数据上传失败!", "上传结果", MessageBoxButton.OK, MessageBoxImage.Error);
+                    Dispatcher.Invoke(() => MessageBox.Show("数据上传失败!", "上传结果", MessageBoxButton.OK, MessageBoxImage.Error));
                     return;
                 }
             }
@@ -1438,22 +1438,18 @@ namespace ABBDataManagerSystem.Pages
                 configItem = items[0];
             }
 
-            if (Table.Rows.Count == 0)
+            if (rows.Length == 0)
             {
-                MessageBox.Show("暂无数据可以上传，请先采集数据!", "上传结果", MessageBoxButton.OK, MessageBoxImage.Warning);
+                Dispatcher.Invoke(() => MessageBox.Show("暂无数据可以上传，请先采集数据!", "上传结果", MessageBoxButton.OK, MessageBoxImage.Warning));
                 return;
             }
 
             // 删除之前的时间数据
             CommonTempRiseTestRecordInfo.DeleteData(configItem.ID);
             // 将DataTable中的数据转成试验数据格式并且一条条上传
-            var query = from row in Table.AsEnumerable()
-                        select row;
-            int i = 0;
             List<CommonTempRiseTestRecordInfo> list = new List<CommonTempRiseTestRecordInfo>();
-            foreach (var item in query)
+            foreach (var item in rows)
             {
-                i++;
                 var record = new CommonTempRiseTestRecordInfo()
                 {
                     ID = configItem.ID,
@@ -1471,10 +1467,10 @@ namespace ABBDataManagerSystem.Pages
                     WindingTempA = item.Field<float?>(GetBindingPath(Configs.Configs.WindingA)) ?? null,
                     WindingTempB = item.Field<float?>(GetBindingPath(Configs.Configs.WindingB)) ?? null,
                     WindingTempC = item.Field<float?>(GetBindingPath(Configs.Configs.WindingC)) ?? null,
-                    IsAFWF = TempTestMode == TempMode.AFWF,
-                    WorkflowID = Configs.Configs.WorkflowID
+                    IsAFWF = tempMode == TempMode.AFWF,
+                    WorkflowID = workflowId
                 };
-                if (TempTestMode == TempMode.COMMON)
+                if (tempMode == TempMode.COMMON)
                 {
                     record.EnvTempA = item.Field<float?>(GetBindingPath(Configs.Configs.EnvA)) ?? null;
                     record.EnvTempB = item.Field<float?>(GetBindingPath(Configs.Configs.EnvB)) ?? null;
@@ -1496,7 +1492,7 @@ namespace ABBDataManagerSystem.Pages
                     record.Inlet2 = item.Field<float?>(GetBindingPath(inlets[1])) ?? null;
                     record.Inlet3 = item.Field<float?>(GetBindingPath(inlets[2])) ?? null;
                     record.TopTemp = item.Field<float?>(GetBindingPath(Configs.Configs.TopTemperature)) ?? null;
-                    if (TempTestMode == TempMode.AFWF)
+                    if (tempMode == TempMode.AFWF)
                     {
                         record.OutletWaterTemperature = item.Field<float?>("Outletwater") ?? null;
                         record.InletWaterTemperature = item.Field<float?>("Inletwater") ?? null;
@@ -1518,20 +1514,57 @@ namespace ABBDataManagerSystem.Pages
             bool ret = CommonTempRiseTestRecordInfo.BatchInsertData(list);
             if (ret)
             {
-                MessageBox.Show($"数据上传成功，共{Table.Rows.Count}条数据!", "上传结果", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                SetCommonInfo(false);
+                Dispatcher.Invoke(() =>
+                {
+                    MessageBox.Show($"数据上传成功，共{rows.Length}条数据!", "上传结果", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                    SetCommonInfo(false);
+                });
                 return;
             }
             else
             {
-                MessageBox.Show($"数据上传出错，请检查或者重新尝试!", "上传结果", MessageBoxButton.OK, MessageBoxImage.Warning);
+                Dispatcher.Invoke(() =>
+                {
+                    MessageBox.Show($"数据上传出错，请检查或者重新尝试!", "上传结果", MessageBoxButton.OK, MessageBoxImage.Warning);
+                });
                 return;
             }
         }
 
         private void btUpload_Click(object sender, RoutedEventArgs e)
         {
-            UploadData();
+            // 在UI线程读取控件值和DataTable（非线程安全）
+            int testIndex = (int)tbTestCount.Value;
+            string testPhase = cbTestPhase.Text;
+            string testStatus = cbTestStatus.Text;
+            string coolingMode = cbCoolingMode.Text;
+            string workflowId = Configs.Configs.WorkflowID;
+            string remark = tbRemark.Text;
+            TempMode tempMode = TempTestMode;
+
+            if (Table.Rows.Count == 0)
+            {
+                MessageBox.Show("暂无数据可以上传，请先采集数据!", "上传结果", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            // 在UI线程拷贝DataTable数据
+            DataRow[] rows = Table.AsEnumerable().ToArray();
+
+            btUpload.IsEnabled = false;
+            btUpload.Content = "上传中...";
+
+            Task.Run(() =>
+            {
+                UploadDataAsync(testIndex, testPhase, testStatus, coolingMode, workflowId, remark, tempMode, rows);
+            }).ContinueWith(t =>
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    btUpload.IsEnabled = true;
+                    btUpload.Content = "上传数据";
+                });
+            });
         }
 
 
