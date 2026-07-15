@@ -352,5 +352,42 @@ namespace ABBDataManagerSystem.Bean.Base
                 }
             }
         }
+
+        public static string MigrateDBColumns()
+        {
+            var newColumns = new[] { "OutletAirTemperature5", "OutletAirTemperature6", "OutletAirTemperature7", "OutletAirTemperature8" };
+            var results = new System.Collections.Generic.List<string>();
+            try
+            {
+                using (SQLConnection connection = new SQLConnection(DBConnector.GetConnectionString()))
+                {
+                    connection.Open();
+                    foreach (var col in newColumns)
+                    {
+                        try
+                        {
+                            string sql = $"ALTER TABLE {TABLE_NAME} ADD COLUMN {col} FLOAT DEFAULT NULL";
+                            using (SQLCommond command = new SQLCommond(sql, connection))
+                            {
+                                command.ExecuteNonQuery();
+                            }
+                            results.Add($"{col}: 添加成功");
+                        }
+                        catch (Exception ex)
+                        {
+                            if (ex.Message.Contains("Duplicate column"))
+                                results.Add($"{col}: 已存在，跳过");
+                            else
+                                results.Add($"{col}: 失败 - {ex.Message}");
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return $"数据库连接失败: {ex.Message}";
+            }
+            return string.Join("\n", results);
+        }
     }
 }

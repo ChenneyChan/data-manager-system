@@ -1,4 +1,5 @@
-﻿using ABBDataManagerSystem.Tools;
+﻿using ABBDataManagerSystem.Bean.Base;
+using ABBDataManagerSystem.Tools;
 using MySql.Data.MySqlClient;
 using System.Windows;
 
@@ -56,6 +57,26 @@ namespace ABBDataManagerSystem.Pages
             Tools.EventManager.Instance.TriggerEvent("RatioInputModeChanged", this,
                 new TestEventArgs() { obj = new bool[] { Configs.Configs.IsEnableRatioInputMode, Configs.Configs.IsShowRatioInputControls } });
             Close();
+        }
+
+        private void btMigrateDB_Click(object sender, RoutedEventArgs e)
+        {
+            btMigrateDB.IsEnabled = false;
+            btMigrateDB.Content = "正在迁移...";
+            try
+            {
+                var result = CommonTempRiseTestRecordInfo.MigrateDBColumns();
+                MessageBox.Show(result, "数据库迁移结果", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"迁移失败: {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                btMigrateDB.IsEnabled = true;
+                btMigrateDB.Content = "一键迁移数据库";
+            }
         }
 
         private void btCancel_Click(object sender, RoutedEventArgs e)
