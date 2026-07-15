@@ -3,8 +3,7 @@ using ABBDataManagerSystem.Charts;
 using ABBDataManagerSystem.Connector;
 using ABBDataManagerSystem.Pages.Views;
 using ABBDataManagerSystem.Tools;
-using System.Net;
-using System.Net.Sockets;
+using S7.Net;
 using Microsoft.Win32;
 using System.Data;
 using System.IO;
@@ -1934,7 +1933,6 @@ namespace ABBDataManagerSystem.Pages
         }
 
         #region 绕组温度校验与PLC报警
-        private static int _plcTransactionId = 1;
 
         // 从槽位配置字符串（如 "Slot-3"）中解析出槽位号
         private int? ParseSlotNumber(string slotConfig)
@@ -1957,37 +1955,25 @@ namespace ABBDataManagerSystem.Pages
             return values[index];
         }
 
-        // 向指定PLC写入单寄存器值（Modbus TCP 功能码0x06）
+        // 向指定S7 PLC写入值（S7协议，写入DB地址）
         private void SendPLCAlert(float value)
         {
             var ip = Configs.Configs.PLCAlertIP;
-            var port = Configs.Configs.PLCAlertPort;
-            var register = Configs.Configs.PLCAlertRegister;
-            if (string.IsNullOrEmpty(ip) || port <= 0) return;
+            var rack = (short)Configs.Configs.PLCAlertRack;
+            var slot = (short)Configs.Configs.PLCAlertSlot;
+            var address = Configs.Configs.PLCAlertAddress;
+            if (string.IsNullOrEmpty(ip) || string.IsNullOrEmpty(address)) return;
 
             try
             {
-                using (var client = new TcpClient())
+                using (var plc = new Plc(CpuType.S71500, ip, rack, slot))
                 {
-                    client.Connect(ip, port);
-                    using (var stream = client.GetStream())
+                    plc.Open();
+                    if (plc.IsConnected)
                     {
-                        int tid = Interlocked.Increment(ref _plcTransactionId) % 65536;
-                        ushort regVal = (ushort)Math.Max(0, Math.Min(65535, (int)value));
-                        byte[] frame = new byte[12];
-                        frame[0] = (byte)(tid >> 8);    // Transaction ID high
-                        frame[1] = (byte)(tid & 0xFF);  // Transaction ID low
-                        frame[2] = 0; frame[3] = 0;     // Protocol ID
-                        frame[4] = 0; frame[5] = 6;     // Length (6 bytes follow)
-                        frame[6] = 1;                    // Unit ID
-                        frame[7] = 0x06;                 // Function code: write single register
-                        frame[8] = (byte)(register >> 8);
-                        frame[9] = (byte)(register & 0xFF);
-                        frame[10] = (byte)(regVal >> 8);
-                        frame[11] = (byte)(regVal & 0xFF);
-                        stream.Write(frame, 0, frame.Length);
-                        stream.Flush();
-                        Log.Info($"PLC报警已发送: IP={ip}, Register={register}, Value={value:F1}");
+                        plc.Write(address, value);
+                        plc.Close();
+                        Log.Info($"PLC报警已发送(S7): IP={ip}, Address={address}, Value={value:F1}");
                     }
                 }
             }

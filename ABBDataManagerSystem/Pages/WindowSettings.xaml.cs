@@ -26,6 +26,10 @@ namespace ABBDataManagerSystem.Pages
             cbWorkStation.SelectedIndex = Configs.Configs.WorkStationNo - 1;
             cbEnableRatioInputMode.IsChecked = Configs.Configs.IsEnableRatioInputMode;
             cbShowRatioInputControls.IsChecked = Configs.Configs.IsShowRatioInputControls;
+            tbPLCAlertIP.Text = Configs.Configs.PLCAlertIP;
+            tbPLCAlertRack.Text = Configs.Configs.PLCAlertRack.ToString();
+            tbPLCAlertSlot.Text = Configs.Configs.PLCAlertSlot.ToString();
+            tbPLCAlertAddress.Text = Configs.Configs.PLCAlertAddress;
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -43,6 +47,10 @@ namespace ABBDataManagerSystem.Pages
             Configs.Configs.WorkStationNo = cbWorkStation.SelectedIndex + 1;
             Configs.Configs.IsEnableRatioInputMode = cbEnableRatioInputMode.IsChecked ?? false;
             Configs.Configs.IsShowRatioInputControls = cbShowRatioInputControls.IsChecked ?? false;
+            Configs.Configs.PLCAlertIP = tbPLCAlertIP.Text.Trim();
+            Configs.Configs.PLCAlertRack = Utils.ParseInt(tbPLCAlertRack.Text, 0);
+            Configs.Configs.PLCAlertSlot = Utils.ParseInt(tbPLCAlertSlot.Text, 1);
+            Configs.Configs.PLCAlertAddress = tbPLCAlertAddress.Text.Trim();
             DialogResult = true;
 
             Tools.EventManager.Instance.TriggerEvent("RatioInputModeChanged", this,

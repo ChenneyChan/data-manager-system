@@ -106,8 +106,9 @@ namespace ABBDataManagerSystem.Configs
         #region 常规设置
         #region PLC报警设置
         public static string PLCAlertIP { set; get; } = string.Empty;
-        public static int PLCAlertPort { set; get; } = 502;
-        public static int PLCAlertRegister { set; get; } = 0;
+        public static int PLCAlertRack { set; get; } = 0;
+        public static int PLCAlertSlot { set; get; } = 1;
+        public static string PLCAlertAddress { set; get; } = "DB1.DBD136";
         #endregion
 
         public static int WorkStationNo = 1;
@@ -281,10 +282,12 @@ namespace ABBDataManagerSystem.Configs
             CoolDeviceSelectedIndex = Utils.ParseInt(buff.ToString(), 0);
             GetPrivateProfileString(INIPLCAlert, "IP", "", buff, 32, INIPATH);
             PLCAlertIP = buff.ToString();
-            GetPrivateProfileString(INIPLCAlert, "Port", "502", buff, 16, INIPATH);
-            PLCAlertPort = Utils.ParseInt(buff.ToString(), 502);
-            GetPrivateProfileString(INIPLCAlert, "Register", "0", buff, 16, INIPATH);
-            PLCAlertRegister = Utils.ParseInt(buff.ToString(), 0);
+            GetPrivateProfileString(INIPLCAlert, "Rack", "0", buff, 16, INIPATH);
+            PLCAlertRack = Utils.ParseInt(buff.ToString(), 0);
+            GetPrivateProfileString(INIPLCAlert, "Slot", "1", buff, 16, INIPATH);
+            PLCAlertSlot = Utils.ParseInt(buff.ToString(), 1);
+            GetPrivateProfileString(INIPLCAlert, "Address", "DB1.DBD136", buff, 32, INIPATH);
+            PLCAlertAddress = buff.ToString();
             #endregion
         }
 
@@ -363,8 +366,9 @@ namespace ABBDataManagerSystem.Configs
             WritePrivateProfileString(INICoolDevice, "Port2", CoolDevice2Port.ToString(), INIPATH);
             WritePrivateProfileString(INICoolDevice, "SelectedIndex", CoolDeviceSelectedIndex.ToString(), INIPATH);
             WritePrivateProfileString(INIPLCAlert, "IP", PLCAlertIP, INIPATH);
-            WritePrivateProfileString(INIPLCAlert, "Port", PLCAlertPort.ToString(), INIPATH);
-            WritePrivateProfileString(INIPLCAlert, "Register", PLCAlertRegister.ToString(), INIPATH);
+            WritePrivateProfileString(INIPLCAlert, "Rack", PLCAlertRack.ToString(), INIPATH);
+            WritePrivateProfileString(INIPLCAlert, "Slot", PLCAlertSlot.ToString(), INIPATH);
+            WritePrivateProfileString(INIPLCAlert, "Address", PLCAlertAddress, INIPATH);
             #endregion
         }
 

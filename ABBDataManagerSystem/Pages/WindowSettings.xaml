@@ -95,6 +95,32 @@
                     </StackPanel>
                 </Grid>
             </TabItem>
+            <TabItem Header="PLC设置">
+                <Grid Margin="20, 20, 20, 0" Height="300">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                    </Grid.RowDefinitions>
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock Text="PLC IP地址：" Width="120" Style="{StaticResource Label}" Margin="0,0,10,0"/>
+                        <TextBox Name="tbPLCAlertIP" Width="220"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock Text="CPU Rack：" Width="120" Style="{StaticResource Label}" Margin="0,0,10,0"/>
+                        <TextBox Name="tbPLCAlertRack" Width="220"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock Text="CPU Slot：" Width="120" Style="{StaticResource Label}" Margin="0,0,10,0"/>
+                        <TextBox Name="tbPLCAlertSlot" Width="220"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock Text="DB地址：" Width="120" Style="{StaticResource Label}" Margin="0,0,10,0"/>
+                        <TextBox Name="tbPLCAlertAddress" Width="220"/>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
         </TabControl>
         <StackPanel Grid.Row="1" Height="80" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
             <Button Name="btComfirm" Style="{StaticResource ButtonPrimary}" FontSize="16" FontWeight="Bold" Content="确认" Height="40" Width="170" Margin="0,0,10,0" Click="btComfirm_Click"/>
