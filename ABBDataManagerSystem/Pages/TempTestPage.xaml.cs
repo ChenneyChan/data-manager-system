@@ -1431,6 +1431,14 @@ namespace ABBDataManagerSystem.Pages
 
         #region 数据上传
 
+        // 安全读取 DataRow 字段，列不存在时返回 null
+        private static float? SafeField(DataRow row, string columnName)
+        {
+            if (row.Table.Columns.Contains(columnName))
+                return row.Field<float?>(columnName);
+            return null;
+        }
+
         private void UploadDataAsync(int testIndex, string testPhase, string testStatus, string coolingMode, string workflowId, string remark, TempMode tempMode, DataRow[] rows)
         {
             CommonTempRiseTestInfo configItem;
@@ -1518,15 +1526,15 @@ namespace ABBDataManagerSystem.Pages
                         record.OutletWaterTemperature = item.Field<float?>("Outletwater") ?? null;
                         record.InletWaterTemperature = item.Field<float?>("Inletwater") ?? null;
                         record.AmbientTemperature1 = item.Field<float?>("Ambient1") ?? null;
-                        record.AmbientTemperature2 = item.Field<float?>("Ambient2") ?? null;
+                        record.AmbientTemperature2 = SafeField(item, "Ambient2");
                         record.OutletAirTemperature1 = item.Field<float?>("OutletAir1") ?? null;
                         record.OutletAirTemperature2 = item.Field<float?>("OutletAir2") ?? null;
                         record.OutletAirTemperature3 = item.Field<float?>("OutletAir3") ?? null;
                         record.OutletAirTemperature4 = item.Field<float?>("OutletAir4") ?? null;
-                        record.OutletAirTemperature5 = item.Field<float?>("OutletAir5") ?? null;
-                        record.OutletAirTemperature6 = item.Field<float?>("OutletAir6") ?? null;
-                        record.OutletAirTemperature7 = item.Field<float?>("OutletAir7") ?? null;
-                        record.OutletAirTemperature8 = item.Field<float?>("OutletAir8") ?? null;
+                        record.OutletAirTemperature5 = SafeField(item, "OutletAir5");
+                        record.OutletAirTemperature6 = SafeField(item, "OutletAir6");
+                        record.OutletAirTemperature7 = SafeField(item, "OutletAir7");
+                        record.OutletAirTemperature8 = SafeField(item, "OutletAir8");
                         record.WaterFlowRate = item.Field<float?>("Flow") ?? null;
                     }
                 }
