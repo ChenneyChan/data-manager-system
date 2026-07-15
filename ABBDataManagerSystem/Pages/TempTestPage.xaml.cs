@@ -3,6 +3,8 @@ using ABBDataManagerSystem.Charts;
 using ABBDataManagerSystem.Connector;
 using ABBDataManagerSystem.Pages.Views;
 using ABBDataManagerSystem.Tools;
+using System.Net;
+using System.Net.Sockets;
 using Microsoft.Win32;
 using System.Data;
 using System.IO;
@@ -1073,6 +1075,7 @@ namespace ABBDataManagerSystem.Pages
                 return;
             }
             HandleRecords(values);
+            ValidateWindingTemperatures(values);
             if (NeedRecord())
             {
                 WriteCSVFile(values);
@@ -1214,6 +1217,7 @@ namespace ABBDataManagerSystem.Pages
             {
                 UpdateSlotsMappingDisplay();
             }
+            tbTemperatureThreshold.Value = Configs.Configs.TemperatureThreshold;
         }
 
         private void SaveConfig()
@@ -1231,6 +1235,7 @@ namespace ABBDataManagerSystem.Pages
             }
             Configs.Configs.TPSlots = slots;
             Configs.Configs.TPInterval = cbInterval.Text;
+            Configs.Configs.TemperatureThreshold = (float)tbTemperatureThreshold.Value;
         }
         #endregion
 
@@ -1927,5 +1932,96 @@ namespace ABBDataManagerSystem.Pages
                 dgTempRecord.MinWidth = 0;
             }
         }
+
+        #region 绕组温度校验与PLC报警
+        private static int _plcTransactionId = 1;
+
+        // 从槽位配置字符串（如 "Slot-3"）中解析出槽位号
+        private int? ParseSlotNumber(string slotConfig)
+        {
+            if (string.IsNullOrEmpty(slotConfig) || !slotConfig.Contains("-"))
+                return null;
+            var parts = slotConfig.Split("-");
+            if (parts.Length >= 2 && int.TryParse(parts[1], out int num))
+                return num;
+            return null;
+        }
+
+        // 获取绕组温度值，返回 null 表示该绕组未配置或不在选中通道中
+        private float? GetWindingTemperature(float[] values, string windingConfig)
+        {
+            var slotNum = ParseSlotNumber(windingConfig);
+            if (slotNum == null) return null;
+            var index = SelectedSlots.IndexOf(slotNum.Value);
+            if (index < 0 || index >= values.Length) return null;
+            return values[index];
+        }
+
+        // 向指定PLC写入单寄存器值（Modbus TCP 功能码0x06）
+        private void SendPLCAlert(float value)
+        {
+            var ip = Configs.Configs.PLCAlertIP;
+            var port = Configs.Configs.PLCAlertPort;
+            var register = Configs.Configs.PLCAlertRegister;
+            if (string.IsNullOrEmpty(ip) || port <= 0) return;
+
+            try
+            {
+                using (var client = new TcpClient())
+                {
+                    client.Connect(ip, port);
+                    using (var stream = client.GetStream())
+                    {
+                        int tid = Interlocked.Increment(ref _plcTransactionId) % 65536;
+                        ushort regVal = (ushort)Math.Max(0, Math.Min(65535, (int)value));
+                        byte[] frame = new byte[12];
+                        frame[0] = (byte)(tid >> 8);    // Transaction ID high
+                        frame[1] = (byte)(tid & 0xFF);  // Transaction ID low
+                        frame[2] = 0; frame[3] = 0;     // Protocol ID
+                        frame[4] = 0; frame[5] = 6;     // Length (6 bytes follow)
+                        frame[6] = 1;                    // Unit ID
+                        frame[7] = 0x06;                 // Function code: write single register
+                        frame[8] = (byte)(register >> 8);
+                        frame[9] = (byte)(register & 0xFF);
+                        frame[10] = (byte)(regVal >> 8);
+                        frame[11] = (byte)(regVal & 0xFF);
+                        stream.Write(frame, 0, frame.Length);
+                        stream.Flush();
+                        Log.Info($"PLC报警已发送: IP={ip}, Register={register}, Value={value:F1}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"PLC报警发送失败: {ex.Message}");
+            }
+        }
+
+        // 校验绕组温度，如果任一绕组超过阈值则上报PLC
+        private void ValidateWindingTemperatures(float[] values)
+        {
+            var threshold = Configs.Configs.TemperatureThreshold;
+            if (threshold <= 0) return;
+            if (string.IsNullOrEmpty(Configs.Configs.PLCAlertIP)) return;
+
+            var windings = new (string Name, string Config)[]
+            {
+                ("绕组A", Configs.Configs.WindingA),
+                ("绕组B", Configs.Configs.WindingB),
+                ("绕组C", Configs.Configs.WindingC),
+            };
+
+            foreach (var (name, config) in windings)
+            {
+                var temp = GetWindingTemperature(values, config);
+                if (temp != null && temp.Value > threshold)
+                {
+                    Log.Info($"绕组温度超限: {name}={temp.Value:F1}℃, 阈值={threshold}℃");
+                    SendPLCAlert(temp.Value);
+                    break; // 上报一次即可，避免重复发送
+                }
+            }
+        }
+        #endregion
     }
 }

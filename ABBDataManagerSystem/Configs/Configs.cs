@@ -72,6 +72,7 @@ namespace ABBDataManagerSystem.Configs
         public static string InletTemperature { set; get; } = string.Empty;   // 进风口温度
         public static string TopTemperature { set; get; } = string.Empty;
         public static string ExtensionSlots { set; get; } = string.Empty;
+        public static float TemperatureThreshold { set; get; } = 120f;
         #endregion
 
         #region 20W设置
@@ -103,6 +104,12 @@ namespace ABBDataManagerSystem.Configs
         #endregion
 
         #region 常规设置
+        #region PLC报警设置
+        public static string PLCAlertIP { set; get; } = string.Empty;
+        public static int PLCAlertPort { set; get; } = 502;
+        public static int PLCAlertRegister { set; get; } = 0;
+        #endregion
+
         public static int WorkStationNo = 1;
         public static bool IsEnableVerboseDebug = false;
         public static bool IsEnableRatioInputMode = false;
@@ -121,6 +128,7 @@ namespace ABBDataManagerSystem.Configs
         static string INIJinYuan50E = "JinYuan50E";
         static string INIJinYuanJYTA = "JinYuanJYTA";
         static string INICoolDevice = "CoolDevice";
+        static string INIPLCAlert = "PLCAlert";
 
         [DllImport("kernel32.dll", EntryPoint = "GetPrivateProfileString")]
         private static extern uint GetPrivateProfileString(
@@ -208,6 +216,8 @@ namespace ABBDataManagerSystem.Configs
             TPIsSimulate = buff.ToString().Trim().ToLower() == "true";
             GetPrivateProfileString(INITemperature, "ExtensionSlots", "", buff, 64, INIPATH);
             ExtensionSlots = buff.ToString();
+            GetPrivateProfileString(INITemperature, "TemperatureThreshold", "120", buff, 16, INIPATH);
+            TemperatureThreshold = Utils.ParseFloat(buff.ToString(), 120f);
             #endregion
 
             #region 公共配置
@@ -269,6 +279,12 @@ namespace ABBDataManagerSystem.Configs
             CoolDevice2Port = Utils.ParseInt(buff.ToString(), 8878);
             GetPrivateProfileString(INICoolDevice, "SelectedIndex", "0", buff, 16, INIPATH);
             CoolDeviceSelectedIndex = Utils.ParseInt(buff.ToString(), 0);
+            GetPrivateProfileString(INIPLCAlert, "IP", "", buff, 32, INIPATH);
+            PLCAlertIP = buff.ToString();
+            GetPrivateProfileString(INIPLCAlert, "Port", "502", buff, 16, INIPATH);
+            PLCAlertPort = Utils.ParseInt(buff.ToString(), 502);
+            GetPrivateProfileString(INIPLCAlert, "Register", "0", buff, 16, INIPATH);
+            PLCAlertRegister = Utils.ParseInt(buff.ToString(), 0);
             #endregion
         }
 
@@ -304,6 +320,7 @@ namespace ABBDataManagerSystem.Configs
             WritePrivateProfileString(INITemperature, "TopTemperature", TopTemperature, INIPATH);
             WritePrivateProfileString(INITemperature, "IsSimulate", TPIsSimulate.ToString(), INIPATH);
             WritePrivateProfileString(INITemperature, "ExtensionSlots", ExtensionSlots, INIPATH);
+            WritePrivateProfileString(INITemperature, "TemperatureThreshold", TemperatureThreshold.ToString(), INIPATH);
 
             #region 公共配置
             WritePrivateProfileString(INICommon, "WorkStationNo", WorkStationNo.ToString(), INIPATH);
@@ -345,6 +362,9 @@ namespace ABBDataManagerSystem.Configs
             WritePrivateProfileString(INICoolDevice, "Port1", CoolDevice1Port.ToString(), INIPATH);
             WritePrivateProfileString(INICoolDevice, "Port2", CoolDevice2Port.ToString(), INIPATH);
             WritePrivateProfileString(INICoolDevice, "SelectedIndex", CoolDeviceSelectedIndex.ToString(), INIPATH);
+            WritePrivateProfileString(INIPLCAlert, "IP", PLCAlertIP, INIPATH);
+            WritePrivateProfileString(INIPLCAlert, "Port", PLCAlertPort.ToString(), INIPATH);
+            WritePrivateProfileString(INIPLCAlert, "Register", PLCAlertRegister.ToString(), INIPATH);
             #endregion
         }
 
