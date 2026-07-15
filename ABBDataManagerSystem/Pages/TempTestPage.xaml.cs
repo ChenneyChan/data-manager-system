@@ -829,6 +829,17 @@ namespace ABBDataManagerSystem.Pages
                         { "外循环环境温度2", "Ambient2"},
                         { "流量", "Flow"},
                     };
+                    if (Configs.Configs.CoolDeviceSelectedIndex == 0)
+                    {
+                        maps.Remove("外循环出风口5");
+                        maps.Remove("外循环出风口6");
+                        maps.Remove("外循环出风口7");
+                        maps.Remove("外循环出风口8");
+                    }
+                    if (Configs.Configs.CoolDeviceSelectedIndex == 1)
+                    {
+                        maps.Remove("外循环环境温度2");
+                    }
                     foreach (var item in maps)
                     {
                         dgTempRecord.Columns.Add(new DataGridTextColumn()
@@ -877,17 +888,23 @@ namespace ABBDataManagerSystem.Pages
             if (TempTestMode == TempMode.AFWF)
             {
                 newRow["Ambient1"] = CurrentCoolDeviceInfo.AmbientTemperature1;
-                newRow["Ambient2"] = CurrentCoolDeviceInfo.AmbientTemperature2;
+                if (Configs.Configs.CoolDeviceSelectedIndex != 1)
+                {
+                    newRow["Ambient2"] = CurrentCoolDeviceInfo.AmbientTemperature2;
+                }
                 newRow["Inletwater"] = CurrentCoolDeviceInfo.InletWaterTemperature;
                 newRow["Outletwater"] = CurrentCoolDeviceInfo.OutletWaterTemperature;
                 newRow["OutletAir1"] = CurrentCoolDeviceInfo.OutletAirTemperature1;
                 newRow["OutletAir2"] = CurrentCoolDeviceInfo.OutletAirTemperature2;
                 newRow["OutletAir3"] = CurrentCoolDeviceInfo.OutletAirTemperature3;
                 newRow["OutletAir4"] = CurrentCoolDeviceInfo.OutletAirTemperature4;
-                newRow["OutletAir5"] = CurrentCoolDeviceInfo.OutletAirTemperature5;
-                newRow["OutletAir6"] = CurrentCoolDeviceInfo.OutletAirTemperature6;
-                newRow["OutletAir7"] = CurrentCoolDeviceInfo.OutletAirTemperature7;
-                newRow["OutletAir8"] = CurrentCoolDeviceInfo.OutletAirTemperature8;
+                if (Configs.Configs.CoolDeviceSelectedIndex != 0)
+                {
+                    newRow["OutletAir5"] = CurrentCoolDeviceInfo.OutletAirTemperature5;
+                    newRow["OutletAir6"] = CurrentCoolDeviceInfo.OutletAirTemperature6;
+                    newRow["OutletAir7"] = CurrentCoolDeviceInfo.OutletAirTemperature7;
+                    newRow["OutletAir8"] = CurrentCoolDeviceInfo.OutletAirTemperature8;
+                }
                 newRow["Flow"] = CurrentCoolDeviceInfo.WaterFlowRate;
             }
             lock (objLock)
