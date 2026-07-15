@@ -49,7 +49,7 @@
         <StackPanel Grid.Row="4" Orientation="Horizontal" VerticalAlignment="Center" Height="Auto">
             <RadioButton Name="rbEthNet" Content="网口" Width="80" VerticalAlignment="Center"/>
             <TextBlock Text="IP地址" Width="80" VerticalAlignment="Center"/>
-            <hc:ComboBox Name="cbIP" Width="180"/>
+            <hc:ComboBox Name="cbIP" Width="180" IsEditable="True" IsTextSearchEnabled="True"/>
             <Button Name="btSerachIP" Width="80" Margin="8, 0, 0, 0" Content="搜索" Click="btSerachIP_Click"/>
         </StackPanel>
         <StackPanel Grid.Row="6" Orientation="Horizontal" VerticalAlignment="Center" Height="Auto" HorizontalAlignment="Center">

@@ -2,6 +2,7 @@
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using ABBDataManagerSystem.Configs;
 using TmctlAPINet;
 using Yokogawa.Tm.WT1800CommSample.cs;
 
@@ -152,6 +153,8 @@ namespace ABBDataManagerSystem.PowerAnalyzer
                 //set the address, username and password.
                 connection.devAddress = cbIP.Text;
                 connection.wireType = 8;
+                Configs.Configs.PowerAnalyzerIP = cbIP.Text;
+                Configs.Configs.SaveToFile();
             }
             //else if (rbSerial.IsChecked == true)
             //{
@@ -327,12 +330,13 @@ namespace ABBDataManagerSystem.PowerAnalyzer
             //UsbSerialNoTextBox.Text = buff.ToString();
             //Ether(VXI11)
             GetPrivateProfileString(Ini_Sec_Connect, Ini_Key_Ether_IPAddr, "", buff, 16, INIPATH);
-            var ipAddress = buff.ToString();
-            if (ipAddress.Length > 0)
+            var iniIpAddress = buff.ToString();
+            // 优先使用Configs里记录的IP（用户最后选择或输入过的）
+            var ipAddress = string.IsNullOrEmpty(Configs.Configs.PowerAnalyzerIP) ? iniIpAddress : Configs.Configs.PowerAnalyzerIP;
+            if (!string.IsNullOrEmpty(ipAddress))
             {
                 cbIP.Items.Add(ipAddress);
-                cbIP.SelectedIndex = 0;
-                // 找到 ComboBox 中的字符串选项
+                cbIP.Text = ipAddress;
             }
         }
         #endregion

@@ -46,6 +46,7 @@ namespace ABBDataManagerSystem.Configs
 
         public static string cbVT = "";
         public static string cbCT = "";
+        public static string PowerAnalyzerIP { set; get; } = string.Empty;
         #endregion
 
         #region 温度检测设置
@@ -227,6 +228,8 @@ namespace ABBDataManagerSystem.Configs
             cbVT = buff.ToString();
             GetPrivateProfileString(INIPowerAnalyzer, "cbCT", "", buff, 16, INIPATH);
             cbCT = buff.ToString();
+            GetPrivateProfileString(INIPowerAnalyzer, "IPAddress", "", buff, 32, INIPATH);
+            PowerAnalyzerIP = buff.ToString();
             #endregion
 
             #region JinYuan20W
@@ -313,6 +316,7 @@ namespace ABBDataManagerSystem.Configs
             WritePrivateProfileString(INIPowerAnalyzer, "CT", CT != null ? Utils.FloatFormat((float)CT, 4) : "" , INIPATH);
             WritePrivateProfileString(INIPowerAnalyzer, "cbVT", cbVT, INIPATH);
             WritePrivateProfileString(INIPowerAnalyzer, "cbCT", cbCT, INIPATH);
+            WritePrivateProfileString(INIPowerAnalyzer, "IPAddress", PowerAnalyzerIP, INIPATH);
             #endregion
 
             #region JinaYuan20W
