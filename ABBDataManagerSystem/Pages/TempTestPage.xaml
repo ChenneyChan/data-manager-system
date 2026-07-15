@@ -279,7 +279,7 @@
         </Grid>
         <WrapPanel Grid.Column="0" Grid.Row="1"  Name="panelCoolDevice" MaxWidth="1920" HorizontalAlignment="Left">
             <TextBlock Text="水冷设备" VerticalAlignment="Center" Margin="0,0,5,0" FontSize="16"/>
-            <hc:ComboBox Name="cbCoolDeviceSource" Width="120" VerticalAlignment="Center" SelectionChanged="cbCoolDeviceSource_SelectionChanged">
+            <hc:ComboBox Name="cbCoolDeviceSource" Width="130" VerticalAlignment="Center" SelectionChanged="cbCoolDeviceSource_SelectionChanged" Margin="0,0,5,0">
                 <ComboBoxItem Content="80kW水冷" IsSelected="True"/>
                 <ComboBoxItem Content="200kW水冷"/>
             </hc:ComboBox>

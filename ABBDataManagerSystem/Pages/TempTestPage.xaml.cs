@@ -1800,7 +1800,8 @@ namespace ABBDataManagerSystem.Pages
             Log.Info($"Cool device source switched to device {index + 1}");
             Dispatcher.Invoke(() =>
             {
-                panelCoolDeviceExpandInfo.Visibility = index == 0 ? Visibility.Collapsed : Visibility.Visible; 
+                panelCoolDeviceExpandInfo.Visibility = index == 0 ? Visibility.Collapsed : Visibility.Visible;
+                tbEnvTemp2.Visibility = index == 1 ? Visibility.Collapsed : Visibility.Visible;
             });
         }
 
