@@ -16,14 +16,16 @@ namespace ABBDataManagerSystem.Charts
         private DateTimeAxis? _dateAxis;
         private LinearAxis? _valueAxis;
         private List<int> EnabledSlots;
+        private List<string> SeriesTitles;
         private int MinutesRange = -1;
 
         private static int MAX_RECORD_COUNT = 10000;
 
-        public TempChartsNew(PlotView plot, List<int> enabledSlots)
+        public TempChartsNew(PlotView plot, List<int> enabledSlots, List<string>? seriesTitles = null)
         {
             this.plot = plot;
             this.EnabledSlots = enabledSlots;
+            this.SeriesTitles = seriesTitles ?? new List<string>();
         }
 
         private Random rand = new Random();
@@ -108,12 +110,16 @@ namespace ABBDataManagerSystem.Charts
 
             foreach (var slot in EnabledSlots)
             {
+                var index = _myPlotModel.Series.Count;
+                var title = index < SeriesTitles.Count && !string.IsNullOrWhiteSpace(SeriesTitles[index])
+                    ? SeriesTitles[index]
+                    : "Slot-" + slot;
                 var series = new LineSeries()
                 {
                     StrokeThickness = 1,
                     MarkerSize = 2,
                     MarkerType = MarkerType.Diamond,
-                    Title = "Slot-" + slot,
+                    Title = title,
                     IsVisible = true,
                 };
                 _myPlotModel.Series.Add(series);

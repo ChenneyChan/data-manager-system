@@ -1,4 +1,4 @@
-﻿<Window x:Class="ABBDataManagerSystem.Pages.TempSlotSelectView"
+<Window x:Class="ABBDataManagerSystem.Pages.TempSlotSelectView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,190 +6,77 @@
         xmlns:local="clr-namespace:ABBDataManagerSystem.Pages"
         xmlns:hc="https://handyorg.github.io/handycontrol"
         mc:Ignorable="d"
-        Title="温度测试槽位选择" Height="800" Width="1000" ShowInTaskbar="False" ResizeMode="NoResize">
+        Title="温度测试槽位选择" Height="720" Width="1080" ShowInTaskbar="False" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
     <Window.Resources>
-        <Style TargetType="hc:ComboBox" BasedOn="{StaticResource GlobalComboBoxStyle}">
-            <Setter Property="Margin" Value="2"/>
+        <Style TargetType="hc:NumericUpDown" BasedOn="{StaticResource GlobalNumericUpDownStyle}">
             <Setter Property="FontSize" Value="16"/>
         </Style>
-        <Style TargetType="Border">
-            <Setter Property="BorderThickness" Value="1.5"/>
-            <Setter Property="BorderBrush" Value="Black"/>
+        <Style TargetType="hc:ComboBox" BasedOn="{StaticResource GlobalComboBoxStyle}">
+            <Setter Property="FontSize" Value="16"/>
+        </Style>
+        <Style TargetType="DataGridRow">
+            <Setter Property="IsEnabled" Value="{Binding IsActive}"/>
+            <Setter Property="Opacity" Value="1"/>
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Opacity" Value="0.45"/>
+                </Trigger>
+            </Style.Triggers>
         </Style>
     </Window.Resources>
     <Grid Margin="20">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="9" Background="#FFD2D2D2"/>
-        <Border Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="9" Background="#FFF5F5D5"/>
-        <Border Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="9" Background="#FFE5F7E9"/>
 
-        <Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" BorderThickness="1, 1, 0, 0" />
-        <Border Grid.Column="3" Grid.Row="0" Grid.ColumnSpan="1" BorderThickness="1, 1, 0, 0" />
-        <Border Grid.Column="4" Grid.Row="0" Grid.ColumnSpan="4" BorderThickness="1, 1, 0, 0" />
-        <Border Grid.Column="8" Grid.Row="0" Grid.ColumnSpan="1" BorderThickness="1, 1, 1, 0" />
-        <Border Grid.Column="0" Grid.Row="1" BorderThickness="1, 1, 0, 0" />
-        <Border Grid.Column="1" Grid.Row="1" BorderThickness="1, 1, 0, 0" />
-        <Border Grid.Column="2" Grid.Row="1" BorderThickness="1, 1, 0, 0" />
-        <Border Grid.Column="3" Grid.Row="1" BorderThickness="1, 1, 0, 0" />
-        <Border Grid.Column="4" Grid.Row="1" BorderThickness="1, 1, 0, 0" />
-        <Border Grid.Column="5" Grid.Row="1" BorderThickness="1, 1, 0, 0" />
-        <Border Grid.Column="6" Grid.Row="1" BorderThickness="1, 1, 0, 0" />
-        <Border Grid.Column="7" Grid.Row="1" BorderThickness="1, 1, 0, 0" />
-        <Border Grid.Column="8" Grid.Row="1" BorderThickness="1, 1, 1, 0" />
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+            <TextBlock Text="通道数量" VerticalAlignment="Center" FontSize="16" Margin="0,0,10,0"/>
+            <hc:NumericUpDown Name="nudChannelCount" Width="100" Minimum="0" Maximum="27" ValueChanged="nudChannelCount_ValueChanged"/>
+            <TextBlock Text="槽位上限" VerticalAlignment="Center" FontSize="16" Margin="18,0,10,0"/>
+            <TextBlock Name="tbMaxSlot" VerticalAlignment="Center" FontSize="16"/>
+        </StackPanel>
 
-        <Border Grid.Column="0" Grid.Row="2" BorderThickness="1, 1, 0, 1" />
-        <Border Grid.Column="1" Grid.Row="2" BorderThickness="1, 1, 0, 1" />
-        <Border Grid.Column="2" Grid.Row="2" BorderThickness="1, 1, 0, 1" />
-        <Border Grid.Column="3" Grid.Row="2" BorderThickness="1, 1, 0, 1" />
-        <Border Grid.Column="4" Grid.Row="2" BorderThickness="1, 1, 0, 1" />
-        <Border Grid.Column="5" Grid.Row="2" BorderThickness="1, 1, 0, 1" />
-        <Border Grid.Column="6" Grid.Row="2" BorderThickness="1, 1, 0, 1" />
-        <Border Grid.Column="7" Grid.Row="2" BorderThickness="1, 1, 0, 1" />
-        <Border Grid.Column="8" Grid.Row="2" BorderThickness="1, 1, 1, 1" />
+        <DataGrid Grid.Row="1"
+                  Name="dgChannels"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="False"
+                  CanUserDeleteRows="False"
+                  CanUserResizeColumns="False"
+                  CanUserResizeRows="False"
+                  CanUserReorderColumns="False"
+                  HeadersVisibility="Column"
+                  SelectionMode="Single"
+                  ScrollViewer.VerticalScrollBarVisibility="Auto"
+                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                  RowHeight="32"
+                  ColumnHeaderHeight="34">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="序号" Binding="{Binding RowIndex}" IsReadOnly="True" Width="70"/>
+                <DataGridTextColumn Header="通道名称" Binding="{Binding RoleName}" IsReadOnly="True" Width="160"/>
+                <DataGridTextColumn Header="通道标题" Binding="{Binding Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="*"/>
+                <DataGridTemplateColumn Header="温度探头" Width="180">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Probe}" TextAlignment="Center" VerticalAlignment="Center"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.CellEditingTemplate>
+                        <DataTemplate>
+                            <hc:ComboBox ItemsSource="{Binding DataContext.SlotOptions, RelativeSource={RelativeSource AncestorType=Window}}"
+                                         SelectedItem="{Binding Probe, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                         hc:InfoElement.ShowClearButton="True"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellEditingTemplate>
+                </DataGridTemplateColumn>
+                <DataGridCheckBoxColumn Header="启用" Binding="{Binding IsActive}" IsReadOnly="True" Width="70"/>
+            </DataGrid.Columns>
+        </DataGrid>
 
-        <Border Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="9" Background="#FFD2D2D2" Margin="0, 5, 0, 0"/>
-        <Border Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="9" Background="#FFF5F5D5"/>
-        <Border Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="9" Background="#FFE5F7E9"/>
-
-        <Border Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="6" BorderThickness="1, 1, 0, 0" Margin="0, 5, 0, 0"/>
-        <Border Grid.Column="6" Grid.Row="3" Grid.ColumnSpan="3" BorderThickness="1, 1, 0, 0" Margin="0, 5, 0, 0"/>
-        <Border Grid.Column="0" Grid.Row="4" BorderThickness="1, 1, 0, 0" />
-        <Border Grid.Column="1" Grid.Row="4" BorderThickness="1, 1, 0, 0" />
-        <Border Grid.Column="2" Grid.Row="4" BorderThickness="1, 1, 0, 0" />
-        <Border Grid.Column="3" Grid.Row="4" BorderThickness="1, 1, 0, 0" />
-        <Border Grid.Column="4" Grid.Row="4" BorderThickness="1, 1, 0, 0" />
-        <Border Grid.Column="5" Grid.Row="4" BorderThickness="1, 1, 0, 0" />
-        <Border Grid.Column="6" Grid.Row="4" BorderThickness="1, 1, 0, 0" />
-        <Border Grid.Column="7" Grid.Row="4" BorderThickness="1, 1, 0, 0" />
-        <Border Grid.Column="8" Grid.Row="4" BorderThickness="1, 1, 1, 0" />
-
-        <Border Grid.Column="0" Grid.Row="5" BorderThickness="1, 1, 0, 1" />
-        <Border Grid.Column="1" Grid.Row="5" BorderThickness="1, 1, 0, 1" />
-        <Border Grid.Column="2" Grid.Row="5" BorderThickness="1, 1, 0, 1" />
-        <Border Grid.Column="3" Grid.Row="5" BorderThickness="1, 1, 0, 1" />
-        <Border Grid.Column="4" Grid.Row="5" BorderThickness="1, 1, 0, 1" />
-        <Border Grid.Column="5" Grid.Row="5" BorderThickness="1, 1, 0, 1" />
-        <Border Grid.Column="6" Grid.Row="5" BorderThickness="1, 1, 0, 1" />
-        <Border Grid.Column="7" Grid.Row="5" BorderThickness="1, 1, 0, 1" />
-        <Border Grid.Column="8" Grid.Row="5" BorderThickness="1, 1, 1, 1" />
-
-
-        <Border Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="9" Background="#FFD2D2D2" Margin="0, 5, 0, 0"/>
-        <Border Grid.Column="0" Grid.Row="7" Grid.ColumnSpan="9" Background="#FFF5F5D5"/>
-        <Border Grid.Column="0" Grid.Row="8" Grid.ColumnSpan="9" Background="#FFE5F7E9"/>
-
-        <Border Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="9" BorderThickness="1, 1, 1, 0" Margin="0, 5, 0, 0"/>
-        <Border Grid.Column="0" Grid.Row="7" BorderThickness="1, 1, 0, 0" />
-        <Border Grid.Column="1" Grid.Row="7" BorderThickness="1, 1, 0, 0" />
-        <Border Grid.Column="2" Grid.Row="7" BorderThickness="1, 1, 0, 0" />
-        <Border Grid.Column="3" Grid.Row="7" BorderThickness="1, 1, 0, 0" />
-        <Border Grid.Column="4" Grid.Row="7" BorderThickness="1, 1, 0, 0" />
-        <Border Grid.Column="5" Grid.Row="7" BorderThickness="1, 1, 0, 0" />
-        <Border Grid.Column="6" Grid.Row="7" BorderThickness="1, 1, 0, 0" />
-        <Border Grid.Column="7" Grid.Row="7" BorderThickness="1, 1, 0, 0" />
-        <Border Grid.Column="8" Grid.Row="7" BorderThickness="1, 1, 1, 0" />
-        
-        <Border Grid.Column="0" Grid.Row="8" BorderThickness="1, 1, 0, 1" />
-        <Border Grid.Column="1" Grid.Row="8" BorderThickness="1, 1, 0, 1" />
-        <Border Grid.Column="2" Grid.Row="8" BorderThickness="1, 1, 0, 1" />
-        <Border Grid.Column="3" Grid.Row="8" BorderThickness="1, 1, 0, 1" />
-        <Border Grid.Column="4" Grid.Row="8" BorderThickness="1, 1, 0, 1" />
-        <Border Grid.Column="5" Grid.Row="8" BorderThickness="1, 1, 0, 1" />
-        <Border Grid.Column="6" Grid.Row="8" BorderThickness="1, 1, 0, 1" />
-        <Border Grid.Column="7" Grid.Row="8" BorderThickness="1, 1, 0, 1" />
-        <Border Grid.Column="8" Grid.Row="8" BorderThickness="1, 1, 1, 1" />
-
-        <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Text="绕组温度" FontSize="18" FontWeight="bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="0" Grid.Column="3" Grid.ColumnSpan="1" Text="铁心温度" FontSize="18" FontWeight="bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="0" Grid.Column="4" Grid.ColumnSpan="4" Text="环境温度" FontSize="18" FontWeight="bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="1" Grid.Column="0"  Text="A" VerticalAlignment="Center" FontSize="16" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="1" Grid.Column="1"  Text="B" VerticalAlignment="Center" FontSize="16" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="1" Grid.Column="2"  Text="C" VerticalAlignment="Center" FontSize="16" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="1" Grid.Column="3"  Text="Core" VerticalAlignment="Center" FontSize="16" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="1" Grid.Column="4"  Text="a" VerticalAlignment="Center" FontSize="16" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="1" Grid.Column="5"  Text="b" VerticalAlignment="Center" FontSize="16" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="1" Grid.Column="6"  Text="c" VerticalAlignment="Center" FontSize="16" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="1" Grid.Column="7"  Text="d" VerticalAlignment="Center" FontSize="16" HorizontalAlignment="Center"/>
-
-        <hc:ComboBox Grid.Row="2" Grid.Column="0"  hc:InfoElement.ShowClearButton="True" Name="cbWindingA" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-        <hc:ComboBox Grid.Row="2" Grid.Column="1"  hc:InfoElement.ShowClearButton="True" Name="cbWindingB" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-        <hc:ComboBox Grid.Row="2" Grid.Column="2"  hc:InfoElement.ShowClearButton="True" Name="cbWindingC" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-        <hc:ComboBox Grid.Row="2" Grid.Column="3"  hc:InfoElement.ShowClearButton="True" Name="cbCore" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-        <hc:ComboBox Grid.Row="2" Grid.Column="4"  hc:InfoElement.ShowClearButton="True" Name="cbEnvA" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-        <hc:ComboBox Grid.Row="2" Grid.Column="5"  hc:InfoElement.ShowClearButton="True" Name="cbEnvB" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-        <hc:ComboBox Grid.Row="2" Grid.Column="6"  hc:InfoElement.ShowClearButton="True" Name="cbEnvC" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-        <hc:ComboBox Grid.Row="2" Grid.Column="7"  hc:InfoElement.ShowClearButton="True" Name="cbEnvD" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-
-        <TextBlock Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="6" Text="罩壳出风口温度" FontSize="18" FontWeight="bold" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0, 5, 0, 0"/>
-        <TextBlock Grid.Row="3" Grid.Column="6" Grid.ColumnSpan="3" Text="罩壳进风口温度" FontSize="18" FontWeight="bold" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0, 5, 0, 0"/>
-        <TextBlock Grid.Row="0" Grid.Column="8"  Text="壳内顶部温度" FontSize="18" FontWeight="bold" TextWrapping="Wrap" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0, 5, 0, 0"/>
-        <TextBlock Grid.Row="4" Grid.Column="0"  Text="1" VerticalAlignment="Center" FontSize="16" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="4" Grid.Column="1"  Text="2" VerticalAlignment="Center" FontSize="16" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="4" Grid.Column="2"  Text="3" VerticalAlignment="Center" FontSize="16" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="4" Grid.Column="3"  Text="4" VerticalAlignment="Center" FontSize="16" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="4" Grid.Column="4"  Text="5" VerticalAlignment="Center" FontSize="16" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="4" Grid.Column="5"  Text="6" VerticalAlignment="Center" FontSize="16" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="4" Grid.Column="6"  Text="1" VerticalAlignment="Center" FontSize="16" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="4" Grid.Column="7"  Text="2" VerticalAlignment="Center" FontSize="16" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="4" Grid.Column="8"  Text="3" VerticalAlignment="Center" FontSize="16" HorizontalAlignment="Center"/>
-
-        <hc:ComboBox Grid.Row="5" Grid.Column="0" hc:InfoElement.ShowClearButton="True" Name="cbOutlet1" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-        <hc:ComboBox Grid.Row="5" Grid.Column="1" hc:InfoElement.ShowClearButton="True" Name="cbOutlet2" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-        <hc:ComboBox Grid.Row="5" Grid.Column="2" hc:InfoElement.ShowClearButton="True" Name="cbOutlet3" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-        <hc:ComboBox Grid.Row="5" Grid.Column="3" hc:InfoElement.ShowClearButton="True" Name="cbOutlet4" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-        <hc:ComboBox Grid.Row="5" Grid.Column="4" hc:InfoElement.ShowClearButton="True" Name="cbOutlet5" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-        <hc:ComboBox Grid.Row="5" Grid.Column="5" hc:InfoElement.ShowClearButton="True" Name="cbOutlet6" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-        <hc:ComboBox Grid.Row="5" Grid.Column="6" hc:InfoElement.ShowClearButton="True" Name="cbInlet1" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-        <hc:ComboBox Grid.Row="5" Grid.Column="7" hc:InfoElement.ShowClearButton="True" Name="cbInlet2" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-        <hc:ComboBox Grid.Row="5" Grid.Column="8" hc:InfoElement.ShowClearButton="True" Name="cbInlet3" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-        <hc:ComboBox Grid.Row="2" Grid.Column="8" hc:InfoElement.ShowClearButton="True" Name="cbTop" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-
-        <TextBlock Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="9" Text="额外温度记录" FontSize="18" FontWeight="bold" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0, 5, 0, 0"/>
-        <TextBlock Grid.Row="7" Grid.Column="0"  Text="1" VerticalAlignment="Center" FontSize="16" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="7" Grid.Column="1"  Text="2" VerticalAlignment="Center" FontSize="16" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="7" Grid.Column="2"  Text="3" VerticalAlignment="Center" FontSize="16" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="7" Grid.Column="3"  Text="4" VerticalAlignment="Center" FontSize="16" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="7" Grid.Column="4"  Text="5" VerticalAlignment="Center" FontSize="16" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="7" Grid.Column="5"  Text="6" VerticalAlignment="Center" FontSize="16" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="7" Grid.Column="6"  Text="7" VerticalAlignment="Center" FontSize="16" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="7" Grid.Column="7"  Text="8" VerticalAlignment="Center" FontSize="16" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Row="7" Grid.Column="8"  Text="9" VerticalAlignment="Center" FontSize="16" HorizontalAlignment="Center"/>
-
-        <hc:ComboBox Grid.Row="8" hc:InfoElement.ShowClearButton="True" Grid.Column="0"  Name="cbExtension1" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-        <hc:ComboBox Grid.Row="8" hc:InfoElement.ShowClearButton="True" Grid.Column="1"  Name="cbExtension2" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-        <hc:ComboBox Grid.Row="8" hc:InfoElement.ShowClearButton="True" Grid.Column="2"  Name="cbExtension3" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-        <hc:ComboBox Grid.Row="8" hc:InfoElement.ShowClearButton="True" Grid.Column="3"  Name="cbExtension4" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-        <hc:ComboBox Grid.Row="8" hc:InfoElement.ShowClearButton="True" Grid.Column="4"  Name="cbExtension5" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-        <hc:ComboBox Grid.Row="8" hc:InfoElement.ShowClearButton="True" Grid.Column="5"  Name="cbExtension6" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-        <hc:ComboBox Grid.Row="8" hc:InfoElement.ShowClearButton="True" Grid.Column="6"  Name="cbExtension7" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-        <hc:ComboBox Grid.Row="8" hc:InfoElement.ShowClearButton="True" Grid.Column="7"  Name="cbExtension8" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-        <hc:ComboBox Grid.Row="8" hc:InfoElement.ShowClearButton="True" Grid.Column="8"  Name="cbExtension9" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-
-        <StackPanel Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="8" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <Button Content="确认" Style="{StaticResource ButtonPrimary}" Width="80" Height="36" FontSize="16" Margin="0,20,20,0" Name="btConfirm" Click="btConfirm_Click"/>
-            <Button Content="取消" Style="{StaticResource ButtonPrimary}" Width="80" Height="36" FontSize="16" Margin="0,20,0,0" Name="btCancel" Click="btCancel_Click"/>
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,14,0,0">
+            <Button Content="确认" Style="{StaticResource ButtonPrimary}" Width="90" Height="36" FontSize="16" Margin="0,0,16,0" Name="btConfirm" Click="btConfirm_Click"/>
+            <Button Content="取消" Style="{StaticResource ButtonPrimary}" Width="90" Height="36" FontSize="16" Name="btCancel" Click="btCancel_Click"/>
         </StackPanel>
     </Grid>
 </Window>

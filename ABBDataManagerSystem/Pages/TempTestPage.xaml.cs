@@ -3,6 +3,8 @@ using ABBDataManagerSystem.Charts;
 using ABBDataManagerSystem.Connector;
 using ABBDataManagerSystem.Pages.Views;
 using ABBDataManagerSystem.Tools;
+using TempChannelSetting = ABBDataManagerSystem.Configs.TemperatureChannelSetting;
+using TemperatureChannelCatalog = ABBDataManagerSystem.Configs.TemperatureChannelCatalog;
 using S7.Net;
 using Microsoft.Win32;
 using System.Data;
@@ -121,11 +123,22 @@ namespace ABBDataManagerSystem.Pages
     }
 
 
-    enum TempMode
+    public enum TempMode
     {
         COMMON = 0, // 常规模式，AN或者AF+相对于环境
         AF_AIR = 1, // AF+相对于进风口温度
         AFWF = 2,   // AFWF，水冷模式
+    }
+
+    class TemperatureChannelBinding
+    {
+        public TempChannelSetting Channel { get; set; } = new TempChannelSetting();
+        public int SlotNumber { get; set; }
+        public string RoleKey => Channel.RoleKey ?? string.Empty;
+        public string RoleName => Channel.RoleName ?? string.Empty;
+        public string Probe => Channel.Probe ?? string.Empty;
+        public string ColumnName => $"Temp_{RoleKey}";
+        public string Title => string.IsNullOrWhiteSpace(Channel.Title) ? RoleName : Channel.Title;
     }
 
     /// <summary>
@@ -150,6 +163,7 @@ namespace ABBDataManagerSystem.Pages
 
         private StreamWriter? csvWriter = null;
         private List<int> SelectedSlots = new List<int>();
+        private List<TemperatureChannelBinding> SelectedChannels = new List<TemperatureChannelBinding>();
         private bool SelectedSlotChange = false;
 
         private TempModbusCollector? tempModbusCollector;
@@ -315,7 +329,7 @@ namespace ABBDataManagerSystem.Pages
             UpdateByConfig();
             InitSlot();
             InitChartRange();
-            tempCharts = new TempChartsNew(plotView, SelectedSlots);
+            tempCharts = new TempChartsNew(plotView, SelectedSlots, GetSelectedChannelTitles());
             tempCharts.InitChart();
             if (TempTestMode == TempMode.AFWF)
             {
@@ -350,7 +364,8 @@ namespace ABBDataManagerSystem.Pages
                 {
                     TemperatureSlotView uc = new TemperatureSlotView()
                     {
-                        Slot = i + 1,
+                        Slot = SelectedChannels[i].SlotNumber,
+                        Title = SelectedChannels[i].Title,
                         Temperature = -200f,
                         Margin = new Thickness(5),
                         Width = 120,
@@ -367,7 +382,8 @@ namespace ABBDataManagerSystem.Pages
             for (int i = 0; i < Slots.Count && i < SlotCount; i++)
             {
                 var uc = Slots[i];
-                uc.Slot = SelectedSlots[i];
+                uc.Slot = SelectedChannels[i].SlotNumber;
+                uc.Title = SelectedChannels[i].Title;
             }
         }
 
@@ -429,7 +445,7 @@ namespace ABBDataManagerSystem.Pages
             if (tempCharts == null || SelectedSlotChange)
             {
                 SelectedSlotChange = false;
-                tempCharts = new TempChartsNew(plotView, SelectedSlots);
+                tempCharts = new TempChartsNew(plotView, SelectedSlots, GetSelectedChannelTitles());
                 tempCharts.InitChart();
                 if (TempTestMode == TempMode.AFWF)
                 {
@@ -733,144 +749,59 @@ namespace ABBDataManagerSystem.Pages
             Table.Columns.Add("I3", typeof(float));
             Table.Columns.Add("P3", typeof(float));
 
-            dgTempRecord.Columns.Add(new DataGridTextColumn()
+            foreach (var channel in SelectedChannels)
             {
-                Header = $"绕组A",
-                Binding = new Binding(GetBindingPath(Configs.Configs.WindingA)),
-                MinWidth = 40
-            });
-            dgTempRecord.Columns.Add(new DataGridTextColumn()
-            {
-                Header = $"绕组B",
-                Binding = new Binding(GetBindingPath(Configs.Configs.WindingB)),
-                MinWidth = 40
-            });
-            dgTempRecord.Columns.Add(new DataGridTextColumn()
-            {
-                Header = $"绕组C",
-                Binding = new Binding(GetBindingPath(Configs.Configs.WindingC)),
-                MinWidth = 40
-            });
-            dgTempRecord.Columns.Add(new DataGridTextColumn()
-            {
-                Header = $"铁心",
-                Binding = new Binding(GetBindingPath(Configs.Configs.Core)),
-                MinWidth = 40
-            });
-
-            if (TempTestMode == TempMode.COMMON)
-            {
+                if (!Table.Columns.Contains(channel.ColumnName))
+                {
+                    Table.Columns.Add(channel.ColumnName, typeof(float));
+                }
                 dgTempRecord.Columns.Add(new DataGridTextColumn()
                 {
-                    Header = $"环境A",
-                    Binding = new Binding(GetBindingPath(Configs.Configs.EnvA)),
-                    MinWidth = 40
-                });
-                dgTempRecord.Columns.Add(new DataGridTextColumn()
-                {
-                    Header = $"环境B",
-                    Binding = new Binding(GetBindingPath(Configs.Configs.EnvB)),
-                    MinWidth = 40
-                });
-                dgTempRecord.Columns.Add(new DataGridTextColumn()
-                {
-                    Header = $"环境C",
-                    Binding = new Binding(GetBindingPath(Configs.Configs.EnvC)),
-                    MinWidth = 40
-                });
-                dgTempRecord.Columns.Add(new DataGridTextColumn()
-                {
-                    Header = $"环境D",
-                    Binding = new Binding(GetBindingPath(Configs.Configs.EnvD)),
-                    MinWidth = 40
+                    Header = channel.Title,
+                    Binding = new Binding(channel.ColumnName) { StringFormat = "{0:N1}" },
+                    MinWidth = 56
                 });
             }
-            else
+
+            if (TempTestMode == TempMode.AFWF)
             {
-                var outs = Configs.Configs.OutletTemperature.Split(",");
-                var ins = Configs.Configs.InletTemperature.Split(",");
-                for (int i = 1; i <= 6; i++)
+                Dictionary<string, string> maps = new Dictionary<string, string>()
                 {
-                    string binding = outs.Length >= i ? outs[i - 1] : "None";
+                    { "出水口温度", "Outletwater"},
+                    { "回水口温度", "Inletwater"},
+                    { "外循环出风口1", "OutletAir1"},
+                    { "外循环出风口2", "OutletAir2"},
+                    { "外循环出风口3", "OutletAir3"},
+                    { "外循环出风口4", "OutletAir4"},
+                    { "外循环出风口5", "OutletAir5"},
+                    { "外循环出风口6", "OutletAir6"},
+                    { "外循环出风口7", "OutletAir7"},
+                    { "外循环出风口8", "OutletAir8"},
+                    { "外循环环境温度1", "Ambient1"},
+                    { "外循环环境温度2", "Ambient2"},
+                    { "流量", "Flow"},
+                };
+                if (Configs.Configs.CoolDeviceSelectedIndex == 0)
+                {
+                    maps.Remove("外循环出风口5");
+                    maps.Remove("外循环出风口6");
+                    maps.Remove("外循环出风口7");
+                    maps.Remove("外循环出风口8");
+                }
+                if (Configs.Configs.CoolDeviceSelectedIndex == 1)
+                {
+                    maps.Remove("外循环环境温度2");
+                }
+                foreach (var item in maps)
+                {
                     dgTempRecord.Columns.Add(new DataGridTextColumn()
                     {
-                        Header = $"出风口温度{i}",
-                        Binding = new Binding(GetBindingPath(binding)),
-                        Width = 40
+                        Header = item.Key,
+                        Binding = new Binding(item.Value),
+                        Width = item.Key.IndexOf("外循环环境温度") >= 0 ? 48 : 44
                     });
+                    Table.Columns.Add(item.Value, typeof(float));
                 }
-                for (int i = 1; i <= 3; i++)
-                {
-                    string binding = ins.Length >= i ? ins[i - 1] : "None";
-                    dgTempRecord.Columns.Add(new DataGridTextColumn()
-                    {
-                        Header = $"进风口温度{i}",
-                        Binding = new Binding(GetBindingPath(binding)),
-                        Width = 40
-                    });
-                }
-                dgTempRecord.Columns.Add(new DataGridTextColumn()
-                {
-                    Header = $"顶部温度",
-                    Binding = new Binding(GetBindingPath(Configs.Configs.TopTemperature)),
-                    Width = 40
-                });
-                if (TempTestMode == TempMode.AFWF)
-                {
-                    Dictionary<string, string> maps = new Dictionary<string, string>()
-                    {
-                        { "出水口温度", "Outletwater"},
-                        { "回水口温度", "Inletwater"},
-                        { "外循环出风口1", "OutletAir1"},
-                        { "外循环出风口2", "OutletAir2"},
-                        { "外循环出风口3", "OutletAir3"},
-                        { "外循环出风口4", "OutletAir4"},
-                        { "外循环出风口5", "OutletAir5"},
-                        { "外循环出风口6", "OutletAir6"},
-                        { "外循环出风口7", "OutletAir7"},
-                        { "外循环出风口8", "OutletAir8"},
-                        { "外循环环境温度1", "Ambient1"},
-                        { "外循环环境温度2", "Ambient2"},
-                        { "流量", "Flow"},
-                    };
-                    if (Configs.Configs.CoolDeviceSelectedIndex == 0)
-                    {
-                        maps.Remove("外循环出风口5");
-                        maps.Remove("外循环出风口6");
-                        maps.Remove("外循环出风口7");
-                        maps.Remove("外循环出风口8");
-                    }
-                    if (Configs.Configs.CoolDeviceSelectedIndex == 1)
-                    {
-                        maps.Remove("外循环环境温度2");
-                    }
-                    foreach (var item in maps)
-                    {
-                        dgTempRecord.Columns.Add(new DataGridTextColumn()
-                        {
-                            Header = item.Key,
-                            Binding = new Binding(item.Value),
-                            Width = item.Key.IndexOf("外循环环境温度") >= 0 ? 48 : 44
-                        });
-                        Table.Columns.Add(item.Value, typeof(float));
-                    }
-                }
-            }
-
-            for (int i = 0; i < SelectedSlots.Count; i++)
-            {
-                var slot = SelectedSlots[i];
-                Table.Columns.Add($"Slot-{slot}", typeof(float));
-            }
-
-            foreach (var extensionItem in ExtensionSlotMaps)
-            {
-                dgTempRecord.Columns.Add(new DataGridTextColumn()
-                {
-                    Header = $"其他{extensionItem.Key}",
-                    Binding = new Binding(GetBindingPath(extensionItem.Value)),
-                    Width = 40
-                });
             }
 
             dgTempRecord.AutoGenerateColumns = false;
@@ -884,10 +815,9 @@ namespace ABBDataManagerSystem.Pages
             DataRow newRow = Table.NewRow();
             newRow["序号"] = ++Index;
             newRow["时间"] = DateTime.Now;
-            for (int i = 0; i < SelectedSlots.Count && i < values.Length; i++)
+            for (int i = 0; i < SelectedChannels.Count && i < values.Length; i++)
             {
-                var slot = SelectedSlots[i];
-                newRow[$"Slot-{slot}"] = values[i];
+                newRow[SelectedChannels[i].ColumnName] = values[i];
             }
             if (TempTestMode == TempMode.AFWF)
             {
@@ -954,10 +884,9 @@ namespace ABBDataManagerSystem.Pages
             DataRow newRow = Table.NewRow();
             newRow["序号"] = 0;
             newRow["时间"] = DateTime.Now.Date;
-            for (int i = 0; i < SelectedSlots.Count; i++)
+            for (int i = 0; i < SelectedChannels.Count; i++)
             {
-                var slot = SelectedSlots[i];
-                newRow[$"Slot-{slot}"] = slot;
+                newRow[SelectedChannels[i].ColumnName] = SelectedChannels[i].SlotNumber;
             }
             Dispatcher.Invoke(() =>
             {
@@ -1137,12 +1066,12 @@ namespace ABBDataManagerSystem.Pages
         private void StartCSVFile()
         {
             // 定义要写入CSV文件的数据  
-            string[] titles = new string[SlotCount + 1];
-            for (int i = 0; i < SelectedSlots.Count; i++)
+            string[] titles = new string[SelectedChannels.Count + 1];
+            for (int i = 0; i < SelectedChannels.Count; i++)
             {
-                titles[i] = $"Slot{SelectedSlots[i]}";
+                titles[i] = EscapeCsv(SelectedChannels[i].Title);
             }
-            titles[SlotCount] = "Time";
+            titles[SelectedChannels.Count] = "Time";
 
             // 定义CSV文件路径和文件名  
             csvFilePath = tbSaveFilePath.Text.Trim();
@@ -1158,12 +1087,12 @@ namespace ABBDataManagerSystem.Pages
         private void WriteCSVFile(float[] data)
         {
             if (data.Length == 0 || csvWriter == null) return;
-            string[] values = new string[SlotCount + 1];
-            for (int i = 0; i < SlotCount && i < data.Length; i++)
+            string[] values = new string[SelectedChannels.Count + 1];
+            for (int i = 0; i < SelectedChannels.Count && i < data.Length; i++)
             {
                 values[i] = data[i].ToString("0.0");
             }
-            values[SlotCount] = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss fff");
+            values[SelectedChannels.Count] = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss fff");
             csvWriter.WriteLine(string.Join(",", values)); // 使用逗号分隔每个字段并写入行
             flushDelay--;
             if (flushDelay == 0)
@@ -1178,6 +1107,16 @@ namespace ABBDataManagerSystem.Pages
             csvWriter?.Flush();
             csvWriter?.Close();
             csvWriter = null;
+        }
+
+        private static string EscapeCsv(string value)
+        {
+            value = value ?? string.Empty;
+            if (value.Contains(",") || value.Contains("\"") || value.Contains("\r") || value.Contains("\n"))
+            {
+                return $"\"{value.Replace("\"", "\"\"")}\"";
+            }
+            return value;
         }
         #endregion
 
@@ -1230,12 +1169,7 @@ namespace ABBDataManagerSystem.Pages
                 Configs.Configs.TPSerialPort = cbSerialPort.Text;
                 Configs.Configs.TPSerialBoundRate = cbSerialBoudRate.Text;
             }
-            string slots = "";
-            foreach (var slot in SelectedSlots)
-            {
-                slots += $"{slot},";
-            }
-            Configs.Configs.TPSlots = slots;
+            Configs.Configs.TPSlots = string.Join(",", SelectedChannels.Select(item => item.Probe));
             Configs.Configs.TPInterval = cbInterval.Text;
             Configs.Configs.TemperatureThreshold = (float)tbTemperatureThreshold.Value;
         }
@@ -1262,22 +1196,7 @@ namespace ABBDataManagerSystem.Pages
 
         private void UpdateSlotShieldState()
         {
-            bool needEnv = TempTestMode == TempMode.COMMON;
-            bool needAir = TempTestMode == TempMode.AF_AIR || TempTestMode == TempMode.AFWF;
-            shEnvA.Visibility = !needEnv ? Visibility.Collapsed : Visibility.Visible;
-            shEnvB.Visibility = !needEnv ? Visibility.Collapsed : Visibility.Visible;
-            shEnvC.Visibility = !needEnv ? Visibility.Collapsed : Visibility.Visible;
-            shEnvD.Visibility = !needEnv ? Visibility.Collapsed : Visibility.Visible;
-            shOut1.Visibility = !needAir ? Visibility.Collapsed : Visibility.Visible;
-            shOut2.Visibility = !needAir ? Visibility.Collapsed : Visibility.Visible;
-            shOut3.Visibility = !needAir ? Visibility.Collapsed : Visibility.Visible;
-            shOut4.Visibility = !needAir ? Visibility.Collapsed : Visibility.Visible;
-            shOut5.Visibility = !needAir ? Visibility.Collapsed : Visibility.Visible;
-            shOut6.Visibility = !needAir ? Visibility.Collapsed : Visibility.Visible;
-            shIn1.Visibility = !needAir ? Visibility.Collapsed : Visibility.Visible;
-            shIn2.Visibility = !needAir ? Visibility.Collapsed : Visibility.Visible;
-            shIn3.Visibility = !needAir ? Visibility.Collapsed : Visibility.Visible;
-            shTop.Visibility = !needAir ? Visibility.Collapsed : Visibility.Visible;
+            UpdateSlotsMappingDisplay();
         }
 
         private void SelectedSlots_SelectionChanged()
@@ -1287,71 +1206,56 @@ namespace ABBDataManagerSystem.Pages
             UpdateSlotsMappingDisplay();
         }
 
+        private List<string> GetSelectedChannelTitles()
+        {
+            return SelectedChannels.Select(item => item.Title).ToList();
+        }
+
         private int ProcessSelectedSlots()
         {
             SelectedSlots.Clear();
-            List<string> slots = new List<string>();
-            slots.Add(Configs.Configs.WindingA);
-            slots.Add(Configs.Configs.WindingB);
-            slots.Add(Configs.Configs.WindingC);
-            slots.Add(Configs.Configs.Core);
-            if (TempTestMode == TempMode.COMMON)
+            SelectedChannels.Clear();
+            ExtensionSlotMaps.Clear();
+
+            var channels = Configs.Configs.TemperatureChannels ?? TemperatureChannelCatalog.CreateDefaultChannels();
+            foreach (var channel in channels)
             {
-                slots.Add(Configs.Configs.EnvA);
-                slots.Add(Configs.Configs.EnvB);
-                slots.Add(Configs.Configs.EnvC);
-                slots.Add(Configs.Configs.EnvD);
-            }
-            else
-            {
-                var _outletSlots = Configs.Configs.OutletTemperature.Split(','); // 出风口温度最多6个
-                var _inletSlots = Configs.Configs.InletTemperature.Split(','); // 进风口温度最多3个
-                for (int i = 0; i < _outletSlots.Length && i < 6; i++)
+                if (!channel.IsActive || string.IsNullOrWhiteSpace(channel.Probe))
                 {
-                    slots.Add(_outletSlots[i]);
+                    continue;
                 }
-                for (int i = 0; i < _inletSlots.Length && i < 3; i++)
+
+                var slotNumber = ParseSlotNumber(channel.Probe);
+                if (slotNumber == null || slotNumber.Value <= 0 || slotNumber.Value > MaxSlotCount)
                 {
-                    slots.Add(_inletSlots[i]);
+                    continue;
                 }
-                slots.Add(Configs.Configs.TopTemperature);
-            }
-            if (Configs.Configs.ExtensionSlots.Length > 0)
-            {
-                ExtensionSlotMaps.Clear();
-                var _extensionSlots = Configs.Configs.ExtensionSlots.Split(',');
-                int index = 0;
-                foreach (var _extensionSlot in _extensionSlots)
+
+                SelectedChannels.Add(new TemperatureChannelBinding
                 {
-                    index++;
-                    if (_extensionSlot.Trim().Length == 0)
-                    {
-                        continue;
-                    }
-                    slots.Add(_extensionSlot);
-                    ExtensionSlotMaps.Add(index, _extensionSlot);
+                    Channel = channel.Clone(),
+                    SlotNumber = slotNumber.Value,
+                });
+            }
+
+            SelectedSlots.AddRange(SelectedChannels.Select(item => item.SlotNumber));
+
+            foreach (var channel in SelectedChannels.Where(item => item.RoleKey.StartsWith("Extension")))
+            {
+                var suffix = channel.RoleKey.Replace("Extension", string.Empty);
+                var index = Utils.ParseInt(suffix);
+                if (index > 0)
+                {
+                    ExtensionSlotMaps[index] = channel.Probe;
                 }
             }
-            foreach (var item in slots)
-            {
-                try
-                {
-                    if (item.Length > 0 && item.IndexOf("-") >= 0)
-                    {
-                        var slotIndex = item.Split("-")[1];
-                        SelectedSlots.Add(Utils.ParseInt(slotIndex));
-                    }
-                }
-                catch { }
-            }
-            SelectedSlots.Sort();
-            SelectedSlots = SelectedSlots.Distinct().ToList();
-            return SelectedSlots.Count;
+
+            return SelectedChannels.Count;
         }
 
         private void btSelectSlots_Click(object sender, RoutedEventArgs e)
         {
-            var selectDialog = new TempSlotSelectView(MaxSlotCount, TempTestMode != TempMode.AFWF) { WindowStartupLocation = WindowStartupLocation.CenterScreen };
+            var selectDialog = new TempSlotSelectView(MaxSlotCount, TempTestMode) { WindowStartupLocation = WindowStartupLocation.CenterScreen };
             if (selectDialog.ShowDialog() == true)
             {
                 SelectedSlots_SelectionChanged();
@@ -1360,74 +1264,54 @@ namespace ABBDataManagerSystem.Pages
 
         private void UpdateSlotsMappingDisplay()
         {
-            string msg = "";
-            msg += $"绕组A - {Configs.Configs.WindingA}, ";
-            msg += $"绕组B - {Configs.Configs.WindingB}, ";
-            msg += $"绕组C - {Configs.Configs.WindingC}, ";
-            msg += $"铁心 - {Configs.Configs.Core}, ";
-            msg += $"环境1 - {Configs.Configs.EnvA}, ";
-            msg += $"环境2 - {Configs.Configs.EnvB}, ";
-            msg += $"环境3 - {Configs.Configs.EnvC}, ";
-            msg += $"环境4 - {Configs.Configs.EnvD}, ";
-            tbSlotMappingShow.Text = msg;
-            shWindingA.Status = Configs.Configs.WindingA;
-            shWindingB.Status = Configs.Configs.WindingB;
-            shWindingC.Status = Configs.Configs.WindingC;
-            shCore.Status = Configs.Configs.Core;
-            shEnvA.Status = Configs.Configs.EnvA;
-            shEnvB.Status = Configs.Configs.EnvB;
-            shEnvC.Status = Configs.Configs.EnvC;
-            shEnvD.Status = Configs.Configs.EnvD;
-            string[] outSlots = Configs.Configs.OutletTemperature.Split(",");
-            string[] inSlots = Configs.Configs.InletTemperature.Split(",");
-            shOut1.Status = outSlots.Length > 0 ? outSlots[0] : "";
-            shOut2.Status = outSlots.Length > 1 ? outSlots[1] : "";
-            shOut3.Status = outSlots.Length > 2 ? outSlots[2] : "";
-            shOut4.Status = outSlots.Length > 3 ? outSlots[3] : "";
-            shOut5.Status = outSlots.Length > 4 ? outSlots[4] : "";
-            shOut6.Status = outSlots.Length > 5 ? outSlots[5] : "";
-
-            shIn1.Status = inSlots.Length > 0 ? inSlots[0] : "";
-            shIn2.Status = inSlots.Length > 1 ? inSlots[1] : "";
-            shIn3.Status = inSlots.Length > 2 ? inSlots[2] : "";
-            shTop.Status = Configs.Configs.TopTemperature;
-
-            if (Configs.Configs.ExtensionSlots.Length > 0 && ExtensionSlotMaps.Count == 0)
+            if (SelectedChannels.Count == 0)
             {
-                var _extensionSlots = Configs.Configs.ExtensionSlots.Split(',');
-                int index = 0;
-                foreach (var _extensionSlot in _extensionSlots)
-                {
-                    index++;
-                    if (_extensionSlot.Trim().Length == 0)
-                    {
-                        continue;
-                    }
-                    ExtensionSlotMaps.Add(index, _extensionSlot);
-                }
+                ProcessSelectedSlots();
             }
 
-            UpdateExtensionSheild(1, shExtension1);
-            UpdateExtensionSheild(2, shExtension2);
-            UpdateExtensionSheild(3, shExtension3);
-            UpdateExtensionSheild(4, shExtension4);
-            UpdateExtensionSheild(5, shExtension5);
-            UpdateExtensionSheild(6, shExtension6);
-            UpdateExtensionSheild(7, shExtension7);
-            UpdateExtensionSheild(8, shExtension8);
-            UpdateExtensionSheild(9, shExtension9);
+            tbSlotMappingShow.Text = string.Join(", ", SelectedChannels.Select(item => $"{item.Title} - {item.Probe}"));
+            UpdateChannelShield("WindingA", shWindingA);
+            UpdateChannelShield("WindingB", shWindingB);
+            UpdateChannelShield("WindingC", shWindingC);
+            UpdateChannelShield("Core", shCore);
+            UpdateChannelShield("EnvA", shEnvA);
+            UpdateChannelShield("EnvB", shEnvB);
+            UpdateChannelShield("EnvC", shEnvC);
+            UpdateChannelShield("EnvD", shEnvD);
+            UpdateChannelShield("Outlet1", shOut1);
+            UpdateChannelShield("Outlet2", shOut2);
+            UpdateChannelShield("Outlet3", shOut3);
+            UpdateChannelShield("Outlet4", shOut4);
+            UpdateChannelShield("Outlet5", shOut5);
+            UpdateChannelShield("Outlet6", shOut6);
+            UpdateChannelShield("Inlet1", shIn1);
+            UpdateChannelShield("Inlet2", shIn2);
+            UpdateChannelShield("Inlet3", shIn3);
+            UpdateChannelShield("TopTemperature", shTop);
+            UpdateChannelShield("Extension1", shExtension1);
+            UpdateChannelShield("Extension2", shExtension2);
+            UpdateChannelShield("Extension3", shExtension3);
+            UpdateChannelShield("Extension4", shExtension4);
+            UpdateChannelShield("Extension5", shExtension5);
+            UpdateChannelShield("Extension6", shExtension6);
+            UpdateChannelShield("Extension7", shExtension7);
+            UpdateChannelShield("Extension8", shExtension8);
+            UpdateChannelShield("Extension9", shExtension9);
         }
 
-        private void UpdateExtensionSheild(int key, Shield sh)
+        private void UpdateChannelShield(string roleKey, Shield sh)
         {
-            if (ExtensionSlotMaps.ContainsKey(key))
+            var channel = SelectedChannels.FirstOrDefault(item => item.RoleKey == roleKey);
+            if (channel != null)
             {
                 sh.Visibility = Visibility.Visible;
-                sh.Status = ExtensionSlotMaps[key];
+                sh.Subject = channel.Title;
+                sh.Status = channel.Probe;
             }
             else
             {
                 sh.Visibility = Visibility.Collapsed;
+                sh.Status = string.Empty;
             }
         }
         #endregion
@@ -1442,7 +1326,23 @@ namespace ABBDataManagerSystem.Pages
             return null;
         }
 
-        private void UploadDataAsync(int testIndex, string testPhase, string testStatus, string coolingMode, string workflowId, string remark, TempMode tempMode, DataRow[] rows)
+        private static float? SafeRoleField(DataRow row, Dictionary<string, string> roleColumnMap, string roleKey)
+        {
+            if (!roleColumnMap.TryGetValue(roleKey, out var columnName))
+            {
+                return null;
+            }
+            return SafeField(row, columnName);
+        }
+
+        private Dictionary<string, string> CreateRoleColumnMap()
+        {
+            return SelectedChannels
+                .GroupBy(item => item.RoleKey)
+                .ToDictionary(item => item.Key, item => item.First().ColumnName);
+        }
+
+        private void UploadDataAsync(int testIndex, string testPhase, string testStatus, string coolingMode, string workflowId, string remark, TempMode tempMode, DataRow[] rows, Dictionary<string, string> roleColumnMap)
         {
             CommonTempRiseTestInfo configItem;
             var items = CommonTempRiseTestInfo.ReadFromDB(workflowId, testPhase, testStatus, coolingMode, testIndex, 1);
@@ -1495,51 +1395,43 @@ namespace ABBDataManagerSystem.Pages
                     Ic = item.Field<float?>("ic") ?? null,
                     I3 = item.Field<float?>("i3") ?? null,
                     P3 = item.Field<float?>("p3") ?? null,
-                    CoreTemp = item.Field<float?>(GetBindingPath(Configs.Configs.Core)) ?? null,
-                    WindingTempA = item.Field<float?>(GetBindingPath(Configs.Configs.WindingA)) ?? null,
-                    WindingTempB = item.Field<float?>(GetBindingPath(Configs.Configs.WindingB)) ?? null,
-                    WindingTempC = item.Field<float?>(GetBindingPath(Configs.Configs.WindingC)) ?? null,
+                    CoreTemp = SafeRoleField(item, roleColumnMap, "Core"),
+                    WindingTempA = SafeRoleField(item, roleColumnMap, "WindingA"),
+                    WindingTempB = SafeRoleField(item, roleColumnMap, "WindingB"),
+                    WindingTempC = SafeRoleField(item, roleColumnMap, "WindingC"),
                     IsAFWF = tempMode == TempMode.AFWF,
                     WorkflowID = workflowId
                 };
-                if (tempMode == TempMode.COMMON)
-                {
-                    record.EnvTempA = item.Field<float?>(GetBindingPath(Configs.Configs.EnvA)) ?? null;
-                    record.EnvTempB = item.Field<float?>(GetBindingPath(Configs.Configs.EnvB)) ?? null;
-                    record.EnvTempC = item.Field<float?>(GetBindingPath(Configs.Configs.EnvC)) ?? null;
-                    record.EnvTempD = item.Field<float?>(GetBindingPath(Configs.Configs.EnvD)) ?? null;
-                }
-                else
-                {
-                    var outlets = Configs.Configs.OutletTemperature.Split(",");
-                    var inlets = Configs.Configs.InletTemperature.Split(",");
+                record.EnvTempA = SafeRoleField(item, roleColumnMap, "EnvA");
+                record.EnvTempB = SafeRoleField(item, roleColumnMap, "EnvB");
+                record.EnvTempC = SafeRoleField(item, roleColumnMap, "EnvC");
+                record.EnvTempD = SafeRoleField(item, roleColumnMap, "EnvD");
+                record.Outlet1 = SafeRoleField(item, roleColumnMap, "Outlet1");
+                record.Outlet2 = SafeRoleField(item, roleColumnMap, "Outlet2");
+                record.Outlet3 = SafeRoleField(item, roleColumnMap, "Outlet3");
+                record.Outlet4 = SafeRoleField(item, roleColumnMap, "Outlet4");
+                record.Outlet5 = SafeRoleField(item, roleColumnMap, "Outlet5");
+                record.Outlet6 = SafeRoleField(item, roleColumnMap, "Outlet6");
+                record.Inlet1 = SafeRoleField(item, roleColumnMap, "Inlet1");
+                record.Inlet2 = SafeRoleField(item, roleColumnMap, "Inlet2");
+                record.Inlet3 = SafeRoleField(item, roleColumnMap, "Inlet3");
+                record.TopTemp = SafeRoleField(item, roleColumnMap, "TopTemperature");
 
-                    record.Outlet1 = item.Field<float?>(GetBindingPath(outlets[0])) ?? null;
-                    record.Outlet2 = item.Field<float?>(GetBindingPath(outlets[1])) ?? null;
-                    record.Outlet3 = item.Field<float?>(GetBindingPath(outlets[2])) ?? null;
-                    record.Outlet4 = item.Field<float?>(GetBindingPath(outlets[3])) ?? null;
-                    record.Outlet5 = item.Field<float?>(GetBindingPath(outlets[4])) ?? null;
-                    record.Outlet6 = item.Field<float?>(GetBindingPath(outlets[5])) ?? null;
-                    record.Inlet1 = item.Field<float?>(GetBindingPath(inlets[0])) ?? null;
-                    record.Inlet2 = item.Field<float?>(GetBindingPath(inlets[1])) ?? null;
-                    record.Inlet3 = item.Field<float?>(GetBindingPath(inlets[2])) ?? null;
-                    record.TopTemp = item.Field<float?>(GetBindingPath(Configs.Configs.TopTemperature)) ?? null;
-                    if (tempMode == TempMode.AFWF)
-                    {
-                        record.OutletWaterTemperature = item.Field<float?>("Outletwater") ?? null;
-                        record.InletWaterTemperature = item.Field<float?>("Inletwater") ?? null;
-                        record.AmbientTemperature1 = item.Field<float?>("Ambient1") ?? null;
-                        record.AmbientTemperature2 = SafeField(item, "Ambient2");
-                        record.OutletAirTemperature1 = item.Field<float?>("OutletAir1") ?? null;
-                        record.OutletAirTemperature2 = item.Field<float?>("OutletAir2") ?? null;
-                        record.OutletAirTemperature3 = item.Field<float?>("OutletAir3") ?? null;
-                        record.OutletAirTemperature4 = item.Field<float?>("OutletAir4") ?? null;
-                        record.OutletAirTemperature5 = SafeField(item, "OutletAir5");
-                        record.OutletAirTemperature6 = SafeField(item, "OutletAir6");
-                        record.OutletAirTemperature7 = SafeField(item, "OutletAir7");
-                        record.OutletAirTemperature8 = SafeField(item, "OutletAir8");
-                        record.WaterFlowRate = item.Field<float?>("Flow") ?? null;
-                    }
+                if (tempMode == TempMode.AFWF)
+                {
+                    record.OutletWaterTemperature = item.Field<float?>("Outletwater") ?? null;
+                    record.InletWaterTemperature = item.Field<float?>("Inletwater") ?? null;
+                    record.AmbientTemperature1 = item.Field<float?>("Ambient1") ?? null;
+                    record.AmbientTemperature2 = SafeField(item, "Ambient2");
+                    record.OutletAirTemperature1 = item.Field<float?>("OutletAir1") ?? null;
+                    record.OutletAirTemperature2 = item.Field<float?>("OutletAir2") ?? null;
+                    record.OutletAirTemperature3 = item.Field<float?>("OutletAir3") ?? null;
+                    record.OutletAirTemperature4 = item.Field<float?>("OutletAir4") ?? null;
+                    record.OutletAirTemperature5 = SafeField(item, "OutletAir5");
+                    record.OutletAirTemperature6 = SafeField(item, "OutletAir6");
+                    record.OutletAirTemperature7 = SafeField(item, "OutletAir7");
+                    record.OutletAirTemperature8 = SafeField(item, "OutletAir8");
+                    record.WaterFlowRate = item.Field<float?>("Flow") ?? null;
                 }
                 list.Add(record);
             }
@@ -1582,13 +1474,14 @@ namespace ABBDataManagerSystem.Pages
 
             // 在UI线程拷贝DataTable数据
             DataRow[] rows = Table.AsEnumerable().ToArray();
+            var roleColumnMap = CreateRoleColumnMap();
 
             btUpload.IsEnabled = false;
             btUpload.Content = "上传中...";
 
             Task.Run(() =>
             {
-                UploadDataAsync(testIndex, testPhase, testStatus, coolingMode, workflowId, remark, tempMode, rows);
+                UploadDataAsync(testIndex, testPhase, testStatus, coolingMode, workflowId, remark, tempMode, rows, roleColumnMap);
             }).ContinueWith(t =>
             {
                 Dispatcher.Invoke(() =>
@@ -1953,11 +1846,9 @@ namespace ABBDataManagerSystem.Pages
         }
 
         // 获取绕组温度值，返回 null 表示该绕组未配置或不在选中通道中
-        private float? GetWindingTemperature(float[] values, string windingConfig)
+        private float? GetWindingTemperature(float[] values, string roleKey)
         {
-            var slotNum = ParseSlotNumber(windingConfig);
-            if (slotNum == null) return null;
-            var index = SelectedSlots.IndexOf(slotNum.Value);
+            var index = SelectedChannels.FindIndex(item => item.RoleKey == roleKey);
             if (index < 0 || index >= values.Length) return null;
             return values[index];
         }
@@ -1997,16 +1888,16 @@ namespace ABBDataManagerSystem.Pages
             if (threshold <= 0) return;
             if (string.IsNullOrEmpty(Configs.Configs.PLCAlertIP)) return;
 
-            var windings = new (string Name, string Config)[]
+            var windings = new (string Name, string RoleKey)[]
             {
-                ("绕组A", Configs.Configs.WindingA),
-                ("绕组B", Configs.Configs.WindingB),
-                ("绕组C", Configs.Configs.WindingC),
+                (GetRoleTitle("WindingA", "绕组A"), "WindingA"),
+                (GetRoleTitle("WindingB", "绕组B"), "WindingB"),
+                (GetRoleTitle("WindingC", "绕组C"), "WindingC"),
             };
 
-            foreach (var (name, config) in windings)
+            foreach (var (name, roleKey) in windings)
             {
-                var temp = GetWindingTemperature(values, config);
+                var temp = GetWindingTemperature(values, roleKey);
                 if (temp != null && temp.Value > threshold)
                 {
                     Log.Info($"绕组温度超限: {name}={temp.Value:F1}℃, 阈值={threshold}℃");
@@ -2014,6 +1905,12 @@ namespace ABBDataManagerSystem.Pages
                     break; // 上报一次即可，避免重复发送
                 }
             }
+        }
+
+        private string GetRoleTitle(string roleKey, string fallback)
+        {
+            var channel = SelectedChannels.FirstOrDefault(item => item.RoleKey == roleKey);
+            return channel == null || string.IsNullOrWhiteSpace(channel.Title) ? fallback : channel.Title;
         }
         #endregion
     }

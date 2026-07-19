@@ -1,6 +1,8 @@
 ﻿using ABBDataManagerSystem.Bean.Base;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Linq;
+using System.Text.Json;
 
 namespace ABBDataManagerSystem.Configs
 {
@@ -72,6 +74,8 @@ namespace ABBDataManagerSystem.Configs
         public static string InletTemperature { set; get; } = string.Empty;   // 进风口温度
         public static string TopTemperature { set; get; } = string.Empty;
         public static string ExtensionSlots { set; get; } = string.Empty;
+        public static string TemperatureChannelsJson { set; get; } = string.Empty;
+        public static List<TemperatureChannelSetting> TemperatureChannels { set; get; } = TemperatureChannelCatalog.CreateDefaultChannels();
         public static float TemperatureThreshold { set; get; } = 120f;
         #endregion
 
@@ -152,6 +156,7 @@ namespace ABBDataManagerSystem.Configs
         public static void LoadFromFile()
         {
             StringBuilder buff = new StringBuilder(128);
+            StringBuilder jsonBuff = new StringBuilder(8192);
             GetPrivateProfileString(INIPDSerial, "SerialPort", "", buff, 16, INIPATH);
             PDSerialPort = buff.ToString();
             GetPrivateProfileString(INIPDSerial, "SerialBoudRate", "", buff, 16, INIPATH);
@@ -219,6 +224,9 @@ namespace ABBDataManagerSystem.Configs
             TPIsSimulate = buff.ToString().Trim().ToLower() == "true";
             GetPrivateProfileString(INITemperature, "ExtensionSlots", "", buff, 64, INIPATH);
             ExtensionSlots = buff.ToString();
+            GetPrivateProfileString(INITemperature, "TemperatureChannelsJson", "", jsonBuff, 8192, INIPATH);
+            TemperatureChannelsJson = jsonBuff.ToString();
+            LoadTemperatureChannels();
             GetPrivateProfileString(INITemperature, "TemperatureThreshold", "120", buff, 16, INIPATH);
             TemperatureThreshold = Utils.ParseFloat(buff.ToString(), 120f);
             #endregion
@@ -299,6 +307,8 @@ namespace ABBDataManagerSystem.Configs
 
         public static void SaveToFile()
         {
+            SyncTemperatureChannels();
+
             WritePrivateProfileString(INIPDSerial, "SerialPort", PDSerialPort, INIPATH);
             WritePrivateProfileString(INIPDSerial, "SerialBoudRate", PDSerialBoudRate, INIPATH);
             WritePrivateProfileString(INIPDSerial, "Interval", PDInterval, INIPATH);
@@ -329,6 +339,7 @@ namespace ABBDataManagerSystem.Configs
             WritePrivateProfileString(INITemperature, "TopTemperature", TopTemperature, INIPATH);
             WritePrivateProfileString(INITemperature, "IsSimulate", TPIsSimulate.ToString(), INIPATH);
             WritePrivateProfileString(INITemperature, "ExtensionSlots", ExtensionSlots, INIPATH);
+            WritePrivateProfileString(INITemperature, "TemperatureChannelsJson", TemperatureChannelsJson, INIPATH);
             WritePrivateProfileString(INITemperature, "TemperatureThreshold", TemperatureThreshold.ToString(), INIPATH);
 
             #region 公共配置
@@ -378,6 +389,160 @@ namespace ABBDataManagerSystem.Configs
             WritePrivateProfileString(INIPLCAlert, "Slot", PLCAlertSlot.ToString(), INIPATH);
             WritePrivateProfileString(INIPLCAlert, "Address", PLCAlertAddress, INIPATH);
             #endregion
+        }
+
+        private static void LoadTemperatureChannels()
+        {
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(TemperatureChannelsJson))
+                {
+                    var saved = JsonSerializer.Deserialize<List<TemperatureChannelSetting>>(TemperatureChannelsJson);
+                    TemperatureChannels = TemperatureChannelCatalog.NormalizeChannels(saved);
+                }
+                else
+                {
+                    TemperatureChannels = TemperatureChannelCatalog.NormalizeChannels(BuildChannelsFromLegacy());
+                }
+            }
+            catch
+            {
+                TemperatureChannels = TemperatureChannelCatalog.NormalizeChannels(BuildChannelsFromLegacy());
+            }
+
+            SyncTemperatureChannels();
+        }
+
+        private static List<TemperatureChannelSetting> BuildChannelsFromLegacy()
+        {
+            var channels = TemperatureChannelCatalog.CreateDefaultChannels();
+            var lookup = channels.ToDictionary(item => item.RoleKey, item => item);
+
+            SetProbe(lookup, "WindingA", WindingA);
+            SetProbe(lookup, "WindingB", WindingB);
+            SetProbe(lookup, "WindingC", WindingC);
+            SetProbe(lookup, "Core", Core);
+            SetProbe(lookup, "EnvA", EnvA);
+            SetProbe(lookup, "EnvB", EnvB);
+            SetProbe(lookup, "EnvC", EnvC);
+            SetProbe(lookup, "EnvD", EnvD);
+            SetProbe(lookup, "Outlet1", SplitValue(OutletTemperature, 0));
+            SetProbe(lookup, "Outlet2", SplitValue(OutletTemperature, 1));
+            SetProbe(lookup, "Outlet3", SplitValue(OutletTemperature, 2));
+            SetProbe(lookup, "Outlet4", SplitValue(OutletTemperature, 3));
+            SetProbe(lookup, "Outlet5", SplitValue(OutletTemperature, 4));
+            SetProbe(lookup, "Outlet6", SplitValue(OutletTemperature, 5));
+            SetProbe(lookup, "Inlet1", SplitValue(InletTemperature, 0));
+            SetProbe(lookup, "Inlet2", SplitValue(InletTemperature, 1));
+            SetProbe(lookup, "Inlet3", SplitValue(InletTemperature, 2));
+            SetProbe(lookup, "TopTemperature", TopTemperature);
+
+            var extensions = string.IsNullOrWhiteSpace(ExtensionSlots)
+                ? Array.Empty<string>()
+                : ExtensionSlots.Split(',');
+            SetProbe(lookup, "Extension1", SplitValue(extensions, 0));
+            SetProbe(lookup, "Extension2", SplitValue(extensions, 1));
+            SetProbe(lookup, "Extension3", SplitValue(extensions, 2));
+            SetProbe(lookup, "Extension4", SplitValue(extensions, 3));
+            SetProbe(lookup, "Extension5", SplitValue(extensions, 4));
+            SetProbe(lookup, "Extension6", SplitValue(extensions, 5));
+            SetProbe(lookup, "Extension7", SplitValue(extensions, 6));
+            SetProbe(lookup, "Extension8", SplitValue(extensions, 7));
+            SetProbe(lookup, "Extension9", SplitValue(extensions, 8));
+
+            foreach (var channel in channels)
+            {
+                channel.IsActive = !string.IsNullOrWhiteSpace(channel.Probe);
+            }
+
+            return channels;
+        }
+
+        private static void SyncTemperatureChannels()
+        {
+            if (TemperatureChannels == null || TemperatureChannels.Count == 0)
+            {
+                TemperatureChannels = TemperatureChannelCatalog.CreateDefaultChannels();
+            }
+
+            TemperatureChannelsJson = JsonSerializer.Serialize(TemperatureChannels);
+
+            var lookup = TemperatureChannels.ToDictionary(item => item.RoleKey, item => item);
+            WindingA = GetProbe(lookup, "WindingA");
+            WindingB = GetProbe(lookup, "WindingB");
+            WindingC = GetProbe(lookup, "WindingC");
+            Core = GetProbe(lookup, "Core");
+            EnvA = GetProbe(lookup, "EnvA");
+            EnvB = GetProbe(lookup, "EnvB");
+            EnvC = GetProbe(lookup, "EnvC");
+            EnvD = GetProbe(lookup, "EnvD");
+            OutletTemperature = string.Join(",", new[]
+            {
+                GetProbe(lookup, "Outlet1"),
+                GetProbe(lookup, "Outlet2"),
+                GetProbe(lookup, "Outlet3"),
+                GetProbe(lookup, "Outlet4"),
+                GetProbe(lookup, "Outlet5"),
+                GetProbe(lookup, "Outlet6"),
+            });
+            InletTemperature = string.Join(",", new[]
+            {
+                GetProbe(lookup, "Inlet1"),
+                GetProbe(lookup, "Inlet2"),
+                GetProbe(lookup, "Inlet3"),
+            });
+            TopTemperature = GetProbe(lookup, "TopTemperature");
+            ExtensionSlots = string.Join(",", new[]
+            {
+                GetProbe(lookup, "Extension1"),
+                GetProbe(lookup, "Extension2"),
+                GetProbe(lookup, "Extension3"),
+                GetProbe(lookup, "Extension4"),
+                GetProbe(lookup, "Extension5"),
+                GetProbe(lookup, "Extension6"),
+                GetProbe(lookup, "Extension7"),
+                GetProbe(lookup, "Extension8"),
+                GetProbe(lookup, "Extension9"),
+            });
+            TPSlots = string.Join(",", TemperatureChannels
+                .Where(item => item.IsActive && !string.IsNullOrWhiteSpace(item.Probe))
+                .Select(item => item.Probe));
+        }
+
+        private static void SetProbe(Dictionary<string, TemperatureChannelSetting> lookup, string roleKey, string probe)
+        {
+            if (lookup.TryGetValue(roleKey, out var channel))
+            {
+                channel.Probe = probe ?? string.Empty;
+            }
+        }
+
+        private static string GetProbe(Dictionary<string, TemperatureChannelSetting> lookup, string roleKey)
+        {
+            return lookup.TryGetValue(roleKey, out var channel) ? channel.Probe ?? string.Empty : string.Empty;
+        }
+
+        private static string SplitValue(string? value, int index)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return string.Empty;
+            }
+            var values = value.Split(',');
+            if (index < 0 || index >= values.Length)
+            {
+                return string.Empty;
+            }
+            return values[index];
+        }
+
+        private static string SplitValue(string[] values, int index)
+        {
+            if (index < 0 || index >= values.Length)
+            {
+                return string.Empty;
+            }
+            return values[index];
         }
 
         #endregion
