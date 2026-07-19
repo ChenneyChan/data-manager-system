@@ -77,6 +77,8 @@
                         <RowDefinition/>
                         <RowDefinition/>
                         <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
                     </Grid.RowDefinitions>
                     <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                         <TextBlock Text="工位选择：" Width="120" Style="{StaticResource Label}" Margin="0,0,10,0"/>
@@ -92,6 +94,14 @@
                     <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                         <TextBlock Text="显示变比输入框：" Width="120" Style="{StaticResource Label}" Margin="0,0,10,0"/>
                         <CheckBox Name="cbShowRatioInputControls" IsChecked="False" Width="220"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock Text="显示实时温度：" Width="120" Style="{StaticResource Label}" Margin="0,0,10,0"/>
+                        <CheckBox Name="cbShowRealTimeTemperature" IsChecked="True" Width="220"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock Text="显示折线图：" Width="120" Style="{StaticResource Label}" Margin="0,0,10,0"/>
+                        <CheckBox Name="cbShowTemperatureChart" IsChecked="True" Width="220"/>
                     </StackPanel>
                 </Grid>
             </TabItem>

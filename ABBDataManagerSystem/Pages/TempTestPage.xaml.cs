@@ -213,6 +213,7 @@ namespace ABBDataManagerSystem.Pages
             UpdateByConfig();
             UpdateInterval();
             UpdateSlotShieldState();
+            ApplyDisplaySettings();
             tbTestCount.ValueChanged += tbTestCount_ValueChanged;
             cbTestCount.SelectionChanged += CbTestCount_SelectionChanged;
             cbCoolingMode.SelectionChanged += cbCoolingMode_SelectionChanged;
@@ -324,6 +325,7 @@ namespace ABBDataManagerSystem.Pages
             GetWorkflowBaseInfo();
             Tools.EventManager.Instance.Subscribe("WorkflowSelected", WorkflowUpdateEvent);
             Tools.EventManager.Instance.Subscribe("PowerAnalyzer", EventHandler);
+            Tools.EventManager.Instance.Subscribe("TemperatureDisplaySettingsChanged", TemperatureDisplaySettingsChanged);
             // Set cool device selection from config
             cbCoolDeviceSource.SelectedIndex = Configs.Configs.CoolDeviceSelectedIndex;
             UpdateCurrentCoolDevice();
@@ -480,6 +482,7 @@ namespace ABBDataManagerSystem.Pages
             }
             Tools.EventManager.Instance.Unsubscribe("PowerAnalyzer", EventHandler);
             Tools.EventManager.Instance.Unsubscribe("WorkflowSelected", WorkflowUpdateEvent);
+            Tools.EventManager.Instance.Unsubscribe("TemperatureDisplaySettingsChanged", TemperatureDisplaySettingsChanged);
             StopListening();
         }
 
@@ -1909,25 +1912,22 @@ namespace ABBDataManagerSystem.Pages
             IsAutoScroll = !IsAutoScroll;
         }
 
-        private void btToggleRealTimeTemp_Click(object sender, RoutedEventArgs e)
+        private void TemperatureDisplaySettingsChanged(object sender, TestEventArgs e)
         {
-            if (SlotWrapPanel.Visibility == Visibility.Visible)
-                SlotWrapPanel.Visibility = Visibility.Collapsed;
-            else
-                SlotWrapPanel.Visibility = Visibility.Visible;
+            Dispatcher.Invoke(ApplyDisplaySettings);
         }
 
-        private bool IsChartVisible = true;
-
-        private void btToggleChart_Click(object sender, RoutedEventArgs e)
+        private void ApplyDisplaySettings()
         {
-            IsChartVisible = !IsChartVisible;
-            if (IsChartVisible)
+            SlotWrapPanel.Visibility = Configs.Configs.IsShowRealTimeTemperature
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
+            if (Configs.Configs.IsShowTemperatureChart)
             {
                 chartPanel.Visibility = Visibility.Visible;
                 colDataGrid.Width = new GridLength(0, GridUnitType.Auto);
                 colChart.Width = new GridLength(1, GridUnitType.Star);
-                btToggleChart.Content = "隐藏折线图";
                 dgTempRecord.MinWidth = 600;
             }
             else
@@ -1935,7 +1935,6 @@ namespace ABBDataManagerSystem.Pages
                 chartPanel.Visibility = Visibility.Collapsed;
                 colDataGrid.Width = new GridLength(1, GridUnitType.Star);
                 colChart.Width = new GridLength(0, GridUnitType.Auto);
-                btToggleChart.Content = "显示折线图";
                 dgTempRecord.MinWidth = 0;
             }
         }

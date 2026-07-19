@@ -115,6 +115,8 @@ namespace ABBDataManagerSystem.Configs
         public static bool IsEnableVerboseDebug = false;
         public static bool IsEnableRatioInputMode = false;
         public static bool IsShowRatioInputControls = false;
+        public static bool IsShowRealTimeTemperature = true;
+        public static bool IsShowTemperatureChart = true;
         #endregion
 
         #region 读写配置
@@ -228,6 +230,10 @@ namespace ABBDataManagerSystem.Configs
             WorkflowID = buff.ToString();
             GetPrivateProfileString(INICommon, "IsEnableVerboseDebug", "", buff, 32, INIPATH);
             IsEnableVerboseDebug = buff.ToString().Trim().ToLower() == "true";
+            GetPrivateProfileString(INICommon, "IsShowRealTimeTemperature", "true", buff, 32, INIPATH);
+            IsShowRealTimeTemperature = buff.ToString().Trim().ToLower() == "true";
+            GetPrivateProfileString(INICommon, "IsShowTemperatureChart", "true", buff, 32, INIPATH);
+            IsShowTemperatureChart = buff.ToString().Trim().ToLower() == "true";
             #endregion
 
             #region 功率分析仪
@@ -329,6 +335,8 @@ namespace ABBDataManagerSystem.Configs
             WritePrivateProfileString(INICommon, "WorkStationNo", WorkStationNo.ToString(), INIPATH);
             WritePrivateProfileString(INICommon, "WorkflowID", WorkflowID, INIPATH);
             WritePrivateProfileString(INICommon, "IsEnableVerboseDebug", IsEnableVerboseDebug.ToString(), INIPATH);
+            WritePrivateProfileString(INICommon, "IsShowRealTimeTemperature", IsShowRealTimeTemperature.ToString(), INIPATH);
+            WritePrivateProfileString(INICommon, "IsShowTemperatureChart", IsShowTemperatureChart.ToString(), INIPATH);
             #endregion
 
             #region 功率分析仪

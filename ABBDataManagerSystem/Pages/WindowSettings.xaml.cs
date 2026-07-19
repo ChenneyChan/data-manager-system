@@ -27,6 +27,8 @@ namespace ABBDataManagerSystem.Pages
             cbWorkStation.SelectedIndex = Configs.Configs.WorkStationNo - 1;
             cbEnableRatioInputMode.IsChecked = Configs.Configs.IsEnableRatioInputMode;
             cbShowRatioInputControls.IsChecked = Configs.Configs.IsShowRatioInputControls;
+            cbShowRealTimeTemperature.IsChecked = Configs.Configs.IsShowRealTimeTemperature;
+            cbShowTemperatureChart.IsChecked = Configs.Configs.IsShowTemperatureChart;
             tbPLCAlertIP.Text = Configs.Configs.PLCAlertIP;
             tbPLCAlertRack.Text = Configs.Configs.PLCAlertRack.ToString();
             tbPLCAlertSlot.Text = Configs.Configs.PLCAlertSlot.ToString();
@@ -48,6 +50,8 @@ namespace ABBDataManagerSystem.Pages
             Configs.Configs.WorkStationNo = cbWorkStation.SelectedIndex + 1;
             Configs.Configs.IsEnableRatioInputMode = cbEnableRatioInputMode.IsChecked ?? false;
             Configs.Configs.IsShowRatioInputControls = cbShowRatioInputControls.IsChecked ?? false;
+            Configs.Configs.IsShowRealTimeTemperature = cbShowRealTimeTemperature.IsChecked ?? true;
+            Configs.Configs.IsShowTemperatureChart = cbShowTemperatureChart.IsChecked ?? true;
             Configs.Configs.PLCAlertIP = tbPLCAlertIP.Text.Trim();
             Configs.Configs.PLCAlertRack = Utils.ParseInt(tbPLCAlertRack.Text, 0);
             Configs.Configs.PLCAlertSlot = Utils.ParseInt(tbPLCAlertSlot.Text, 1);
@@ -56,6 +60,7 @@ namespace ABBDataManagerSystem.Pages
 
             Tools.EventManager.Instance.TriggerEvent("RatioInputModeChanged", this,
                 new TestEventArgs() { obj = new bool[] { Configs.Configs.IsEnableRatioInputMode, Configs.Configs.IsShowRatioInputControls } });
+            Tools.EventManager.Instance.TriggerEvent("TemperatureDisplaySettingsChanged", this, new TestEventArgs());
             Close();
         }
 

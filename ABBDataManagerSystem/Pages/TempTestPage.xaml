@@ -160,8 +160,7 @@
                     <hc:ComboBox Width="100" VerticalAlignment="Center" Name="cbSerialBoudRate"/>
                     <TextBlock Text="采集周期" Width="70" Margin="10,0" VerticalAlignment="Center"/>
                     <hc:ComboBox Width="100" VerticalAlignment="Center" Name="cbInterval"/>
-                    <Button Margin="10, 0" Content="切换实时温度显示" Width="180" Name="btToggleRealTimeTemp" Click="btToggleRealTimeTemp_Click" Style="{StaticResource plotButton}" Height="34" BorderThickness="1" BorderBrush="Gray"/>
-                    <Button Margin="10, 0" Content="隐藏折线图" Width="140" Name="btToggleChart" Click="btToggleChart_Click" Style="{StaticResource plotButton}" Height="34" BorderThickness="1" BorderBrush="Gray"/>
+                    <Button Content="选择温度通道" Name="btSelectSlots" Width="120" Margin="10, 0" Click="btSelectSlots_Click" Height="30" BorderThickness="1" BorderBrush="Gray"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0, 10">
                     <TextBlock Text="阶段" Width="32" Margin="0, 0, 10,0" VerticalAlignment="Center"/>
@@ -194,7 +193,6 @@
                         <ComboBoxItem Content="AF"/>
                         <ComboBoxItem Content="AFWF"/>
                     </hc:ComboBox>
-                    <Button Content="选择温度通道" Name="btSelectSlots" Width="120" Margin="10, 0" Click="btSelectSlots_Click" Height="30" BorderThickness="1" BorderBrush="Gray"/>
                     <TextBlock Text="温度阈值" Width="64" Margin="10,0,5,0" VerticalAlignment="Center"/>
                     <hc:NumericUpDown Width="80" Minimum="0" Maximum="300" Value="120" Name="tbTemperatureThreshold"/>
                     <TextBlock Text="℃" Margin="2,0" VerticalAlignment="Center"/>

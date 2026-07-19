@@ -411,7 +411,7 @@ namespace ABBDataManagerSystem.Bean.Base
             using (SQLConnection connection = new SQLConnection(DBConnector.GetConnectionString()))
             {
                 connection.Open();
-                string query = $"SELECT * FROM {TABLE_NAME} {where} ORDER BY ID" +
+                string query = $"SELECT * FROM {TABLE_NAME} {where} ORDER BY Date DESC" +
                     $" LIMIT {pageSize} OFFSET {pageSize * page}";
                 using (SQLCommond queryDataCmd = new SQLCommond(query, connection))
                 {
