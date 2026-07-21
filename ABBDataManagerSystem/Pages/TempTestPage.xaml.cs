@@ -1645,7 +1645,12 @@ namespace ABBDataManagerSystem.Pages
                         {
                             targetInfo.OutletWaterTemperature = Utils.ParseFloat(values[0]);
                             targetInfo.InletWaterTemperature = Utils.ParseFloat(values[1]);
-                            targetInfo.WaterFlowRate = Utils.ParseFloat(values[2]);
+                            // The 200 kW cooler (device 2) sends flow in L/min; all
+                            // TempTestPage display and persisted flow values use m3/h.
+                            float waterFlowRate = Utils.ParseFloat(values[2]);
+                            targetInfo.WaterFlowRate = deviceIndex == 1
+                                ? waterFlowRate * 60f / 1000f
+                                : waterFlowRate;
                             targetInfo.AmbientTemperature1 = Utils.ParseFloat(values[3]);
                             targetInfo.AmbientTemperature2 = Utils.ParseFloat(values[4]);
                             targetInfo.OutletAirTemperature1 = Utils.ParseFloat(values[5]);
