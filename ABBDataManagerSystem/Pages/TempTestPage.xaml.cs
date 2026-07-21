@@ -1888,6 +1888,7 @@ namespace ABBDataManagerSystem.Pages
                 (GetRoleTitle("WindingC", "绕组C"), "WindingC"),
             };
 
+            bool isAlarming = false;
             foreach (var (name, roleKey) in windings)
             {
                 var temp = GetWindingTemperature(values, roleKey);
@@ -1895,9 +1896,20 @@ namespace ABBDataManagerSystem.Pages
                 {
                     Log.Info($"绕组温度超限: {name}={temp.Value:F1}℃, 阈值={threshold}℃");
                     SendPLCAlert(temp.Value);
+                    isAlarming = true;
                     break; // 上报一次即可，避免重复发送
                 }
             }
+            UpdateAlertIndicator(isAlarming);
+        }
+
+        // 切换告警状态控件可见性（采集线程调用，需切回UI线程）
+        private void UpdateAlertIndicator(bool alarming)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                alertIndicator.Visibility = alarming ? Visibility.Visible : Visibility.Collapsed;
+            });
         }
 
         private string GetRoleTitle(string roleKey, string fallback)
