@@ -71,7 +71,7 @@
                     <Button Name="btDBTest" Style="{StaticResource ButtonPrimary}" Margin="420, 0, 0, 0" Content="测试" Click="btDBTest_Click" Grid.Row="1"/>
                 </Grid>
             </TabItem>
-            <TabItem Header="常规设置">
+            <TabItem Header="常规设置" IsSelected="True">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition/>
@@ -105,7 +105,7 @@
                     </StackPanel>
                 </Grid>
            </TabItem>
-           <TabItem Header="PLC设置">
+           <TabItem Header="PLC设置" Visibility="Collapsed">
                <Grid Margin="20, 20, 20, 0" Height="300">
                    <Grid.RowDefinitions>
                        <RowDefinition Height="1*"/>
@@ -131,7 +131,7 @@
                    </StackPanel>
                </Grid>
            </TabItem>
-           <TabItem Header="数据库迁移" Height="40">
+           <TabItem Header="数据库迁移" Height="40" Visibility="Collapsed">
                 <Grid Margin="20, 20, 20, 0">
                     <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
                         <TextBlock Text="为 commonTempRiseTestRecord 表增加 200kW 水冷需要的四个字段：&#10;OutletAirTemperature5 ~ OutletAirTemperature8" 
