@@ -344,6 +344,7 @@ namespace ABBDataManagerSystem.Pages
             UpdateCurrentCoolDevice();
             StartListening();
             UpdateCommonInfo();
+            StartAlertBroadcast();
         }
 
         private void UserControl_Unloaded(object sender, RoutedEventArgs e)
@@ -499,6 +500,7 @@ namespace ABBDataManagerSystem.Pages
             Tools.EventManager.Instance.Unsubscribe("WorkflowSelected", WorkflowUpdateEvent);
             Tools.EventManager.Instance.Unsubscribe("TemperatureDisplaySettingsChanged", TemperatureDisplaySettingsChanged);
             StopListening();
+            StopAlertBroadcast();
         }
 
         #region 图表相关操作
@@ -1853,33 +1855,64 @@ namespace ABBDataManagerSystem.Pages
         }
 
         // 向指定S7 PLC写入值（S7协议，写入DB地址）
-        private void SendPLCAlert(float value)
+        // 温度告警状态：true=有绕组超阈值。采集线程写，广播线程读，用volatile保证可见性
+        private volatile bool isTemperatureAlarming = false;
+
+        // 告警心跳广播线程与生命周期标志
+        private Thread? alertBroadcastThread;
+        private bool isAlertBroadcasting;
+
+        // 进入页面后启动：每2s广播一帧1字节状态(1=告警,0=正常)，工位一8911/工位二8922
+        private void StartAlertBroadcast()
         {
-            // 每次检测到温度超阈值，广播一次告警报文（仅温度字段，4字节float大端）。
-            // 工位一用8911，工位二用8922。
-            try
+            if (isAlertBroadcasting) return;
+            isAlertBroadcasting = true;
+            alertBroadcastThread = new Thread(() =>
             {
-                bool isWorkstationOne = Configs.Configs.WorkStationNo == 1;
-                int port = isWorkstationOne ? 8911 : 8922;
-                byte[] data = Utils.FloatToBigEndianBytes(value);
-                using (var udpClient = new UdpClient())
+                try
                 {
-                    udpClient.EnableBroadcast = true;
-                    udpClient.Send(data, data.Length, new IPEndPoint(IPAddress.Broadcast, port));
+                    bool isWorkstationOne = Configs.Configs.WorkStationNo == 1;
+                    int port = isWorkstationOne ? 8911 : 8922;
+                    using (var udpClient = new UdpClient())
+                    {
+                        udpClient.EnableBroadcast = true;
+                        var endPoint = new IPEndPoint(IPAddress.Broadcast, port);
+                        while (isAlertBroadcasting)
+                        {
+                            byte[] data = new byte[] { (byte)(isTemperatureAlarming ? 1 : 0) };
+                            udpClient.Send(data, data.Length, endPoint);
+                            Thread.Sleep(2000);
+                        }
+                    }
                 }
-                Log.Info($"温度告警UDP广播: 工位={Configs.Configs.WorkStationNo}, 端口={port}, 值={value:F1}℃");
-            }
-            catch (Exception ex)
-            {
-                Log.Error($"温度告警UDP广播失败: {ex.Message}");
-            }
+                catch (Exception ex)
+                {
+                    Log.Error($"温度告警UDP广播失败: {ex.Message}");
+                }
+                finally
+                {
+                    isAlertBroadcasting = false;
+                }
+            }) { IsBackground = true };
+            alertBroadcastThread.Start();
         }
 
-        // 校验绕组温度，如果任一绕组超过阈值则上报PLC
+        // 关闭页面时停止心跳广播
+        private void StopAlertBroadcast()
+        {
+            isAlertBroadcasting = false;
+        }
+
+        // 校验绕组温度，刷新告警状态（广播线程按此状态发送0/1）
         private void ValidateWindingTemperatures(float[] values)
         {
             var threshold = Configs.Configs.TemperatureThreshold;
-            if (threshold <= 0) return;
+            if (threshold <= 0)
+            {
+                isTemperatureAlarming = false;
+                UpdateAlertIndicator(false);
+                return;
+            }
 
             var windings = new (string Name, string RoleKey)[]
             {
@@ -1895,11 +1928,11 @@ namespace ABBDataManagerSystem.Pages
                 if (temp != null && temp.Value > threshold)
                 {
                     Log.Info($"绕组温度超限: {name}={temp.Value:F1}℃, 阈值={threshold}℃");
-                    SendPLCAlert(temp.Value);
                     isAlarming = true;
-                    break; // 上报一次即可，避免重复发送
+                    break;
                 }
             }
+            isTemperatureAlarming = isAlarming;
             UpdateAlertIndicator(isAlarming);
         }
 
