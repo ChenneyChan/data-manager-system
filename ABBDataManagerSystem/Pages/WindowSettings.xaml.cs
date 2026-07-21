@@ -29,10 +29,6 @@ namespace ABBDataManagerSystem.Pages
             cbShowRatioInputControls.IsChecked = Configs.Configs.IsShowRatioInputControls;
             cbShowRealTimeTemperature.IsChecked = Configs.Configs.IsShowRealTimeTemperature;
             cbShowTemperatureChart.IsChecked = Configs.Configs.IsShowTemperatureChart;
-            tbPLCAlertIP.Text = Configs.Configs.PLCAlertIP;
-            tbPLCAlertRack.Text = Configs.Configs.PLCAlertRack.ToString();
-            tbPLCAlertSlot.Text = Configs.Configs.PLCAlertSlot.ToString();
-            tbPLCAlertAddress.Text = Configs.Configs.PLCAlertAddress;
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -52,10 +48,6 @@ namespace ABBDataManagerSystem.Pages
             Configs.Configs.IsShowRatioInputControls = cbShowRatioInputControls.IsChecked ?? false;
             Configs.Configs.IsShowRealTimeTemperature = cbShowRealTimeTemperature.IsChecked ?? true;
             Configs.Configs.IsShowTemperatureChart = cbShowTemperatureChart.IsChecked ?? true;
-            Configs.Configs.PLCAlertIP = tbPLCAlertIP.Text.Trim();
-            Configs.Configs.PLCAlertRack = Utils.ParseInt(tbPLCAlertRack.Text, 0);
-            Configs.Configs.PLCAlertSlot = Utils.ParseInt(tbPLCAlertSlot.Text, 1);
-            Configs.Configs.PLCAlertAddress = tbPLCAlertAddress.Text.Trim();
             DialogResult = true;
 
             Tools.EventManager.Instance.TriggerEvent("RatioInputModeChanged", this,

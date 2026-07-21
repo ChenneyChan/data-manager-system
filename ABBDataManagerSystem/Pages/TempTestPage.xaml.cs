@@ -5,7 +5,6 @@ using ABBDataManagerSystem.Pages.Views;
 using ABBDataManagerSystem.Tools;
 using TempChannelSetting = ABBDataManagerSystem.Configs.TemperatureChannelSetting;
 using TemperatureChannelCatalog = ABBDataManagerSystem.Configs.TemperatureChannelCatalog;
-using S7.Net;
 using Microsoft.Win32;
 using System.Data;
 using System.IO;
@@ -1856,28 +1855,23 @@ namespace ABBDataManagerSystem.Pages
         // 向指定S7 PLC写入值（S7协议，写入DB地址）
         private void SendPLCAlert(float value)
         {
-            var ip = Configs.Configs.PLCAlertIP;
-            var rack = (short)Configs.Configs.PLCAlertRack;
-            var slot = (short)Configs.Configs.PLCAlertSlot;
-            var address = Configs.Configs.PLCAlertAddress;
-            if (string.IsNullOrEmpty(ip) || string.IsNullOrEmpty(address)) return;
-
+            // 每次检测到温度超阈值，广播一次告警报文（仅温度字段，4字节float大端）。
+            // 工位一用8911，工位二用8922。
             try
             {
-                using (var plc = new Plc(CpuType.S71500, ip, rack, slot))
+                bool isWorkstationOne = Configs.Configs.WorkStationNo == 1;
+                int port = isWorkstationOne ? 8911 : 8922;
+                byte[] data = Utils.FloatToBigEndianBytes(value);
+                using (var udpClient = new UdpClient())
                 {
-                    plc.Open();
-                    if (plc.IsConnected)
-                    {
-                        plc.Write(address, value);
-                        plc.Close();
-                        Log.Info($"PLC报警已发送(S7): IP={ip}, Address={address}, Value={value:F1}");
-                    }
+                    udpClient.EnableBroadcast = true;
+                    udpClient.Send(data, data.Length, new IPEndPoint(IPAddress.Broadcast, port));
                 }
+                Log.Info($"温度告警UDP广播: 工位={Configs.Configs.WorkStationNo}, 端口={port}, 值={value:F1}℃");
             }
             catch (Exception ex)
             {
-                Log.Error($"PLC报警发送失败: {ex.Message}");
+                Log.Error($"温度告警UDP广播失败: {ex.Message}");
             }
         }
 
@@ -1886,7 +1880,6 @@ namespace ABBDataManagerSystem.Pages
         {
             var threshold = Configs.Configs.TemperatureThreshold;
             if (threshold <= 0) return;
-            if (string.IsNullOrEmpty(Configs.Configs.PLCAlertIP)) return;
 
             var windings = new (string Name, string RoleKey)[]
             {

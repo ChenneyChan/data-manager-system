@@ -108,13 +108,6 @@ namespace ABBDataManagerSystem.Configs
         #endregion
 
         #region 常规设置
-        #region PLC报警设置
-        public static string PLCAlertIP { set; get; } = string.Empty;
-        public static int PLCAlertRack { set; get; } = 0;
-        public static int PLCAlertSlot { set; get; } = 1;
-        public static string PLCAlertAddress { set; get; } = "DB1.DBD136";
-        #endregion
-
         public static int WorkStationNo = 1;
         public static bool IsEnableVerboseDebug = false;
         public static bool IsEnableRatioInputMode = false;
@@ -135,7 +128,6 @@ namespace ABBDataManagerSystem.Configs
         static string INIJinYuan50E = "JinYuan50E";
         static string INIJinYuanJYTA = "JinYuanJYTA";
         static string INICoolDevice = "CoolDevice";
-        static string INIPLCAlert = "PLCAlert";
 
         [DllImport("kernel32.dll", EntryPoint = "GetPrivateProfileString")]
         private static extern uint GetPrivateProfileString(
@@ -294,14 +286,6 @@ namespace ABBDataManagerSystem.Configs
             CoolDevice2Port = Utils.ParseInt(buff.ToString(), 8878);
             GetPrivateProfileString(INICoolDevice, "SelectedIndex", "0", buff, 16, INIPATH);
             CoolDeviceSelectedIndex = Utils.ParseInt(buff.ToString(), 0);
-            GetPrivateProfileString(INIPLCAlert, "IP", "", buff, 32, INIPATH);
-            PLCAlertIP = buff.ToString();
-            GetPrivateProfileString(INIPLCAlert, "Rack", "0", buff, 16, INIPATH);
-            PLCAlertRack = Utils.ParseInt(buff.ToString(), 0);
-            GetPrivateProfileString(INIPLCAlert, "Slot", "1", buff, 16, INIPATH);
-            PLCAlertSlot = Utils.ParseInt(buff.ToString(), 1);
-            GetPrivateProfileString(INIPLCAlert, "Address", "DB1.DBD136", buff, 32, INIPATH);
-            PLCAlertAddress = buff.ToString();
             #endregion
         }
 
@@ -384,10 +368,6 @@ namespace ABBDataManagerSystem.Configs
             WritePrivateProfileString(INICoolDevice, "Port1", CoolDevice1Port.ToString(), INIPATH);
             WritePrivateProfileString(INICoolDevice, "Port2", CoolDevice2Port.ToString(), INIPATH);
             WritePrivateProfileString(INICoolDevice, "SelectedIndex", CoolDeviceSelectedIndex.ToString(), INIPATH);
-            WritePrivateProfileString(INIPLCAlert, "IP", PLCAlertIP, INIPATH);
-            WritePrivateProfileString(INIPLCAlert, "Rack", PLCAlertRack.ToString(), INIPATH);
-            WritePrivateProfileString(INIPLCAlert, "Slot", PLCAlertSlot.ToString(), INIPATH);
-            WritePrivateProfileString(INIPLCAlert, "Address", PLCAlertAddress, INIPATH);
             #endregion
         }
 
