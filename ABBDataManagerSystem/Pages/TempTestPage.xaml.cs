@@ -990,13 +990,16 @@ namespace ABBDataManagerSystem.Pages
             else
             {
                 string msg;
-                int maxSelectedSlotIndex = SelectedSlots[SelectedSlots.Count - 1];
+                // The configured channel order is user-defined, so its final item is not
+                // necessarily the physically highest Slot number.
+                int maxSelectedSlotIndex = SelectedSlots.Max();
                 var listValues = tempModbusCollector.ReadData(maxSelectedSlotIndex, out msg);
                 for (int i = 0; i < SlotCount; i++)
                 {
                     if (SelectedSlots[i] - 1 >= listValues.Count)
                     {
-                        break;
+                        Log.Warn($"Temperature probe Slot-{SelectedSlots[i]} is outside the collected data range ({listValues.Count}).");
+                        continue;
                     }
                     values[i] = listValues[SelectedSlots[i] - 1];
                     //Log.Info($"TempValue {i},Slot {SelectedSlots[i]},value {values[i]}");
