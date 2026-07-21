@@ -54,7 +54,7 @@
                   ColumnHeaderHeight="34">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="序号" Binding="{Binding RowIndex}" IsReadOnly="True" Width="70"/>
-                <DataGridTextColumn Header="通道名称" Binding="{Binding RoleName}" IsReadOnly="True" Width="160"/>
+                <DataGridTextColumn Header="通道名称" Binding="{Binding RoleName}" IsReadOnly="True" Width="160" Visibility="Collapsed"/>
                 <DataGridTextColumn Header="通道标题" Binding="{Binding Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="*"/>
                 <DataGridTemplateColumn Header="温度探头" Width="180">
                     <DataGridTemplateColumn.CellTemplate>
