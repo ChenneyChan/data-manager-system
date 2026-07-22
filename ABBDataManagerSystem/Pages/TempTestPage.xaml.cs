@@ -715,6 +715,12 @@ namespace ABBDataManagerSystem.Pages
                     Binding = new Binding("Pkt") { StringFormat = "{0:N2}" },
                     MinWidth = 40
                 });
+                dgTempRecord.Columns.Add(new DataGridTextColumn()
+                {
+                    Header = "Fu",
+                    Binding = new Binding("Fu") { StringFormat = "{0:N2}" },
+                    MinWidth = 40
+                });
             }
             else
             {
@@ -736,6 +742,12 @@ namespace ABBDataManagerSystem.Pages
                     Binding = new Binding("Pkt") { StringFormat = "{0:N2}" },
                     MinWidth = 40
                 });
+                dgTempRecord.Columns.Add(new DataGridTextColumn()
+                {
+                    Header = "Fu",
+                    Binding = new Binding("Fu") { StringFormat = "{0:N2}" },
+                    MinWidth = 40
+                });
             }
 
             Table.Columns.Add("序号", typeof(int));
@@ -749,6 +761,7 @@ namespace ABBDataManagerSystem.Pages
             Table.Columns.Add("Ic", typeof(float));
             Table.Columns.Add("Iavg", typeof(float));
             Table.Columns.Add("Pkt", typeof(float));
+            Table.Columns.Add("Fu", typeof(float));
 
             foreach (var channel in SelectedChannels)
             {
@@ -856,6 +869,7 @@ namespace ABBDataManagerSystem.Pages
                     newRow["ic"] = CurrentVoltageInfo.ic;
                     newRow["iavg"] = CurrentVoltageInfo.i3;
                     newRow["pkt"] = CurrentVoltageInfo.p3;
+                    newRow["fu"] = CurrentVoltageInfo.fu;
                 }
             }
             Dispatcher.Invoke(() =>
@@ -1398,8 +1412,9 @@ namespace ABBDataManagerSystem.Pages
                     Ib = item.Field<float?>("ib") ?? null,
                     Ic = item.Field<float?>("ic") ?? null,
                     I3 = item.Field<float?>("iavg") ?? null,
-                    P3 = item.Field<float?>("pkt") ?? null,
-                    CoreTemp = SafeRoleField(item, roleColumnMap, "Core"),
+                   P3 = item.Field<float?>("pkt") ?? null,
+                    FU = item.Field<float?>("fu") ?? null,
+                   CoreTemp = SafeRoleField(item, roleColumnMap, "Core"),
                     WindingTempA = SafeRoleField(item, roleColumnMap, "WindingA"),
                     WindingTempB = SafeRoleField(item, roleColumnMap, "WindingB"),
                     WindingTempC = SafeRoleField(item, roleColumnMap, "WindingC"),

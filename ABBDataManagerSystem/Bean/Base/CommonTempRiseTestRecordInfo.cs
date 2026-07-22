@@ -1,4 +1,4 @@
-﻿using ABBDataManagerSystem.Database;
+using ABBDataManagerSystem.Database;
 using MySql.Data.MySqlClient;
 using System.Data;
 
@@ -18,8 +18,9 @@ namespace ABBDataManagerSystem.Bean.Base
         public float? Ib = null;
         public float? Ic = null;
         public float? I3 = null;
-        public float? P3 = null;
-        public float? CoreTemp = null;
+       public float? P3 = null;
+        public float? FU = null;
+       public float? CoreTemp = null;
         public float? WindingTempA = null;
         public float? WindingTempB = null;
         public float? WindingTempC = null;
@@ -78,8 +79,9 @@ namespace ABBDataManagerSystem.Bean.Base
             {"OutletAirTemperature6", "外循环出风口温度6"},
             {"OutletAirTemperature7", "外循环出风口温度7"},
             {"OutletAirTemperature8", "外循环出风口温度8"},
-            {"WaterFlowRate", "冷却液流量"},
-        };
+           {"WaterFlowRate", "冷却液流量"},
+            {"FU", "频率"},
+       };
 
         public bool WriteToDB()
         {
@@ -89,29 +91,30 @@ namespace ABBDataManagerSystem.Bean.Base
                 // 打开数据库连接
                 connection.Open();
 
-                using (SQLCommond command = new SQLCommond($"INSERT INTO {TABLE_NAME} (ID, Timestamp, ua, ub, uc, u3, ia, ib, ic, i3, p3, " +
-                    $"CoreTemperature, WindingATemperature, WindingBTemperature, WindingCTemperature, AmbientATemperature, AmbientBTemperature, AmbientCTemperature, AmbientDTemperature, " +
-                    "Outlet1, Outlet2, Outlet3, Outlet4, Outlet5, Outlet6, Inlet1, Inlet2, Inlet3, TopTemperature, " +
-                    "OutletWaterTemperature, InletWaterTemperature, AmbientTemperature1, AmbientTemperature2, OutletAirTemperature1, OutletAirTemperature2, OutletAirTemperature3, OutletAirTemperature4, OutletAirTemperature5, OutletAirTemperature6, OutletAirTemperature7, OutletAirTemperature8, WaterFlowRate" +
-                    ") VALUES " +
-                    "(@ID, @Timestamp, @ua, @ub, @uc, @u3, @ia, @ib, @ic, @i3, @p3, " +
-                    $"@CoreTemp, @WindingTempA, @WindingTempB, @WindingTempC, @EnvTempA, @EnvTempB, @EnvTempC, @EnvTempD, " +
+               using (SQLCommond command = new SQLCommond($"INSERT INTO {TABLE_NAME} (ID, Timestamp, ua, ub, uc, u3, ia, ib, ic, i3, p3, " +
+                   $"CoreTemperature, WindingATemperature, WindingBTemperature, WindingCTemperature, AmbientATemperature, AmbientBTemperature, AmbientCTemperature, AmbientDTemperature, " +
+                   "Outlet1, Outlet2, Outlet3, Outlet4, Outlet5, Outlet6, Inlet1, Inlet2, Inlet3, TopTemperature, " +
+                    "OutletWaterTemperature, InletWaterTemperature, AmbientTemperature1, AmbientTemperature2, OutletAirTemperature1, OutletAirTemperature2, OutletAirTemperature3, OutletAirTemperature4, OutletAirTemperature5, OutletAirTemperature6, OutletAirTemperature7, OutletAirTemperature8, WaterFlowRate, fu" +
+                   ") VALUES " +
+                   "(@ID, @Timestamp, @ua, @ub, @uc, @u3, @ia, @ib, @ic, @i3, @p3, " +
+                   $"@CoreTemp, @WindingTempA, @WindingTempB, @WindingTempC, @EnvTempA, @EnvTempB, @EnvTempC, @EnvTempD, " +
                     "@Outlet1, @Outlet2, @Outlet3, @Outlet4, @Outlet5, @Outlet6, @Inlet1, @Inlet2, @Inlet3, @TopTemperature, " +
-                    "@OutletWaterTemperature, @InletWaterTemperature, @AmbientTemperature1, @AmbientTemperature2, @OutletAirTemperature1, @OutletAirTemperature2, @OutletAirTemperature3, @OutletAirTemperature4, @OutletAirTemperature5, @OutletAirTemperature6, @OutletAirTemperature7, @OutletAirTemperature8, @WaterFlowRate" +
-                    ")", connection))
-                {
-                    command.Parameters.AddWithValue("@ID", ID);
-                    command.Parameters.AddWithValue("@Timestamp", Timestamp);
-                    command.Parameters.AddWithValue("@ua", Ua);
-                    command.Parameters.AddWithValue("@ub", Ub);
-                    command.Parameters.AddWithValue("@uc", Uc);
-                    command.Parameters.AddWithValue("@u3", U3);
-                    command.Parameters.AddWithValue("@ia", Ia);
-                    command.Parameters.AddWithValue("@ib", Ib);
-                    command.Parameters.AddWithValue("@ic", Ic);
-                    command.Parameters.AddWithValue("@i3", I3);
-                    command.Parameters.AddWithValue("@p3", P3);
-                    command.Parameters.AddWithValue("@CoreTemp", CoreTemp);
+                    "@OutletWaterTemperature, @InletWaterTemperature, @AmbientTemperature1, @AmbientTemperature2, @OutletAirTemperature1, @OutletAirTemperature2, @OutletAirTemperature3, @OutletAirTemperature4, @OutletAirTemperature5, @OutletAirTemperature6, @OutletAirTemperature7, @OutletAirTemperature8, @WaterFlowRate, @fu" +
+                   ")", connection))
+               {
+                   command.Parameters.AddWithValue("@ID", ID);
+                   command.Parameters.AddWithValue("@Timestamp", Timestamp);
+                   command.Parameters.AddWithValue("@ua", Ua);
+                   command.Parameters.AddWithValue("@ub", Ub);
+                   command.Parameters.AddWithValue("@uc", Uc);
+                   command.Parameters.AddWithValue("@u3", U3);
+                   command.Parameters.AddWithValue("@ia", Ia);
+                   command.Parameters.AddWithValue("@ib", Ib);
+                   command.Parameters.AddWithValue("@ic", Ic);
+                   command.Parameters.AddWithValue("@i3", I3);
+                   command.Parameters.AddWithValue("@p3", P3);
+                    command.Parameters.AddWithValue("@fu", FU);
+                   command.Parameters.AddWithValue("@CoreTemp", CoreTemp);
                     command.Parameters.AddWithValue("@WindingTempA", WindingTempA);
                     command.Parameters.AddWithValue("@WindingTempB", WindingTempB);
                     command.Parameters.AddWithValue("@WindingTempC", WindingTempC);
@@ -214,16 +217,16 @@ namespace ABBDataManagerSystem.Bean.Base
             {
                 connection.Open();
 
-                string insertSql = $"INSERT INTO {TABLE_NAME} (ID, Timestamp, ua, ub, uc, u3, ia, ib, ic, i3, p3, " +
-                    $"CoreTemperature, WindingATemperature, WindingBTemperature, WindingCTemperature, AmbientATemperature, AmbientBTemperature, AmbientCTemperature, AmbientDTemperature, " +
-                    $"Outlet1, Outlet2, Outlet3, Outlet4, Outlet5, Outlet6, Inlet1, Inlet2, Inlet3, TopTemperature, " +
-                    $"OutletWaterTemperature, InletWaterTemperature, AmbientTemperature1, AmbientTemperature2, OutletAirTemperature1, OutletAirTemperature2, OutletAirTemperature3, OutletAirTemperature4, OutletAirTemperature5, OutletAirTemperature6, OutletAirTemperature7, OutletAirTemperature8, WaterFlowRate, " +
-                    $"workflow_id) VALUES " +
-                    $"(@ID, @Timestamp, @ua, @ub, @uc, @u3, @ia, @ib, @ic, @i3, @p3, " +
-                    $"@CoreTemp, @WindingTempA, @WindingTempB, @WindingTempC, @EnvTempA, @EnvTempB, @EnvTempC, @EnvTempD, " +
+               string insertSql = $"INSERT INTO {TABLE_NAME} (ID, Timestamp, ua, ub, uc, u3, ia, ib, ic, i3, p3, " +
+                   $"CoreTemperature, WindingATemperature, WindingBTemperature, WindingCTemperature, AmbientATemperature, AmbientBTemperature, AmbientCTemperature, AmbientDTemperature, " +
+                   $"Outlet1, Outlet2, Outlet3, Outlet4, Outlet5, Outlet6, Inlet1, Inlet2, Inlet3, TopTemperature, " +
+                    $"OutletWaterTemperature, InletWaterTemperature, AmbientTemperature1, AmbientTemperature2, OutletAirTemperature1, OutletAirTemperature2, OutletAirTemperature3, OutletAirTemperature4, OutletAirTemperature5, OutletAirTemperature6, OutletAirTemperature7, OutletAirTemperature8, WaterFlowRate, fu, " +
+                   $"workflow_id) VALUES " +
+                   $"(@ID, @Timestamp, @ua, @ub, @uc, @u3, @ia, @ib, @ic, @i3, @p3, " +
+                   $"@CoreTemp, @WindingTempA, @WindingTempB, @WindingTempC, @EnvTempA, @EnvTempB, @EnvTempC, @EnvTempD, " +
                     $"@Outlet1, @Outlet2, @Outlet3, @Outlet4, @Outlet5, @Outlet6, @Inlet1, @Inlet2, @Inlet3, @TopTemperature, " +
-                    $"@OutletWaterTemperature, @InletWaterTemperature, @AmbientTemperature1, @AmbientTemperature2, @OutletAirTemperature1, @OutletAirTemperature2, @OutletAirTemperature3, @OutletAirTemperature4, @OutletAirTemperature5, @OutletAirTemperature6, @OutletAirTemperature7, @OutletAirTemperature8, @WaterFlowRate, " +
-                    $"@WorkflowID)";
+                    $"@OutletWaterTemperature, @InletWaterTemperature, @AmbientTemperature1, @AmbientTemperature2, @OutletAirTemperature1, @OutletAirTemperature2, @OutletAirTemperature3, @OutletAirTemperature4, @OutletAirTemperature5, @OutletAirTemperature6, @OutletAirTemperature7, @OutletAirTemperature8, @WaterFlowRate, @fu, " +
+                   $"@WorkflowID)";
 
                 int totalCount = dataRows.Count;
                 int processedCount = 0;
@@ -252,8 +255,9 @@ namespace ABBDataManagerSystem.Bean.Base
                                 command.Parameters.Add("@ib", MySqlDbType.Float);
                                 command.Parameters.Add("@ic", MySqlDbType.Float);
                                 command.Parameters.Add("@i3", MySqlDbType.Float);
-                                command.Parameters.Add("@p3", MySqlDbType.Float);
-                                command.Parameters.Add("@CoreTemp", MySqlDbType.Float);
+                               command.Parameters.Add("@p3", MySqlDbType.Float);
+                                command.Parameters.Add("@fu", MySqlDbType.Float);
+                               command.Parameters.Add("@CoreTemp", MySqlDbType.Float);
                                 command.Parameters.Add("@WindingTempA", MySqlDbType.Float);
                                 command.Parameters.Add("@WindingTempB", MySqlDbType.Float);
                                 command.Parameters.Add("@WindingTempC", MySqlDbType.Float);
@@ -299,8 +303,9 @@ namespace ABBDataManagerSystem.Bean.Base
                                     command.Parameters["@ib"].Value = row.Ib;
                                     command.Parameters["@ic"].Value = row.Ic;
                                     command.Parameters["@i3"].Value = row.I3;
-                                    command.Parameters["@p3"].Value = row.P3;
-                                    command.Parameters["@CoreTemp"].Value = row.CoreTemp;
+                                   command.Parameters["@p3"].Value = row.P3;
+                                    command.Parameters["@fu"].Value = row.FU;
+                                   command.Parameters["@CoreTemp"].Value = row.CoreTemp;
                                     command.Parameters["@WindingTempA"].Value = row.WindingTempA;
                                     command.Parameters["@WindingTempB"].Value = row.WindingTempB;
                                     command.Parameters["@WindingTempC"].Value = row.WindingTempC;
@@ -355,7 +360,7 @@ namespace ABBDataManagerSystem.Bean.Base
 
         public static string MigrateDBColumns()
         {
-            var newColumns = new[] { "OutletAirTemperature5", "OutletAirTemperature6", "OutletAirTemperature7", "OutletAirTemperature8" };
+            var newColumns = new[] { "fu", "OutletAirTemperature5", "OutletAirTemperature6", "OutletAirTemperature7", "OutletAirTemperature8" };
             var results = new System.Collections.Generic.List<string>();
             try
             {
