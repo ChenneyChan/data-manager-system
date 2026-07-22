@@ -15,12 +15,11 @@
             <Setter Property="FontSize" Value="16"/>
         </Style>
         <Style TargetType="DataGridRow">
-            <Setter Property="IsEnabled" Value="{Binding IsActive}"/>
             <Setter Property="Opacity" Value="1"/>
             <Style.Triggers>
-                <Trigger Property="IsEnabled" Value="False">
+                <DataTrigger Binding="{Binding IsActive}" Value="False">
                     <Setter Property="Opacity" Value="0.45"/>
-                </Trigger>
+                </DataTrigger>
             </Style.Triggers>
         </Style>
     </Window.Resources>
@@ -31,15 +30,19 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
             <TextBlock Text="通道数量" VerticalAlignment="Center" FontSize="16" Margin="0,0,10,0"/>
-            <hc:NumericUpDown Name="nudChannelCount" Width="100" Minimum="0" Maximum="27" ValueChanged="nudChannelCount_ValueChanged"/>
+            <hc:NumericUpDown Name="nudChannelCount" Width="100" Minimum="0" Maximum="99" ValueChanged="nudChannelCount_ValueChanged"/>
             <TextBlock Text="槽位上限" VerticalAlignment="Center" FontSize="16" Margin="18,0,10,0"/>
             <TextBlock Name="tbMaxSlot" VerticalAlignment="Center" FontSize="16"/>
+            <TextBlock Text="新增通道：" VerticalAlignment="Center" FontSize="16" Margin="30,0,10,0"/>
+            <TextBox Name="tbNewChannelName" Width="120" FontSize="16" VerticalAlignment="Center" Margin="0,0,8,0" hc:InfoElement.ShowClearButton="True"/>
+            <Button Content="添加" Style="{StaticResource ButtonPrimary}" Width="60" Height="30" FontSize="14" Click="btAdd_Click"/>
+            <Button Content="删除选中" Style="{StaticResource ButtonPrimary}" Width="80" Height="30" FontSize="14" Margin="12,0,0,0" Click="btDelete_Click"/>
         </StackPanel>
 
         <DataGrid Grid.Row="1"
-                  Name="dgChannels"
+                  Name="dgChannels" EnableRowVirtualization="False"
                   AutoGenerateColumns="False"
                   CanUserAddRows="False"
                   CanUserDeleteRows="False"
@@ -70,7 +73,7 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellEditingTemplate>
                 </DataGridTemplateColumn>
-                <DataGridCheckBoxColumn Header="启用" Binding="{Binding IsActive}" IsReadOnly="True" Width="70"/>
+                <DataGridTemplateColumn Header="启用" Width="70"><DataGridTemplateColumn.CellTemplate><DataTemplate><CheckBox IsChecked="{Binding IsActive, Mode=OneWay}" HorizontalAlignment="Center" Checked="CheckBox_IsActive_Changed" Unchecked="CheckBox_IsActive_Changed"/></DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
 

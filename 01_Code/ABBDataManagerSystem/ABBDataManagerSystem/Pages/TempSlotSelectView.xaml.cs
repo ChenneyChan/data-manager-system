@@ -1,4 +1,4 @@
-﻿using ABBDataManagerSystem.Configs;
+using ABBDataManagerSystem.Configs;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -7,6 +7,9 @@ using System.Windows.Controls;
 
 namespace ABBDataManagerSystem.Pages
 {
+    /// <summary>
+    /// TempSlotSelectView.xaml 的交互逻辑
+    /// </summary>
     public partial class TempSlotSelectView : Window
     {
         private readonly int MaxSlot = 36;
@@ -98,12 +101,8 @@ namespace ABBDataManagerSystem.Pages
             ApplyActiveCount((int)nudChannelCount.Value);
         }
 
-        private void CheckBox_IsActive_Changed(object sender, RoutedEventArgs e)
+        private void CheckBox_IsActive_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is CheckBox cb && cb.DataContext is TemperatureChannelSetting channel)
-            {
-                channel.IsActive = cb.IsChecked == true;
-            }
             SyncNumericUpDown();
         }
 
