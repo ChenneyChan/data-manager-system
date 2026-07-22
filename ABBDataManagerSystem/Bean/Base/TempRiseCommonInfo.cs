@@ -21,6 +21,7 @@ namespace ABBDataManagerSystem.Bean.Base
         public float? TempRiseHVCorrectionFactor = null;
         public float? TempRiseLVCorrectionFactor = null;
         public string TempRiseRelativeTo = String.Empty;
+        public int CoolingEquipment = 0; // 水冷设备，0-80kw 1-200kw
 
 
         public static Dictionary<string, string> FieldComments = new Dictionary<string, string>
@@ -31,13 +32,13 @@ namespace ABBDataManagerSystem.Bean.Base
             {"TempRiseHVCorrectionFactor", "高压温升校正系数" },
             {"TempRiseLVCorrectionFactor", "低压温升校正系数" },
             {"TempRiseRelativeTo", "温升相对于" },
+            {"CoolingEquipment", "水冷设备，0-80kw 1-200kw" },
         };
-
 
         public bool UpdateData()
         {
             string updateSql = $"UPDATE {TABLE_NAME} SET TempRiseTestingVoltage = @TempRiseTestingVoltage, TempRiseTestingCurrent = @TempRiseTestingCurrent, " +
-                "TempRiseHVCorrectionFactor = @TempRiseHVCorrectionFactor, TempRiseLVCorrectionFactor = @TempRiseLVCorrectionFactor, TempRiseRelativeTo = @TempRiseRelativeTo " +
+                "TempRiseHVCorrectionFactor = @TempRiseHVCorrectionFactor, TempRiseLVCorrectionFactor = @TempRiseLVCorrectionFactor, TempRiseRelativeTo = @TempRiseRelativeTo, CoolingEquipment = @CoolingEquipment " +
                 "WHERE workflow_id = @WorkflowID AND TestIndex = @TestIndex AND CoolingMode = @CoolingMode AND TestingPhase = @TestingPhase";
 
             // 创建 SQLite 连接对象
@@ -55,6 +56,7 @@ namespace ABBDataManagerSystem.Bean.Base
                     command.Parameters.AddWithValue("@TempRiseHVCorrectionFactor", TempRiseHVCorrectionFactor);
                     command.Parameters.AddWithValue("@TempRiseLVCorrectionFactor", TempRiseLVCorrectionFactor);
                     command.Parameters.AddWithValue("@TempRiseRelativeTo", TempRiseRelativeTo);
+                    command.Parameters.AddWithValue("@CoolingEquipment", CoolingEquipment);
 
                     return command.ExecuteNonQuery() > 0;
                 }
@@ -63,8 +65,8 @@ namespace ABBDataManagerSystem.Bean.Base
 
         public bool InsertDB()
         {
-            string updateSql = $"INSERT INTO {TABLE_NAME} (workflow_id, TestingPhase, TestIndex, CoolingMode, TempRiseTestingVoltage, TempRiseTestingCurrent, TempRiseHVCorrectionFactor, TempRiseLVCorrectionFactor, TempRiseRelativeTo) VALUES " +
-                " (@WorkflowID, @TestingPhase, @TestIndex, @CoolingMode, @TempRiseTestingVoltage, @TempRiseTestingCurrent, @TempRiseHVCorrectionFactor, @TempRiseLVCorrectionFactor, @TempRiseRelativeTo)";
+            string updateSql = $"INSERT INTO {TABLE_NAME} (workflow_id, TestingPhase, TestIndex, CoolingMode, TempRiseTestingVoltage, TempRiseTestingCurrent, TempRiseHVCorrectionFactor, TempRiseLVCorrectionFactor, TempRiseRelativeTo, CoolingEquipment) VALUES " +
+                " (@WorkflowID, @TestingPhase, @TestIndex, @CoolingMode, @TempRiseTestingVoltage, @TempRiseTestingCurrent, @TempRiseHVCorrectionFactor, @TempRiseLVCorrectionFactor, @TempRiseRelativeTo, @CoolingEquipment)";
 
             // 创建 SQLite 连接对象
             using (SQLConnection connection = new SQLConnection(DBConnector.GetConnectionString()))
@@ -81,6 +83,7 @@ namespace ABBDataManagerSystem.Bean.Base
                     command.Parameters.AddWithValue("@TempRiseHVCorrectionFactor", TempRiseHVCorrectionFactor);
                     command.Parameters.AddWithValue("@TempRiseLVCorrectionFactor", TempRiseLVCorrectionFactor);
                     command.Parameters.AddWithValue("@TempRiseRelativeTo", TempRiseRelativeTo);
+                    command.Parameters.AddWithValue("@CoolingEquipment", CoolingEquipment);
 
                     return command.ExecuteNonQuery() > 0;
                 }
@@ -109,6 +112,7 @@ namespace ABBDataManagerSystem.Bean.Base
                     TempRiseTestingCurrent = !reader.IsDBNull("TempRiseTestingCurrent") ? reader.GetFloat("TempRiseTestingCurrent") : null,
                     TempRiseHVCorrectionFactor = !reader.IsDBNull("TempRiseHVCorrectionFactor") ? reader.GetFloat("TempRiseHVCorrectionFactor") : null,
                     TempRiseLVCorrectionFactor = !reader.IsDBNull("TempRiseLVCorrectionFactor") ? reader.GetFloat("TempRiseLVCorrectionFactor") : null,
+                    CoolingEquipment = !reader.IsDBNull("CoolingEquipment") ? reader.GetInt32("CoolingEquipment") : 0,
                 };
             });
             if (records == null)

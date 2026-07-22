@@ -1,4 +1,4 @@
-using ABBDataManagerSystem.Bean.Base;
+﻿using ABBDataManagerSystem.Bean.Base;
 using ABBDataManagerSystem.Charts;
 using ABBDataManagerSystem.Connector;
 using ABBDataManagerSystem.Pages.Views;
@@ -253,6 +253,7 @@ namespace ABBDataManagerSystem.Pages
                         cbHVCorrectionFact.Text = data.TempRiseHVCorrectionFactor.ToString();
                         cbLVCorrectionFact.Text = data.TempRiseLVCorrectionFactor.ToString();
                         cbRelatedTo.Text = data.TempRiseRelativeTo.ToString();
+                        cbCoolDeviceSource.SelectedIndex = data.CoolingEquipment;
                     });
                 }
                 else
@@ -720,7 +721,7 @@ namespace ABBDataManagerSystem.Pages
                 });
                 dgTempRecord.Columns.Add(new DataGridTextColumn()
                 {
-                    Header = "Fu",
+                    Header = "Hz",
                     Binding = new Binding("Fu") { StringFormat = "{0:N2}" },
                     MinWidth = 40
                 });
@@ -747,7 +748,7 @@ namespace ABBDataManagerSystem.Pages
                 });
                 dgTempRecord.Columns.Add(new DataGridTextColumn()
                 {
-                    Header = "Fu",
+                    Header = "Hz",
                     Binding = new Binding("Fu") { StringFormat = "{0:N2}" },
                     MinWidth = 40
                 });
@@ -1536,6 +1537,7 @@ namespace ABBDataManagerSystem.Pages
             data.TempRiseRelativeTo = cbRelatedTo.Text;
             data.TempRiseTestingVoltage = voltage;
             data.TempRiseTestingCurrent = current;
+            data.CoolingEquipment = cbCoolDeviceSource.SelectedIndex;
 
             bool ret;
             var datas = TempRiseCommonInfo.ReadFromDB(workflowId, TestingPhase, Index, CoolingMode);
