@@ -1874,14 +1874,6 @@ namespace ABBDataManagerSystem.Pages
             return null;
         }
 
-        // 获取绕组温度值，返回 null 表示该绕组未配置或不在选中通道中
-        private float? GetWindingTemperature(float[] values, string roleKey)
-        {
-            var index = SelectedChannels.FindIndex(item => item.RoleKey == roleKey);
-            if (index < 0 || index >= values.Length) return null;
-            return values[index];
-        }
-
         // 向指定S7 PLC写入值（S7协议，写入DB地址）
         // 温度告警状态：true=有绕组超阈值。采集线程写，广播线程读，用volatile保证可见性
         private volatile bool isTemperatureAlarming = false;
@@ -1939,7 +1931,7 @@ namespace ABBDataManagerSystem.Pages
             UpdateAlertIndicator(false);
         }
 
-        // 校验绕组温度，刷新告警状态（广播线程按此状态发送0/1）
+        // 校验所有选中通道的温度，任一超限即触发告警
         private void ValidateWindingTemperatures(float[] values)
         {
             var threshold = Configs.Configs.TemperatureThreshold;
@@ -1950,20 +1942,13 @@ namespace ABBDataManagerSystem.Pages
                 return;
             }
 
-            var windings = new (string Name, string RoleKey)[]
-            {
-                (GetRoleTitle("WindingA", "绕组A"), "WindingA"),
-                (GetRoleTitle("WindingB", "绕组B"), "WindingB"),
-                (GetRoleTitle("WindingC", "绕组C"), "WindingC"),
-            };
-
             bool isAlarming = false;
-            foreach (var (name, roleKey) in windings)
+            for (int i = 0; i < SelectedChannels.Count && i < values.Length; i++)
             {
-                var temp = GetWindingTemperature(values, roleKey);
-                if (temp != null && temp.Value > threshold)
+                var temp = values[i];
+                if (temp > threshold)
                 {
-                    Log.Info($"绕组温度超限: {name}={temp.Value:F1}℃, 阈值={threshold}℃");
+                    Log.Info($"绕组温度超限: {SelectedChannels[i].Title}={temp:F1}℃, 阈值={threshold}℃");
                     isAlarming = true;
                     break;
                 }
@@ -1979,12 +1964,6 @@ namespace ABBDataManagerSystem.Pages
             {
                 alertIndicator.Visibility = alarming ? Visibility.Visible : Visibility.Collapsed;
             });
-        }
-
-        private string GetRoleTitle(string roleKey, string fallback)
-        {
-            var channel = SelectedChannels.FirstOrDefault(item => item.RoleKey == roleKey);
-            return channel == null || string.IsNullOrWhiteSpace(channel.Title) ? fallback : channel.Title;
         }
         #endregion
     }
