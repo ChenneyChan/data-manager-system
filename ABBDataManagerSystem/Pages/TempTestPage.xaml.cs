@@ -1,4 +1,4 @@
-﻿using ABBDataManagerSystem.Bean.Base;
+using ABBDataManagerSystem.Bean.Base;
 using ABBDataManagerSystem.Charts;
 using ABBDataManagerSystem.Connector;
 using ABBDataManagerSystem.Pages.Views;
@@ -405,6 +405,8 @@ namespace ABBDataManagerSystem.Pages
                 btStart.Background = Brushes.DodgerBlue;
                 btStart.Foreground = Brushes.White;
                 ToogleAllStatus();
+                // 退出采集立即取消告警，避免广播继续发送告警帧
+                ClearAlertState();
                 return;
             }
             if (ResetEvent != null)
@@ -500,6 +502,7 @@ namespace ABBDataManagerSystem.Pages
             Tools.EventManager.Instance.Unsubscribe("WorkflowSelected", WorkflowUpdateEvent);
             Tools.EventManager.Instance.Unsubscribe("TemperatureDisplaySettingsChanged", TemperatureDisplaySettingsChanged);
             StopListening();
+            ClearAlertState();
             StopAlertBroadcast();
         }
 
@@ -1902,7 +1905,8 @@ namespace ABBDataManagerSystem.Pages
                         var endPoint = new IPEndPoint(IPAddress.Broadcast, port);
                         while (isAlertBroadcasting)
                         {
-                            byte[] data = new byte[] { (byte)(isTemperatureAlarming ? 1 : 0) };
+                            // 仅在采集状态下才发送告警，退出采集立即恢复正常(0)
+                            byte[] data = new byte[] { (byte)(isTemperatureAlarming && IsCollecting ? 1 : 0) };
                             udpClient.Send(data, data.Length, endPoint);
                             Thread.Sleep(2000);
                         }
@@ -1924,6 +1928,13 @@ namespace ABBDataManagerSystem.Pages
         private void StopAlertBroadcast()
         {
             isAlertBroadcasting = false;
+        }
+
+        // 退出采集状态时清除告警状态：复位标志并隐藏指示灯，广播线程下一帧发送0
+        private void ClearAlertState()
+        {
+            isTemperatureAlarming = false;
+            UpdateAlertIndicator(false);
         }
 
         // 校验绕组温度，刷新告警状态（广播线程按此状态发送0/1）
