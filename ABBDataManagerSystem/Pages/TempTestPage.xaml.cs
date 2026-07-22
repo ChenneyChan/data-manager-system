@@ -1,4 +1,5 @@
 ﻿using ABBDataManagerSystem.Bean.Base;
+using System.Text.Json;
 using ABBDataManagerSystem.Charts;
 using ABBDataManagerSystem.Connector;
 using ABBDataManagerSystem.Pages.Views;
@@ -1198,6 +1199,41 @@ namespace ABBDataManagerSystem.Pages
         #endregion
 
         #region 温度槽位选择
+        private void LoadChannelDefinitionFromDb()
+        {
+            string workflowId = Configs.Configs.WorkflowID;
+            string coolingMode = cbCoolingMode.Text;
+            if (string.IsNullOrEmpty(workflowId) || string.IsNullOrEmpty(coolingMode))
+                return;
+
+            try
+            {
+                var def = TempRiseChannelDefinition.Load(workflowId, coolingMode);
+                if (def == null) return;
+
+                var defs = JsonSerializer.Deserialize<List<TempChannelSetting>>(def.ChannelDefsJson);
+                if (defs == null || defs.Count == 0) return;
+
+                // Merge DB definitions into the local config
+                var channels = Configs.Configs.TemperatureChannels
+                    ?? TemperatureChannelCatalog.CreateDefaultChannels();
+                var lookup = channels.ToDictionary(c => c.RoleKey);
+                foreach (var d in defs)
+                {
+                    if (lookup.TryGetValue(d.RoleKey, out var existing))
+                    {
+                        existing.Title = d.Title;
+                        existing.Probe = d.Probe;
+                        existing.IsActive = d.IsActive;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"Failed to load channel definition: {ex.Message}");
+            }
+        }
+
         private void cbCoolingMode_SelectionChanged(object sender, RoutedEventArgs e)
         {
             var oldMode = TempTestMode;
@@ -1348,23 +1384,7 @@ namespace ABBDataManagerSystem.Pages
             return null;
         }
 
-        private static float? SafeRoleField(DataRow row, Dictionary<string, string> roleColumnMap, string roleKey)
-        {
-            if (!roleColumnMap.TryGetValue(roleKey, out var columnName))
-            {
-                return null;
-            }
-            return SafeField(row, columnName);
-        }
-
-        private Dictionary<string, string> CreateRoleColumnMap()
-        {
-            return SelectedChannels
-                .GroupBy(item => item.RoleKey)
-                .ToDictionary(item => item.Key, item => item.First().ColumnName);
-        }
-
-        private void UploadDataAsync(int testIndex, string testPhase, string testStatus, string coolingMode, string workflowId, string remark, TempMode tempMode, DataRow[] rows, Dictionary<string, string> roleColumnMap)
+        private void UploadDataAsync(int testIndex, string testPhase, string testStatus, string coolingMode, string workflowId, string remark, TempMode tempMode, DataRow[] rows)
         {
             CommonTempRiseTestInfo configItem;
             var items = CommonTempRiseTestInfo.ReadFromDB(workflowId, testPhase, testStatus, coolingMode, testIndex, 1);
@@ -1399,14 +1419,24 @@ namespace ABBDataManagerSystem.Pages
             }
 
             // 删除之前的时间数据
-            CommonTempRiseTestRecordInfo.DeleteData(configItem.ID);
-            // 将DataTable中的数据转成试验数据格式并且一条条上传
-            List<CommonTempRiseTestRecordInfo> list = new List<CommonTempRiseTestRecordInfo>();
+            TempRiseTestRecord.DeleteData(configItem.ID);
+            // 将DataTable中的数据转成试验数据格式并批量上传
+            List<TempRiseTestRecord> list = new List<TempRiseTestRecord>();
             foreach (var item in rows)
             {
-                var record = new CommonTempRiseTestRecordInfo()
+                // 动态构建温度 JSON
+                var temps = new Dictionary<string, object?>();
+                foreach (var channel in SelectedChannels)
                 {
-                    ID = configItem.ID,
+                    var val = SafeField(item, channel.ColumnName);
+                    temps[channel.RoleKey] = val;
+                }
+                string tempsJson = JsonSerializer.Serialize(temps);
+
+                var record = new TempRiseTestRecord()
+                {
+                    TestInfoId = configItem.ID,
+                    WorkflowId = workflowId,
                     Timestamp = item.Field<DateTime>("时间"),
                     Ua = item.Field<float?>("ua") ?? null,
                     Ub = item.Field<float?>("ub") ?? null,
@@ -1416,29 +1446,11 @@ namespace ABBDataManagerSystem.Pages
                     Ib = item.Field<float?>("ib") ?? null,
                     Ic = item.Field<float?>("ic") ?? null,
                     I3 = item.Field<float?>("iavg") ?? null,
-                   P3 = item.Field<float?>("pkt") ?? null,
+                    P3 = item.Field<float?>("pkt") ?? null,
                     FU = item.Field<float?>("fu") ?? null,
-                   CoreTemp = SafeRoleField(item, roleColumnMap, "Core"),
-                    WindingTempA = SafeRoleField(item, roleColumnMap, "WindingA"),
-                    WindingTempB = SafeRoleField(item, roleColumnMap, "WindingB"),
-                    WindingTempC = SafeRoleField(item, roleColumnMap, "WindingC"),
-                    IsAFWF = tempMode == TempMode.AFWF,
-                    WorkflowID = workflowId
+                    TemperaturesJson = tempsJson,
+                    IsAFWF = tempMode == TempMode.AFWF
                 };
-                record.EnvTempA = SafeRoleField(item, roleColumnMap, "EnvA");
-                record.EnvTempB = SafeRoleField(item, roleColumnMap, "EnvB");
-                record.EnvTempC = SafeRoleField(item, roleColumnMap, "EnvC");
-                record.EnvTempD = SafeRoleField(item, roleColumnMap, "EnvD");
-                record.Outlet1 = SafeRoleField(item, roleColumnMap, "Outlet1");
-                record.Outlet2 = SafeRoleField(item, roleColumnMap, "Outlet2");
-                record.Outlet3 = SafeRoleField(item, roleColumnMap, "Outlet3");
-                record.Outlet4 = SafeRoleField(item, roleColumnMap, "Outlet4");
-                record.Outlet5 = SafeRoleField(item, roleColumnMap, "Outlet5");
-                record.Outlet6 = SafeRoleField(item, roleColumnMap, "Outlet6");
-                record.Inlet1 = SafeRoleField(item, roleColumnMap, "Inlet1");
-                record.Inlet2 = SafeRoleField(item, roleColumnMap, "Inlet2");
-                record.Inlet3 = SafeRoleField(item, roleColumnMap, "Inlet3");
-                record.TopTemp = SafeRoleField(item, roleColumnMap, "TopTemperature");
 
                 if (tempMode == TempMode.AFWF)
                 {
@@ -1458,7 +1470,7 @@ namespace ABBDataManagerSystem.Pages
                 }
                 list.Add(record);
             }
-            bool ret = CommonTempRiseTestRecordInfo.BatchInsertData(list);
+            bool ret = TempRiseTestRecord.BatchInsertData(list);
             if (ret)
             {
                 Dispatcher.Invoke(() =>
@@ -1497,14 +1509,13 @@ namespace ABBDataManagerSystem.Pages
 
             // 在UI线程拷贝DataTable数据
             DataRow[] rows = Table.AsEnumerable().ToArray();
-            var roleColumnMap = CreateRoleColumnMap();
 
             btUpload.IsEnabled = false;
             btUpload.Content = "上传中...";
 
             Task.Run(() =>
             {
-                UploadDataAsync(testIndex, testPhase, testStatus, coolingMode, workflowId, remark, tempMode, rows, roleColumnMap);
+                UploadDataAsync(testIndex, testPhase, testStatus, coolingMode, workflowId, remark, tempMode, rows);
             }).ContinueWith(t =>
             {
                 Dispatcher.Invoke(() =>
