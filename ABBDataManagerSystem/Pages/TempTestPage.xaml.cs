@@ -679,8 +679,8 @@ namespace ABBDataManagerSystem.Pages
                 });
                 dgTempRecord.Columns.Add(new DataGridTextColumn()
                 {
-                    Header = "U3",
-                    Binding = new Binding("U3") { StringFormat = "{0:N2}" },
+                    Header = "Uavg",
+                    Binding = new Binding("Uavg") { StringFormat = "{0:N2}" },
                     MinWidth = 40
                 });
 
@@ -704,15 +704,15 @@ namespace ABBDataManagerSystem.Pages
                 });
                 dgTempRecord.Columns.Add(new DataGridTextColumn()
                 {
-                    Header = "I3",
-                    Binding = new Binding("I3") { StringFormat = "{0:N2}" },
+                    Header = "Iavg",
+                    Binding = new Binding("Iavg") { StringFormat = "{0:N2}" },
                     MinWidth = 40
                 });
 
                 dgTempRecord.Columns.Add(new DataGridTextColumn()
                 {
-                    Header = "P3",
-                    Binding = new Binding("P3") { StringFormat = "{0:N2}" },
+                    Header = "Pkt",
+                    Binding = new Binding("Pkt") { StringFormat = "{0:N2}" },
                     MinWidth = 40
                 });
             }
@@ -720,20 +720,20 @@ namespace ABBDataManagerSystem.Pages
             {
                 dgTempRecord.Columns.Add(new DataGridTextColumn()
                 {
-                    Header = "U3",
-                    Binding = new Binding("U3") { StringFormat = "{0:N2}" },
+                    Header = "Uavg",
+                    Binding = new Binding("Uavg") { StringFormat = "{0:N2}" },
                     MinWidth = 40
                 });
                 dgTempRecord.Columns.Add(new DataGridTextColumn()
                 {
-                    Header = "I3",
-                    Binding = new Binding("I3") { StringFormat = "{0:N2}" },
+                    Header = "Iavg",
+                    Binding = new Binding("Iavg") { StringFormat = "{0:N2}" },
                     MinWidth = 40
                 });
                 dgTempRecord.Columns.Add(new DataGridTextColumn()
                 {
-                    Header = "P3",
-                    Binding = new Binding("P3") { StringFormat = "{0:N2}" },
+                    Header = "Pkt",
+                    Binding = new Binding("Pkt") { StringFormat = "{0:N2}" },
                     MinWidth = 40
                 });
             }
@@ -743,12 +743,12 @@ namespace ABBDataManagerSystem.Pages
             Table.Columns.Add("Ua", typeof(float));
             Table.Columns.Add("Ub", typeof(float));
             Table.Columns.Add("Uc", typeof(float));
-            Table.Columns.Add("U3", typeof(float));
+            Table.Columns.Add("Uavg", typeof(float));
             Table.Columns.Add("Ia", typeof(float));
             Table.Columns.Add("Ib", typeof(float));
             Table.Columns.Add("Ic", typeof(float));
-            Table.Columns.Add("I3", typeof(float));
-            Table.Columns.Add("P3", typeof(float));
+            Table.Columns.Add("Iavg", typeof(float));
+            Table.Columns.Add("Pkt", typeof(float));
 
             foreach (var channel in SelectedChannels)
             {
@@ -850,12 +850,12 @@ namespace ABBDataManagerSystem.Pages
                     newRow["ua"] = CurrentVoltageInfo.ua;
                     newRow["ub"] = CurrentVoltageInfo.ub;
                     newRow["uc"] = CurrentVoltageInfo.uc;
-                    newRow["u3"] = CurrentVoltageInfo.u3;
+                    newRow["uavg"] = CurrentVoltageInfo.u3;
                     newRow["ia"] = CurrentVoltageInfo.ia;
                     newRow["ib"] = CurrentVoltageInfo.ib;
                     newRow["ic"] = CurrentVoltageInfo.ic;
-                    newRow["i3"] = CurrentVoltageInfo.i3;
-                    newRow["p3"] = CurrentVoltageInfo.p3;
+                    newRow["iavg"] = CurrentVoltageInfo.i3;
+                    newRow["pkt"] = CurrentVoltageInfo.p3;
                 }
             }
             Dispatcher.Invoke(() =>
@@ -1393,12 +1393,12 @@ namespace ABBDataManagerSystem.Pages
                     Ua = item.Field<float?>("ua") ?? null,
                     Ub = item.Field<float?>("ub") ?? null,
                     Uc = item.Field<float?>("uc") ?? null,
-                    U3 = item.Field<float?>("u3") ?? null,
+                    U3 = item.Field<float?>("uavg") ?? null,
                     Ia = item.Field<float?>("ia") ?? null,
                     Ib = item.Field<float?>("ib") ?? null,
                     Ic = item.Field<float?>("ic") ?? null,
-                    I3 = item.Field<float?>("i3") ?? null,
-                    P3 = item.Field<float?>("p3") ?? null,
+                    I3 = item.Field<float?>("iavg") ?? null,
+                    P3 = item.Field<float?>("pkt") ?? null,
                     CoreTemp = SafeRoleField(item, roleColumnMap, "Core"),
                     WindingTempA = SafeRoleField(item, roleColumnMap, "WindingA"),
                     WindingTempB = SafeRoleField(item, roleColumnMap, "WindingB"),
