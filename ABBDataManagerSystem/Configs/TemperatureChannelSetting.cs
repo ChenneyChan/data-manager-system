@@ -100,17 +100,48 @@ namespace ABBDataManagerSystem.Configs
         }
     }
 
-    public static class TemperatureChannelCatalog
-    {
-        // 不预置任何语义通道：通道列表完全由用户自定义，所有通道地位平等。
-        // 新装用户从空列表开始，通过 TempSlotSelectView 添加并命名通道。
-        public static List<TemperatureChannelSetting> CreateDefaultChannels()
-        {
-            return new List<TemperatureChannelSetting>();
-        }
+   public static class TemperatureChannelCatalog
+   {
+       // 通道无预设语义：所有通道地位平等，使用通用 RoleKey（Channel1、Channel2...），
+       // 用户可给通道的标题任意命名。
+       // 当本地配置、DB 均为空时使用预设模板给用户一个合理起点初始通道列表，
+       // 用户可在使用前完成探头分配，也会在这个基础上修改。
+       public static List<TemperatureChannelSetting> CreateDefaultChannels()
+       {
+           return CreatePresetTemplate();
+       }
 
-        // 归一化保存的通道：按 RoleKey 去重，空标题回填 RoleName；不再依赖任何预设默认值。
-        public static List<TemperatureChannelSetting> NormalizeChannels(IEnumerable<TemperatureChannelSetting>? saved)
+       // 预设模板给用户一个合理的起点：通用 RoleKey，且名称直观，用户可按需重命名。
+       // 通道默认为非激活（probe 为空），用户指定实物卡座号后才激活。
+       public static List<TemperatureChannelSetting> CreatePresetTemplate()
+       {
+           return new List<TemperatureChannelSetting>
+           {
+               Create("Channel1", "绕组A"),
+               Create("Channel2", "绕组B"),
+               Create("Channel3", "绕组C"),
+               Create("Channel4", "铁心"),
+               Create("Channel5", "环境A"),
+               Create("Channel6", "环境B"),
+               Create("Channel7", "环境C"),
+               Create("Channel8", "环境D"),
+           };
+       }
+
+       private static TemperatureChannelSetting Create(string roleKey, string roleName)
+       {
+           return new TemperatureChannelSetting
+           {
+               RoleKey = roleKey,
+               RoleName = roleName,
+               Title = roleName,
+               Probe = string.Empty,
+               IsActive = false,
+           };
+       }
+
+       // 归一化保存的通道：按 RoleKey 去重，空标题回填 RoleName。
+       public static List<TemperatureChannelSetting> NormalizeChannels(IEnumerable<TemperatureChannelSetting>? saved)
         {
             var result = new List<TemperatureChannelSetting>();
             if (saved == null)
