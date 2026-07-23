@@ -52,12 +52,8 @@ namespace ABBDataManagerSystem.Pages
             RefreshRowIndexes();
             dgChannels.ItemsSource = Channels;
 
-            var activeCount = Channels.Count(item => item.IsActive);
-            if (activeCount == 0)
-            {
-                activeCount = tempMode == TempMode.COMMON ? 8 : 18;
-            }
-            nudChannelCount.Maximum = Channels.Count;
+           var activeCount = Channels.Count(item => item.IsActive);
+           nudChannelCount.Maximum = Channels.Count;
             nudChannelCount.Value = activeCount;
             ApplyActiveCount(activeCount);
         }

@@ -17,12 +17,12 @@
  *     UNIQUE KEY uk_workflow_cooling (workflow_id, cooling_mode)
  * ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='温升测试通道定义表';
  *
- * channel_defs JSON 结构示例:
- * [
- *   {"index":0, "roleKey":"WindingA", "roleName":"绕组A", "title":"高压A相", "probe":"Slot-3"},
- *   {"index":1, "roleKey":"Core",     "roleName":"铁心",   "title":"铁心温度", "probe":"Slot-7"},
- *   ...
- * ]
+* channel_defs JSON 结构示例:
+* [
+ *   {"index":0, "roleKey":"Channel1", "roleName":"通道1", "title":"高压A相", "probe":"Slot-3"},
+ *   {"index":1, "roleKey":"Channel2", "roleName":"通道2", "title":"铁心温度", "probe":"Slot-7"},
+*   ...
+* ]
  * ============================================================================
  */
 

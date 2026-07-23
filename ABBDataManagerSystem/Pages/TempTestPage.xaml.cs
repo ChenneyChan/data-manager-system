@@ -7,6 +7,7 @@ using ABBDataManagerSystem.Tools;
 using TempChannelSetting = ABBDataManagerSystem.Configs.TemperatureChannelSetting;
 using TemperatureChannelCatalog = ABBDataManagerSystem.Configs.TemperatureChannelCatalog;
 using Microsoft.Win32;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.IO;
 using System.IO.Ports;
@@ -149,9 +150,8 @@ namespace ABBDataManagerSystem.Pages
         private static bool Simulate = Configs.Configs.TPIsSimulate;
         private bool IsFirstLoad = true;
 
-        private bool UsingSerial = true;
-        private List<TemperatureSlotView> Slots = new List<TemperatureSlotView>();
-        private Dictionary<int, string> ExtensionSlotMaps = new Dictionary<int, string>();
+       private bool UsingSerial = true;
+       private List<TemperatureSlotView> Slots = new List<TemperatureSlotView>();
 
         private TempChartsNew tempCharts;
 
@@ -162,9 +162,10 @@ namespace ABBDataManagerSystem.Pages
         private string csvFilePath = string.Empty;
 
         private StreamWriter? csvWriter = null;
-        private List<int> SelectedSlots = new List<int>();
-        private List<TemperatureChannelBinding> SelectedChannels = new List<TemperatureChannelBinding>();
-        private bool SelectedSlotChange = false;
+       private List<int> SelectedSlots = new List<int>();
+       private List<TemperatureChannelBinding> SelectedChannels = new List<TemperatureChannelBinding>();
+        private ObservableCollection<TemperatureChannelBinding> ChannelShields = new ObservableCollection<TemperatureChannelBinding>();
+       private bool SelectedSlotChange = false;
 
         private TempModbusCollector? tempModbusCollector;
         private ManualResetEvent? ResetEvent = null;
@@ -195,9 +196,10 @@ namespace ABBDataManagerSystem.Pages
             this.DataContext = new { DataList = SlotChoices, Table };
         }
 
-        private void InitView()
-        {
-            var ports = SerialPort.GetPortNames();
+       private void InitView()
+       {
+           icChannelShields.ItemsSource = ChannelShields;
+           var ports = SerialPort.GetPortNames();
             Array.Sort(ports);
             ports.ToList().ForEach(port => { cbSerialPort.Items.Add(port); });
             cbSerialPort.SelectedIndex = cbSerialPort.Items.Count > 0 ? 0 : -1;
@@ -1307,13 +1309,12 @@ namespace ABBDataManagerSystem.Pages
             return SelectedChannels.Select(item => item.Title).ToList();
         }
 
-        private int ProcessSelectedSlots()
-        {
-            SelectedSlots.Clear();
-            SelectedChannels.Clear();
-            ExtensionSlotMaps.Clear();
+       private int ProcessSelectedSlots()
+       {
+           SelectedSlots.Clear();
+           SelectedChannels.Clear();
 
-            var channels = Configs.Configs.TemperatureChannels ?? TemperatureChannelCatalog.CreateDefaultChannels();
+           var channels = Configs.Configs.TemperatureChannels ?? TemperatureChannelCatalog.CreateDefaultChannels();
             foreach (var channel in channels)
             {
                 if (!channel.IsActive || string.IsNullOrWhiteSpace(channel.Probe))
@@ -1334,19 +1335,9 @@ namespace ABBDataManagerSystem.Pages
                 });
             }
 
-            SelectedSlots.AddRange(SelectedChannels.Select(item => item.SlotNumber));
+           SelectedSlots.AddRange(SelectedChannels.Select(item => item.SlotNumber));
 
-            foreach (var channel in SelectedChannels.Where(item => item.RoleKey.StartsWith("Extension")))
-            {
-                var suffix = channel.RoleKey.Replace("Extension", string.Empty);
-                var index = Utils.ParseInt(suffix);
-                if (index > 0)
-                {
-                    ExtensionSlotMaps[index] = channel.Probe;
-                }
-            }
-
-            return SelectedChannels.Count;
+           return SelectedChannels.Count;
         }
 
         private void btSelectSlots_Click(object sender, RoutedEventArgs e)
@@ -1358,59 +1349,21 @@ namespace ABBDataManagerSystem.Pages
             }
         }
 
-        private void UpdateSlotsMappingDisplay()
-        {
-            if (SelectedChannels.Count == 0)
-            {
-                ProcessSelectedSlots();
-            }
+       private void UpdateSlotsMappingDisplay()
+       {
+           if (SelectedChannels.Count == 0)
+           {
+               ProcessSelectedSlots();
+           }
 
-            tbSlotMappingShow.Text = string.Join(", ", SelectedChannels.Select(item => $"{item.Title} - {item.Probe}"));
-            UpdateChannelShield("WindingA", shWindingA);
-            UpdateChannelShield("WindingB", shWindingB);
-            UpdateChannelShield("WindingC", shWindingC);
-            UpdateChannelShield("Core", shCore);
-            UpdateChannelShield("EnvA", shEnvA);
-            UpdateChannelShield("EnvB", shEnvB);
-            UpdateChannelShield("EnvC", shEnvC);
-            UpdateChannelShield("EnvD", shEnvD);
-            UpdateChannelShield("Outlet1", shOut1);
-            UpdateChannelShield("Outlet2", shOut2);
-            UpdateChannelShield("Outlet3", shOut3);
-            UpdateChannelShield("Outlet4", shOut4);
-            UpdateChannelShield("Outlet5", shOut5);
-            UpdateChannelShield("Outlet6", shOut6);
-            UpdateChannelShield("Inlet1", shIn1);
-            UpdateChannelShield("Inlet2", shIn2);
-            UpdateChannelShield("Inlet3", shIn3);
-            UpdateChannelShield("TopTemperature", shTop);
-            UpdateChannelShield("Extension1", shExtension1);
-            UpdateChannelShield("Extension2", shExtension2);
-            UpdateChannelShield("Extension3", shExtension3);
-            UpdateChannelShield("Extension4", shExtension4);
-            UpdateChannelShield("Extension5", shExtension5);
-            UpdateChannelShield("Extension6", shExtension6);
-            UpdateChannelShield("Extension7", shExtension7);
-            UpdateChannelShield("Extension8", shExtension8);
-            UpdateChannelShield("Extension9", shExtension9);
-        }
-
-        private void UpdateChannelShield(string roleKey, Shield sh)
-        {
-            var channel = SelectedChannels.FirstOrDefault(item => item.RoleKey == roleKey);
-            if (channel != null)
-            {
-                sh.Visibility = Visibility.Visible;
-                sh.Subject = channel.Title;
-                sh.Status = channel.Probe;
-            }
-            else
-            {
-                sh.Visibility = Visibility.Collapsed;
-                sh.Status = string.Empty;
-            }
-        }
-        #endregion
+           tbSlotMappingShow.Text = string.Join(", ", SelectedChannels.Select(item => $"{item.Title} - {item.Probe}"));
+           ChannelShields.Clear();
+           foreach (var ch in SelectedChannels)
+           {
+               ChannelShields.Add(ch);
+           }
+       }
+       #endregion
 
         #region 数据上传
 

@@ -24,9 +24,9 @@
  *     i3 FLOAT DEFAULT NULL COMMENT '三相平均电流(A)',
  *     p3 FLOAT DEFAULT NULL COMMENT '三相总有功功率(kW)',
  *     fu FLOAT DEFAULT NULL COMMENT '频率(Hz)',
- *     -- 动态字段: 用户自定义温度通道
- *     temperatures          JSON         NOT NULL COMMENT '温度通道值 {"WindingA":23.5,"Core":30.0,...}',
- *     -- 固定字段: 水冷设备 (仅 AFWF 模式有值)
+*     -- 动态字段: 用户自定义温度通道
+ *     temperatures          JSON         NOT NULL COMMENT '温度通道值 {"Channel1":23.5,"Channel2":30.0,...}',
+*     -- 固定字段: 水冷设备 (仅 AFWF 模式有值)
  *     outlet_water_temp     FLOAT DEFAULT NULL COMMENT '出水口温度(℃)',
  *     inlet_water_temp      FLOAT DEFAULT NULL COMMENT '回水口温度(℃)',
  *     ambient_temp_1        FLOAT DEFAULT NULL COMMENT '环境温度1(℃)',
@@ -44,15 +44,15 @@
  *     INDEX idx_test_info (test_info_id)
  * ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='温升测试数据记录表';
  *
- * temperatures JSON 结构示例:
- * {
- *   "WindingA": 23.5,
- *   "WindingB": 24.1,
- *   "WindingC": 23.8,
- *   "Core": 30.2,
- *   "EnvA": 18.0,
- *   "Extension1": 22.3
- * }
+* temperatures JSON 结构示例:
+* {
+ *   "Channel1": 23.5,
+ *   "Channel2": 24.1,
+ *   "Channel3": 23.8,
+ *   "Channel4": 30.2,
+ *   "Channel5": 18.0,
+ *   "Channel6": 22.3
+* }
  *
  * 迁移说明:
  * 旧表 commonTempRiseTestRecord 保留不动，新数据写入此表。

@@ -102,83 +102,42 @@ namespace ABBDataManagerSystem.Configs
 
     public static class TemperatureChannelCatalog
     {
+        // 不预置任何语义通道：通道列表完全由用户自定义，所有通道地位平等。
+        // 新装用户从空列表开始，通过 TempSlotSelectView 添加并命名通道。
         public static List<TemperatureChannelSetting> CreateDefaultChannels()
         {
-            return new List<TemperatureChannelSetting>
-            {
-                Create("WindingA", "绕组A", ""),
-                Create("WindingB", "绕组B", ""),
-                Create("WindingC", "绕组C", ""),
-                Create("Core", "铁心", ""),
-                Create("EnvA", "环境A", ""),
-                Create("EnvB", "环境B", ""),
-                Create("EnvC", "环境C", ""),
-                Create("EnvD", "环境D", ""),
-                Create("Outlet1", "出风口温度1", ""),
-                Create("Outlet2", "出风口温度2", ""),
-                Create("Outlet3", "出风口温度3", ""),
-                Create("Outlet4", "出风口温度4", ""),
-                Create("Outlet5", "出风口温度5", ""),
-                Create("Outlet6", "出风口温度6", ""),
-                Create("Inlet1", "进风口温度1", ""),
-                Create("Inlet2", "进风口温度2", ""),
-                Create("Inlet3", "进风口温度3", ""),
-                Create("TopTemperature", "壳内顶部温度", ""),
-                Create("Extension1", "额外温度1", ""),
-                Create("Extension2", "额外温度2", ""),
-                Create("Extension3", "额外温度3", ""),
-                Create("Extension4", "额外温度4", ""),
-                Create("Extension5", "额外温度5", ""),
-                Create("Extension6", "额外温度6", ""),
-                Create("Extension7", "额外温度7", ""),
-                Create("Extension8", "额外温度8", ""),
-                Create("Extension9", "额外温度9", ""),
-            };
+            return new List<TemperatureChannelSetting>();
         }
 
+        // 归一化保存的通道：按 RoleKey 去重，空标题回填 RoleName；不再依赖任何预设默认值。
         public static List<TemperatureChannelSetting> NormalizeChannels(IEnumerable<TemperatureChannelSetting>? saved)
         {
-            var defaults = CreateDefaultChannels();
+            var result = new List<TemperatureChannelSetting>();
             if (saved == null)
             {
-                return defaults;
+                return result;
             }
 
-            var lookup = new Dictionary<string, TemperatureChannelSetting>();
+            var seen = new HashSet<string>();
             foreach (var item in saved)
             {
                 if (item == null || string.IsNullOrWhiteSpace(item.RoleKey))
                 {
                     continue;
                 }
-                lookup[item.RoleKey] = item;
-            }
-
-            foreach (var item in defaults)
-            {
-                if (!lookup.TryGetValue(item.RoleKey, out var savedItem))
+                if (!seen.Add(item.RoleKey))
                 {
                     continue;
                 }
 
-                item.Title = string.IsNullOrWhiteSpace(savedItem.Title) ? item.Title : savedItem.Title;
-                item.Probe = savedItem.Probe ?? string.Empty;
-                item.IsActive = savedItem.IsActive;
+                if (string.IsNullOrWhiteSpace(item.Title))
+                {
+                    item.Title = item.RoleName;
+                }
+                result.Add(item);
             }
 
-            return defaults;
-        }
-
-        private static TemperatureChannelSetting Create(string roleKey, string roleName, string probe)
-        {
-            return new TemperatureChannelSetting
-            {
-                RoleKey = roleKey,
-                RoleName = roleName,
-                Title = roleName,
-                Probe = probe,
-                IsActive = !string.IsNullOrWhiteSpace(probe),
-            };
+            return result;
         }
     }
 }

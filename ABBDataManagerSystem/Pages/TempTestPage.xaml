@@ -236,34 +236,19 @@
             <StackPanel Grid.Column="1" >
                 <WrapPanel HorizontalAlignment="Left" MaxWidth="980">
                     <TextBlock Text="通道选择：" FontWeight="Bold"/>
-                    <TextBlock Text="" Name="tbSlotMappingShow" Visibility="Collapsed"/>
-                    <hc:Shield FontSize="14" Height="30" Margin="4, 2" Name="shWindingA" Subject="线圈A" Status="" Color="#1182c3"/>
-                    <hc:Shield FontSize="14" Height="30" Margin="4, 2" Name="shWindingB" Subject="线圈B" Status="" Color="#1182c3"/>
-                    <hc:Shield FontSize="14" Height="30" Margin="4, 2" Name="shWindingC" Subject="线圈C" Status="" Color="#1182c3"/>
-                    <hc:Shield FontSize="14" Height="30" Margin="4, 2" Name="shCore" Subject="铁心"  Status="" Color="#1182c3"/>
-                    <hc:Shield FontSize="14" Height="30" Margin="4, 2" Name="shEnvA" Subject="环境A" Status="" Color="#1182c3"/>
-                    <hc:Shield FontSize="14" Height="30" Margin="4, 2" Name="shEnvB" Subject="环境B" Status="" Color="#1182c3"/>
-                    <hc:Shield FontSize="14" Height="30" Margin="4, 2" Name="shEnvC" Subject="环境C" Status="" Color="#1182c3"/>
-                    <hc:Shield FontSize="14" Height="30" Margin="4, 2" Name="shEnvD" Subject="环境D" Status="" Color="#1182c3"/>
-                    <hc:Shield FontSize="14" Height="30" Margin="4, 2" Name="shOut1" Subject="出风口温度1" Status="" Color="#1182c3"/>
-                    <hc:Shield FontSize="14" Height="30" Margin="4, 2" Name="shOut2" Subject="出风口温度2" Status="" Color="#1182c3"/>
-                    <hc:Shield FontSize="14" Height="30" Margin="4, 2" Name="shOut3" Subject="出风口温度3" Status="" Color="#1182c3"/>
-                    <hc:Shield FontSize="14" Height="30" Margin="4, 2" Name="shOut4" Subject="出风口温度4" Status="" Color="#1182c3"/>
-                    <hc:Shield FontSize="14" Height="30" Margin="4, 2" Name="shOut5" Subject="出风口温度5" Status="" Color="#1182c3"/>
-                    <hc:Shield FontSize="14" Height="30" Margin="4, 2" Name="shOut6" Subject="出风口温度6" Status="" Color="#1182c3"/>
-                    <hc:Shield FontSize="14" Height="30" Margin="4, 2" Name="shIn1" Subject="进风口温度1" Status="" Color="#1182c3"/>
-                    <hc:Shield FontSize="14" Height="30" Margin="4, 2" Name="shIn2" Subject="进风口温度2" Status="" Color="#1182c3"/>
-                    <hc:Shield FontSize="14" Height="30" Margin="4, 2" Name="shIn3" Subject="进风口温度3" Status="" Color="#1182c3"/>
-                    <hc:Shield FontSize="14" Height="30" Margin="4, 2" Name="shTop" Subject="顶部温度" Status="" Color="#1182c3"/>
-                    <hc:Shield FontSize="14" Height="30" Margin="4, 2" Name="shExtension1" Subject="其他1" Status="" Color="#1182c3"/>
-                    <hc:Shield FontSize="14" Height="30" Margin="4, 2" Name="shExtension2" Subject="其他2" Status="" Color="#1182c3"/>
-                    <hc:Shield FontSize="14" Height="30" Margin="4, 2" Name="shExtension3" Subject="其他3" Status="" Color="#1182c3"/>
-                    <hc:Shield FontSize="14" Height="30" Margin="4, 2" Name="shExtension4" Subject="其他4" Status="" Color="#1182c3"/>
-                    <hc:Shield FontSize="14" Height="30" Margin="4, 2" Name="shExtension5" Subject="其他5" Status="" Color="#1182c3"/>
-                    <hc:Shield FontSize="14" Height="30" Margin="4, 2" Name="shExtension6" Subject="其他6" Status="" Color="#1182c3"/>
-                    <hc:Shield FontSize="14" Height="30" Margin="4, 2" Name="shExtension7" Subject="其他7" Status="" Color="#1182c3"/>
-                    <hc:Shield FontSize="14" Height="30" Margin="4, 2" Name="shExtension8" Subject="其他8" Status="" Color="#1182c3"/>
-                    <hc:Shield FontSize="14" Height="30" Margin="4, 2" Name="shExtension9" Subject="其他9" Status="" Color="#1182c3"/>
+                   <TextBlock Text="" Name="tbSlotMappingShow" Visibility="Collapsed"/>
+                    <ItemsControl Name="icChannelShields">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel MaxWidth="980" HorizontalAlignment="Left"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <hc:Shield FontSize="14" Height="30" Margin="4, 2" Subject="{Binding Title}" Status="{Binding Probe}" Color="#1182c3"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
                 </WrapPanel>
                 <TextBlock Text="功率分析仪数据：" Margin="0, 5, 5, 5" FontWeight="Bold"/>
                 <WrapPanel MaxWidth="980" HorizontalAlignment="Left" IsEnabled="False">

@@ -393,47 +393,59 @@ namespace ABBDataManagerSystem.Configs
             SyncTemperatureChannels();
         }
 
-        private static List<TemperatureChannelSetting> BuildChannelsFromLegacy()
-        {
-            var channels = TemperatureChannelCatalog.CreateDefaultChannels();
-            var lookup = channels.ToDictionary(item => item.RoleKey, item => item);
+       private static List<TemperatureChannelSetting> BuildChannelsFromLegacy()
+       {
+            // 一次性迁移：把老版本 INI 固定字段转成带历史名称的通道（仅导入已配置探头的）。
+            // 新版本通道列表无任何预设语义字段，历史名称只在此迁移路径中保留。
+            var channels = new List<TemperatureChannelSetting>();
 
-            SetProbe(lookup, "WindingA", WindingA);
-            SetProbe(lookup, "WindingB", WindingB);
-            SetProbe(lookup, "WindingC", WindingC);
-            SetProbe(lookup, "Core", Core);
-            SetProbe(lookup, "EnvA", EnvA);
-            SetProbe(lookup, "EnvB", EnvB);
-            SetProbe(lookup, "EnvC", EnvC);
-            SetProbe(lookup, "EnvD", EnvD);
-            SetProbe(lookup, "Outlet1", SplitValue(OutletTemperature, 0));
-            SetProbe(lookup, "Outlet2", SplitValue(OutletTemperature, 1));
-            SetProbe(lookup, "Outlet3", SplitValue(OutletTemperature, 2));
-            SetProbe(lookup, "Outlet4", SplitValue(OutletTemperature, 3));
-            SetProbe(lookup, "Outlet5", SplitValue(OutletTemperature, 4));
-            SetProbe(lookup, "Outlet6", SplitValue(OutletTemperature, 5));
-            SetProbe(lookup, "Inlet1", SplitValue(InletTemperature, 0));
-            SetProbe(lookup, "Inlet2", SplitValue(InletTemperature, 1));
-            SetProbe(lookup, "Inlet3", SplitValue(InletTemperature, 2));
-            SetProbe(lookup, "TopTemperature", TopTemperature);
+            void Add(string key, string name, string probe)
+            {
+                if (string.IsNullOrWhiteSpace(probe))
+                {
+                    return;
+                }
+                channels.Add(new TemperatureChannelSetting
+                {
+                    RoleKey = key,
+                    RoleName = name,
+                    Title = name,
+                    Probe = probe,
+                    IsActive = true,
+                });
+            }
+
+            Add("WindingA", "绕组A", WindingA);
+            Add("WindingB", "绕组B", WindingB);
+            Add("WindingC", "绕组C", WindingC);
+            Add("Core", "铁心", Core);
+            Add("EnvA", "环境A", EnvA);
+            Add("EnvB", "环境B", EnvB);
+            Add("EnvC", "环境C", EnvC);
+            Add("EnvD", "环境D", EnvD);
+            Add("Outlet1", "出风口温度1", SplitValue(OutletTemperature, 0));
+            Add("Outlet2", "出风口温度2", SplitValue(OutletTemperature, 1));
+            Add("Outlet3", "出风口温度3", SplitValue(OutletTemperature, 2));
+            Add("Outlet4", "出风口温度4", SplitValue(OutletTemperature, 3));
+            Add("Outlet5", "出风口温度5", SplitValue(OutletTemperature, 4));
+            Add("Outlet6", "出风口温度6", SplitValue(OutletTemperature, 5));
+            Add("Inlet1", "进风口温度1", SplitValue(InletTemperature, 0));
+            Add("Inlet2", "进风口温度2", SplitValue(InletTemperature, 1));
+            Add("Inlet3", "进风口温度3", SplitValue(InletTemperature, 2));
+            Add("TopTemperature", "壳内顶部温度", TopTemperature);
 
             var extensions = string.IsNullOrWhiteSpace(ExtensionSlots)
                 ? Array.Empty<string>()
                 : ExtensionSlots.Split(',');
-            SetProbe(lookup, "Extension1", SplitValue(extensions, 0));
-            SetProbe(lookup, "Extension2", SplitValue(extensions, 1));
-            SetProbe(lookup, "Extension3", SplitValue(extensions, 2));
-            SetProbe(lookup, "Extension4", SplitValue(extensions, 3));
-            SetProbe(lookup, "Extension5", SplitValue(extensions, 4));
-            SetProbe(lookup, "Extension6", SplitValue(extensions, 5));
-            SetProbe(lookup, "Extension7", SplitValue(extensions, 6));
-            SetProbe(lookup, "Extension8", SplitValue(extensions, 7));
-            SetProbe(lookup, "Extension9", SplitValue(extensions, 8));
-
-            foreach (var channel in channels)
-            {
-                channel.IsActive = !string.IsNullOrWhiteSpace(channel.Probe);
-            }
+            Add("Extension1", "额外温度1", SplitValue(extensions, 0));
+            Add("Extension2", "额外温度2", SplitValue(extensions, 1));
+            Add("Extension3", "额外温度3", SplitValue(extensions, 2));
+            Add("Extension4", "额外温度4", SplitValue(extensions, 3));
+            Add("Extension5", "额外温度5", SplitValue(extensions, 4));
+            Add("Extension6", "额外温度6", SplitValue(extensions, 5));
+            Add("Extension7", "额外温度7", SplitValue(extensions, 6));
+            Add("Extension8", "额外温度8", SplitValue(extensions, 7));
+            Add("Extension9", "额外温度9", SplitValue(extensions, 8));
 
             return channels;
         }
@@ -442,64 +454,47 @@ namespace ABBDataManagerSystem.Configs
         {
             if (TemperatureChannels == null || TemperatureChannels.Count == 0)
             {
-                TemperatureChannels = TemperatureChannelCatalog.CreateDefaultChannels();
+                TemperatureChannels = new List<TemperatureChannelSetting>();
             }
 
             TemperatureChannelsJson = JsonSerializer.Serialize(TemperatureChannels);
 
             var lookup = TemperatureChannels.ToDictionary(item => item.RoleKey, item => item);
-            WindingA = GetProbe(lookup, "WindingA");
-            WindingB = GetProbe(lookup, "WindingB");
-            WindingC = GetProbe(lookup, "WindingC");
-            Core = GetProbe(lookup, "Core");
-            EnvA = GetProbe(lookup, "EnvA");
-            EnvB = GetProbe(lookup, "EnvB");
-            EnvC = GetProbe(lookup, "EnvC");
-            EnvD = GetProbe(lookup, "EnvD");
-            OutletTemperature = string.Join(",", new[]
-            {
-                GetProbe(lookup, "Outlet1"),
-                GetProbe(lookup, "Outlet2"),
-                GetProbe(lookup, "Outlet3"),
-                GetProbe(lookup, "Outlet4"),
-                GetProbe(lookup, "Outlet5"),
-                GetProbe(lookup, "Outlet6"),
-            });
-            InletTemperature = string.Join(",", new[]
-            {
-                GetProbe(lookup, "Inlet1"),
-                GetProbe(lookup, "Inlet2"),
-                GetProbe(lookup, "Inlet3"),
-            });
-            TopTemperature = GetProbe(lookup, "TopTemperature");
-            ExtensionSlots = string.Join(",", new[]
-            {
-                GetProbe(lookup, "Extension1"),
-                GetProbe(lookup, "Extension2"),
-                GetProbe(lookup, "Extension3"),
-                GetProbe(lookup, "Extension4"),
-                GetProbe(lookup, "Extension5"),
-                GetProbe(lookup, "Extension6"),
-                GetProbe(lookup, "Extension7"),
-                GetProbe(lookup, "Extension8"),
-                GetProbe(lookup, "Extension9"),
-            });
+            // 旧 INI 固定字段已弃用：仅当存在同 RoleKey 的通道时才回写，
+            // 否则保留原值，避免清空未迁移的历史配置。
+            WindingA = SyncProbe(lookup, "WindingA", WindingA);
+            WindingB = SyncProbe(lookup, "WindingB", WindingB);
+            WindingC = SyncProbe(lookup, "WindingC", WindingC);
+            Core = SyncProbe(lookup, "Core", Core);
+            EnvA = SyncProbe(lookup, "EnvA", EnvA);
+            EnvB = SyncProbe(lookup, "EnvB", EnvB);
+            EnvC = SyncProbe(lookup, "EnvC", EnvC);
+            EnvD = SyncProbe(lookup, "EnvD", EnvD);
+            OutletTemperature = SyncJoined(lookup, new[] { "Outlet1", "Outlet2", "Outlet3", "Outlet4", "Outlet5", "Outlet6" }, OutletTemperature);
+            InletTemperature = SyncJoined(lookup, new[] { "Inlet1", "Inlet2", "Inlet3" }, InletTemperature);
+            TopTemperature = SyncProbe(lookup, "TopTemperature", TopTemperature);
+            ExtensionSlots = SyncJoined(lookup, new[] { "Extension1", "Extension2", "Extension3", "Extension4", "Extension5", "Extension6", "Extension7", "Extension8", "Extension9" }, ExtensionSlots);
             TPSlots = string.Join(",", TemperatureChannels
                 .Where(item => item.IsActive && !string.IsNullOrWhiteSpace(item.Probe))
                 .Select(item => item.Probe));
         }
 
-        private static void SetProbe(Dictionary<string, TemperatureChannelSetting> lookup, string roleKey, string probe)
+        // 存在同 RoleKey 通道时回写其探头，否则保留 current 原值（无损）
+        private static string SyncProbe(Dictionary<string, TemperatureChannelSetting> lookup, string roleKey, string current)
         {
-            if (lookup.TryGetValue(roleKey, out var channel))
-            {
-                channel.Probe = probe ?? string.Empty;
-            }
+            return lookup.TryGetValue(roleKey, out var channel) ? (channel.Probe ?? string.Empty) : current;
         }
 
-        private static string GetProbe(Dictionary<string, TemperatureChannelSetting> lookup, string roleKey)
+        // 拼接多个 RoleKey 的探头；若全部缺失则保留 current 原值
+        private static string SyncJoined(Dictionary<string, TemperatureChannelSetting> lookup, string[] roleKeys, string current)
         {
-            return lookup.TryGetValue(roleKey, out var channel) ? channel.Probe ?? string.Empty : string.Empty;
+            if (!roleKeys.Any(k => lookup.ContainsKey(k)))
+            {
+                return current;
+            }
+            return string.Join(",", roleKeys
+                .Where(k => lookup.ContainsKey(k))
+                .Select(k => lookup[k].Probe ?? string.Empty));
         }
 
         private static string SplitValue(string? value, int index)
