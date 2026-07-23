@@ -1192,11 +1192,43 @@ namespace ABBDataManagerSystem.Pages
                 Configs.Configs.TPSerialPort = cbSerialPort.Text;
                 Configs.Configs.TPSerialBoundRate = cbSerialBoudRate.Text;
             }
-            Configs.Configs.TPSlots = string.Join(",", SelectedChannels.Select(item => item.Probe));
-            Configs.Configs.TPInterval = cbInterval.Text;
-            Configs.Configs.TemperatureThreshold = (float)tbTemperatureThreshold.Value;
+           Configs.Configs.TPSlots = string.Join(",", SelectedChannels.Select(item => item.Probe));
+           Configs.Configs.TPInterval = cbInterval.Text;
+           Configs.Configs.TemperatureThreshold = (float)tbTemperatureThreshold.Value;
+
+            // 启动采集时把当前通道定义写入 DB (按 workflow_id + cooling_mode upsert)
+            SaveChannelDefinitionToDb();
+       }
+
+        /// <summary>
+        /// 将当前温度通道定义写入 tempRiseChannelDefinition 表 (upsert)。
+        /// 通道定义以 JSON 数组形式存储，键为 (workflow_id, cooling_mode)。
+        /// </summary>
+        private void SaveChannelDefinitionToDb()
+        {
+            string workflowId = Configs.Configs.WorkflowID;
+            string coolingMode = cbCoolingMode.Text;
+            if (string.IsNullOrEmpty(workflowId) || string.IsNullOrEmpty(coolingMode))
+                return;
+
+            try
+            {
+                var channels = Configs.Configs.TemperatureChannels
+                    ?? TemperatureChannelCatalog.CreateDefaultChannels();
+                string json = JsonSerializer.Serialize(channels);
+
+                var def = new TempRiseChannelDefinition(workflowId, coolingMode, json);
+                if (!def.Save())
+                {
+                    Log.Error($"Failed to save channel definition to DB (workflow={workflowId}, mode={coolingMode})");
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"Failed to save channel definition: {ex.Message}");
+            }
         }
-        #endregion
+       #endregion
 
         #region 温度槽位选择
         private void LoadChannelDefinitionFromDb()
@@ -1234,23 +1266,29 @@ namespace ABBDataManagerSystem.Pages
             }
         }
 
-        private void cbCoolingMode_SelectionChanged(object sender, RoutedEventArgs e)
-        {
-            var oldMode = TempTestMode;
-            bool _IsAFWF = cbCoolingMode.SelectedIndex == 2;
-            bool _IsAF_Air = cbCoolingMode.SelectedIndex == 1 && cbRelatedTo.SelectedIndex == 2;
-            TempTestMode = _IsAFWF ? TempMode.AFWF : (_IsAF_Air ? TempMode.AF_AIR : TempMode.COMMON);
-            if (TempTestMode != oldMode)
-            {
-                UpdateSlotShieldState();
-                SelectedSlots_SelectionChanged();
-            }
-            panelCoolDevice.Visibility = TempTestMode == TempMode.AFWF ? Visibility.Visible : Visibility.Collapsed;
+       private void cbCoolingMode_SelectionChanged(object sender, RoutedEventArgs e)
+       {
+            // 冷却方式变更时从 DB 加载通道定义，优先级: DB > 本地配置 > 默认值
             if (sender == cbCoolingMode)
             {
-                UpdateCommonInfo();
+                LoadChannelDefinitionFromDb();
             }
-        }
+
+           var oldMode = TempTestMode;
+           bool _IsAFWF = cbCoolingMode.SelectedIndex == 2;
+           bool _IsAF_Air = cbCoolingMode.SelectedIndex == 1 && cbRelatedTo.SelectedIndex == 2;
+           TempTestMode = _IsAFWF ? TempMode.AFWF : (_IsAF_Air ? TempMode.AF_AIR : TempMode.COMMON);
+           if (TempTestMode != oldMode)
+           {
+               UpdateSlotShieldState();
+               SelectedSlots_SelectionChanged();
+           }
+           panelCoolDevice.Visibility = TempTestMode == TempMode.AFWF ? Visibility.Visible : Visibility.Collapsed;
+           if (sender == cbCoolingMode)
+           {
+               UpdateCommonInfo();
+           }
+       }
 
         private void UpdateSlotShieldState()
         {
@@ -1604,12 +1642,16 @@ namespace ABBDataManagerSystem.Pages
                             cbTestPhase.Items.Add("负载（大容量）");
                             cbTestPhase.Items.Add("负载（小容量）");
                         }
-                        cbTestPhase.SelectedIndex = 0;
-                    }
-                });
-            });
-        }
-        #endregion
+                       cbTestPhase.SelectedIndex = 0;
+                   }
+
+                    // 工作令切换后从 DB 加载通道定义并刷新槽位显示
+                    LoadChannelDefinitionFromDb();
+                    SelectedSlots_SelectionChanged();
+               });
+           });
+       }
+       #endregion
 
         #region 监听水冷温度流量数据
 
